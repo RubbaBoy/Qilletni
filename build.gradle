@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+    id 'antlr'
+}
+
+group = 'is.yarr.qilletni'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation 'org.antlr:antlr4-runtime:4.13.1'
+    antlr 'org.antlr:antlr4:4.13.1'
+}
+
+//sourceSets {
+//    main {
+//        java {
+//            srcDir "${buildDir}/generated-src/antlr/main"
+//        }
+//    }
+//}
+
+generateGrammarSource {
+//        val pkg = "com.stackoverflow.antlr"
+//        arguments = arguments + listOf("-package", pkg)
+        var pkg = 'is.yarr.qilletni.antlr';
+        outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/${pkg.split("\\.").join("/")}".toString())
+//        outputDirectory = new File("${project.layout.buildDirectory}/generated-src/antlr/" + "is.yarr.qilletni.antlr".split("\\.").join("/")
+    maxHeapSize = "128m"
+    arguments += ['-visitor', '-no-listener']
+}
+
+sourceSets {
+    generated {
+        java.srcDir 'generated-src/antlr/main/'
+    }
+}
+
+compileJava.dependsOn generateGrammarSource
+
+test {
+    useJUnitPlatform()
+}
