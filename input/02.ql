@@ -6,7 +6,7 @@ string hi = "hi!"
 
 play "Empty Mirror" by "Colony Collapse"
 
-two(9, 10)
+print("hey!")
 
 fun one(a, b, c) {
     string hello = "World!"

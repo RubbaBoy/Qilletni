@@ -9,6 +9,7 @@ import is.yarr.qilletni.types.WeightsType;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 public class Symbol<T extends QilletniType> {

@@ -44,7 +44,6 @@ int_expr
     | function_call
     | INT
     | ID
-    |  // do I need above commented lines?
     ;
 
 str_expr
@@ -96,17 +95,11 @@ single_weight_t
     ;
 
 function_call
-    : ID '(' params ')'
+    : ID '(' expr_list? ')'
     ;
 
-params
-    : expr params_t
-    | // epsilon
-    ;
-
-params_t
-    : ',' expr params_t
-    | // epsilon
+expr_list
+    : expr (',' expr)*
     ;
 
 body_stmt
