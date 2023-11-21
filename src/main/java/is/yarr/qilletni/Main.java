@@ -21,23 +21,13 @@ public class Main {
     }
     
     private void main(String programFile) throws IOException {
-        var input = CharStreams.fromPath(Paths.get("input", programFile));
+        var qilletniProgramRunner = new QilletniProgramRunner();
         
-        var lexer = new QilletniLexer(input);
-        var tokenStream = new CommonTokenStream(lexer);
-        var qilletniParser = new QilletniParser(tokenStream);
-        
-        var symbolTable = new SymbolTable();
-        var nativeFunctionHandler = new NativeFunctionHandler();
-        nativeFunctionHandler.init(InternalNative.class);
-        
-        QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, nativeFunctionHandler);
-        qilletniVisitor.visit(programContext);
+        qilletniProgramRunner.runProgram(Paths.get("input", programFile));
 
         LOGGER.debug("Symbol table at the end:");
 
-        qilletniVisitor.symbolTable.getAllScopes()
+        qilletniProgramRunner.getSymbolTable().getAllScopes()
                 .stream()
                 .map(Scope::toString)
                 .forEach(LOGGER::debug);

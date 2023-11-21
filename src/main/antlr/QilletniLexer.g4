@@ -9,7 +9,6 @@ tokens {
 }
 
 IMPORT: 'import';
-FILE_NAME : ID '.ql';
 
 COMMENT
     : '//' .*? NEWLINE

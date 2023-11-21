@@ -28,7 +28,6 @@ public class NativeFunctionHandler {
         }
 
         try {
-            System.out.println("params = " + params);
             return (QilletniType) method.invoke(null, params.toArray(Object[]::new));
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);

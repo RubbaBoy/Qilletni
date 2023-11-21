@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     
@@ -24,14 +25,17 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     
     public final SymbolTable symbolTable;
     private final NativeFunctionHandler nativeFunctionHandler;
+    private final Consumer<String> importConsumer;
 
-    public QilletniVisitor(SymbolTable symbolTable, NativeFunctionHandler nativeFunctionHandler) {
+    public QilletniVisitor(SymbolTable symbolTable, NativeFunctionHandler nativeFunctionHandler, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.nativeFunctionHandler = nativeFunctionHandler;
+        this.importConsumer = importConsumer;
     }
 
     @Override
     public Object visitProg(QilletniParser.ProgContext ctx) {
+        symbolTable.pushScope();
         visitChildren(ctx);
         return null;
     }
@@ -199,28 +203,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 .toList();
     }
 
-    //    @Override
-//    public List<QilletniType> visitParams(QilletniParser.ParamsContext ctx) {
-//        var list = new ArrayList<QilletniType>();
-//        if (ctx.params_t() != null) {
-//            list.addAll((List<QilletniType>) ctx.accept(this));
-//        }
-//        
-//        list.add(visitQilletniTypedNode(ctx.expr()));
-//        return list;
-//    }
-//
-//    @Override
-//    public List<QilletniType> visitParams_t(QilletniParser.Params_tContext ctx) {
-//        var list = new ArrayList<QilletniType>();
-//        if (ctx.params_t() != null) {
-//            list.addAll((List<QilletniType>) ctx.accept(this));
-//        }
-//        
-//        list.add(visitQilletniTypedNode(ctx.expr()));
-//        return list;
-//    }
-
     @Override
     public Object visitReturn_stmt(QilletniParser.Return_stmtContext ctx) {
         return visitQilletniTypedNode(ctx.expr());
@@ -229,7 +211,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public Object visitImport_file(QilletniParser.Import_fileContext ctx) {
         // TODO: Import file
-        LOGGER.debug("Importing {}", ctx.FILE_NAME().getText());
+        LOGGER.debug("Importing {}", ctx.STRING().getText());
+        importConsumer.accept(ctx.STRING().getText());
         
         return null;
     }

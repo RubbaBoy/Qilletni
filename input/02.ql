@@ -1,6 +1,3 @@
-import balls.ql
-
-
 native fun print(obj)
 string hi = "hi!"
 

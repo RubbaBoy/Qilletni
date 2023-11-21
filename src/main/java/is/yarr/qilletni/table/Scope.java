@@ -1,5 +1,6 @@
 package is.yarr.qilletni.table;
 
+import is.yarr.qilletni.types.FunctionType;
 import is.yarr.qilletni.types.QilletniType;
 
 import java.util.HashMap;

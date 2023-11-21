@@ -6,11 +6,8 @@ import is.yarr.qilletni.types.FunctionType;
 import is.yarr.qilletni.types.QilletniType;
 import is.yarr.qilletni.types.SongType;
 import is.yarr.qilletni.types.WeightsType;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
 
 public class Symbol<T extends QilletniType> {
     
