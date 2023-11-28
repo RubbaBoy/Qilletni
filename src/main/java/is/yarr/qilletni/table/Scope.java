@@ -1,6 +1,5 @@
 package is.yarr.qilletni.table;
 
-import is.yarr.qilletni.types.FunctionType;
 import is.yarr.qilletni.types.QilletniType;
 
 import java.util.HashMap;
@@ -39,8 +38,6 @@ public class Scope {
 
     public <T extends QilletniType> void define(Symbol<T> symbol) {
         symbolTable.put(symbol.getName(), symbol);
-        System.out.println("defined symbolTable = " + symbolTable);
-        System.out.println("symbolTable = " + symbolTable.hashCode());
     }
 
     @Override

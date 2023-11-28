@@ -103,7 +103,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return currentScope.lookup(ctx.ID().getText()).getValue();
         }
         
-        return visitChildren(ctx);
+        if (ctx.LEFT_PAREN() != null) { // ( expr )
+            return visitQilletniTypedNode(ctx.getChild(1));
+        }
+        
+        return visitQilletniTypedNode(ctx.getChild(0));
     }
 
     @Override
@@ -115,13 +119,31 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var symbol = terminalNode.getSymbol();
             var type = symbol.getType();
             if (type == QilletniLexer.ID) {
-                value = symbolTable.currentScope().<StringType>lookup(symbol.getText()).getValue();
+                value = StringType.fromType(symbolTable.currentScope().<StringType>lookup(symbol.getText()).getValue());
             } else if (type == QilletniLexer.STRING) {
                 var stringLiteral = symbol.getText();
                 value = new StringType(stringLiteral.substring(1, stringLiteral.length() - 1));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
             value = visitQilletniTypedNode(functionCallContext);
+        } else if (child instanceof QilletniParser.Str_exprContext) {
+            value = visitQilletniTypedNode(child);
+        } else if (child instanceof QilletniParser.ExprContext) {
+            value = new StringType(String.valueOf(visitQilletniTypedNode(child)));
+        }
+
+        if (ctx.getChildCount() == 3) { // ( str_expr )  or  str_expr + str_expr 
+            var middle = ctx.getChild(1);
+            if (middle instanceof TerminalNode term && term.getSymbol().getType() == QilletniLexer.PLUS) {
+                if (value == null) {
+                    value = new StringType("null");
+                }
+
+                var add = visitQilletniTypedNode(ctx.getChild(2));
+                value = new StringType(value.getValue() + add.stringValue());
+            } else if (middle instanceof QilletniParser.Str_exprContext stringExprContext) {
+                value = visitQilletniTypedNode(stringExprContext);
+            }
         }
         
         return value;
@@ -130,6 +152,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public IntType visitInt_expr(QilletniParser.Int_exprContext ctx) {
         var child = ctx.getChild(0);
+        
+        if (ctx.LEFT_PAREN() != null) {
+            child = ctx.getChild(1);
+        }
 
         IntType value = null;
         if (child instanceof TerminalNode terminalNode) {
@@ -142,6 +168,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
             value = visitQilletniTypedNode(functionCallContext);
+        } else if (child instanceof QilletniParser.Int_exprContext) {
+            value = visitQilletniTypedNode(child);
+        }
+        
+        if (ctx.PLUS() != null) {
+            var intVal = 0;
+            if (value != null) {
+                intVal = value.getValue();
+            }
+            
+            IntType add = visitQilletniTypedNode(ctx.getChild(2));
+            value = new IntType(intVal + add.getValue());
         }
 
         return value;
@@ -210,10 +248,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Object visitImport_file(QilletniParser.Import_fileContext ctx) {
-        // TODO: Import file
-        LOGGER.debug("Importing {}", ctx.STRING().getText());
         importConsumer.accept(ctx.STRING().getText());
-        
         return null;
     }
     

@@ -15,4 +15,9 @@ public final class BooleanType implements QilletniType {
     public void setValue(boolean value) {
         this.value = value;
     }
+
+    @Override
+    public String stringValue() {
+        return String.valueOf(value);
+    }
 }

@@ -17,6 +17,11 @@ public final class IntType implements QilletniType {
     }
 
     @Override
+    public String stringValue() {
+        return String.valueOf(value);
+    }
+
+    @Override
     public String toString() {
         return "IntType{" +
                 "value=" + value +

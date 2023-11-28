@@ -2,7 +2,7 @@ import balls.ql;
 
 play "Empty Mirror" by "Colony Collapse"
 
-for (i..infinity) {
+for (i..19) {
     if (i % 2 == 0) {
         play nu_disco limit[3]
     } else {

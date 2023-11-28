@@ -45,6 +45,14 @@ public final class FunctionType implements QilletniType {
     }
 
     @Override
+    public String stringValue() {
+        return String.format("%s%s(%s)",
+                isNative ? "native " : "",
+                name,
+                String.join(",", params));
+    }
+
+    @Override
     public String toString() {
         return "FunctionType{" +
                 "name='" + name + '\'' +

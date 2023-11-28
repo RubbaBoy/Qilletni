@@ -24,20 +24,7 @@ public class InternalNative {
      * @param qilletniType The object to print
      */
     public static void print(QilletniType qilletniType) {
-        var obj = switch (qilletniType) {
-            case StringType s -> s.getValue();
-            case BooleanType booleanType -> booleanType.getValue();
-            case CollectionType collectionType -> "~collection~";
-            case FunctionType functionType -> String.format("%s%s(%s)",
-                    functionType.isNative() ? "native " : "",
-                    functionType.getName(),
-                    String.join(",", functionType.getParams()));
-            case IntType intType -> intType.getValue();
-            case SongType songType -> "~song~";
-            case WeightsType weightsType -> "~weights~";
-        };
-        
-        System.out.println(obj);
+        System.out.println(qilletniType.stringValue());
     }
 
     /**

@@ -39,7 +39,8 @@ bool_expr
     ;
 
 int_expr
-    : int_expr OP int_expr
+    : int_expr PLUS int_expr
+    | int_expr OP int_expr
     | LEFT_PAREN int_expr RIGHT_PAREN
     | function_call
     | INT
@@ -47,8 +48,10 @@ int_expr
     ;
 
 str_expr
-    : ID
+    : LEFT_PAREN str_expr RIGHT_PAREN
+    | ID
     | STRING
+    | str_expr PLUS expr
     | function_call
     ;
 

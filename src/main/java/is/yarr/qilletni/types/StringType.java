@@ -7,6 +7,10 @@ public final class StringType implements QilletniType {
     public StringType(String value) {
         this.value = value;
     }
+    
+    public static StringType fromType(QilletniType qilletniType) {
+        return new StringType(String.valueOf(qilletniType.stringValue()));
+    }
 
     public String getValue() {
         return value;
@@ -14,6 +18,11 @@ public final class StringType implements QilletniType {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public String stringValue() {
+        return value;
     }
 
     @Override

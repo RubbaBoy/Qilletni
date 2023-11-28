@@ -17,6 +17,7 @@ COMMENT
 // var name
 
 
+PLUS : '+';
 OP            : '*' | '/' | '%' | '+' | '-';
 
 WEIGHTS_KEYWORD : 'weights';
