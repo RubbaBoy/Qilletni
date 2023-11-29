@@ -26,6 +26,11 @@ public final class StringType implements QilletniType {
     }
 
     @Override
+    public String typeName() {
+        return "string";
+    }
+
+    @Override
     public String toString() {
         return "StringType{" +
                 "value='" + value + '\'' +

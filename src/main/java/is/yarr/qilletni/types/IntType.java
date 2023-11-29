@@ -22,6 +22,11 @@ public final class IntType implements QilletniType {
     }
 
     @Override
+    public String typeName() {
+        return "int";
+    }
+
+    @Override
     public String toString() {
         return "IntType{" +
                 "value=" + value +

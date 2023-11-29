@@ -5,4 +5,6 @@ package is.yarr.qilletni.types;
  */
 public sealed interface QilletniType permits IntType, StringType, BooleanType, CollectionType, SongType, WeightsType, FunctionType {
     String stringValue();
+    
+    String typeName();
 }

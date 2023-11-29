@@ -53,6 +53,11 @@ public final class FunctionType implements QilletniType {
     }
 
     @Override
+    public String typeName() {
+        return "function";
+    }
+
+    @Override
     public String toString() {
         return "FunctionType{" +
                 "name='" + name + '\'' +

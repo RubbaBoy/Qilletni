@@ -52,6 +52,7 @@ public class Symbol<T extends QilletniType> {
 
     public enum SymbolType {
         INT(QilletniLexer.INT_TYPE, Integer.class),
+        BOOLEAN(QilletniLexer.BOOLEAN_TYPE, Boolean.class),
         STRING(QilletniLexer.STRING_TYPE, String.class),
         COLLECTION(QilletniLexer.COLLECTION_TYPE, CollectionType.class),
         SONG(QilletniLexer.SONG_TYPE, SongType.class),

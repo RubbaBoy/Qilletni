@@ -6,4 +6,9 @@ public final class CollectionType implements QilletniType {
     public String stringValue() {
         return "~collection~";
     }
+
+    @Override
+    public String typeName() {
+        return "collection";
+    }
 }

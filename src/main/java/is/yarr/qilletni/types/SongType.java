@@ -5,4 +5,9 @@ public final class SongType implements QilletniType {
     public String stringValue() {
         return "~song~";
     }
+
+    @Override
+    public String typeName() {
+        return "song";
+    }
 }
