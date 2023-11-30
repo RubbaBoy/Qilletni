@@ -1,5 +1,6 @@
 package is.yarr.qilletni.table;
 
+import is.yarr.qilletni.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.types.QilletniType;
 
 import java.util.HashMap;
@@ -37,15 +38,32 @@ public class Scope {
     }
 
     public <T extends QilletniType> void define(Symbol<T> symbol) {
+        if (isDefined(symbol.getName())) {
+            throw new AlreadyDefinedException("Symbol " + symbol.getName() + " has already been defined!");
+        }
+        
         symbolTable.put(symbol.getName(), symbol);
     }
+
+//    @Override
+//    public String toString() {
+//        var stringBuilder = new StringBuilder("Scope[");
+//        var arr = symbolTable.values().toArray(Symbol[]::new);
+//        for (int i = 0; i < arr.length; i++) {
+//            stringBuilder.append(arr[i].getName()).append(" = ").append(arr[i].getValue());
+//            if (i != arr.length - 1) {
+//                stringBuilder.append(", ");
+//            }
+//        }
+//        return stringBuilder + "]";
+//    }
 
     @Override
     public String toString() {
         var stringBuilder = new StringBuilder("Scope[");
         var arr = symbolTable.values().toArray(Symbol[]::new);
         for (int i = 0; i < arr.length; i++) {
-            stringBuilder.append(arr[i].getName()).append(" = ").append(arr[i].getValue());
+            stringBuilder.append(arr[i].getName()).append(" = ").append(arr[i].getValue().stringValue());
             if (i != arr.length - 1) {
                 stringBuilder.append(", ");
             }

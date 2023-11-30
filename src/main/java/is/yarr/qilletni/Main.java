@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Stack;
 
 public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
@@ -24,12 +25,5 @@ public class Main {
         var qilletniProgramRunner = new QilletniProgramRunner();
         
         qilletniProgramRunner.runProgram(Paths.get("input", programFile));
-
-        LOGGER.debug("Symbol table at the end:");
-
-        qilletniProgramRunner.getSymbolTable().getAllScopes()
-                .stream()
-                .map(Scope::toString)
-                .forEach(LOGGER::debug);
     }
 }

@@ -8,8 +8,14 @@ import java.util.Stack;
 
 public class SymbolTable {
     
-    private final Stack<Scope> scopeStack = new Stack<>();
-    private final List<Scope> allScopes = new ArrayList<>();
+    private final Scope globalScope = new Scope();
+    
+    private Stack<Scope> currentScopeStack = new Stack<>();
+    private final Stack<Stack<Scope>> previousScopeStacks = new Stack<>();
+    
+    public void initScope() {
+        currentScopeStack.push(globalScope);
+    }
 
     /**
      * Creates a new scope as a child of the previous parent one and returns it.
@@ -17,26 +23,47 @@ public class SymbolTable {
      * @return The new, empty scope
      */
     public Scope pushScope() {
-        var parentScope = scopeStack.isEmpty() ? null : scopeStack.peek();
+        var parentScope = currentScopeStack.isEmpty() ? null : currentScopeStack.peek();
         var scope = new Scope(parentScope);
-        scopeStack.push(scope);
-        allScopes.add(scope);
+        currentScopeStack.push(scope);
+        previousScopeStacks.add(currentScopeStack);
         return scope;
     }
     
     public void popScope() {
-        scopeStack.pop();
+        currentScopeStack.pop();
     }
     
     public Scope currentScope() {
-        return scopeStack.peek();
+        return currentScopeStack.peek();
+    }
+
+    /**
+     * Resets the current scope to one that is only parents with the global one.
+     * 
+     * @return
+     */
+    public Scope functionCall() {
+        previousScopeStacks.push(currentScopeStack);
+        
+        currentScopeStack = new Stack<>();
+        currentScopeStack.push(globalScope);
+        currentScopeStack.push(new Scope(globalScope));
+
+        return currentScopeStack.peek();
+    }
+    
+    public Scope endFunctionCall() {
+        currentScopeStack = previousScopeStacks.pop();
+
+        return currentScopeStack.peek();
     }
 
     public Stack<Scope> getScopeStack() {
-        return scopeStack;
+        return currentScopeStack;
     }
 
-    public List<Scope> getAllScopes() {
-        return allScopes;
+    public List<Stack<Scope>> getAllScopes() {
+        return previousScopeStacks;
     }
 }

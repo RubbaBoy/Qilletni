@@ -1,10 +1,13 @@
 package is.yarr.qilletni.table;
 
 import is.yarr.qilletni.antlr.QilletniLexer;
+import is.yarr.qilletni.types.BooleanType;
 import is.yarr.qilletni.types.CollectionType;
 import is.yarr.qilletni.types.FunctionType;
+import is.yarr.qilletni.types.IntType;
 import is.yarr.qilletni.types.QilletniType;
 import is.yarr.qilletni.types.SongType;
+import is.yarr.qilletni.types.StringType;
 import is.yarr.qilletni.types.WeightsType;
 
 import java.util.Arrays;
@@ -51,20 +54,22 @@ public class Symbol<T extends QilletniType> {
     }
 
     public enum SymbolType {
-        INT(QilletniLexer.INT_TYPE, Integer.class),
-        BOOLEAN(QilletniLexer.BOOLEAN_TYPE, Boolean.class),
-        STRING(QilletniLexer.STRING_TYPE, String.class),
-        COLLECTION(QilletniLexer.COLLECTION_TYPE, CollectionType.class),
-        SONG(QilletniLexer.SONG_TYPE, SongType.class),
-        WEIGHTS(QilletniLexer.WEIGHTS_KEYWORD, WeightsType.class),
-        FUNCTION(-1, FunctionType.class);
+        INT(QilletniLexer.INT_TYPE, Integer.class, IntType.class),
+        BOOLEAN(QilletniLexer.BOOLEAN_TYPE, Boolean.class, BooleanType.class),
+        STRING(QilletniLexer.STRING_TYPE, String.class, StringType.class),
+        COLLECTION(QilletniLexer.COLLECTION_TYPE, CollectionType.class, CollectionType.class),
+        SONG(QilletniLexer.SONG_TYPE, SongType.class, SongType.class),
+        WEIGHTS(QilletniLexer.WEIGHTS_KEYWORD, WeightsType.class, WeightsType.class),
+        FUNCTION(-1, FunctionType.class, FunctionType.class);
         
         private final int tokenType;
         private final Class<?> internalType;
+        private final Class<?> qilletniType;
 
-        SymbolType(int tokenType, Class<?> internalType) {
+        SymbolType(int tokenType, Class<?> internalType, Class<?> qilletniType) {
             this.tokenType = tokenType;
             this.internalType = internalType;
+            this.qilletniType = qilletniType;
         }
 
         public int getTokenType() {
@@ -84,6 +89,20 @@ public class Symbol<T extends QilletniType> {
                     .filter(symbol -> symbol.tokenType == tokenType)
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Unknown token!"));
+        }
+        
+        public static SymbolType fromInternalType(Class<?> internalType) {
+            return Arrays.stream(values())
+                    .filter(symbol -> symbol.internalType.equals(internalType))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Unknown internal type: " + internalType.getName()));
+        }
+        
+        public static <T extends QilletniType> SymbolType fromQilletniType(Class<T> qilletniType) {
+            return Arrays.stream(values())
+                    .filter(symbol -> symbol.qilletniType.equals(qilletniType))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("Unknown qilletni type: " + qilletniType.getName()));
         }
     }
     

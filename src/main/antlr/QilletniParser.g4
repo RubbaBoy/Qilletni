@@ -22,6 +22,7 @@ running
 
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
+    | ID PLUS ID // handled separately due to appending of different types
     | function_call
     | ID
     | bool_expr
@@ -171,12 +172,12 @@ for_stmt
     ;
 
 for_expr
-    : BOOL
+    : bool_expr
     | range
     ;
 
 range
-    : ID RANGE_OP (expr | RANGE_INFINITY)
+    : ID RANGE_OP (INT | RANGE_INFINITY)
     ;
 
 stmt

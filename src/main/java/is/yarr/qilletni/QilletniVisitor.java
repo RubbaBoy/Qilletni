@@ -3,6 +3,8 @@ package is.yarr.qilletni;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
+import is.yarr.qilletni.exceptions.AlreadyDefinedException;
+import is.yarr.qilletni.exceptions.InvalidParameterException;
 import is.yarr.qilletni.exceptions.TypeMismatchException;
 import is.yarr.qilletni.table.Symbol;
 import is.yarr.qilletni.table.TableUtils;
@@ -24,9 +26,9 @@ import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniVisitor.class);
-    
+
     public final SymbolTable symbolTable;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final Consumer<String> importConsumer;
@@ -39,7 +41,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Object visitProg(QilletniParser.ProgContext ctx) {
-        symbolTable.pushScope();
+        symbolTable.initScope();
         visitChildren(ctx);
         return null;
     }
@@ -50,13 +52,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var id = ctx.ID().getText();
         var currScope = symbolTable.currentScope();
         var params = (List<String>) ctx.function_def_params().accept(this);
-        
+
         if (ctx.NATIVE() != null) {
             currScope.define(new Symbol<>(id, params.size(), FunctionType.createNativeFunction(id, params.toArray(String[]::new))));
         } else {
             currScope.define(new Symbol<>(id, params.size(), FunctionType.createImplementedFunction(id, params.toArray(String[]::new), ctx.body())));
         }
-        
+
         return null;
     }
 
@@ -69,7 +71,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public Object visitAsmt(QilletniParser.AsmtContext ctx) {
         var id = ctx.ID().getText();
         var currentScope = symbolTable.currentScope();
-        
+
         if (ctx.type != null) {
             QilletniType assignmentValue = visitQilletniTypedNode(switch (ctx.type.getType()) {
                 case QilletniLexer.INT_TYPE -> ctx.int_expr();
@@ -87,38 +89,66 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var currentSymbol = currentScope.lookup(id);
 
             QilletniType assignmentExpression = visitQilletniTypedNode(ctx.getChild(2));
-            
+
             TableUtils.requireSameType(currentSymbol, assignmentExpression);
-            
+
             currentSymbol.setValue(assignmentExpression);
-            
+
             LOGGER.debug("{} = {}", id, assignmentExpression);
         }
 
         return null;
     }
-    
+
     // Expressions
 
     @Override
-    public Object visitExpr(QilletniParser.ExprContext ctx) {
+    public QilletniType visitExpr(QilletniParser.ExprContext ctx) {
         var currentScope = symbolTable.currentScope();
-        if (ctx.ID() != null) {
+        if (ctx.ID().size() == 1) {
             LOGGER.debug("Visiting expr! ID: {}", ctx.ID());
-            return currentScope.lookup(ctx.ID().getText()).getValue();
+            return currentScope.lookup(ctx.ID(0).getText()).getValue();
         }
-        
+
         if (ctx.LEFT_PAREN() != null) { // ( expr )
             return visitQilletniTypedNode(ctx.getChild(1));
         }
         
+        if (ctx.ID().size() == 2) { // id + id
+            var leftId = currentScope.lookup(ctx.ID(0).getText()).getValue();
+            var rightId = currentScope.lookup(ctx.ID(1).getText()).getValue();
+            
+            if (leftId instanceof StringType leftString) {
+                var leftValue = leftString.getValue();
+                
+                Object rightAppending = "";
+                if (rightId instanceof IntType rightInt) {
+                    rightAppending = rightInt.getValue();
+                } else if (rightId instanceof StringType rightString) {
+                    rightAppending = rightString.getValue();
+                }
+                
+                return new StringType(leftValue + rightAppending);
+            } else if (leftId instanceof IntType leftInt) {
+                var leftValue = leftInt.getValue();
+                
+                if (rightId instanceof IntType rightInt) {
+                    var rightValue = rightInt.getValue();
+                    return new IntType(leftValue + rightValue);
+                } else if (rightId instanceof StringType rightString) {
+                    var rightValue = rightString.getValue();
+                    return new StringType(leftValue + rightValue);
+                }
+            }
+        }
+
         return visitQilletniTypedNode(ctx.getChild(0));
     }
 
     @Override
     public StringType visitStr_expr(QilletniParser.Str_exprContext ctx) {
         var child = ctx.getChild(0);
-        
+
         StringType value = null;
         if (child instanceof TerminalNode terminalNode) {
             var symbol = terminalNode.getSymbol();
@@ -150,14 +180,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = visitQilletniTypedNode(stringExprContext);
             }
         }
-        
+
         return value;
     }
 
     @Override
     public IntType visitInt_expr(QilletniParser.Int_exprContext ctx) {
         var child = ctx.getChild(0);
-        
+
         if (ctx.LEFT_PAREN() != null) {
             child = ctx.getChild(1);
         }
@@ -177,14 +207,24 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             value = visitQilletniTypedNode(child);
         }
         
-        if (ctx.PLUS() != null) {
+        if (ctx.OP() != null || ctx.PLUS() != null) {
+            var operation = ctx.OP() != null ? ctx.OP().getText() : "+";
+            BiFunction<Integer, Integer, Integer> calculate = switch (operation) {
+                case "*" -> (a, b) -> a * b;
+                case "/" -> (a, b) -> a / b;
+                case "%" -> (a, b) -> a % b;
+                case "+" -> (a, b) -> a + b;
+                case "-" -> (a, b) -> a - b;
+                default -> throw new IllegalStateException("Unexpected value: " + ctx.OP().getText());
+            };
+
             var intVal = 0;
             if (value != null) {
                 intVal = value.getValue();
             }
-            
+
             IntType add = visitQilletniTypedNode(ctx.getChild(2));
-            value = new IntType(intVal + add.getValue());
+            value = new IntType(calculate.apply(intVal, add.getValue()));
         }
 
         return value;
@@ -210,17 +250,17 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var rightChild = ctx.getChild(2);
             var leftType = visitQilletniTypedNode(leftChild);
             var rightType = visitQilletniTypedNode(rightChild);
-            
+
             var relOpVal = relOp.getSymbol().getText();
-            
+
             if ("!==".contains(relOpVal)) {
                 BiFunction<Comparable<?>, Comparable<?>, Boolean> compareMethod = relOpVal.equals("==") ?
                         Objects::equals : (a, b) -> !Objects.equals(a, b);
-                
+
                 if (leftChild instanceof QilletniParser.Int_exprContext && rightChild instanceof QilletniParser.Int_exprContext) {
                     var leftInt = TypeUtils.safelyCast(leftType, IntType.class).getValue();
                     var rightInt = TypeUtils.safelyCast(rightType, IntType.class).getValue();
-                    
+
                     return new BooleanType(compareMethod.apply(leftInt, rightInt));
                 } else if (leftChild instanceof QilletniParser.Bool_exprContext && rightChild instanceof QilletniParser.Bool_exprContext) {
                     var leftBool = TypeUtils.safelyCast(leftType, BooleanType.class).getValue();
@@ -228,7 +268,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
                     return new BooleanType(compareMethod.apply(leftBool, rightBool));
                 }
-                
+
                 throw new TypeMismatchException("Cannot compare differing types");
             } else {
                 var leftInt = TypeUtils.safelyCast(leftType, IntType.class).getValue();
@@ -243,7 +283,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     case ">=" -> leftInt >= rightInt;
                     default -> throw new IllegalStateException("Unexpected value: " + relOpVal);
                 };
-                
+
                 return new BooleanType(comparisonResult);
             }
         }
@@ -265,18 +305,31 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.expr_list() != null) {
             params = (List<QilletniType>) ctx.expr_list().accept(this);
         }
-                
+
         var functionType = symbolTable.currentScope().<FunctionType>lookup(id).getValue();
+
+        var functionParams = functionType.getParams();
+        var expectedParamLength = functionParams.length;
+        
+        if (expectedParamLength != params.size()) {
+            throw new InvalidParameterException("Expected " + expectedParamLength + " parameters, got " + params.size());
+        }
+        
         if (functionType.isNative()) {
             LOGGER.debug("Invoking native! {}", functionType.getName());
             return nativeFunctionHandler.invokeNativeMethod(functionType.getName(), params);
         }
-        
-        symbolTable.pushScope();
 
-        var result = visitQilletniTypedNode(functionType.getBodyContext());
+        var functionScope = symbolTable.functionCall();
         
-        symbolTable.popScope();
+        for (int i = 0; i < params.size(); i++) {
+            var qilletniType = params.get(i);
+            functionScope.define(new Symbol<>(functionParams[i], Symbol.SymbolType.fromQilletniType(qilletniType.getClass()), qilletniType));
+        }
+        
+        var result = visitQilletniTypedNode(functionType.getBodyContext());
+
+        symbolTable.endFunctionCall();
         return result;
     }
 
@@ -305,12 +358,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 return null;
             }
         }
-        
+
         if (ctx.else_body() != null) {
             visitQilletniTypedNode(ctx.else_body());
             return null;
         }
-        
+
         return null;
     }
 
@@ -319,7 +372,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.ELSE_KEYWORD() == null) { // epsilon
             return BooleanType.FALSE;
         }
-        
+
         BooleanType conditional = visitQilletniTypedNode(ctx.bool_expr());
         if (conditional.getValue()) {
             visitQilletniTypedNode(ctx.body());
@@ -327,7 +380,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         } else if (ctx.elseif_list() != null) {
             return visitQilletniTypedNode(ctx.elseif_list());
         }
-        
+
         return BooleanType.FALSE;
     }
 
@@ -336,9 +389,69 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.ELSE_KEYWORD() == null) { // epsilon
             return BooleanType.FALSE;
         }
-        
+
         visitQilletniTypedNode(ctx.body());
         return BooleanType.TRUE;
+    }
+
+    @Override
+    public Object visitFor_stmt(QilletniParser.For_stmtContext ctx) {
+        var scope = symbolTable.pushScope();
+        
+        var range = ctx.for_expr().range();
+        if (range != null) {
+            var id = range.ID().getText();
+            if (scope.isDefined(id)) {
+                throw new AlreadyDefinedException("Symbol " + id + " has already been defined!");
+            }
+        }
+        
+        while (this.<BooleanType>visitQilletniTypedNode(ctx.for_expr()).getValue()) {
+            visitQilletniTypedNode(ctx.body());
+        }
+        
+        symbolTable.popScope();
+        
+        return null;
+    }
+
+    /**
+     * @param ctx the parse tree
+     * @return If the loop should iterate
+     */
+    @Override
+    public BooleanType visitFor_expr(QilletniParser.For_exprContext ctx) {
+        if (ctx.bool_expr() != null) {
+            return visitQilletniTypedNode(ctx.bool_expr());
+        } else if (ctx.range() != null) {
+            return visitQilletniTypedNode(ctx.range());
+        }
+        
+        // Should never happen
+        return BooleanType.FALSE;
+    }
+
+    @Override
+    public Object visitRange(QilletniParser.RangeContext ctx) {
+        var scope = symbolTable.currentScope();
+        var id = ctx.ID().getText();
+
+        var rangeTo = ctx.RANGE_INFINITY() != null ? Integer.MAX_VALUE : Integer.parseInt(ctx.getChild(2).getText());
+
+        if (!scope.isDefined(id)) { // first iteration, let it pass
+            scope.define(new Symbol<>(id, Symbol.SymbolType.INT, new IntType(0)));
+            return BooleanType.TRUE;
+        }
+
+        var idIntType = scope.<IntType>lookup(id);
+        var newValue = idIntType.getValue().getValue() + 1;
+        idIntType.setValue(new IntType(newValue));
+        
+        if (rangeTo > newValue) {
+            return BooleanType.TRUE;
+        }
+
+        return BooleanType.FALSE;
     }
 
     @Override
@@ -346,13 +459,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         importConsumer.accept(ctx.STRING().getText());
         return null;
     }
-    
+
     public <T extends QilletniType> T visitQilletniTypedNode(ParseTree ctx) {
         var result = ctx.accept(QilletniVisitor.this);
         if (result == null) {
             return null;
         }
-        
+
         return (T) result;
     }
 }
