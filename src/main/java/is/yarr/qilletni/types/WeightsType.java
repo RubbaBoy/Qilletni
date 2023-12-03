@@ -1,25 +1,40 @@
 package is.yarr.qilletni.types;
 
+import is.yarr.qilletni.types.weights.WeightEntry;
+
+import java.util.List;
+
 public final class WeightsType implements QilletniType {
     
-    class WeightEntry {
-        private int weightAmount;
-        private WeightUnit weightUnit;
-        private SongType song;
+    private final List<WeightEntry> weightEntries;
+
+    public WeightsType(List<WeightEntry> weightEntries) {
+        this.weightEntries = weightEntries;
     }
-    
-    enum WeightUnit {
-        PERCENT,
-        MULTIPLIER
+
+    public List<WeightEntry> getWeightEntries() {
+        return weightEntries;
     }
-    
+
     @Override
     public String stringValue() {
-        return "~weights~";
+        return String.format("weights[%s]", String.join(", ", weightEntries.stream()
+                .map(entry -> String.format("%d%s %s",
+                        entry.getWeightAmount(),
+                        entry.getWeightUnit().getStringUnit(),
+                        entry.getSong().stringValue()))
+                .toList()));
     }
 
     @Override
     public String typeName() {
         return "weights";
+    }
+
+    @Override
+    public String toString() {
+        return "WeightsType{" +
+                "weights=" + weightEntries +
+                '}';
     }
 }

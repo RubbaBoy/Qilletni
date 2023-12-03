@@ -61,8 +61,6 @@ RETURN : 'return';
 
 
 BY            : 'by';
-URL           : 'http' 's'? '://' STR;
-URL_LITERAL   : '"' URL '"';
 //STR_LITERAL   : '"' STR '"';
 
 LQUOTE : '"' -> more, mode(STR);

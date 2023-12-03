@@ -5,9 +5,6 @@ import is.yarr.qilletni.types.CollectionType;
 import is.yarr.qilletni.types.FunctionType;
 import is.yarr.qilletni.types.IntType;
 import is.yarr.qilletni.types.QilletniType;
-import is.yarr.qilletni.types.SongType;
-import is.yarr.qilletni.types.StringType;
-import is.yarr.qilletni.types.WeightsType;
 
 import java.util.concurrent.ThreadLocalRandom;
 

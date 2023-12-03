@@ -81,21 +81,16 @@ song_expr
     ;
 
 url_or_name_pair
-    : URL_LITERAL
+    : STRING
     | STRING BY STRING
     ;
 
 weights_expr
-    : single_weight single_weight_t
+    : single_weight single_weight*
     ;
 
 single_weight
-    : WEIGHT_PIPE weight_amount url_or_name_pair
-    ;
-
-single_weight_t
-    : single_weight single_weight_t
-    | // epsilon
+    : WEIGHT_PIPE weight_amount song_expr
     ;
 
 function_call
@@ -138,7 +133,7 @@ collection_limit
     ;
 
 play_stmt
-    : PLAY url_or_name_pair
+    : PLAY song_expr
     | PLAY ID collection_limit? // collection_limit is only for collection
     | PLAY COLLECTION_TYPE stateful_collection_define collection_limit?
     ;

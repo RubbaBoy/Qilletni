@@ -12,8 +12,12 @@ import is.yarr.qilletni.types.BooleanType;
 import is.yarr.qilletni.types.FunctionType;
 import is.yarr.qilletni.types.IntType;
 import is.yarr.qilletni.types.QilletniType;
+import is.yarr.qilletni.types.SongType;
 import is.yarr.qilletni.types.StringType;
 import is.yarr.qilletni.types.TypeUtils;
+import is.yarr.qilletni.types.WeightsType;
+import is.yarr.qilletni.types.weights.WeightEntry;
+import is.yarr.qilletni.types.weights.WeightUnit;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
@@ -459,8 +463,65 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         importConsumer.accept(ctx.STRING().getText());
         return null;
     }
+    
+    // Song-related things
+
+    @Override
+    public SongType visitSong_expr(QilletniParser.Song_exprContext ctx) {
+        var scope = symbolTable.currentScope();
+        
+        if (ctx.ID() != null) {
+            return scope.<SongType>lookup(ctx.ID().getText()).getValue();
+        }
+        
+        if (ctx.function_call() != null) {
+            return visitQilletniTypedNode(ctx.function_call());
+        }
+        
+        return visitQilletniTypedNode(ctx.url_or_name_pair());
+    }
+
+    @Override
+    public SongType visitUrl_or_name_pair(QilletniParser.Url_or_name_pairContext ctx) {
+        if (ctx.STRING().size() == 1) {
+            return new SongType(StringUtility.removeQuotes(ctx.STRING(0).getText()));
+        }
+        
+        return new SongType(StringUtility.removeQuotes(ctx.STRING(0).getText()), StringUtility.removeQuotes(ctx.STRING(1).getText()));
+    }
+
+    @Override
+    public WeightsType visitWeights_expr(QilletniParser.Weights_exprContext ctx) {
+        var weights = ctx.single_weight().stream().map(this::<WeightEntry>visitNode).toList();
+        return new WeightsType(weights);
+    }
+
+    @Override
+    public WeightEntry visitSingle_weight(QilletniParser.Single_weightContext ctx) {
+        var weightAmount = ctx.weight_amount();
+        var weightInt = Integer.parseInt(weightAmount.INT().getText());
+        SongType song = visitQilletniTypedNode(ctx.song_expr());
+        
+        return new WeightEntry(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), song);
+    }
+
+    @Override
+    public Object visitPlay_stmt(QilletniParser.Play_stmtContext ctx) {
+        if (ctx.song_expr() != null) {
+            SongType song = visitQilletniTypedNode(ctx.song_expr());
+            LOGGER.debug("Playing {}", song);
+            return null;
+        }
+        
+        // TODO collection playing
+        return null;
+    }
 
     public <T extends QilletniType> T visitQilletniTypedNode(ParseTree ctx) {
+        return this.visitNode(ctx);
+    }
+
+    public <T> T visitNode(ParseTree ctx) {
         var result = ctx.accept(QilletniVisitor.this);
         if (result == null) {
             return null;

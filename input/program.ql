@@ -1,4 +1,4 @@
-import balls.ql;
+import "balls.ql"
 
 play "Empty Mirror" by "Colony Collapse"
 
@@ -15,12 +15,11 @@ weights metal_weights =
     | 3x "God Knows" by "Knocked Loose"
     | 2x "https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe?si=aa4cff0ba07a4a37"
     | 10% "US" by "Apex Alpha"
-    ;
     
 fun hi(a, b, c) {
     // hi
-    int i = 0;
-    string s = "Hello World!";
+    int i = 0
+    string s = "Hello World!"
     play "https://aa"
     play "Empty Mirror" by "Colony Collapse"
     
