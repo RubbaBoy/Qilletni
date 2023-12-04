@@ -9,6 +9,7 @@ import is.yarr.qilletni.exceptions.TypeMismatchException;
 import is.yarr.qilletni.table.Symbol;
 import is.yarr.qilletni.table.TableUtils;
 import is.yarr.qilletni.types.BooleanType;
+import is.yarr.qilletni.types.CollectionType;
 import is.yarr.qilletni.types.FunctionType;
 import is.yarr.qilletni.types.IntType;
 import is.yarr.qilletni.types.QilletniType;
@@ -16,6 +17,8 @@ import is.yarr.qilletni.types.SongType;
 import is.yarr.qilletni.types.StringType;
 import is.yarr.qilletni.types.TypeUtils;
 import is.yarr.qilletni.types.WeightsType;
+import is.yarr.qilletni.types.collection.CollectionLimit;
+import is.yarr.qilletni.types.collection.CollectionLimitUnit;
 import is.yarr.qilletni.types.weights.WeightEntry;
 import is.yarr.qilletni.types.weights.WeightUnit;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -477,17 +480,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.function_call() != null) {
             return visitQilletniTypedNode(ctx.function_call());
         }
-        
-        return visitQilletniTypedNode(ctx.url_or_name_pair());
+
+        var urlOrName = ctx.url_or_name_pair();
+        if (urlOrName.STRING().size() == 1) {
+            return new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+        }
+
+        return new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
     }
 
     @Override
-    public SongType visitUrl_or_name_pair(QilletniParser.Url_or_name_pairContext ctx) {
-        if (ctx.STRING().size() == 1) {
-            return new SongType(StringUtility.removeQuotes(ctx.STRING(0).getText()));
-        }
-        
-        return new SongType(StringUtility.removeQuotes(ctx.STRING(0).getText()), StringUtility.removeQuotes(ctx.STRING(1).getText()));
+    public Void visitUrl_or_name_pair(QilletniParser.Url_or_name_pairContext ctx) {
+        throw new RuntimeException("This should never be visited!");
     }
 
     @Override
@@ -513,8 +517,66 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return null;
         }
         
-        // TODO collection playing
+        var collection = visitQilletniTypedNode(ctx.collection_expr());
+        
+        if (ctx.collection_limit() != null) {
+            CollectionLimit limit = visitNode(ctx.collection_limit());
+            LOGGER.debug("Playing collection {} with a limit of {}", collection, limit);
+        } else {
+            LOGGER.debug("Playing collection {}", collection);
+        }
+        
         return null;
+    }
+
+    @Override
+    public Object visitCollection_expr(QilletniParser.Collection_exprContext ctx) {
+        var scope = symbolTable.currentScope();
+
+        if (ctx.ID() != null) {
+            return scope.<CollectionType>lookup(ctx.ID().getText()).getValue();
+        }
+
+        if (ctx.function_call() != null) {
+            return visitQilletniTypedNode(ctx.function_call());
+        }
+
+        var urlOrName = ctx.url_or_name_pair();
+        if (urlOrName.STRING().size() == 1) {
+            return new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+        }
+
+        return new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+    }
+
+    @Override
+    public Object visitOrder_define(QilletniParser.Order_defineContext ctx) {
+        return super.visitOrder_define(ctx);
+    }
+
+    @Override
+    public Object visitWeights_define(QilletniParser.Weights_defineContext ctx) {
+        return super.visitWeights_define(ctx);
+    }
+
+    @Override
+    public Object visitWeight_amount(QilletniParser.Weight_amountContext ctx) {
+        return super.visitWeight_amount(ctx);
+    }
+
+    @Override
+    public CollectionLimit visitCollection_limit(QilletniParser.Collection_limitContext ctx) {
+        return visitNode(ctx.limit_amount());
+    }
+
+    @Override
+    public CollectionLimit visitLimit_amount(QilletniParser.Limit_amountContext ctx) {
+        var limitUnit = CollectionLimitUnit.COUNT;
+        if (ctx.LIMIT_UNIT() != null) {
+            limitUnit = CollectionLimitUnit.fromText(ctx.LIMIT_UNIT().getText());
+        }
+        
+        return new CollectionLimit(Integer.parseInt(ctx.INT().getText()), limitUnit);
     }
 
     public <T extends QilletniType> T visitQilletniTypedNode(ParseTree ctx) {

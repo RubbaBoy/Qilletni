@@ -59,11 +59,7 @@ str_expr
 collection_expr
     : ID
     | function_call
-    | stateful_collection_define
-    ;
-
-stateful_collection_define
-    : url_or_name_pair order_define? weights_define?
+    | url_or_name_pair order_define? weights_define?
     ;
 
 order_define
@@ -134,8 +130,7 @@ collection_limit
 
 play_stmt
     : PLAY song_expr
-    | PLAY ID collection_limit? // collection_limit is only for collection
-    | PLAY COLLECTION_TYPE stateful_collection_define collection_limit?
+    | PLAY COLLECTION_TYPE collection_expr collection_limit?
     ;
 
 function_def

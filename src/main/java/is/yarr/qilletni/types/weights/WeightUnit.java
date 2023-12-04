@@ -1,5 +1,7 @@
 package is.yarr.qilletni.types.weights;
 
+import java.util.Arrays;
+
 public enum WeightUnit {
     PERCENT("%"),
     MULTIPLIER("x");
@@ -15,10 +17,8 @@ public enum WeightUnit {
     }
     
     public static WeightUnit fromSymbol(String text) {
-        return switch (text) {
-            case "x" -> MULTIPLIER;
-            case "%" -> PERCENT;
-            default -> throw new IllegalStateException("Unexpected value: " + text);
-        };
+        return Arrays.stream(values())
+                .filter(unit -> unit.stringUnit.equals(text)).findFirst()
+                .orElseThrow(() -> new IllegalStateException("Unexpected value: " + text));
     }
 }
