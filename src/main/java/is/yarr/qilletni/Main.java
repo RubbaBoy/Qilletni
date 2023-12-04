@@ -1,5 +1,6 @@
 package is.yarr.qilletni;
 
+import is.yarr.qilletni.lang.QilletniProgramRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -42,6 +42,8 @@ RANGE_OP: '..';
 PLAY : 'play';
 FUNCTION_DEF : 'fun';
 NATIVE : 'native';
+ON: 'on';
+DOT: '.';
 
 NEWLINE           : [\r\n]+ -> skip;
 WS                : [ \t\n\r]+ -> skip;

@@ -23,6 +23,7 @@ running
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
     | ID PLUS ID // handled separately due to appending of different types
+    | expr DOT function_call
     | function_call
     | ID
     | bool_expr
@@ -134,8 +135,12 @@ play_stmt
     ;
 
 function_def
-    : FUNCTION_DEF ID '(' function_def_params ')' '{' body '}'
-    | NATIVE FUNCTION_DEF ID '(' function_def_params ')'
+    : FUNCTION_DEF ID '(' function_def_params ')' function_on_type? '{' body '}'
+    | NATIVE FUNCTION_DEF ID '(' function_def_params ')' function_on_type?
+    ;
+
+function_on_type
+    : ON type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD)
     ;
 
 function_def_params
@@ -174,6 +179,7 @@ stmt
     : play_stmt
     | asmt
     | function_call
+    | expr DOT function_call
     ;
 
 

@@ -1,10 +1,7 @@
 package is.yarr.qilletni;
 
-import is.yarr.qilletni.types.BooleanType;
-import is.yarr.qilletni.types.CollectionType;
-import is.yarr.qilletni.types.FunctionType;
-import is.yarr.qilletni.types.IntType;
-import is.yarr.qilletni.types.QilletniType;
+import is.yarr.qilletni.lang.types.IntType;
+import is.yarr.qilletni.lang.types.QilletniType;
 
 import java.util.concurrent.ThreadLocalRandom;
 
