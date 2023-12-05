@@ -1,14 +1,21 @@
 package is.yarr.qilletni.lang.table;
 
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
+import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
+import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.QilletniType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public class Scope {
 
+    // List<Symbol<?>> because of method overloading
     private final Map<String, Symbol<?>> symbolTable = new HashMap<>();
+    private final Map<String, List<Symbol<FunctionType>>> functionSymbolTable = new HashMap<>();
     private final Scope parent;
     
     public Scope() {
@@ -28,13 +35,47 @@ public class Scope {
         TableUtils.requireSymbolNotNull(symbol, name);
         return symbol;
     }
+
+    public Symbol<FunctionType> lookupFunction(String name, int params) {
+        var symbols = lookupFunction(name);
+        return symbols.stream().filter(symbol -> {
+            var callingParamCount = symbol.getParamCount();
+            if (symbol.getValue().getOnType() != null) {
+                callingParamCount--;
+            }
+            return callingParamCount == params;
+        })
+                .findFirst()
+                .orElseThrow(() -> new VariableNotFoundException("Function " + name + " with " + params + " not found"));
+    }
+
+    public List<Symbol<FunctionType>> lookupFunction(String name) {
+        if (parent != null && parent.isFunctionDefined(name)) {
+            return parent.lookupFunction(name);
+        }
+
+        var functions = functionSymbolTable.get(name);
+        if (functions == null) {
+            throw new VariableNotFoundException("Function " + name + " not found!");
+        }
+        
+        return functions;
+    }
     
     public boolean isDefined(String name) {
         if (parent != null && parent.isDefined(name)) {
             return true;
         }
         
-        return symbolTable.containsKey(name);
+        return symbolTable.containsKey(name) || functionSymbolTable.containsKey(name);
+    }
+    
+    public boolean isFunctionDefined(String name) {
+        if (parent != null && parent.isFunctionDefined(name)) {
+            return true;
+        }
+        
+        return functionSymbolTable.containsKey(name);
     }
 
     public <T extends QilletniType> void define(Symbol<T> symbol) {
@@ -43,6 +84,24 @@ public class Scope {
         }
         
         symbolTable.put(symbol.getName(), symbol);
+    }
+    
+    public void defineFunction(Symbol<FunctionType> functionSymbol) {
+        if (isFunctionDefined(functionSymbol.getName())) {
+            var functions = lookupFunction(functionSymbol.getName());
+            var targetParamCount = functionSymbol.getValue().getParams().length;
+            if (functions.stream().anyMatch(symbol -> symbol.getParamCount() == targetParamCount)) {
+                throw new AlreadyDefinedException("Function " + functionSymbol.getName() + " has already been defined!");
+            }
+        }
+        
+        functionSymbolTable.compute(functionSymbol.getName(), (k, v) -> {
+            if (v == null) {
+                return List.of(functionSymbol);
+            }
+            
+            return Stream.concat(Stream.of(functionSymbol), v.stream()).toList();
+        });
     }
 
 //    @Override

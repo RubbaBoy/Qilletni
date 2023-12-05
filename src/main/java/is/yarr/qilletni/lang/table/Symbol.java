@@ -105,5 +105,14 @@ public class Symbol<T extends QilletniType> {
                     .orElseThrow(() -> new RuntimeException("Unknown qilletni type: " + qilletniType.getName()));
         }
     }
-    
+
+    @Override
+    public String toString() {
+        return "Symbol{" +
+                "name='" + name + '\'' +
+                ", paramCount=" + paramCount +
+                ", type=" + type +
+                ", value=" + value +
+                '}';
+    }
 }

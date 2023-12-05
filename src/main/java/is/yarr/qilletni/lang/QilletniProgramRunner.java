@@ -4,6 +4,7 @@ import is.yarr.qilletni.InternalNative;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.lang.internal.StringNativeFunctions;
+import is.yarr.qilletni.lang.table.SymbolTable;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;

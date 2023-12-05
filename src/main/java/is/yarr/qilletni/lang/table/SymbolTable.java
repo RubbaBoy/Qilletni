@@ -1,4 +1,4 @@
-package is.yarr.qilletni.lang;
+package is.yarr.qilletni.lang.table;
 
 import is.yarr.qilletni.lang.table.Scope;
 

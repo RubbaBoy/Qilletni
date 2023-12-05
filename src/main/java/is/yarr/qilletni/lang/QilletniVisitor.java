@@ -8,6 +8,7 @@ import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.Symbol;
+import is.yarr.qilletni.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.table.TableUtils;
 import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.CollectionType;
@@ -29,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -82,9 +82,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 //                params.remove(0);
 //            }
             
-            currScope.define(new Symbol<>(id, params.size(), FunctionType.createNativeFunction(id, params.toArray(String[]::new), onType)));
+            currScope.defineFunction(new Symbol<>(id, params.size(), FunctionType.createNativeFunction(id, params.toArray(String[]::new), onType)));
         } else {
-            currScope.define(new Symbol<>(id, params.size(), FunctionType.createImplementedFunction(id, params.toArray(String[]::new), onType, ctx.body())));
+            currScope.defineFunction(new Symbol<>(id, params.size(), FunctionType.createImplementedFunction(id, params.toArray(String[]::new), onType, ctx.body())));
         }
 
         return null;
@@ -356,7 +356,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             params.addAll(visitNode(ctx.expr_list()));
         }
 
-        var functionType = symbolTable.currentScope().<FunctionType>lookup(id).getValue();
+        var functionType = symbolTable.currentScope().lookupFunction(id, params.size()).getValue();
 
         var functionParams = new ArrayList<>(Arrays.asList(functionType.getParams()));
         
@@ -374,7 +374,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         Class<? extends QilletniType> invokingUponExpressionType = null;
         if (invokingUpon) {
             var expr = invokedUponExpressionStack.pop();
-            params.add(expr);
+            params.add(0, expr);
             invokingUponExpressionType = expr.getClass();
         }
         
