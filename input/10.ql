@@ -4,6 +4,7 @@ native fun length(str) on string
 
 fun sayHi(str) on string {
     print("Hello string, " + str)
+    print("Hello string, " + str)
 }
 
 string foo = "Adam"

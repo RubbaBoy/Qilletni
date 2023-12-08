@@ -2,10 +2,10 @@ package is.yarr.qilletni.lang.table;
 
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
+import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.QilletniType;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +16,9 @@ public class Scope {
     // List<Symbol<?>> because of method overloading
     private final Map<String, Symbol<?>> symbolTable = new HashMap<>();
     private final Map<String, List<Symbol<FunctionType>>> functionSymbolTable = new HashMap<>();
+    
+    // Names of entities defined (not instances of entities)
+//    private final Map<String, EntityType> entityTypes = new HashMap<>();
     private final Scope parent;
     
     public Scope() {
@@ -37,6 +40,10 @@ public class Scope {
     }
 
     public Symbol<FunctionType> lookupFunction(String name, int params) {
+        if (parent != null && parent.isFunctionDefined(name)) {
+            return parent.lookupFunction(name, params);
+        }
+        
         var symbols = lookupFunction(name);
         return symbols.stream().filter(symbol -> {
             var callingParamCount = symbol.getParamCount();
@@ -48,6 +55,16 @@ public class Scope {
                 .findFirst()
                 .orElseThrow(() -> new VariableNotFoundException("Function " + name + " with " + params + " not found"));
     }
+    
+//    public Symbol<EntityType> lookupEntityDefinition(String name) {
+//        if (parent != null && parent.isEntityDefinitionDefined(name)) {
+//            return parent.lookupEntityDefinition(name);
+//        }
+//
+//        var symbol = (Symbol<EntityType>) functionSymbolTable.get(name);
+//        TableUtils.requireSymbolNotNull(symbol, name);
+//        return symbol;
+//    }
 
     public List<Symbol<FunctionType>> lookupFunction(String name) {
         if (parent != null && parent.isFunctionDefined(name)) {
@@ -77,6 +94,14 @@ public class Scope {
         
         return functionSymbolTable.containsKey(name);
     }
+    
+//    public boolean isEntityDefinitionDefined(String name) {
+//        if (parent != null && parent.isEntityDefinitionDefined(name)) {
+//            return true;
+//        }
+//
+//        return entityTypes.containsKey(name);
+//    }
 
     public <T extends QilletniType> void define(Symbol<T> symbol) {
         if (isDefined(symbol.getName())) {
@@ -104,18 +129,9 @@ public class Scope {
         });
     }
 
-//    @Override
-//    public String toString() {
-//        var stringBuilder = new StringBuilder("Scope[");
-//        var arr = symbolTable.values().toArray(Symbol[]::new);
-//        for (int i = 0; i < arr.length; i++) {
-//            stringBuilder.append(arr[i].getName()).append(" = ").append(arr[i].getValue());
-//            if (i != arr.length - 1) {
-//                stringBuilder.append(", ");
-//            }
-//        }
-//        return stringBuilder + "]";
-//    }
+    public Map<String, Symbol<?>> getAllSymbols() {
+        return symbolTable;
+    }
 
     @Override
     public String toString() {

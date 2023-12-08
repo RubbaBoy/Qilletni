@@ -10,9 +10,8 @@ tokens {
 
 IMPORT: 'import';
 
-COMMENT
-    : '//' .*? NEWLINE
-    | '/*' .*? '*/';
+LINE_COMMENT: '//' .*? NEWLINE -> skip; 
+BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 
 // var name
 
@@ -28,6 +27,9 @@ STRING_TYPE : 'string';
 BOOLEAN_TYPE : 'boolean';
 COLLECTION_TYPE : 'collection';
 SONG_TYPE : 'song';
+
+ENTITY: 'entity';
+NEW: 'new';
 
 ORDER_PARAM   : 'order' -> pushMode(ORDER_MODE);
 LIMIT_PARAM   : 'limit' -> pushMode(LIMIT_MODE);

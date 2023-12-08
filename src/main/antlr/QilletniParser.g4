@@ -24,6 +24,8 @@ running
 expr: LEFT_PAREN expr RIGHT_PAREN
     | ID PLUS ID // handled separately due to appending of different types
     | expr DOT function_call
+    | expr DOT ID
+    | entity_initialize
     | function_call
     | ID
     | bool_expr
@@ -36,7 +38,6 @@ expr: LEFT_PAREN expr RIGHT_PAREN
 bool_expr
     : int_expr REL_OP int_expr
     | function_call
-    | ID
     | BOOL
     ;
 
@@ -46,20 +47,17 @@ int_expr
     | LEFT_PAREN int_expr RIGHT_PAREN
     | function_call
     | INT
-    | ID
     ;
 
 str_expr
     : LEFT_PAREN str_expr RIGHT_PAREN
-    | ID
     | STRING
     | str_expr PLUS expr
     | function_call
     ;
 
 collection_expr
-    : ID
-    | function_call
+    : function_call
     | url_or_name_pair order_define? weights_define?
     ;
 
@@ -72,8 +70,7 @@ weights_define
     ;
 
 song_expr
-    : ID
-    | function_call
+    : function_call
     | url_or_name_pair
     ;
 
@@ -116,13 +113,15 @@ body
     ;
 
 asmt
-    : type=INT_TYPE ID ASSIGN int_expr
-    | type=STRING_TYPE ID ASSIGN str_expr
-    | type=BOOLEAN_TYPE ID ASSIGN bool_expr
-    | type=COLLECTION_TYPE ID ASSIGN collection_expr
-    | type=SONG_TYPE ID ASSIGN song_expr
-    | type=WEIGHTS_KEYWORD ID ASSIGN weights_expr
+    : type=INT_TYPE ID ASSIGN expr
+    | type=STRING_TYPE ID ASSIGN expr
+    | type=BOOLEAN_TYPE ID ASSIGN expr
+    | type=COLLECTION_TYPE ID ASSIGN expr
+    | type=SONG_TYPE ID ASSIGN expr
+    | type=WEIGHTS_KEYWORD ID ASSIGN expr
+    | type=ID ID ASSIGN expr
     | ID ASSIGN expr
+    | expr_assign=expr DOT ID ASSIGN expr
     ;
 
 collection_limit
@@ -140,7 +139,7 @@ function_def
     ;
 
 function_on_type
-    : ON type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD)
+    : ON type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ID)
     ;
 
 function_def_params
@@ -175,11 +174,38 @@ range
     : ID RANGE_OP (INT | RANGE_INFINITY)
     ;
 
+entity_def
+    : ENTITY ID '{' entity_body '}'
+    ;
+
+entity_body
+    : entity_property_declaration* entity_constructor? (function_def | COMMENT)*
+    ;
+
+entity_property_declaration
+    : type=INT_TYPE ID (ASSIGN int_expr)?
+    | type=STRING_TYPE ID (ASSIGN str_expr)?
+    | type=BOOLEAN_TYPE ID (ASSIGN bool_expr)?
+    | type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
+    | type=SONG_TYPE ID (ASSIGN song_expr)?
+    | type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?
+    | type=ID ID (ASSIGN entity_initialize)?
+    ;
+
+entity_constructor
+    : ID '(' function_def_params ')'
+    ;
+
+entity_initialize
+    : NEW ID '(' expr_list? ')'
+    ;
+
 stmt
     : play_stmt
     | asmt
     | function_call
     | expr DOT function_call
+    | entity_def
     ;
 
 

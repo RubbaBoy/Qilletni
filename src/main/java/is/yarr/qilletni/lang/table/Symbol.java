@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.table;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.CollectionType;
+import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.IntType;
 import is.yarr.qilletni.lang.types.QilletniType;
@@ -11,6 +12,7 @@ import is.yarr.qilletni.lang.types.StringType;
 import is.yarr.qilletni.lang.types.WeightsType;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Symbol<T extends QilletniType> {
     
@@ -60,7 +62,8 @@ public class Symbol<T extends QilletniType> {
         COLLECTION(QilletniLexer.COLLECTION_TYPE, CollectionType.class, CollectionType.class),
         SONG(QilletniLexer.SONG_TYPE, SongType.class, SongType.class),
         WEIGHTS(QilletniLexer.WEIGHTS_KEYWORD, WeightsType.class, WeightsType.class),
-        FUNCTION(-1, FunctionType.class, FunctionType.class);
+        FUNCTION(-1, FunctionType.class, FunctionType.class),
+        ENTITY(QilletniLexer.ID, EntityType.class, EntityType.class);
         
         private final int tokenType;
         private final Class<?> internalType;
@@ -104,6 +107,19 @@ public class Symbol<T extends QilletniType> {
                     .findFirst()
                     .orElseThrow(() -> new RuntimeException("Unknown qilletni type: " + qilletniType.getName()));
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Symbol<?> symbol = (Symbol<?>) object;
+        return paramCount == symbol.paramCount && Objects.equals(name, symbol.name) && type == symbol.type && Objects.equals(value, symbol.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, paramCount, type, value);
     }
 
     @Override

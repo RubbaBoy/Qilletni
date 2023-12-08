@@ -4,7 +4,9 @@ import is.yarr.qilletni.InternalNative;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.lang.internal.StringNativeFunctions;
+import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.SymbolTable;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
@@ -18,13 +20,19 @@ public class QilletniProgramRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniProgramRunner.class);
     
     private final SymbolTable symbolTable;
+    private final Scope globalScope;
+    private final EntityDefinitionManager entityDefinitionManager;
 
     public QilletniProgramRunner() {
         this.symbolTable = new SymbolTable();
+        this.globalScope = new Scope();
+        this.entityDefinitionManager = new EntityDefinitionManager();
     }
 
-    public QilletniProgramRunner(SymbolTable symbolTable) {
+    public QilletniProgramRunner(SymbolTable symbolTable, Scope globalScope, EntityDefinitionManager entityDefinitionManager) {
         this.symbolTable = symbolTable;
+        this.globalScope = globalScope;
+        this.entityDefinitionManager = entityDefinitionManager;
     }
     
     public void runProgram(Path file) throws IOException {
@@ -38,7 +46,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.init(InternalNative.class, StringNativeFunctions.class);
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, nativeFunctionHandler, importedFile -> importFile(importedFile, file));
+        var qilletniVisitor = new QilletniVisitor(symbolTable, globalScope, entityDefinitionManager, nativeFunctionHandler, importedFile -> importFile(importedFile, file));
         qilletniVisitor.visit(programContext);
     }
     

@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.types;
 import is.yarr.qilletni.antlr.QilletniParser;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public final class FunctionType extends QilletniType {
     
@@ -66,6 +67,21 @@ public final class FunctionType extends QilletniType {
     @Override
     public String typeName() {
         return "function";
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        FunctionType that = (FunctionType) object;
+        return Objects.equals(name, that.name) && Arrays.equals(params, that.params) && Objects.equals(onType, that.onType);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(name, onType);
+        result = 31 * result + Arrays.hashCode(params);
+        return result;
     }
 
     @Override
