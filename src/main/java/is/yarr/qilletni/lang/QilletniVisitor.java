@@ -5,6 +5,7 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
+import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
@@ -42,6 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 import java.util.function.BiFunction;
@@ -56,14 +58,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final Consumer<String> importConsumer;
-
-    /**
-     * Populated when a method is being invoked upon an expression. For example, with the following expression:
-     * foo.bar()
-     * 
-     * foo is evaluated, and pushed to this stack. Then, bar() is evaluated and then pops off the value. 
-     */
-    private final Stack<QilletniType> invokedUponExpressionStack = new Stack<>();
 
     public QilletniVisitor(SymbolTable symbolTable, Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
@@ -188,7 +182,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         if (ctx.DOT() != null) { // foo.bar()
             var leftExpr = visitQilletniTypedNode(ctx.expr());
-            return visitFunctionCallWithContext(ctx.function_call(), leftExpr);
+            return visitFunctionCallWithContext(ctx.function_call(), leftExpr).orElseThrow(FunctionDidntReturnException::new);
         }
 
         if (ctx.LEFT_PAREN() != null) { // ( expr )
@@ -241,7 +235,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = new StringType(stringLiteral.substring(1, stringLiteral.length() - 1));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = visitFunctionCallWithContext(functionCallContext);
+            value = this.<StringType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
         } else if (child instanceof QilletniParser.Str_exprContext) {
             value = visitQilletniTypedNode(child);
         } else if (child instanceof QilletniParser.ExprContext) {
@@ -283,7 +277,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = new IntType(Integer.parseInt(symbol.getText()));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = visitFunctionCallWithContext(functionCallContext);
+            value = this.<IntType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);;
         } else if (child instanceof QilletniParser.Int_exprContext) {
             value = visitQilletniTypedNode(child);
         }
@@ -325,7 +319,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = new BooleanType(symbol.getText().equals("true"));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = visitFunctionCallWithContext(functionCallContext);
+            value = this.<BooleanType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);;
         } else if (ctx.REL_OP() != null && ctx.getChild(1) instanceof TerminalNode relOp) {
             var leftChild = ctx.getChild(0);
             var rightChild = ctx.getChild(2);
@@ -373,28 +367,50 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitBody_stmt(QilletniParser.Body_stmtContext ctx) {
-        visitChildren(ctx);
-        return null;
+    public Optional<QilletniType> visitBody(QilletniParser.BodyContext ctx) {
+        if (ctx.return_stmt() != null) {
+            return Optional.of(visitQilletniTypedNode(ctx.return_stmt()));
+        }
+        
+        if (ctx.body_stmt() != null) {
+            Optional<QilletniType> res = visitNode(ctx.body_stmt());
+            return Optional.ofNullable(res.orElseGet(() -> visitNode(ctx.body())));
+        }
+        
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<QilletniType> visitBody_stmt(QilletniParser.Body_stmtContext ctx) {
+        if (ctx.if_stmt() != null) {
+            return visitNode(ctx.if_stmt());
+        }
+        
+        if (ctx.for_stmt() != null) {
+            return visitNode(ctx.for_stmt());
+        }
+
+        visitNode(ctx.stmt());
+        return Optional.empty();
     }
 
     @Override
     public Object visitStmt(QilletniParser.StmtContext ctx) {
         if (ctx.DOT() != null) { // foo.bar()
             var leftExpr = visitQilletniTypedNode(ctx.expr());
-//            invokedUponExpressionStack.push(leftExpr);
-//            return visitQilletniTypedNode(ctx.function_call());
-            return visitFunctionCallWithContext(ctx.function_call(), leftExpr);
+            visitFunctionCallWithContext(ctx.function_call(), leftExpr);
+            return null;
         }
         
-        return visitChildren(ctx);
+        visitChildren(ctx);
+        return null;
     }
     
-    private <T extends QilletniType> T visitFunctionCallWithContext(QilletniParser.Function_callContext ctx) {
+    private <T extends QilletniType> Optional<T> visitFunctionCallWithContext(QilletniParser.Function_callContext ctx) {
         return visitFunctionCallWithContext(ctx, null);
     }
     
-    private <T extends QilletniType> T visitFunctionCallWithContext(QilletniParser.Function_callContext ctx, QilletniType invokedOn) {
+    private <T extends QilletniType> Optional<T> visitFunctionCallWithContext(QilletniParser.Function_callContext ctx, QilletniType invokedOn) {
         var id = ctx.ID().getText();
 
         LOGGER.debug("invokedOn = {}", invokedOn);
@@ -432,14 +448,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         Class<? extends QilletniType> invokingUponExpressionType = null;
         if (hasOnType) {
-//            var expr = invokedUponExpressionStack.pop();
             params.add(0, invokedOn);
             invokingUponExpressionType = invokedOn.getClass();
         }
 
         if (functionType.isNative()) {
             LOGGER.debug("Invoking native! {}", functionType.getName());
-            return (T) nativeFunctionHandler.invokeNativeMethod(functionType.getName(), params, invokingUponExpressionType);
+            return Optional.ofNullable((T) nativeFunctionHandler.invokeNativeMethod(functionType.getName(), params, invokingUponExpressionType));
         }
 
         var functionScope = symbolTable.functionCall();
@@ -449,7 +464,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             functionScope.define(new Symbol<>(functionParams.get(i), Symbol.SymbolType.fromQilletniType(qilletniType.getClass()), qilletniType));
         }
 
-        var result = visitQilletniTypedNode(functionType.getBodyContext());
+        Optional<T> result = visitNode(functionType.getBodyContext());
 
         symbolTable.endFunctionCall();
         
@@ -457,11 +472,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             symbolTable.unswapScope();
         }
         
-        return (T) result;
+        return result;
     }
 
     @Override
-    public Object visitFunction_call(QilletniParser.Function_callContext ctx) {
+    public Optional<QilletniType> visitFunction_call(QilletniParser.Function_callContext ctx) {
         return visitFunctionCallWithContext(ctx);
     }
 
@@ -478,56 +493,61 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitIf_stmt(QilletniParser.If_stmtContext ctx) {
+    public Optional<QilletniType> visitIf_stmt(QilletniParser.If_stmtContext ctx) {
         BooleanType conditional = visitQilletniTypedNode(ctx.bool_expr());
         if (conditional.getValue()) {
-            visitQilletniTypedNode(ctx.body());
-            return null;
+            return visitNode(ctx.body());
         } else if (ctx.elseif_list() != null) { // for properly getting return val, we need to know both if this was invoked AND if it ran, right? OR, keep the result on the scope
             // result is if it went through (any if conditional was true)
-            BooleanType elseIfList = visitQilletniTypedNode(ctx.elseif_list());
-            if (elseIfList.getValue()) {
-                return null;
+            ConditionalReturning conditionalReturning = visitNode(ctx.elseif_list());
+            if (conditionalReturning.finishedBranch()) {
+                return conditionalReturning.returnValue();
             }
         }
 
         if (ctx.else_body() != null) {
-            visitQilletniTypedNode(ctx.else_body());
-            return null;
+            ConditionalReturning conditionalReturning = visitNode(ctx.else_body());
+            return conditionalReturning.returnValue();
         }
 
-        return null;
+        return Optional.empty();
+    }
+
+    public record ConditionalReturning(boolean finishedBranch, Optional<QilletniType> returnValue) {
+        ConditionalReturning(boolean finishedBranch) {
+            this(finishedBranch, Optional.empty());
+        }
     }
 
     @Override
-    public BooleanType visitElseif_list(QilletniParser.Elseif_listContext ctx) {
+    public ConditionalReturning visitElseif_list(QilletniParser.Elseif_listContext ctx) {
         if (ctx.ELSE_KEYWORD() == null) { // epsilon
-            return BooleanType.FALSE;
+            return new ConditionalReturning(false);
         }
 
         BooleanType conditional = visitQilletniTypedNode(ctx.bool_expr());
         if (conditional.getValue()) {
-            visitQilletniTypedNode(ctx.body());
-            return BooleanType.TRUE;
+            Optional<QilletniType> returnValue = visitNode(ctx.body());
+            return new ConditionalReturning(true, returnValue);
         } else if (ctx.elseif_list() != null) {
-            return visitQilletniTypedNode(ctx.elseif_list());
+            return visitNode(ctx.elseif_list());
         }
 
-        return BooleanType.FALSE;
+        return new ConditionalReturning(false);
     }
 
     @Override
-    public BooleanType visitElse_body(QilletniParser.Else_bodyContext ctx) {
+    public ConditionalReturning visitElse_body(QilletniParser.Else_bodyContext ctx) {
         if (ctx.ELSE_KEYWORD() == null) { // epsilon
-            return BooleanType.FALSE;
+            return new ConditionalReturning(false);
         }
 
-        visitQilletniTypedNode(ctx.body());
-        return BooleanType.TRUE;
+        Optional<QilletniType> returnValue = visitNode(ctx.body());
+        return new ConditionalReturning(true, returnValue);
     }
 
     @Override
-    public Object visitFor_stmt(QilletniParser.For_stmtContext ctx) {
+    public Optional<QilletniType> visitFor_stmt(QilletniParser.For_stmtContext ctx) {
         var scope = symbolTable.pushScope();
         
         var range = ctx.for_expr().range();
@@ -539,12 +559,15 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
         
         while (this.<BooleanType>visitQilletniTypedNode(ctx.for_expr()).getValue()) {
-            visitQilletniTypedNode(ctx.body());
+            Optional<QilletniType> bodyReturn = visitNode(ctx.body());
+            if (bodyReturn.isPresent()) {
+                return bodyReturn;
+            }
         }
         
         symbolTable.popScope();
         
-        return null;
+        return Optional.empty();
     }
 
     /**

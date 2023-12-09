@@ -47,6 +47,7 @@ int_expr
     | LEFT_PAREN int_expr RIGHT_PAREN
     | function_call
     | INT
+    | ID
     ;
 
 str_expr
@@ -108,7 +109,6 @@ return_stmt
 body
     : body_stmt body
     | return_stmt
-    | COMMENT body
     | // epsilon
     ;
 
@@ -204,8 +204,8 @@ stmt
     : play_stmt
     | asmt
     | function_call
-    | expr DOT function_call
     | entity_def
+    | expr DOT function_call
     ;
 
 
