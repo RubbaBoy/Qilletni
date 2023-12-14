@@ -513,12 +513,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         return Optional.empty();
     }
 
-    public record ConditionalReturning(boolean finishedBranch, Optional<QilletniType> returnValue) {
-        ConditionalReturning(boolean finishedBranch) {
-            this(finishedBranch, Optional.empty());
-        }
-    }
-
     @Override
     public ConditionalReturning visitElseif_list(QilletniParser.Elseif_listContext ctx) {
         if (ctx.ELSE_KEYWORD() == null) { // epsilon
@@ -840,4 +834,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     // T can either be QilletniType (defined) or UninitializedType (undefined)
     private record EntityProperty<T>(String name, T type) {}
+
+    public record ConditionalReturning(boolean finishedBranch, Optional<QilletniType> returnValue) {
+        ConditionalReturning(boolean finishedBranch) {
+            this(finishedBranch, Optional.empty());
+        }
+    }
+    
 }
