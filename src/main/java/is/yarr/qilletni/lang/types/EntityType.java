@@ -1,11 +1,8 @@
 package is.yarr.qilletni.lang.types;
 
-import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.table.Scope;
-import is.yarr.qilletni.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.types.entity.EntityDefinition;
 
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public final class EntityType extends QilletniType {

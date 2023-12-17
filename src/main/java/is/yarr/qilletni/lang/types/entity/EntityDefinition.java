@@ -4,7 +4,6 @@ import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.Symbol;
-import is.yarr.qilletni.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.QilletniType;
 import org.slf4j.Logger;

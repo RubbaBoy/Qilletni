@@ -16,7 +16,7 @@ public class Main {
     
     private void main(String programFile) throws IOException {
         var qilletniProgramRunner = new QilletniProgramRunner();
-        
+
         qilletniProgramRunner.runProgram(Paths.get("input", programFile));
     }
 }

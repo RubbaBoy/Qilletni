@@ -2,7 +2,6 @@ package is.yarr.qilletni.lang.table;
 
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
-import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.QilletniType;
 

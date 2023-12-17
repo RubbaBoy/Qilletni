@@ -9,7 +9,7 @@ public interface MusicCache {
 
     Optional<Track> getTrackById(String id);
 
-    Optional<List<Track>> getTracks(List<MusicSupplier.TrackNameArtist> tracks);
+    Optional<List<Track>> getTracks(List<MusicFetcher.TrackNameArtist> tracks);
 
     Optional<List<Track>> getTracksById(List<String> trackIds);
 
@@ -19,8 +19,14 @@ public interface MusicCache {
 
     Optional<Album> getAlbum(String name, String artist);
 
+    Optional<Album> getAlbumById(String id);
+
     Optional<List<Track>> getAlbumTracks(Album album);
 
     Optional<List<Track>> getPlaylistTracks(Playlist playlist);
+    
+    Optional<Artist> getArtistById(String id);
+    
+    Optional<Artist> getArtistByName(String name);
     
 }

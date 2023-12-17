@@ -7,9 +7,9 @@ public interface Album {
     String getId();
     
     String getName();
+
+    Artist getArtist();
     
-    String getArtist();
-    
-    List<String> getArtists();
+    List<Artist> getArtists();
     
 }

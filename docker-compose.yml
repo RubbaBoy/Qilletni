@@ -1,0 +1,14 @@
+version: '3'
+services:
+  qilletni-db:
+    image: postgres
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: qilletni
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: qilletni
+    volumes:
+      - qilletni-database:/var/lib/postgresql/data
+volumes:
+  qilletni-database:
