@@ -66,4 +66,15 @@ public class SpotifyTrack implements Track {
     public int getDuration() {
         return duration;
     }
+
+    @Override
+    public String toString() {
+        return "SpotifyTrack{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", artists=" + artists +
+                ", album=" + album +
+                ", duration=" + duration +
+                '}';
+    }
 }

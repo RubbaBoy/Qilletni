@@ -9,9 +9,9 @@ public interface MusicFetcher {
     
     Optional<Track> fetchTrackById(String id);
     
-    Optional<List<Track>> fetchTracks(List<TrackNameArtist> tracks);
+    List<Track> fetchTracks(List<TrackNameArtist> tracks);
     
-    Optional<List<Track>> fetchTracksById(List<String> trackIds);
+    List<Track> fetchTracksById(List<String> trackIds);
     
     Optional<Playlist> fetchPlaylist(String name, String author);
     
@@ -21,14 +21,18 @@ public interface MusicFetcher {
     
     Optional<Album> fetchAlbumById(String id);
     
-    Optional<List<Track>> fetchAlbumTracks(Album album);
+    List<Track> fetchAlbumTracks(Album album);
     
-    Optional<List<Track>> fetchPlaylistTracks(Playlist playlist);
+    List<Track> fetchPlaylistTracks(Playlist playlist);
     
     Optional<Artist> fetchArtistByName(String name);
     
     Optional<Artist> fetchArtistById(String id);
     
-    record TrackNameArtist(String name, String artist) {}
+    record TrackNameArtist(String name, String artist) {
+        public boolean matchesTrack(Track track) {
+            return track.getName().equals(name) && track.getArtist().getName().equals(artist);
+        }
+    }
     
 }

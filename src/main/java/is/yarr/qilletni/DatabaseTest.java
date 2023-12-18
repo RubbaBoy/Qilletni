@@ -6,7 +6,7 @@ import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
 public class DatabaseTest {
 
     public static void main(String[] args) {
-        var cache = new SpotifyMusicCache(new SpotifyMusicFetcher());
+        var cache = new SpotifyMusicCache(new SpotifyMusicFetcher(authorizer));
         cache.getAlbum("Anxiety", "Breakwaters");
     }
     

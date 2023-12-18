@@ -4,6 +4,7 @@ import is.yarr.qilletni.music.Artist;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class SpotifyArtist implements Artist {
@@ -27,6 +28,19 @@ public class SpotifyArtist implements Artist {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        SpotifyArtist that = (SpotifyArtist) object;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

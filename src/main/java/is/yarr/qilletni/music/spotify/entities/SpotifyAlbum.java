@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class SpotifyAlbum implements Album {
@@ -46,6 +47,19 @@ public class SpotifyAlbum implements Album {
     @Override
     public List<Artist> getArtists() {
         return artists.stream().map(Artist.class::cast).toList();
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        SpotifyAlbum that = (SpotifyAlbum) object;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

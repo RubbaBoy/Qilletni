@@ -6,7 +6,7 @@ public interface Playlist {
     
     String getTitle();
     
-    String getCreator();
+    User getCreator();
     
     int getTrackCount();
     

@@ -185,6 +185,10 @@ public class SpotifyAuthorizer {
             }
         });
     }
+    
+    public SpotifyApi getSpotifyApi() {
+        return spotifyApi;
+    }
 
     /**
      * Calculates the time to sleep between token refresh iterations, based off of the previous token expiry time.
