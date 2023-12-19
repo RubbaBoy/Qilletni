@@ -62,8 +62,9 @@ public class SpotifyMusicCache implements MusicCache {
             }
         }
 
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchTrack(name, artist);
+        return spotifyMusicFetcher.fetchTrack(name, artist)
+                .map(SpotifyTrack.class::cast)
+                .map(this::storeTrack);
     }
 
     @Override
@@ -77,8 +78,9 @@ public class SpotifyMusicCache implements MusicCache {
             }
         }
 
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchTrackById(id);
+        return spotifyMusicFetcher.fetchTrackById(id)
+                .map(SpotifyTrack.class::cast)
+                .map(this::storeTrack);
     }
 
     @Override
@@ -125,7 +127,7 @@ public class SpotifyMusicCache implements MusicCache {
         LOGGER.debug("foundTracks = {}", foundTracks);
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
-        var fetched = addToCache(spotifyMusicFetcher.fetchTracks(lookupTracks.values().stream().toList()));
+        var fetched = storeTracks(spotifyMusicFetcher.fetchTracks(lookupTracks.values().stream().toList()));
         for (Entry(var index, var trackNameArtist) : MapUtility.getRecordEntries(lookupTracks)) {
             fetched.stream().filter(trackNameArtist::matchesTrack)
                     .findFirst()
@@ -138,7 +140,6 @@ public class SpotifyMusicCache implements MusicCache {
 
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
-        // TODO: Add only looked up to database
         return foundTracks;
     }
 
@@ -181,7 +182,7 @@ public class SpotifyMusicCache implements MusicCache {
         LOGGER.debug("foundTracks = {}", foundTracks);
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
-        var fetched = addToCache(spotifyMusicFetcher.fetchTracksById(lookupTracks.values().stream().toList()));
+        var fetched = storeTracks(spotifyMusicFetcher.fetchTracksById(lookupTracks.values().stream().toList()));
         for (Entry(var index, var id) : MapUtility.getRecordEntries(lookupTracks)) {
             fetched.stream().filter(track -> track.getId().equals(id))
                     .findFirst()
@@ -194,7 +195,6 @@ public class SpotifyMusicCache implements MusicCache {
 
         LOGGER.debug("lookupTracks = {}", lookupTracks);
         
-        // TODO: Add only looked up to database
         return foundTracks;
     }
 
@@ -221,8 +221,9 @@ public class SpotifyMusicCache implements MusicCache {
             }
         }
 
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchPlaylist(name, creator);
+        return spotifyMusicFetcher.fetchPlaylist(name, creator)
+                .map(SpotifyPlaylist.class::cast)
+                .map(this::storePlaylist);
     }
 
     @Override
@@ -236,8 +237,9 @@ public class SpotifyMusicCache implements MusicCache {
             }
         }
 
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchPlaylistById(id);
+        return spotifyMusicFetcher.fetchPlaylistById(id)
+                .map(SpotifyPlaylist.class::cast)
+                .map(this::storePlaylist);
     }
 
     @Override
@@ -263,8 +265,9 @@ public class SpotifyMusicCache implements MusicCache {
             }
         }
 
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchAlbum(name, artist);
+        return spotifyMusicFetcher.fetchAlbum(name, artist)
+                .map(SpotifyAlbum.class::cast)
+                .map(this::storeAlbum);
     }
 
     @Override
@@ -277,9 +280,10 @@ public class SpotifyMusicCache implements MusicCache {
                 return albumOptional;
             }
         }
-
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchAlbumById(id);
+        
+        return spotifyMusicFetcher.fetchAlbumById(id)
+                .map(SpotifyAlbum.class::cast)
+                .map(this::storeAlbum);
     }
 
     @Override
@@ -295,10 +299,19 @@ public class SpotifyMusicCache implements MusicCache {
         var expires = playlistIndex.getLastUpdatedIndex().toInstant().plus(7, ChronoUnit.DAYS); // when it expires
         if (expires.isAfter(Instant.now())) {
             var tracks = spotifyMusicFetcher.fetchPlaylistTracks(playlist);
-            return addToCache(tracks);
+            return storeTracks(tracks);
         }
 
         return playlistIndex.getTracks().stream().map(Track.class::cast).toList();
+    }
+
+    /**
+     * Stores a single artist into the database.
+     * 
+     * @param artist The artist to store in the database
+     */
+    private SpotifyArtist storeArtist(SpotifyArtist artist) {
+        return storeArtists(List.of(artist)).values().toArray(SpotifyArtist[]::new)[0];
     }
 
     /**
@@ -326,6 +339,90 @@ public class SpotifyMusicCache implements MusicCache {
         }
 
         return allArtists;
+    }
+
+    @Override
+    public Optional<Artist> getArtistById(String id) {
+        try (var entityTransaction = EntityTransaction.beginTransaction()) {
+            var session = entityTransaction.getSession();
+
+            var albumOptional = Optional.<Artist>ofNullable(session.find(SpotifyArtist.class, id));
+            if (albumOptional.isPresent()) {
+                return albumOptional;
+            }
+        }
+
+        return spotifyMusicFetcher.fetchArtistById(id)
+                .map(SpotifyArtist.class::cast)
+                .map(this::storeArtist);
+    }
+
+    @Override
+    public Optional<Artist> getArtistByName(String name) {
+        try (var entityTransaction = EntityTransaction.beginTransaction()) {
+            var session = entityTransaction.getSession();
+
+            var builder = session.getCriteriaBuilder();
+            var criteria = builder.createQuery(SpotifyArtist.class);
+            var root = criteria.from(SpotifyArtist.class);
+
+            criteria.where(builder.equal(root.get("name"), name));
+
+            var artists = session.createQuery(criteria).getResultList();
+
+            if (!artists.isEmpty()) {
+                return Optional.of(artists.get(0));
+            }
+        }
+
+        return spotifyMusicFetcher.fetchArtistByName(name)
+                .map(SpotifyArtist.class::cast)
+                .map(this::storeArtist);
+    }
+
+    /**
+     * Stores a playlist to the database, replacing the creator with a reference to the one in the database, if found.
+     * If not, the user is also saved.
+     *
+     * @param playlist The playlist to store in the database
+     * @return The new {@link SpotifyPlaylist}
+     */
+    private SpotifyPlaylist storePlaylist(SpotifyPlaylist playlist) {
+        try (var entityTransaction = EntityTransaction.beginTransaction()) {
+            var session = entityTransaction.getSession();
+
+            var user = (SpotifyUser) playlist.getCreator();
+            var databaseUser = session.find(SpotifyUser.class, user.getId());
+            if (databaseUser == null) {
+                session.save(databaseUser = user);
+            }
+
+            var newPlaylist = new SpotifyPlaylist(playlist.getId(), playlist.getTitle(), databaseUser);
+            session.save(newPlaylist);
+            return newPlaylist;
+        }
+    }
+
+    /**
+     * Stores an individual spotify album in the database, returning the new object to use, with updated artist
+     * instances.
+     *
+     * @param album The album to store in the database
+     * @return The new {@link SpotifyAlbum} instance
+     */
+    private SpotifyAlbum storeAlbum(SpotifyAlbum album) {
+        var artistMap = storeArtists(album.getArtists().stream().distinct().map(SpotifyArtist.class::cast).toList());
+        return storeAlbums(List.of(album), artistMap).values().toArray(SpotifyAlbum[]::new)[0];
+    }
+
+    /**
+     * Stores a track into the database, returning the new reference to the track, now in the database.
+     *
+     * @param track The track to store in the database
+     * @return The new track instance
+     */
+    private Track storeTrack(SpotifyTrack track) {
+        return storeTracks(List.of(track)).get(0);
     }
 
     /**
@@ -364,18 +461,18 @@ public class SpotifyMusicCache implements MusicCache {
     /**
      * Adds all given tracks to the database (if they are not present already), using cached albums and artists for
      * everything already in the database.
-     * 
+     *
      * @param addingTracks The tracks to add to the database
      * @return The list of added tracks, in the same order as addedTracks (excluding already cached ones)
      */
-    private List<Track> addToCache(List<Track> addingTracks) {
+    private List<Track> storeTracks(List<Track> addingTracks) {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
-            
+
             var preTrackCount = addingTracks.size();
             // Remove tracks already in the database. Do this now so albums/artists are skipped for existing ones
             addingTracks = addingTracks.parallelStream().filter(track -> session.find(SpotifyTrack.class, track.getId()) == null).toList();
-            
+
             LOGGER.debug("Removed {} tracks that are already in the database. Adding {} tracks", preTrackCount - addingTracks.size(), addingTracks.size());
 
             var distinctArtists = addingTracks.stream()
@@ -397,49 +494,12 @@ public class SpotifyMusicCache implements MusicCache {
             return addingTracks.parallelStream().map(track -> {
                 var storedArtists = track.getArtists().stream().map(Artist::getId).map(artistMap::get).toList();
                 var storedAlbum = albumMap.get(track.getAlbum().getId());
-                
+
                 var newTrack = new SpotifyTrack(track.getId(), track.getName(), storedArtists, storedAlbum, track.getDuration());
                 session.save(newTrack);
-                
+
                 return (Track) newTrack;
             }).toList();
         }
-    }
-
-    @Override
-    public Optional<Artist> getArtistById(String id) {
-        try (var entityTransaction = EntityTransaction.beginTransaction()) {
-            var session = entityTransaction.getSession();
-
-            var albumOptional = Optional.<Artist>ofNullable(session.find(SpotifyArtist.class, id));
-            if (albumOptional.isPresent()) {
-                return albumOptional;
-            }
-        }
-
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchArtistById(id);
-    }
-
-    @Override
-    public Optional<Artist> getArtistByName(String name) {
-        try (var entityTransaction = EntityTransaction.beginTransaction()) {
-            var session = entityTransaction.getSession();
-
-            var builder = session.getCriteriaBuilder();
-            var criteria = builder.createQuery(SpotifyArtist.class);
-            var root = criteria.from(SpotifyArtist.class);
-
-            criteria.where(builder.equal(root.get("name"), name));
-
-            var artists = session.createQuery(criteria).getResultList();
-
-            if (!artists.isEmpty()) {
-                return Optional.of(artists.get(0));
-            }
-        }
-
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchArtistByName(name);
     }
 }
