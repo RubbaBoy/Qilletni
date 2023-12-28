@@ -2,8 +2,10 @@ package is.yarr.qilletni.music.spotify.entities;
 
 import is.yarr.qilletni.music.User;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
+@Entity
 public class SpotifyUser implements User {
     
     @Id

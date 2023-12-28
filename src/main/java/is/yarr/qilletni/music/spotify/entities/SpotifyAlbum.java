@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
+import javax.sound.midi.Track;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,6 +21,9 @@ public class SpotifyAlbum implements Album {
     @ManyToMany
     @OrderColumn(name="artistOrder")
     private List<SpotifyArtist> artists;
+    
+    @ManyToMany
+    private List<SpotifyTrack> tracks;
 
     public SpotifyAlbum() {}
 
@@ -47,6 +51,14 @@ public class SpotifyAlbum implements Album {
     @Override
     public List<Artist> getArtists() {
         return artists.stream().map(Artist.class::cast).toList();
+    }
+
+    public List<SpotifyTrack> getTracks() {
+        return tracks;
+    }
+
+    public void setTracks(List<SpotifyTrack> tracks) {
+        this.tracks = tracks;
     }
 
     @Override

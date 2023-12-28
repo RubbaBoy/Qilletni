@@ -12,6 +12,7 @@ import is.yarr.qilletni.music.Track;
 import is.yarr.qilletni.music.spotify.entities.SpotifyAlbum;
 import is.yarr.qilletni.music.spotify.entities.SpotifyArtist;
 import is.yarr.qilletni.music.spotify.entities.SpotifyPlaylist;
+import is.yarr.qilletni.music.spotify.entities.SpotifyPlaylistIndex;
 import is.yarr.qilletni.music.spotify.entities.SpotifyTrack;
 import is.yarr.qilletni.music.spotify.entities.SpotifyUser;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
+import java.sql.Date;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -288,57 +290,48 @@ public class SpotifyMusicCache implements MusicCache {
 
     @Override
     public List<Track> getAlbumTracks(Album album) {
-        // TODO: add to database
-        return spotifyMusicFetcher.fetchAlbumTracks(album);
+        var spotifyAlbum = (SpotifyAlbum) album;
+        var albumTracks = spotifyAlbum.getTracks();
+
+        if (albumTracks == null) {
+            var tracks = spotifyMusicFetcher.fetchAlbumTracks(album);
+            var storedTracks = storeTracks(tracks);
+            spotifyAlbum.setTracks(storedTracks.stream().map(SpotifyTrack.class::cast).toList());
+
+            try (var entityTransaction = EntityTransaction.beginTransaction()) {
+                var session = entityTransaction.getSession();
+                session.save(spotifyAlbum);
+            }
+            
+            return storedTracks;
+        }
+
+        return albumTracks.stream().map(Track.class::cast).toList();
     }
 
     @Override
     public List<Track> getPlaylistTracks(Playlist playlist) {
-        var playlistIndex = ((SpotifyPlaylist) playlist).getSpotifyPlaylistIndex();
+        var spotifyPlaylist = (SpotifyPlaylist) playlist;
+        var playlistIndex = spotifyPlaylist.getSpotifyPlaylistIndex();
 
         var expires = playlistIndex.getLastUpdatedIndex().toInstant().plus(7, ChronoUnit.DAYS); // when it expires
         if (expires.isAfter(Instant.now())) {
             var tracks = spotifyMusicFetcher.fetchPlaylistTracks(playlist);
-            return storeTracks(tracks);
+            var storedTracks = storeTracks(tracks);
+
+            spotifyPlaylist.setSpotifyPlaylistIndex(new SpotifyPlaylistIndex(storedTracks.stream()
+                    .map(SpotifyTrack.class::cast)
+                    .toList(), new Date(System.currentTimeMillis())));
+
+            try (var entityTransaction = EntityTransaction.beginTransaction()) {
+                var session = entityTransaction.getSession();
+                session.save(spotifyPlaylist);
+            }
+            
+            return storedTracks;
         }
 
         return playlistIndex.getTracks().stream().map(Track.class::cast).toList();
-    }
-
-    /**
-     * Stores a single artist into the database.
-     * 
-     * @param artist The artist to store in the database
-     */
-    private SpotifyArtist storeArtist(SpotifyArtist artist) {
-        return storeArtists(List.of(artist)).values().toArray(SpotifyArtist[]::new)[0];
-    }
-
-    /**
-     * Attempts to put all given artists in the database. The list is assumed to be distinct. If an artist is found in
-     * the database, its ID and stored instance is added to the map. A distinct artist will be added to the map no
-     * matter what.
-     *
-     * @param artists The artists to try and put in the database
-     * @return A map of all IDs and {@link SpotifyArtist} instances, regardless of if they were added to the database
-     */
-    private Map<String, SpotifyArtist> storeArtists(List<SpotifyArtist> artists) {
-        var allArtists = new HashMap<String, SpotifyArtist>();
-        try (var entityTransaction = EntityTransaction.beginTransaction()) {
-            var session = entityTransaction.getSession();
-
-            artists.parallelStream().map(artist -> {
-                var foundArtist = session.find(SpotifyArtist.class, artist.getId());
-                if (foundArtist != null) {
-                    return foundArtist;
-                }
-
-                session.save(artist);
-                return artist;
-            }).forEach(artist -> allArtists.put(artist.getId(), artist));
-        }
-
-        return allArtists;
     }
 
     @Override
@@ -378,6 +371,42 @@ public class SpotifyMusicCache implements MusicCache {
         return spotifyMusicFetcher.fetchArtistByName(name)
                 .map(SpotifyArtist.class::cast)
                 .map(this::storeArtist);
+    }
+
+    /**
+     * Stores a single artist into the database.
+     *
+     * @param artist The artist to store in the database
+     */
+    private SpotifyArtist storeArtist(SpotifyArtist artist) {
+        return storeArtists(List.of(artist)).values().toArray(SpotifyArtist[]::new)[0];
+    }
+
+    /**
+     * Attempts to put all given artists in the database. The list is assumed to be distinct. If an artist is found in
+     * the database, its ID and stored instance is added to the map. A distinct artist will be added to the map no
+     * matter what.
+     *
+     * @param artists The artists to try and put in the database
+     * @return A map of all IDs and {@link SpotifyArtist} instances, regardless of if they were added to the database
+     */
+    private Map<String, SpotifyArtist> storeArtists(List<SpotifyArtist> artists) {
+        var allArtists = new HashMap<String, SpotifyArtist>();
+        try (var entityTransaction = EntityTransaction.beginTransaction()) {
+            var session = entityTransaction.getSession();
+
+            artists.parallelStream().map(artist -> {
+                var foundArtist = session.find(SpotifyArtist.class, artist.getId());
+                if (foundArtist != null) {
+                    return foundArtist;
+                }
+
+                session.save(artist);
+                return artist;
+            }).forEach(artist -> allArtists.put(artist.getId(), artist));
+        }
+
+        return allArtists;
     }
 
     /**
@@ -482,6 +511,8 @@ public class SpotifyMusicCache implements MusicCache {
 
             // The instances of artists that should be saved with/are known to be in the database
             var artistMap = storeArtists(distinctArtists);
+            
+            LOGGER.debug("artist map = {}", artistMap);
 
             var distinctAlbums = addingTracks.stream()
                     .map(Track::getAlbum)
@@ -490,6 +521,8 @@ public class SpotifyMusicCache implements MusicCache {
 
             // The instances of albums that should be saved with/are known to be in the database
             var albumMap = storeAlbums(distinctAlbums, artistMap);
+            
+            LOGGER.debug("album map = {}", albumMap);
 
             return addingTracks.parallelStream().map(track -> {
                 var storedArtists = track.getArtists().stream().map(Artist::getId).map(artistMap::get).toList();
