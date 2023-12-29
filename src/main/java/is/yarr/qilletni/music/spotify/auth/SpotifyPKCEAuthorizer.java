@@ -16,12 +16,14 @@ import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
+import se.michaelthelin.spotify.model_objects.specification.User;
 
 import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
@@ -39,6 +41,8 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
     private final String codeChallenge;
     private final String codeVerifier;
     private final PKCECredentialCache credentialCache;
+    
+    private se.michaelthelin.spotify.model_objects.specification.User currentUser;
 
     public SpotifyPKCEAuthorizer(String codeChallenge, String codeVerifier) {
         this.codeChallenge = codeChallenge;
@@ -75,7 +79,8 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
                     refreshTokens(credentialCache.getCachedCredentials());
                     var credentials = performImmediateRefresh();
                     beginRefreshLoop(credentials.expiresIn());
-                    completableFuture.complete(spotifyApi);
+                    updateCurrentUser().thenRun(() -> completableFuture.complete(spotifyApi));
+
                     return completableFuture;
                 }
             } catch (IOException | ParseException | SpotifyWebApiException e) {
@@ -87,6 +92,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
 
             getCodeFromUser().thenCompose(this::setupSpotifyApi)
                     .thenAccept(this::beginRefreshLoop)
+                    .thenCompose($ -> updateCurrentUser())
                     .thenRun(() -> completableFuture.complete(spotifyApi));
 
         } catch (Exception e) {
@@ -105,7 +111,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
     private CompletableFuture<String> getCodeFromUser() throws Exception {
         var authorizationCodeUriRequest = spotifyApi.authorizationCodePKCEUri(codeChallenge)
 //          .state("x4xkmn9pu3j6ukrs8n")
-//          .scope("user-read-birthdate,user-read-email")
+          .scope("user-read-email,playlist-read-private")
 //          .show_dialog(true)
                 .build();
 
@@ -235,9 +241,24 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
         return authCodeCredentials;
     }
 
+    /**
+     * Sets the {@link #currentUser} to the current user that has been authenticated.
+     * 
+     * @return The future of the user request
+     */
+    private CompletableFuture<Void> updateCurrentUser() {
+        return spotifyApi.getCurrentUsersProfile().build().executeAsync()
+                .thenAccept(user -> currentUser = user);
+    }
+
     @Override
     public SpotifyApi getSpotifyApi() {
         return spotifyApi;
+    }
+
+    @Override
+    public Optional<User> getCurrentUser() {
+        return Optional.ofNullable(currentUser);
     }
 
     /**

@@ -1,7 +1,9 @@
 package is.yarr.qilletni.music.spotify.auth;
 
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.model_objects.specification.User;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface SpotifyAuthorizer {
@@ -19,5 +21,13 @@ public interface SpotifyAuthorizer {
      * @return The current {@link SpotifyApi}
      */
     SpotifyApi getSpotifyApi();
+
+    /**
+     * Gets the current user profile that has been authenticated with. If no user is associated with the
+     * authentication, an empty optional is returned.
+     * 
+     * @return The current user
+     */
+    Optional<User> getCurrentUser();
     
 }

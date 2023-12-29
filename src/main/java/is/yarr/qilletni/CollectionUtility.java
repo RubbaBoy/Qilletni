@@ -1,12 +1,19 @@
 package is.yarr.qilletni;
 
+import antlr.collections.impl.IntRange;
+
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
-public class MapUtility {
+public class CollectionUtility {
     
     public static <K, V> List<Entry<K, V>> getRecordEntries(Map<K, V> map) {
         return map.entrySet().stream().map(Entry::new).toList();
+    }
+    
+    public static <T> List<T> createList(int size, T value) {
+        return IntStream.range(0, size).mapToObj(i -> value).toList();
     }
     
     public record Entry<K, V>(K k, V v) {

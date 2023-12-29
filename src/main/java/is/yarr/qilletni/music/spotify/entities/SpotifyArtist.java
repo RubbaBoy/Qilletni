@@ -31,19 +31,6 @@ public class SpotifyArtist implements Artist {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        SpotifyArtist that = (SpotifyArtist) object;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
         return "SpotifyArtist{" +
                 "id='" + id + '\'' +

@@ -5,11 +5,13 @@ import is.yarr.qilletni.music.Artist;
 import is.yarr.qilletni.music.Track;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class SpotifyTrack implements Track {
@@ -18,11 +20,11 @@ public class SpotifyTrack implements Track {
     private String id;
     private String name;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @OrderColumn(name="artistOrder")
     private List<SpotifyArtist> artists;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private SpotifyAlbum album;
     
     private int duration;

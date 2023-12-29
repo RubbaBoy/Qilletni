@@ -5,8 +5,11 @@ import is.yarr.qilletni.music.User;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.sql.Date;
+import java.util.Collections;
 
 @Entity
 public class SpotifyPlaylist implements Playlist {
@@ -15,7 +18,7 @@ public class SpotifyPlaylist implements Playlist {
     private String id;
     private String title;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private SpotifyUser creator;
     
     @Embedded
@@ -27,6 +30,7 @@ public class SpotifyPlaylist implements Playlist {
         this.id = id;
         this.title = title;
         this.creator = creator;
+        this.spotifyPlaylistIndex = new SpotifyPlaylistIndex(Collections.emptyList(), new Date(0));
     }
 
     @Override
@@ -63,7 +67,6 @@ public class SpotifyPlaylist implements Playlist {
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", creator=" + creator +
-                ", trackCount=" + spotifyPlaylistIndex.getTracks().size() +
                 '}';
     }
 }

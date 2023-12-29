@@ -5,6 +5,7 @@ import is.yarr.qilletni.music.Artist;
 import is.yarr.qilletni.music.MusicFetcher;
 import is.yarr.qilletni.music.Playlist;
 import is.yarr.qilletni.music.Track;
+import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
 import is.yarr.qilletni.music.spotify.auth.SpotifyPKCEAuthorizer;
 import is.yarr.qilletni.music.spotify.entities.SpotifyAlbum;
 import is.yarr.qilletni.music.spotify.entities.SpotifyArtist;
@@ -17,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.AlbumSimplified;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 
 import java.io.IOException;
@@ -25,6 +27,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class SpotifyMusicFetcher implements MusicFetcher {
 
@@ -32,9 +36,9 @@ public class SpotifyMusicFetcher implements MusicFetcher {
 
     private static final int MAX_PAGE_LIMIT = 50;
 
-    private final SpotifyPKCEAuthorizer authorizer;
+    private final SpotifyAuthorizer authorizer;
 
-    public SpotifyMusicFetcher(SpotifyPKCEAuthorizer authorizer) {
+    public SpotifyMusicFetcher(SpotifyAuthorizer authorizer) {
         this.authorizer = authorizer;
     }
 
@@ -101,33 +105,43 @@ public class SpotifyMusicFetcher implements MusicFetcher {
     public Optional<Playlist> fetchPlaylist(String name, String author) {
         LOGGER.debug("fetchPlaylist({}, {})", name, author);
         try {
-            var spotifyApi = authorizer.getSpotifyApi();
-
-            var offset = 0;
-            var lastTotal = 0;
-            
-            do {
-                var playlists = spotifyApi.getListOfUsersPlaylists(name)
-                        .limit(MAX_PAGE_LIMIT)
-                        .offset(offset)
-                        .build()
-                        .execute()
-                        .getItems();
-
-                lastTotal = playlists.length;
-                offset += lastTotal;
-
-                var matchingPlaylist = Arrays.stream(playlists).filter(playlist -> playlist.getName().equals(name)).findFirst();
-                if (matchingPlaylist.isPresent()) {
-                    return matchingPlaylist.map(this::createPlaylistEntity);
-                }
-                
-            } while (lastTotal == MAX_PAGE_LIMIT);
-
-            return Optional.empty();
+            return fetchPlaylistFromUserByName(name, author).map(this::createPlaylistEntity);
         } catch (IOException | ParseException | SpotifyWebApiException e) {
             throw new RuntimeException(e);
         }
+    }
+    
+    private Optional<PlaylistSimplified> fetchPlaylistFromUserByName(String name, String author) throws IOException, ParseException, SpotifyWebApiException {
+        var spotifyApi = authorizer.getSpotifyApi();
+        return pagePlaylists(name, (limit, offset) -> spotifyApi.getListOfUsersPlaylists(author)
+                .limit(MAX_PAGE_LIMIT)
+                .offset(offset)
+                .build()
+                .execute()
+                .getItems());
+    }
+    
+    private Optional<PlaylistSimplified> pagePlaylists(String playlistName, SpotifyBiFunction<Integer, Integer, PlaylistSimplified[]> playlistFetcher) throws IOException, ParseException, SpotifyWebApiException {
+        var offset = 0;
+        var lastTotal = 0;
+
+        do {
+            var playlists = playlistFetcher.apply(MAX_PAGE_LIMIT, offset);
+
+            lastTotal = playlists.length;
+            offset += lastTotal;
+
+            LOGGER.debug("playlists checking: {}", Arrays.stream(playlists).map(PlaylistSimplified::getName).collect(Collectors.joining(", ")));
+
+            var matchingPlaylist = Arrays.stream(playlists).filter(playlist -> playlist.getName().equals(playlistName)).findFirst();
+            if (matchingPlaylist.isPresent()) {
+                return matchingPlaylist;
+            }
+
+            LOGGER.debug("{} == {}", lastTotal, MAX_PAGE_LIMIT);
+        } while (lastTotal == MAX_PAGE_LIMIT);
+
+        return Optional.empty();
     }
 
     @Override
@@ -213,7 +227,7 @@ public class SpotifyMusicFetcher implements MusicFetcher {
     }
 
     @Override
-    public List<Track> fetchPlaylistTracks(Playlist playlist) {
+    public List<Track> fetchPlaylistTracks(Playlist playlist) { //
         LOGGER.debug("fetchPlaylistTracks({})", playlist);
         var spotifyApi = authorizer.getSpotifyApi();
 

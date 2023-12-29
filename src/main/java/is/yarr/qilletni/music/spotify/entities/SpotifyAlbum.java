@@ -4,6 +4,7 @@ import is.yarr.qilletni.music.Album;
 import is.yarr.qilletni.music.Artist;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
@@ -18,11 +19,11 @@ public class SpotifyAlbum implements Album {
     private String id;
     private String name;
     
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @OrderColumn(name="artistOrder")
     private List<SpotifyArtist> artists;
     
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<SpotifyTrack> tracks;
 
     public SpotifyAlbum() {}
@@ -59,19 +60,6 @@ public class SpotifyAlbum implements Album {
 
     public void setTracks(List<SpotifyTrack> tracks) {
         this.tracks = tracks;
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        SpotifyAlbum that = (SpotifyAlbum) object;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
     @Override

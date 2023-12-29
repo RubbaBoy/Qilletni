@@ -1,7 +1,7 @@
 package is.yarr.qilletni.music.spotify;
 
-import is.yarr.qilletni.MapUtility;
-import is.yarr.qilletni.MapUtility.Entry;
+import is.yarr.qilletni.CollectionUtility;
+import is.yarr.qilletni.CollectionUtility.Entry;
 import is.yarr.qilletni.database.EntityTransaction;
 import is.yarr.qilletni.music.Album;
 import is.yarr.qilletni.music.Artist;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SpotifyMusicCache implements MusicCache {
@@ -42,7 +43,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Track> getTrack(String name, String artist) {
+    public Optional<Track> getTrack(String name, String artist) { //
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -70,7 +71,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Track> getTrackById(String id) {
+    public Optional<Track> getTrackById(String id) { //
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -86,10 +87,10 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public List<Track> getTracks(List<TrackNameArtist> tracks) {
+    public List<Track> getTracks(List<TrackNameArtist> tracks) { // TODO: Not testing yet
         // The track to look up with its destination index in the list
         var lookupTracks = new HashMap<Integer, TrackNameArtist>();
-        var foundTracks = new ArrayList<Track>(tracks.size());
+        var foundTracks = new ArrayList<Track>(CollectionUtility.createList(tracks.size(), null));
 
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
@@ -129,8 +130,8 @@ public class SpotifyMusicCache implements MusicCache {
         LOGGER.debug("foundTracks = {}", foundTracks);
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
-        var fetched = storeTracks(spotifyMusicFetcher.fetchTracks(lookupTracks.values().stream().toList()));
-        for (Entry(var index, var trackNameArtist) : MapUtility.getRecordEntries(lookupTracks)) {
+        var fetched = storeTracks(spotifyMusicFetcher.fetchTracks(lookupTracks.values().stream().toList())).fetchedTracks();
+        for (Entry(var index, var trackNameArtist) : CollectionUtility.getRecordEntries(lookupTracks)) {
             fetched.stream().filter(trackNameArtist::matchesTrack)
                     .findFirst()
                     .ifPresent(track -> foundTracks.set(index, track));
@@ -146,14 +147,13 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public List<Track> getTracksById(List<String> trackIds) {
+    public List<Track> getTracksById(List<String> trackIds) { //
         // The track to look up with its destination index in the list
         var lookupTracks = new HashMap<Integer, String>();
-        var foundTracks = new ArrayList<Track>(trackIds.size());
+        var foundTracks = new ArrayList<Track>(CollectionUtility.createList(trackIds.size(), null));
 
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
-
 
             var builder = session.getCriteriaBuilder();
             var criteria = builder.createQuery(SpotifyTrack.class);
@@ -184,8 +184,8 @@ public class SpotifyMusicCache implements MusicCache {
         LOGGER.debug("foundTracks = {}", foundTracks);
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
-        var fetched = storeTracks(spotifyMusicFetcher.fetchTracksById(lookupTracks.values().stream().toList()));
-        for (Entry(var index, var id) : MapUtility.getRecordEntries(lookupTracks)) {
+        var fetched = storeTracks(spotifyMusicFetcher.fetchTracksById(lookupTracks.values().stream().toList())).fetchedTracks();
+        for (Entry(var index, var id) : CollectionUtility.getRecordEntries(lookupTracks)) {
             fetched.stream().filter(track -> track.getId().equals(id))
                     .findFirst()
                     .ifPresent(track -> foundTracks.set(index, track));
@@ -201,7 +201,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Playlist> getPlaylist(String name, String creator) {
+    public Optional<Playlist> getPlaylist(String name, String creator) { //
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -295,15 +295,15 @@ public class SpotifyMusicCache implements MusicCache {
 
         if (albumTracks == null) {
             var tracks = spotifyMusicFetcher.fetchAlbumTracks(album);
-            var storedTracks = storeTracks(tracks);
-            spotifyAlbum.setTracks(storedTracks.stream().map(SpotifyTrack.class::cast).toList());
+            var allTracks = storeTracks(tracks).allTracks();
+            spotifyAlbum.setTracks(allTracks.stream().map(SpotifyTrack.class::cast).toList());
 
             try (var entityTransaction = EntityTransaction.beginTransaction()) {
                 var session = entityTransaction.getSession();
-                session.save(spotifyAlbum);
+                session.update(spotifyAlbum);
             }
             
-            return storedTracks;
+            return allTracks;
         }
 
         return albumTracks.stream().map(Track.class::cast).toList();
@@ -313,29 +313,37 @@ public class SpotifyMusicCache implements MusicCache {
     public List<Track> getPlaylistTracks(Playlist playlist) {
         var spotifyPlaylist = (SpotifyPlaylist) playlist;
         var playlistIndex = spotifyPlaylist.getSpotifyPlaylistIndex();
+        
+        LOGGER.debug("playlistIndex = {}", playlistIndex);
 
-        var expires = playlistIndex.getLastUpdatedIndex().toInstant().plus(7, ChronoUnit.DAYS); // when it expires
-        if (expires.isAfter(Instant.now())) {
+        
+        var expires = Instant.ofEpochMilli(playlistIndex.getLastUpdatedIndex().getTime()).plus(7, ChronoUnit.DAYS); // when it expires
+        LOGGER.debug("Should update: {} .isAfter {}", Instant.now(), expires);
+        if (Instant.now().isAfter(expires)) {
             var tracks = spotifyMusicFetcher.fetchPlaylistTracks(playlist);
-            var storedTracks = storeTracks(tracks);
+            System.out.println("tracks = " + tracks);
+            
+            var playlistTracks = storeTracks(tracks).allTracks();
 
-            spotifyPlaylist.setSpotifyPlaylistIndex(new SpotifyPlaylistIndex(storedTracks.stream()
+            System.out.println("playlistTracks = " + playlistTracks);
+
+            spotifyPlaylist.setSpotifyPlaylistIndex(new SpotifyPlaylistIndex(playlistTracks.stream()
                     .map(SpotifyTrack.class::cast)
                     .toList(), new Date(System.currentTimeMillis())));
 
             try (var entityTransaction = EntityTransaction.beginTransaction()) {
                 var session = entityTransaction.getSession();
-                session.save(spotifyPlaylist);
+                session.update(spotifyPlaylist);
             }
             
-            return storedTracks;
+            return playlistTracks;
         }
 
         return playlistIndex.getTracks().stream().map(Track.class::cast).toList();
     }
 
     @Override
-    public Optional<Artist> getArtistById(String id) {
+    public Optional<Artist> getArtistById(String id) { //
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -351,7 +359,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Artist> getArtistByName(String name) {
+    public Optional<Artist> getArtistByName(String name) { //
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -395,15 +403,22 @@ public class SpotifyMusicCache implements MusicCache {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
-            artists.parallelStream().map(artist -> {
+            artists.forEach(artist -> {
+                if (allArtists.containsKey(artist.getId())) {
+                    return;
+                }
+                
                 var foundArtist = session.find(SpotifyArtist.class, artist.getId());
                 if (foundArtist != null) {
-                    return foundArtist;
+                    LOGGER.debug("Already found artist: {}", foundArtist);
+                    allArtists.put(foundArtist.getId(), foundArtist);
+                    return;
                 }
 
+                LOGGER.debug("Saving artist: {}", artist);
                 session.save(artist);
-                return artist;
-            }).forEach(artist -> allArtists.put(artist.getId(), artist));
+                allArtists.put(artist.getId(), artist);
+            });
         }
 
         return allArtists;
@@ -427,6 +442,7 @@ public class SpotifyMusicCache implements MusicCache {
             }
 
             var newPlaylist = new SpotifyPlaylist(playlist.getId(), playlist.getTitle(), databaseUser);
+            LOGGER.debug("new playlist = {}", newPlaylist);
             session.save(newPlaylist);
             return newPlaylist;
         }
@@ -451,7 +467,7 @@ public class SpotifyMusicCache implements MusicCache {
      * @return The new track instance
      */
     private Track storeTrack(SpotifyTrack track) {
-        return storeTracks(List.of(track)).get(0);
+        return storeTracks(List.of(track)).allTracks().get(0);
     }
 
     /**
@@ -469,7 +485,7 @@ public class SpotifyMusicCache implements MusicCache {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
-            albums.parallelStream().map(album -> {
+            albums.stream().map(album -> {
                 var foundAlbum = session.find(SpotifyAlbum.class, album.getId());
                 if (foundAlbum != null) {
                     return foundAlbum;
@@ -492,17 +508,22 @@ public class SpotifyMusicCache implements MusicCache {
      * everything already in the database.
      *
      * @param addingTracks The tracks to add to the database
-     * @return The list of added tracks, in the same order as addedTracks (excluding already cached ones)
+     * @return A record containing saved tracks and all tracks (with new objects), in the same order as addedTracks
+     *         (excluding already cached ones)
      */
-    private List<Track> storeTracks(List<Track> addingTracks) {
+    private StoredTracks storeTracks(List<Track> addingTracks) {
+        LOGGER.debug("All tracks to add: {}", addingTracks);
+        
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
             var preTrackCount = addingTracks.size();
             // Remove tracks already in the database. Do this now so albums/artists are skipped for existing ones
-            addingTracks = addingTracks.parallelStream().filter(track -> session.find(SpotifyTrack.class, track.getId()) == null).toList();
+            var newTracks = addingTracks.stream().filter(track -> session.find(SpotifyTrack.class, track.getId()) == null).toList();
 
-            LOGGER.debug("Removed {} tracks that are already in the database. Adding {} tracks", preTrackCount - addingTracks.size(), addingTracks.size());
+            LOGGER.debug("Removed {} tracks that are already in the database. Adding {} tracks", preTrackCount - newTracks.size(), newTracks.size());
+            
+            LOGGER.debug("Tracks to add: {}", getNameList(newTracks));
 
             var distinctArtists = addingTracks.stream()
                     .flatMap(track -> Stream.concat(track.getArtists().stream(), track.getAlbum().getArtists().stream()))
@@ -524,15 +545,44 @@ public class SpotifyMusicCache implements MusicCache {
             
             LOGGER.debug("album map = {}", albumMap);
 
-            return addingTracks.parallelStream().map(track -> {
-                var storedArtists = track.getArtists().stream().map(Artist::getId).map(artistMap::get).toList();
-                var storedAlbum = albumMap.get(track.getAlbum().getId());
+            var fetchedTracks = new ArrayList<Track>();
+            
+            var allTracks = addingTracks.stream().map(track -> {
+                var newTrackFound = newTracks.stream().filter(newTrack -> newTrack.getId().equals(track.getId())).findFirst();
+                if (newTrackFound.isPresent()) {
+                    var storingTrack = newTrackFound.get();
+                    
+                    var storedArtists = storingTrack.getArtists().stream().map(Artist::getId).map(artistMap::get).toList();
+                    LOGGER.debug("stored artists = {}", storedArtists);
+                    
+                    var storedAlbum = albumMap.get(storingTrack.getAlbum().getId());
 
-                var newTrack = new SpotifyTrack(track.getId(), track.getName(), storedArtists, storedAlbum, track.getDuration());
-                session.save(newTrack);
+                    var newTrack = new SpotifyTrack(storingTrack.getId(), storingTrack.getName(), storedArtists, storedAlbum, storingTrack.getDuration());
+                    session.save(newTrack);
+                    fetchedTracks.add(newTrack);
 
-                return (Track) newTrack;
+                    return newTrack;
+                } else {
+                    return (Track) session.find(SpotifyTrack.class, track.getId());
+                }
             }).toList();
+            
+            LOGGER.debug("Tracks fetched: {}", getNameList(fetchedTracks));
+            LOGGER.debug("New all tracks: {}", getNameList(allTracks));
+            
+            return new StoredTracks(fetchedTracks, allTracks);
         }
     }
+    
+    private static String getNameList(List<Track> tracks) {
+        return tracks.stream().map(Track::getName).collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Tracks stored from {@link #storeTracks(List)}.
+     * 
+     * @param fetchedTracks New tracks fetched and added to the cache
+     * @param allTracks All tracks, just with any necessary new objects
+     */
+    private record StoredTracks(List<Track> fetchedTracks, List<Track> allTracks) {}
 }

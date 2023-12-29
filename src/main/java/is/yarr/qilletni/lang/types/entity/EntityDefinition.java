@@ -1,7 +1,7 @@
 package is.yarr.qilletni.lang.types.entity;
 
-import is.yarr.qilletni.MapUtility;
-import is.yarr.qilletni.MapUtility.Entry;
+import is.yarr.qilletni.CollectionUtility;
+import is.yarr.qilletni.CollectionUtility.Entry;
 import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.Scope;
@@ -60,12 +60,12 @@ public class EntityDefinition {
             throw new InvalidSyntaxException("Invalid constructor invocation");
         }
 
-        for (Entry(var name, var qilletniType) : MapUtility.getRecordEntries(properties)) {
+        for (Entry(var name, var qilletniType) : CollectionUtility.getRecordEntries(properties)) {
             scope.define(new Symbol<>(name, Symbol.SymbolType.fromQilletniType(qilletniType.getClass()), qilletniType));
         }
 
         int index = 0;
-        for (Entry(var name, var uninitializedType) : MapUtility.getRecordEntries(uninitializedParams)) {
+        for (Entry(var name, var uninitializedType) : CollectionUtility.getRecordEntries(uninitializedParams)) {
             var currentParam = constructorParams.get(index);
 
             if (!uninitializedType.isNative()) {
