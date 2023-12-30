@@ -40,7 +40,10 @@ public class SpotifyGetCode {
                 
 //                LOGGER.debug("Playlist gotten: {}", playlist);
                 
-                var tracks = cache.getTracksById(List.of("43GI27G3Zn2TWqjPmOZly0", "4Bdmve2usvDEXeFNX4YSQl", "5dQranC4Mh6N5AF7xofVmB"));
+                var album = cache.getAlbumById("4syaagktdRKUoKLuWQU2Y6").get();
+                var tracks = cache.getAlbumTracks(album);
+
+                System.out.println("album = " + album);
 
                 System.out.println("tracks.size() = " + tracks.size());
                 System.out.println("tracks = " + tracks.stream().map(Track::getName).collect(Collectors.joining(", ")));

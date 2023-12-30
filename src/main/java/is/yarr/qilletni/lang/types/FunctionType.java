@@ -1,6 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.antlr.QilletniParser;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -10,12 +11,12 @@ public final class FunctionType extends QilletniType {
     private final String name;
     private final String[] params;
     private final boolean isNative;
-    private final Class<? extends QilletniType> onType;
+    private final QilletniTypeClass<?> onType;
     
     // Only set if isNative is false
     private final QilletniParser.BodyContext bodyContext;
 
-    private FunctionType(String name, String[] params, boolean isNative, Class<? extends QilletniType> onType, QilletniParser.BodyContext bodyContext) {
+    private FunctionType(String name, String[] params, boolean isNative, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
         this.isNative = isNative;
         this.name = name;
         this.params = params;
@@ -23,11 +24,11 @@ public final class FunctionType extends QilletniType {
         this.bodyContext = bodyContext;
     }
     
-    public static FunctionType createImplementedFunction(String name, String[] params, Class<? extends QilletniType> onType, QilletniParser.BodyContext bodyContext) {
+    public static FunctionType createImplementedFunction(String name, String[] params, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
         return new FunctionType(name, params, false, onType, bodyContext);
     }
     
-    public static FunctionType createNativeFunction(String name, String[] params, Class<? extends QilletniType> onType) {
+    public static FunctionType createNativeFunction(String name, String[] params, QilletniTypeClass<?> onType) {
         return new FunctionType(name, params, true, onType, null);
     }
 
@@ -48,7 +49,7 @@ public final class FunctionType extends QilletniType {
         return isNative;
     }
 
-    public Class<? extends QilletniType> getOnType() {
+    public QilletniTypeClass<?> getOnType() {
         return onType;
     }
 
@@ -65,8 +66,8 @@ public final class FunctionType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "function";
+    public QilletniTypeClass<FunctionType> getTypeClass() {
+        return QilletniTypeClass.FUNCTION;
     }
 
     @Override

@@ -1,12 +1,14 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Internal types for Qilletni programs.
  */
-public sealed abstract class QilletniType permits BooleanType, CollectionType, EntityType, FunctionType, IntType, SongType, StringType, WeightsType {
+public sealed abstract class QilletniType permits BooleanType, CollectionType, EntityType, FunctionType, IntType, ListType, SongType, StringType, WeightsType {
     
     final List<FunctionType> associatedFunctions = new ArrayList<>();
 //    final List<String> associatedProperties = new ArrayList<>();
@@ -41,5 +43,9 @@ public sealed abstract class QilletniType permits BooleanType, CollectionType, E
     
     public abstract String stringValue();
 
-    public abstract String typeName();
+    public String typeName() {
+        return getTypeClass().getTypeName();
+    }
+    
+    public abstract QilletniTypeClass<?> getTypeClass();
 }

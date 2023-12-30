@@ -8,5 +8,5 @@ if (a > b) {
 } else if (a == 11) {
     print("OH NO!")
 } else {
-    print("what.");
+    print("what.")
 }

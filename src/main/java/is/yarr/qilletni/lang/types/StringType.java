@@ -1,5 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+
 public final class StringType extends QilletniType {
     
     private String value;
@@ -26,8 +28,8 @@ public final class StringType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "string";
+    public QilletniTypeClass<StringType> getTypeClass() {
+        return QilletniTypeClass.STRING;
     }
 
     @Override

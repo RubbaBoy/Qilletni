@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.types.entity.EntityDefinition;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 import java.util.stream.Collectors;
 
@@ -61,5 +62,10 @@ public final class EntityType extends QilletniType {
     @Override
     public String typeName() {
         return entityDefinition.getTypeName();
+    }
+
+    @Override
+    public QilletniTypeClass<EntityType> getTypeClass() {
+        return entityDefinition.getQilletniTypeClass();
     }
 }

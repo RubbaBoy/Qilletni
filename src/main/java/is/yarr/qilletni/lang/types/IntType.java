@@ -1,5 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+
 public final class IntType extends QilletniType {
     
     private int value;
@@ -22,8 +24,8 @@ public final class IntType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "int";
+    public QilletniTypeClass<IntType> getTypeClass() {
+        return QilletniTypeClass.INT;
     }
 
     @Override

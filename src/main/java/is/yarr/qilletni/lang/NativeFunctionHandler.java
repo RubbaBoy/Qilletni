@@ -3,11 +3,13 @@ package is.yarr.qilletni.lang;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
 import is.yarr.qilletni.lang.internal.NativeOn;
 import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.TypeUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,10 +22,13 @@ public class NativeFunctionHandler {
         for (var clazz : nativeMethodClass) {
             for (var declaredMethod : clazz.getDeclaredMethods()) {
                 var annotations = declaredMethod.getDeclaredAnnotations();
-                Class<? extends QilletniType> invokedOn = null;
+                QilletniTypeClass<?> invokedOn = null;
                 for (Annotation annotation : annotations) {
                     if (annotation instanceof NativeOn nativeOn) {
-                        invokedOn = TypeUtils.getTypeFromString(nativeOn.value());
+                        // If the type isn't found, assume it is an entity that isn't known yet
+                        invokedOn = TypeUtils.getTypeFromString(nativeOn.value())
+                                .orElseGet(() -> QilletniTypeClass.createEntityTypePlaceholder(nativeOn.value()));
+                        break;
                     }
                 }
                 
@@ -37,7 +42,7 @@ public class NativeFunctionHandler {
         }
     }
     
-    public QilletniType invokeNativeMethod(String name, List<QilletniType> params, Class<? extends QilletniType> invokedUponType) {
+    public QilletniType invokeNativeMethod(String name, List<QilletniType> params, QilletniTypeClass<?> invokedUponType) {
         var paramCount = params.size();
         if (invokedUponType != null) {
             paramCount--;
@@ -55,6 +60,6 @@ public class NativeFunctionHandler {
         }
     }
     
-    record MethodSignature(String name, int params, Class<? extends QilletniType> nativeOn) {
+    record MethodSignature(String name, int params, QilletniTypeClass<?> nativeOn) {
     }
 }

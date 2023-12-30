@@ -8,6 +8,8 @@ import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.Symbol;
 import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.TypeUtils;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +42,12 @@ public class EntityDefinition {
      */
     private final List<Consumer<Scope>> entityFunctionPopulators;
     private final Scope globalScope;
+    
+    private final QilletniTypeClass<EntityType> qilletniTypeClass;
 
     public EntityDefinition(String typeName, Map<String, QilletniType> properties, Map<String, UninitializedType> uninitializedParams, List<Consumer<Scope>> entityFunctionPopulators, Scope globalScope) {
         this.typeName = typeName;
+        this.qilletniTypeClass = new QilletniTypeClass<>(this, typeName);
         this.properties = properties;
         this.uninitializedParams = uninitializedParams;
         this.entityFunctionPopulators = entityFunctionPopulators;
@@ -61,7 +66,7 @@ public class EntityDefinition {
         }
 
         for (Entry(var name, var qilletniType) : CollectionUtility.getRecordEntries(properties)) {
-            scope.define(new Symbol<>(name, Symbol.SymbolType.fromQilletniType(qilletniType.getClass()), qilletniType));
+            scope.define(Symbol.createGenericSymbol(name, TypeUtils.getTypeFromInternalType(qilletniType.getClass()), qilletniType));
         }
 
         int index = 0;
@@ -85,7 +90,7 @@ public class EntityDefinition {
                     throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName());
                 }
                 
-                if (!uninitializedType.getNativeTypeClass().equals(currentParam.getClass())) {
+                if (!uninitializedType.getNativeTypeClass().equals(currentParam.getTypeClass())) {
                     throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName());
                 }
                 
@@ -93,7 +98,7 @@ public class EntityDefinition {
             }
             
             LOGGER.debug("Setting constructor param {} = {}", name, currentParam);
-            scope.define(new Symbol<>(name, Symbol.SymbolType.fromQilletniType(currentParam.getClass()), currentParam));
+            scope.define(Symbol.createGenericSymbol(name, currentParam.getTypeClass(), currentParam));
 
             index++;
         }
@@ -109,5 +114,9 @@ public class EntityDefinition {
 
     public Map<String, UninitializedType> getUninitializedParams() {
         return uninitializedParams;
+    }
+
+    public QilletniTypeClass<EntityType> getQilletniTypeClass() {
+        return qilletniTypeClass;
     }
 }

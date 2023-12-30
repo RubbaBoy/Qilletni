@@ -1,13 +1,13 @@
 package is.yarr.qilletni.lang.types.entity;
 
-import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 public class UninitializedType {
     
-    private final Class<? extends QilletniType> nativeTypeClass;
+    private final QilletniTypeClass<?> nativeTypeClass;
     private final EntityDefinition entityDefinition;
 
-    public UninitializedType(Class<? extends QilletniType> nativeTypeClass) {
+    public UninitializedType(QilletniTypeClass<?> nativeTypeClass) {
         this.nativeTypeClass = nativeTypeClass;
         this.entityDefinition = null;
     }
@@ -21,7 +21,7 @@ public class UninitializedType {
         return nativeTypeClass != null;
     }
 
-    public Class<? extends QilletniType> getNativeTypeClass() {
+    public QilletniTypeClass<?> getNativeTypeClass() {
         return nativeTypeClass;
     }
 
@@ -31,7 +31,7 @@ public class UninitializedType {
     
     public String getTypeName() {
         if (isNative()) {
-            return nativeTypeClass.getSimpleName();
+            return nativeTypeClass.getTypeName();
         } else {
             return entityDefinition.getTypeName();
         }

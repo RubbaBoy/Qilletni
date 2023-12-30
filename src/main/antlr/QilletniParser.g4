@@ -17,7 +17,6 @@ running
     : body_stmt
     | function_def
     | NEWLINE
-    | COMMENT
     ;
 
 // Expressions
@@ -33,6 +32,7 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | str_expr
     | collection_expr
     | song_expr
+    | weights_expr
     ;
 
 bool_expr
@@ -55,11 +55,13 @@ str_expr
     | STRING
     | str_expr PLUS expr
     | function_call
+    | ID
     ;
 
 collection_expr
     : function_call
     | url_or_name_pair order_define? weights_define?
+    | ID
     ;
 
 order_define
@@ -73,6 +75,7 @@ weights_define
 song_expr
     : function_call
     | url_or_name_pair
+    | ID
     ;
 
 url_or_name_pair
@@ -82,6 +85,7 @@ url_or_name_pair
 
 weights_expr
     : single_weight single_weight*
+    | ID
     ;
 
 single_weight
@@ -120,6 +124,7 @@ asmt
     | type=SONG_TYPE ID ASSIGN expr
     | type=WEIGHTS_KEYWORD ID ASSIGN expr
     | type=ID ID ASSIGN expr
+    | ID LEFT_SBRACKET RIGHT_SBRACKET ID ASSIGN expr
     | ID ASSIGN expr
     | expr_assign=expr DOT ID ASSIGN expr
     ;
@@ -179,7 +184,7 @@ entity_def
     ;
 
 entity_body
-    : entity_property_declaration* entity_constructor? (function_def | COMMENT)*
+    : entity_property_declaration* entity_constructor? function_def*
     ;
 
 entity_property_declaration

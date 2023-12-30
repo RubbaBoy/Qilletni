@@ -1,5 +1,6 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.weights.WeightEntry;
 
 import java.util.List;
@@ -27,8 +28,8 @@ public final class WeightsType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "weights";
+    public QilletniTypeClass<WeightsType> getTypeClass() {
+        return QilletniTypeClass.WEIGHTS;
     }
 
     @Override

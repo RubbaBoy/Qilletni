@@ -1,6 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.lang.types.song.SongDefinition;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 public final class SongType extends QilletniType {
     
@@ -62,8 +63,8 @@ public final class SongType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "song";
+    public QilletniTypeClass<SongType> getTypeClass() {
+        return QilletniTypeClass.SONG;
     }
 
     @Override

@@ -18,7 +18,9 @@ import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.IntType;
+import is.yarr.qilletni.lang.types.ListType;
 import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.SongType;
 import is.yarr.qilletni.lang.types.StringType;
 import is.yarr.qilletni.lang.types.TypeUtils;
@@ -38,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +49,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
@@ -83,16 +87,16 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var id = ctx.ID().getText();
         
         var params = new ArrayList<String>(visitNode(ctx.function_def_params()));
-        Class<? extends QilletniType> onType = null;
+        QilletniTypeClass<?> onType = null;
 
         if (ctx.function_on_type() != null) {
             onType = visitNode(ctx.function_on_type());
         }
 
         if (ctx.NATIVE() != null) {
-            scope.defineFunction(new Symbol<>(id, params.size(), FunctionType.createNativeFunction(id, params.toArray(String[]::new), onType)));
+            scope.defineFunction(Symbol.createFunctionSymbol(id, params.size(), FunctionType.createNativeFunction(id, params.toArray(String[]::new), onType)));
         } else {
-            scope.defineFunction(new Symbol<>(id, params.size(), FunctionType.createImplementedFunction(id, params.toArray(String[]::new), onType, ctx.body())));
+            scope.defineFunction(Symbol.createFunctionSymbol(id, params.size(), FunctionType.createImplementedFunction(id, params.toArray(String[]::new), onType, ctx.body())));
         }
     }
 
@@ -102,8 +106,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     @Override
-    public Class<? extends QilletniType> visitFunction_on_type(QilletniParser.Function_on_typeContext ctx) {
-        return TypeUtils.getTypeFromString(ctx.type.getText());
+    public QilletniTypeClass<?> visitFunction_on_type(QilletniParser.Function_on_typeContext ctx) {
+        return TypeUtils.getTypeFromStringOrThrow(ctx.type.getText());
     }
 
     @Override
@@ -137,9 +141,28 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
-
+            
             LOGGER.debug("(new) {} = {}", id, assignmentValue);
-            currentScope.define(new Symbol<>(id, Symbol.SymbolType.fromTokenType(ctx.type.getType()), assignmentValue));
+            currentScope.define(Symbol.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
+        } else if (ctx.LEFT_SBRACKET() != null) { // list
+            throw new UnsupportedOperationException();
+//            var expr = ctx.expr(0);
+//            var type = ctx.ID(0).getText();
+//            var name = ctx.ID(1).getText();
+//            
+//            var possibleNativeTypes = List.of("int", "boolean", "string", "collection", "song", "weights");
+//            if (possibleNativeTypes.contains(type)) {
+//                // is native type
+//            } else {
+////                var expectedEntity = entityDefinitionManager.lookup(entityName);
+//            }
+//            
+//            TypeUtils.getTypeFromStringOrThrow(type);
+//            
+//            var listValue = visitQilletniTypedNode(expr, ListType.class);
+//            if (listValue.getListType().equals(type)) {
+//                
+//            }
         } else if (ctx.expr_assign != null) {
             var entity = visitQilletniTypedNode(ctx.expr(0), EntityType.class);
             var propertyValue = visitQilletniTypedNode(ctx.expr(1));
@@ -214,8 +237,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
             }
         }
+        
+        if (ctx.function_call() != null) {
+            return visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+        }
 
-        return visitQilletniTypedNode(ctx.getChild(0));
+        return visitQilletniTypedNode(ctx.getChild(0), QilletniType.class);
     }
 
     @Override
@@ -372,7 +399,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         
         if (ctx.body_stmt() != null) {
             Optional<QilletniType> res = visitNode(ctx.body_stmt());
-            return Optional.ofNullable(res.orElseGet(() -> visitNode(ctx.body())));
+            return Optional.ofNullable(res.orElseGet(() -> this.<Optional<QilletniType>>visitNode(ctx.body()).orElse(null)));
         }
         
         return Optional.empty();
@@ -429,7 +456,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         
         var functionType = scope.lookupFunction(id, params.size()).getValue();
         
-        if (hasOnType && !functionType.getOnType().equals(invokedOn.getClass())) {
+        if (hasOnType && !functionType.getOnType().equals(invokedOn.getTypeClass())) {
             throw new RuntimeException("Function not to be invoked on " + invokedOn.getClass());
         }
 
@@ -444,10 +471,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             throw new InvalidParameterException("Expected " + expectedParamLength + " parameters, got " + params.size());
         }
 
-        Class<? extends QilletniType> invokingUponExpressionType = null;
+        QilletniTypeClass<?> invokingUponExpressionType = null;
         if (hasOnType) {
             params.add(0, invokedOn);
-            invokingUponExpressionType = invokedOn.getClass();
+            invokingUponExpressionType = invokedOn.getTypeClass();
         }
 
         if (functionType.isNative()) {
@@ -459,7 +486,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         for (int i = 0; i < params.size(); i++) {
             var qilletniType = params.get(i);
-            functionScope.define(new Symbol<>(functionParams.get(i), Symbol.SymbolType.fromQilletniType(qilletniType.getClass()), qilletniType));
+            functionScope.define(Symbol.createGenericSymbol(functionParams.get(i), TypeUtils.getTypeFromInternalType(qilletniType.getClass()), qilletniType));
         }
 
         Optional<T> result = visitNode(functionType.getBodyContext());
@@ -481,7 +508,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public List<QilletniType> visitExpr_list(QilletniParser.Expr_listContext ctx) {
         return ctx.expr().stream()
-                .<QilletniType>map(this::visitQilletniTypedNode)
+                .<QilletniType>map(t -> visitQilletniTypedNode(t, QilletniType.class))
                 .toList();
     }
 
@@ -586,7 +613,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var rangeTo = ctx.RANGE_INFINITY() != null ? Integer.MAX_VALUE : Integer.parseInt(ctx.getChild(2).getText());
 
         if (!scope.isDefined(id)) { // first iteration, let it pass
-            scope.define(new Symbol<>(id, Symbol.SymbolType.INT, new IntType(0)));
+            scope.define(new Symbol<>(id, QilletniTypeClass.INT, new IntType(0)));
             return BooleanType.TRUE;
         }
 
@@ -613,12 +640,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public SongType visitSong_expr(QilletniParser.Song_exprContext ctx) {
         var scope = symbolTable.currentScope();
         
-//        if (ctx.ID() != null) {
-//            return scope.<SongType>lookup(ctx.ID().getText()).getValue();
-//        }
+        if (ctx.ID() != null) {
+            return scope.<SongType>lookup(ctx.ID().getText()).getValue();
+        }
         
         if (ctx.function_call() != null) {
-            return visitQilletniTypedNode(ctx.function_call());
+            return this.<SongType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.url_or_name_pair();
@@ -636,6 +663,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public WeightsType visitWeights_expr(QilletniParser.Weights_exprContext ctx) {
+        var scope = symbolTable.currentScope();
+        
+        if (ctx.ID() != null) {
+            return scope.<WeightsType>lookup(ctx.ID().getText()).getValue();
+        }
+        
         var weights = ctx.single_weight().stream().map(this::<WeightEntry>visitNode).toList();
         return new WeightsType(weights);
     }
@@ -721,7 +754,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 return new EntityProperty<>(text, new UninitializedType(entityDefinitionManager.lookup(ctx.ID(0).getText()))); // pass the entity name? TODO
             }
             
-            return new EntityProperty<>(text, new UninitializedType(TypeUtils.getTypeFromString(type.getText())));
+            return new EntityProperty<>(text, new UninitializedType(TypeUtils.getTypeFromStringOrThrow(type.getText())));
         }
         
         // is a defined property
@@ -740,12 +773,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         return new EntityProperty<>(text, value);
     }
 
-//    interface EntityProperty {}
-
-//    record DefinedEntityProperty(String name, QilletniType type) implements EntityProperty {}
-
-//    record UndefinedEntityProperty(String name, Class<? extends QilletniType> type) implements EntityProperty {}
-
     @Override
     public List<String> visitEntity_constructor(QilletniParser.Entity_constructorContext ctx) {
         return visitNode(ctx.function_def_params());
@@ -754,19 +781,19 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public EntityType visitEntity_initialize(QilletniParser.Entity_initializeContext ctx) {
         var entityDefinition = entityDefinitionManager.lookup(ctx.ID().getText());
-        return entityDefinition.createInstance(visitNode(ctx.expr_list()));
+        return entityDefinition.createInstance(ctx.expr_list() == null ? Collections.emptyList() : visitNode(ctx.expr_list()));
     }
 
     @Override
-    public Object visitCollection_expr(QilletniParser.Collection_exprContext ctx) {
+    public CollectionType visitCollection_expr(QilletniParser.Collection_exprContext ctx) {
         var scope = symbolTable.currentScope();
 
-//        if (ctx.ID() != null) {
-//            return scope.<CollectionType>lookup(ctx.ID().getText()).getValue();
-//        }
+        if (ctx.ID() != null) {
+            return scope.<CollectionType>lookup(ctx.ID().getText()).getValue();
+        }
 
         if (ctx.function_call() != null) {
-            return visitQilletniTypedNode(ctx.function_call());
+            return this.<CollectionType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.url_or_name_pair();
@@ -814,7 +841,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     public <T extends QilletniType> T visitQilletniTypedNode(ParseTree ctx) {
         try {
-            return (T) this.visitNode(ctx);
+            return this.visitNode(ctx);
         } catch (ClassCastException e) {
             LOGGER.error("Invalid types!");
             throw new TypeMismatchException("Invalid typesssss!");
@@ -831,7 +858,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     // T can either be QilletniType (defined) or UninitializedType (undefined)
-    private record EntityProperty<T>(String name, T type) {}
+    public record EntityProperty<T>(String name, T type) {}
 
     public record ConditionalReturning(boolean finishedBranch, Optional<QilletniType> returnValue) {
         ConditionalReturning(boolean finishedBranch) {

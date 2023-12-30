@@ -1,6 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 public final class CollectionType extends QilletniType {
 
@@ -63,8 +64,8 @@ public final class CollectionType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "collection";
+    public QilletniTypeClass<CollectionType> getTypeClass() {
+        return QilletniTypeClass.COLLECTION;
     }
 
     @Override

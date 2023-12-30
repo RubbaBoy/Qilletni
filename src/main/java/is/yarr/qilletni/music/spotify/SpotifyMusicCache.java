@@ -43,7 +43,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Track> getTrack(String name, String artist) { //
+    public Optional<Track> getTrack(String name, String artist) {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -71,7 +71,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Track> getTrackById(String id) { //
+    public Optional<Track> getTrackById(String id) {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -147,7 +147,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public List<Track> getTracksById(List<String> trackIds) { //
+    public List<Track> getTracksById(List<String> trackIds) {
         // The track to look up with its destination index in the list
         var lookupTracks = new HashMap<Integer, String>();
         var foundTracks = new ArrayList<Track>(CollectionUtility.createList(trackIds.size(), null));
@@ -201,7 +201,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Playlist> getPlaylist(String name, String creator) { //
+    public Optional<Playlist> getPlaylist(String name, String creator) {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -293,7 +293,7 @@ public class SpotifyMusicCache implements MusicCache {
         var spotifyAlbum = (SpotifyAlbum) album;
         var albumTracks = spotifyAlbum.getTracks();
 
-        if (albumTracks == null) {
+        if (albumTracks == null || albumTracks.isEmpty()) {
             var tracks = spotifyMusicFetcher.fetchAlbumTracks(album);
             var allTracks = storeTracks(tracks).allTracks();
             spotifyAlbum.setTracks(allTracks.stream().map(SpotifyTrack.class::cast).toList());
@@ -343,7 +343,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Artist> getArtistById(String id) { //
+    public Optional<Artist> getArtistById(String id) {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 
@@ -359,7 +359,7 @@ public class SpotifyMusicCache implements MusicCache {
     }
 
     @Override
-    public Optional<Artist> getArtistByName(String name) { //
+    public Optional<Artist> getArtistByName(String name) {
         try (var entityTransaction = EntityTransaction.beginTransaction()) {
             var session = entityTransaction.getSession();
 

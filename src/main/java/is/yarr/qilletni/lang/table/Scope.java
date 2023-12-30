@@ -34,6 +34,10 @@ public class Scope {
         }
         
         var symbol = (Symbol<T>) symbolTable.get(name);
+        if (symbol == null) {
+            symbol = (Symbol<T>) functionSymbolTable.get(name).get(0);
+        }
+        
         TableUtils.requireSymbolNotNull(symbol, name);
         return symbol;
     }
@@ -54,16 +58,6 @@ public class Scope {
                 .findFirst()
                 .orElseThrow(() -> new VariableNotFoundException("Function " + name + " with " + params + " not found"));
     }
-    
-//    public Symbol<EntityType> lookupEntityDefinition(String name) {
-//        if (parent != null && parent.isEntityDefinitionDefined(name)) {
-//            return parent.lookupEntityDefinition(name);
-//        }
-//
-//        var symbol = (Symbol<EntityType>) functionSymbolTable.get(name);
-//        TableUtils.requireSymbolNotNull(symbol, name);
-//        return symbol;
-//    }
 
     public List<Symbol<FunctionType>> lookupFunction(String name) {
         if (parent != null && parent.isFunctionDefined(name)) {

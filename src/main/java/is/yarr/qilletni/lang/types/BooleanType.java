@@ -1,5 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+
 public final class BooleanType extends QilletniType {
     
     public static final BooleanType TRUE = new BooleanType(true);
@@ -25,8 +27,8 @@ public final class BooleanType extends QilletniType {
     }
 
     @Override
-    public String typeName() {
-        return "boolean";
+    public QilletniTypeClass<BooleanType> getTypeClass() {
+        return QilletniTypeClass.BOOLEAN;
     }
 
     @Override
