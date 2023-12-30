@@ -16,8 +16,6 @@ public class Scope {
     private final Map<String, Symbol<?>> symbolTable = new HashMap<>();
     private final Map<String, List<Symbol<FunctionType>>> functionSymbolTable = new HashMap<>();
     
-    // Names of entities defined (not instances of entities)
-//    private final Map<String, EntityType> entityTypes = new HashMap<>();
     private final Scope parent;
     
     public Scope() {
@@ -59,7 +57,7 @@ public class Scope {
             return callingParamCount == params;
         })
                 .findFirst()
-                .orElseThrow(() -> new VariableNotFoundException("Function " + name + " with " + params + " not found"));
+                .orElseThrow(() -> new VariableNotFoundException("Function " + name + " with " + params + " params not found"));
     }
 
     public List<Symbol<FunctionType>> lookupFunction(String name) {
@@ -90,14 +88,6 @@ public class Scope {
         
         return functionSymbolTable.containsKey(name);
     }
-    
-//    public boolean isEntityDefinitionDefined(String name) {
-//        if (parent != null && parent.isEntityDefinitionDefined(name)) {
-//            return true;
-//        }
-//
-//        return entityTypes.containsKey(name);
-//    }
 
     public <T extends QilletniType> void define(Symbol<T> symbol) {
         if (isDefined(symbol.getName())) {

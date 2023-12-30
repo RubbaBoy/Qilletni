@@ -25,7 +25,7 @@
     </Console>
 </Appenders>
 <Loggers>
-    <Logger name="is.yarr.qilletni" level="info" additivity="false">
+    <Logger name="is.yarr.qilletni" level="debug" additivity="false">
         <AppenderRef ref="Console"/>
     </Logger>
     <Root level="info" >

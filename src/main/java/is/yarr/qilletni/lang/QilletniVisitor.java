@@ -10,6 +10,7 @@ import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.Symbol;
 import is.yarr.qilletni.lang.table.SymbolTable;
@@ -50,7 +51,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
@@ -516,7 +516,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var functionType = scope.lookupFunction(id, params.size()).getValue();
         
         if (hasOnType && !functionType.getOnType().equals(invokedOn.getTypeClass())) {
-            throw new RuntimeException("Function not to be invoked on " + invokedOn.getClass());
+            throw new RuntimeException("Function not to be invoked on " + invokedOn.getTypeClass() + " should be " + functionType.getOnType());
         }
 
         var functionParams = new ArrayList<>(Arrays.asList(functionType.getParams()));

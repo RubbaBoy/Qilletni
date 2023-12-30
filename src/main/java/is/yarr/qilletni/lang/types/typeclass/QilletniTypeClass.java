@@ -64,7 +64,7 @@ public class QilletniTypeClass<T extends QilletniType> {
     }
     
     public static QilletniTypeClass<ListType> createListOfType(QilletniTypeClass<?> subType) {
-        return new QilletniTypeClass<>(ListType.class, "[]", subType);
+        return new QilletniTypeClass<>(ListType.class, "list", subType);
     }
 
     /**
