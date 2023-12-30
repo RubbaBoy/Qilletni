@@ -22,6 +22,7 @@ running
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
     | ID PLUS ID // handled separately due to appending of different types
+    | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET
     | expr DOT function_call
     | expr DOT ID
     | entity_initialize
@@ -33,6 +34,7 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | collection_expr
     | song_expr
     | weights_expr
+    | list_expression
     ;
 
 bool_expr
@@ -92,6 +94,11 @@ single_weight
     : WEIGHT_PIPE weight_amount song_expr
     ;
 
+list_expression
+    : LEFT_SBRACKET expr_list? RIGHT_SBRACKET
+    | ID
+    ;
+
 function_call
     : ID '(' expr_list? ')'
     ;
@@ -117,14 +124,13 @@ body
     ;
 
 asmt
-    : type=INT_TYPE ID ASSIGN expr
-    | type=STRING_TYPE ID ASSIGN expr
-    | type=BOOLEAN_TYPE ID ASSIGN expr
-    | type=COLLECTION_TYPE ID ASSIGN expr
-    | type=SONG_TYPE ID ASSIGN expr
-    | type=WEIGHTS_KEYWORD ID ASSIGN expr
-    | type=ID ID ASSIGN expr
-    | ID LEFT_SBRACKET RIGHT_SBRACKET ID ASSIGN expr
+    : type=INT_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=STRING_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=BOOLEAN_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=COLLECTION_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=SONG_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=WEIGHTS_KEYWORD (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=ID (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | ID ASSIGN expr
     | expr_assign=expr DOT ID ASSIGN expr
     ;

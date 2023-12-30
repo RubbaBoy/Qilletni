@@ -38,8 +38,10 @@ public class EntityPlaceholderTypeClass extends QilletniTypeClass<EntityType> {
 
     @Override
     public boolean equals(Object o) {
+        System.out.println("aaaa");
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !(o instanceof QilletniTypeClass<?>)) return false;
+        System.out.println("HERE");
         QilletniTypeClass<?> that = (QilletniTypeClass<?>) o;
         return Objects.equals(getTypeName(), that.getTypeName());
     }

@@ -3,18 +3,19 @@ package is.yarr.qilletni.lang.types;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public final class ListType extends QilletniType {
     
     private List<QilletniType> items;
     private final QilletniTypeClass<ListType> listType;
 
-    public ListType(QilletniTypeClass<ListType> innerType, List<QilletniType> items) {
+    public ListType(QilletniTypeClass<?> innerType, List<QilletniType> items) {
         this.items = items;
         this.listType = QilletniTypeClass.createListOfType(innerType);
     }
 
-    public QilletniTypeClass<?> getInnerType() {
+    public QilletniTypeClass<?> getSubType() {
         return listType.getSubType();
     }
 
@@ -28,11 +29,19 @@ public final class ListType extends QilletniType {
 
     @Override
     public String stringValue() {
-        return String.format("%s[]", listType.getSubType().getTypeName());
+        return String.format("[%s]", items.stream().map(QilletniType::stringValue).collect(Collectors.joining(", ")));
     }
 
     @Override
     public QilletniTypeClass<ListType> getTypeClass() {
         return listType;
+    }
+
+    @Override
+    public String toString() {
+        return "ListType{" +
+                "items=" + items +
+                ", listType=" + listType +
+                '}';
     }
 }

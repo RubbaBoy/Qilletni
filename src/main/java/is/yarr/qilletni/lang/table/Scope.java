@@ -35,7 +35,10 @@ public class Scope {
         
         var symbol = (Symbol<T>) symbolTable.get(name);
         if (symbol == null) {
-            symbol = (Symbol<T>) functionSymbolTable.get(name).get(0);
+            var functions = functionSymbolTable.get(name);
+            if (functions != null && !functions.isEmpty()) {
+                symbol = (Symbol<T>) functions.get(0);
+            }
         }
         
         TableUtils.requireSymbolNotNull(symbol, name);

@@ -113,4 +113,14 @@ public class QilletniTypeClass<T extends QilletniType> {
     public int hashCode() {
         return Objects.hash(internalType, entityDefinition, typeName);
     }
+
+    @Override
+    public String toString() {
+        return "QilletniTypeClass{" +
+                "internalType=" + internalType +
+                ", entityDefinition=" + entityDefinition +
+                ", typeName='" + typeName + '\'' +
+                ", subType=" + subType +
+                '}';
+    }
 }

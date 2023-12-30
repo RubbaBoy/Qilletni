@@ -34,7 +34,3 @@ print("foo = " + foo)
 foo = pair // fails
 
 print("foo = " + foo)
-
-//int[] nums = [1, 2, 3, 4, 5]
-
-//print("nums = " + nums)
