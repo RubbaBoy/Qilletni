@@ -147,6 +147,25 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             currentScope.define(Symbol.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
             
             // visitQilletniList
+        } else if (ctx.LEFT_SBRACKET() != null) { // foo[123] = expr
+            var listSymbol = currentScope.<ListType>lookup(id);
+            var list = listSymbol.getValue();
+            var index = visitQilletniTypedNode(ctx.int_expr(), IntType.class).getValue();
+
+            if (index < 0 || index > list.getItems().size()) {
+                throw new ListOutOfBoundsException("Attempted to access index " + index + " on a list with a size of " + list.getItems().size());
+            }
+            
+            var expressionValue = visitQilletniTypedNode(ctx.expr(0));
+            if (!expressionValue.getTypeClass().equals(list.getSubType())) {
+                throw new TypeMismatchException("Attempted to assign a " + expressionValue.typeName() + " in a " + list.typeName() + " list");
+            }
+
+            var mutableItems = new ArrayList<>(list.getItems());
+            mutableItems.set(index, expressionValue);
+            list.setItems(mutableItems);
+            
+            listSymbol.setValue(list); // Not really needed
         } else if (ctx.type != null) { // defining a new var
             var expr = ctx.expr(0);
             QilletniType assignmentValue = switch (ctx.type.getType()) {

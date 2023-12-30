@@ -16,3 +16,6 @@ print("pairs = " + pairs)
 print(nums[1])
 print(pairs[0])
 
+nums[3] = nums[0]
+
+print(nums)

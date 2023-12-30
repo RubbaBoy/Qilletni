@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ public final class ListType extends QilletniType {
     }
 
     public void setItems(List<QilletniType> items) {
-        this.items = items;
+        this.items = Collections.unmodifiableList(items);
     }
 
     @Override
