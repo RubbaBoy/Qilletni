@@ -3,8 +3,11 @@ package is.yarr.qilletni;
 import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.IntType;
+import is.yarr.qilletni.lang.types.ListType;
+import is.yarr.qilletni.lang.types.QilletniType;
 import is.yarr.qilletni.lang.types.SongType;
 import is.yarr.qilletni.lang.types.StringType;
+import is.yarr.qilletni.lang.types.TypelessListType;
 import is.yarr.qilletni.lang.types.WeightsType;
 import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
 import is.yarr.qilletni.lang.types.collection.CollectionOrder;
@@ -253,6 +256,45 @@ public class TypeTest {
         assertEquals("rubbaboy", collection.getCreator());
         assertEquals(CollectionOrder.SHUFFLE, collection.getOrder());
         assertEquals(weights, collection.getWeights());
+    }
+
+    @Test
+    void testList() {
+        var runner = programTester.runProgram("""
+                int[] i = [1, 2, 3]
+                """);
+
+        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        assertEquals(1, symbols.size());
+
+        var listSymbol = symbols.get("i");
+        assertEquals(QilletniTypeClass.LIST, listSymbol.getType());
+        
+        var list = (ListType) listSymbol.getValue();
+        assertEquals(QilletniTypeClass.INT, list.getSubType());
+        
+        var items = list.getItems().toArray(QilletniType[]::new);
+        assertEquals(3, items.length);
+        assertArrayEquals(new QilletniType[] {new IntType(1), new IntType(2), new IntType(3)}, items);
+    }
+
+    @Test
+    void testEmptyList() {
+        var runner = programTester.runProgram("""
+                int[] i = []
+                """);
+
+        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        assertEquals(1, symbols.size());
+
+        var listSymbol = symbols.get("i");
+        assertEquals(QilletniTypeClass.LIST, listSymbol.getType());
+        
+        var list = (ListType) listSymbol.getValue();
+        assertEquals(QilletniTypeClass.INT, list.getSubType());
+        
+        assertFalse(list instanceof TypelessListType);
+        assertEquals(Collections.emptyList(), list.getItems());
     }
     
     public static class TypeTestFunctions {

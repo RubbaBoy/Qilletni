@@ -22,6 +22,7 @@ import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.IntType;
 import is.yarr.qilletni.lang.types.ListType;
 import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.TypelessListType;
 import is.yarr.qilletni.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.SongType;
@@ -121,17 +122,17 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.type != null && ctx.LEFT_SBRACKET() != null) { // defining a new list
             var expr = ctx.expr(0);
             ListType assignmentValue = switch (ctx.type.getType()) {
-                case QilletniLexer.INT_TYPE -> visitQilletniList(expr, QilletniTypeClass.INT);
-                case QilletniLexer.BOOLEAN_TYPE -> visitQilletniList(expr, QilletniTypeClass.BOOLEAN);
-                case QilletniLexer.STRING_TYPE -> visitQilletniList(expr, QilletniTypeClass.STRING);
-                case QilletniLexer.COLLECTION_TYPE -> visitQilletniList(expr, QilletniTypeClass.COLLECTION);
-                case QilletniLexer.SONG_TYPE -> visitQilletniList(expr, QilletniTypeClass.SONG);
-                case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniList(expr, QilletniTypeClass.WEIGHTS);
+                case QilletniLexer.INT_TYPE -> createQilletniList(expr, QilletniTypeClass.INT);
+                case QilletniLexer.BOOLEAN_TYPE -> createQilletniList(expr, QilletniTypeClass.BOOLEAN);
+                case QilletniLexer.STRING_TYPE -> createQilletniList(expr, QilletniTypeClass.STRING);
+                case QilletniLexer.COLLECTION_TYPE -> createQilletniList(expr, QilletniTypeClass.COLLECTION);
+                case QilletniLexer.SONG_TYPE -> createQilletniList(expr, QilletniTypeClass.SONG);
+                case QilletniLexer.WEIGHTS_KEYWORD -> createQilletniList(expr, QilletniTypeClass.WEIGHTS);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
 
                     var expectedEntity = entityDefinitionManager.lookup(entityName).getQilletniTypeClass();
-                    var entityNode = visitQilletniList(expr, QilletniTypeClass.createEntityTypePlaceholder(entityName));
+                    var entityNode = createQilletniList(expr, QilletniTypeClass.createEntityTypePlaceholder(entityName));
 
                     var listSubtypeClass = entityNode.getSubType();
                     if (!listSubtypeClass.equals(expectedEntity)) {
@@ -455,6 +456,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return scope.<ListType>lookup(ctx.ID().getText()).getValue();
         }
         
+        if (ctx.expr_list() == null) {
+            return new TypelessListType();
+        }
+
         var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
         
         var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
@@ -929,11 +934,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         return new CollectionLimit(Integer.parseInt(ctx.INT().getText()), limitUnit);
     }
     
-    private <T extends QilletniType> ListType visitQilletniList(ParseTree ctx, QilletniTypeClass<T> listType) {
+    private <T extends QilletniType> ListType createQilletniList(ParseTree ctx, QilletniTypeClass<T> listType) {
         ListType list = visitNode(ctx);
+        
+        if (list instanceof TypelessListType) {
+            return new ListType(listType, Collections.emptyList());
+        }
+        
         if (!listType.equals(list.getSubType())) {
-            System.out.println("listType = " + listType.getClass());
-            System.out.println("list.getSubType() = " + list.getSubType().getClass());
             throw new TypeMismatchException("Expected list of " + listType.getTypeName() + " but received " + list.getSubType().getTypeName());
         }
         

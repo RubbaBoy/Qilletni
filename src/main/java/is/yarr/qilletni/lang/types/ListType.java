@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public final class ListType extends QilletniType {
+public sealed class ListType extends QilletniType permits TypelessListType {
     
     private List<QilletniType> items;
     private final QilletniTypeClass<ListType> listType;
