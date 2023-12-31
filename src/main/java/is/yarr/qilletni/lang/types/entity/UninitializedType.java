@@ -17,8 +17,8 @@ public class UninitializedType {
         this.nativeTypeClass = null;
     }
     
-    public boolean isNative() {
-        return nativeTypeClass != null;
+    public boolean isEntity() {
+        return nativeTypeClass == null;
     }
 
     public QilletniTypeClass<?> getNativeTypeClass() {
@@ -30,7 +30,7 @@ public class UninitializedType {
     }
     
     public String getTypeName() {
-        if (isNative()) {
+        if (!isEntity()) {
             return nativeTypeClass.getTypeName();
         } else {
             return entityDefinition.getTypeName();
@@ -41,7 +41,7 @@ public class UninitializedType {
     public String toString() {
         var typeString = "nativeTypeClass=" + nativeTypeClass;
         
-        if (!isNative()) {
+        if (isEntity()) {
             typeString = "entityDefinition=" + entityDefinition; 
         }
         

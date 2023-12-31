@@ -73,25 +73,25 @@ public class EntityDefinition {
         for (Entry(var name, var uninitializedType) : CollectionUtility.getRecordEntries(uninitializedParams)) {
             var currentParam = constructorParams.get(index);
 
-            if (!uninitializedType.isNative()) {
+            if (uninitializedType.isEntity()) {
                 if (!(currentParam instanceof EntityType entityType)) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName());
+                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
                 }
                 
                 if (!entityType.getEntityDefinition().equals(uninitializedType.getEntityDefinition())) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName());
+                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
                 }
                 
                 // valid entity to set
             }
 
-            if (uninitializedType.isNative()) {
+            if (!uninitializedType.isEntity()) {
                 if (currentParam instanceof EntityType) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName());
+                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
                 }
                 
                 if (!uninitializedType.getNativeTypeClass().equals(currentParam.getTypeClass())) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName());
+                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
                 }
                 
                 // valid QilletniType

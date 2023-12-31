@@ -47,12 +47,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
@@ -802,20 +805,24 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public EntityAttributes visitEntity_body(QilletniParser.Entity_bodyContext ctx) {
         var initializedProperties = new HashMap<String, QilletniType>();
-        var uninitializedProperties = new HashMap<String, UninitializedType>();
+        var unorderedUninitializedProperties = new HashMap<String, UninitializedType>();
         
         ctx.entity_property_declaration().stream().map(this::<EntityProperty<?>>visitNode).forEach(entityProperty -> {
             if (entityProperty instanceof EntityProperty<?> (var name, UninitializedType type)) {
-                uninitializedProperties.put(name, type);
+                unorderedUninitializedProperties.put(name, type);
             } else if (entityProperty instanceof EntityProperty<?> (var name, QilletniType type)) {
                 initializedProperties.put(name, type);
             }
         });
         
-        Set<String> params = new HashSet<>(visitNode(ctx.entity_constructor()));
-        if (params.size() != uninitializedProperties.size() || !params.stream().allMatch(uninitializedProperties::containsKey)) {
+        List<String> params = visitNode(ctx.entity_constructor());
+        if (params.size() != unorderedUninitializedProperties.size() || !params.stream().allMatch(unorderedUninitializedProperties::containsKey)) {
             throw new InvalidConstructor("Constructor parameters must match uninitialized properties of the entity");
         }
+        
+        // In the same order as the constructor
+        var uninitializedProperties = params.stream().collect(Collectors.toMap(Function.identity(),
+                unorderedUninitializedProperties::get, (o1, o2) -> o1, LinkedHashMap::new));
         
         List<Consumer<Scope>> functionPopulators = ctx.function_def()
                 .stream()

@@ -110,4 +110,12 @@ public class QilletniProgramRunner {
     public NativeFunctionHandler getNativeFunctionHandler() {
         return nativeFunctionHandler;
     }
+
+    public Scope getGlobalScope() {
+        return globalScope;
+    }
+
+    public EntityDefinitionManager getEntityDefinitionManager() {
+        return entityDefinitionManager;
+    }
 }
