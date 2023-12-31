@@ -77,7 +77,7 @@ public class QilletniProgramRunner {
         runProgram(CharStreams.fromStream(stream), pathState);
     }
 
-    private void runProgram(CharStream charStream, ImportPathState pathState) {
+    public void runProgram(CharStream charStream, ImportPathState pathState) {
         var lexer = new QilletniLexer(charStream);
         var tokenStream = new CommonTokenStream(lexer);
         var qilletniParser = new QilletniParser(tokenStream);
@@ -105,5 +105,9 @@ public class QilletniProgramRunner {
 
     public SymbolTable getSymbolTable() {
         return symbolTable;
+    }
+
+    public NativeFunctionHandler getNativeFunctionHandler() {
+        return nativeFunctionHandler;
     }
 }

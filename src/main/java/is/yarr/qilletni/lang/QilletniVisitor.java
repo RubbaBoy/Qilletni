@@ -22,6 +22,7 @@ import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.IntType;
 import is.yarr.qilletni.lang.types.ListType;
 import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.SongType;
 import is.yarr.qilletni.lang.types.StringType;
@@ -172,8 +173,22 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(expr, IntType.class);
                 case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(expr, BooleanType.class);
                 case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(expr, StringType.class);
-                case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(expr, CollectionType.class);
-                case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(expr, SongType.class);
+                case QilletniLexer.COLLECTION_TYPE -> {
+                    var value = visitQilletniTypedNode(expr);
+                    if (!(value instanceof StringType stringType)) {
+                        yield TypeUtils.safelyCast(value, CollectionType.class);
+                    }
+
+                    yield new CollectionType(stringType.stringValue());
+                }
+                case QilletniLexer.SONG_TYPE -> {
+                    var value = visitQilletniTypedNode(expr);
+                    if (!(value instanceof StringType stringType)) {
+                        yield TypeUtils.safelyCast(value, SongType.class);
+                    }
+
+                    yield new SongType(stringType.stringValue());
+                }
                 case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(expr, WeightsType.class);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
@@ -706,7 +721,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return this.<SongType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
-        var urlOrName = ctx.url_or_name_pair();
+        var urlOrName = ctx.song_url_or_name_pair();
         if (urlOrName.STRING().size() == 1) {
             return new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
         }
@@ -715,7 +730,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     @Override
-    public Void visitUrl_or_name_pair(QilletniParser.Url_or_name_pairContext ctx) {
+    public Object visitSong_url_or_name_pair(QilletniParser.Song_url_or_name_pairContext ctx) {
+        throw new RuntimeException("This should never be visited!");
+    }
+
+    @Override
+    public Object visitCollection_url_or_name_pair(QilletniParser.Collection_url_or_name_pairContext ctx) {
         throw new RuntimeException("This should never be visited!");
     }
 
@@ -854,22 +874,39 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return this.<CollectionType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
-        var urlOrName = ctx.url_or_name_pair();
+        var urlOrName = ctx.collection_url_or_name_pair();
+        CollectionType collectionType;
         if (urlOrName.STRING().size() == 1) {
-            return new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+            collectionType = new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+        } else {
+            collectionType = new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
-        return new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+        if (ctx.order_define() != null) {
+            collectionType.setOrder(visitNode(ctx.order_define()));
+        }
+        
+        if (ctx.weights_define() != null) {
+            collectionType.setWeights(visitNode(ctx.weights_define()));
+        }
+        
+        return collectionType;
     }
 
     @Override
-    public Object visitOrder_define(QilletniParser.Order_defineContext ctx) {
-        return super.visitOrder_define(ctx);
+    public CollectionOrder visitOrder_define(QilletniParser.Order_defineContext ctx) {
+        return CollectionOrder.getFromString(ctx.COLLECTION_ORDER().getText());
     }
 
     @Override
-    public Object visitWeights_define(QilletniParser.Weights_defineContext ctx) {
-        return super.visitWeights_define(ctx);
+    public WeightsType visitWeights_define(QilletniParser.Weights_defineContext ctx) {
+        var scope = symbolTable.currentScope();
+
+        if (ctx.ID() != null) {
+            return scope.<WeightsType>lookup(ctx.ID().getText()).getValue();
+        }
+        
+        return this.<WeightsType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
     }
 
     @Override

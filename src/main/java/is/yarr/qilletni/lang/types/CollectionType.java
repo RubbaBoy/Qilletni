@@ -1,6 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
+import is.yarr.qilletni.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 public final class CollectionType extends QilletniType {
@@ -9,6 +10,7 @@ public final class CollectionType extends QilletniType {
     private String url;
     private String name;
     private String creator;
+    private CollectionOrder order = CollectionOrder.SEQUENTIAL;
     private WeightsType weights;
 
     public CollectionType(String url) {
@@ -52,6 +54,22 @@ public final class CollectionType extends QilletniType {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public CollectionOrder getOrder() {
+        return order;
+    }
+
+    public void setOrder(CollectionOrder order) {
+        this.order = order;
+    }
+
+    public WeightsType getWeights() {
+        return weights;
+    }
+
+    public void setWeights(WeightsType weights) {
+        this.weights = weights;
     }
 
     @Override

@@ -64,9 +64,6 @@ public class NativeFunctionHandler {
             paramCount--;
         }
 
-//        System.out.println("name = " + name + ", params = " + params + ", invokedUponType = " + invokedUponType);
-//        System.out.println("nativeMethods = " + nativeMethods);
-        
         var method = nativeMethods.get(new MethodSignature(name, paramCount, invokedUponType));
         if (method == null) {
             throw new NativeMethodNotBoundException("Native method not bound to anything!");

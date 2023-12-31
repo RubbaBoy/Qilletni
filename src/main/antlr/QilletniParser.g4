@@ -62,7 +62,7 @@ str_expr
 
 collection_expr
     : function_call
-    | url_or_name_pair order_define? weights_define?
+    | collection_url_or_name_pair order_define? weights_define?
     | ID
     ;
 
@@ -76,13 +76,18 @@ weights_define
 
 song_expr
     : function_call
-    | url_or_name_pair
+    | song_url_or_name_pair
     | ID
     ;
 
-url_or_name_pair
+song_url_or_name_pair
     : STRING
     | STRING BY STRING
+    ;
+
+collection_url_or_name_pair
+    : STRING
+    | STRING CREATED BY STRING
     ;
 
 weights_expr

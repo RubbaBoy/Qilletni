@@ -1,0 +1,1 @@
+native fun invokeFunction()

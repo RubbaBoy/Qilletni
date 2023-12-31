@@ -4,10 +4,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public record ImportPathState(Path path, boolean isInternal) {
+    
+    public static final ImportPathState VIRTUAL_STATE = new ImportPathState(Path.of(""), true);
+
     /**
      * Creates a new ImportPathState with a sub path in {@link #path}.
      *
-     * @param childFile The name (or relativel path) of the next file
+     * @param childFile The name (or relative path) of the next file
      * @return The new {@link ImportPathState} to import from
      */
     public ImportPathState importFrom(String childFile) {
@@ -19,7 +22,12 @@ public record ImportPathState(Path path, boolean isInternal) {
 
         // This is not the first internal import, or else it would have begun with !
         if (isInternal) {
-            return new ImportPathState(path.getParent().resolve(childFile), true);
+            var parentPath = path.getParent();
+            if (parentPath == null) {
+                parentPath = path;
+            }
+            
+            return new ImportPathState(parentPath.resolve(childFile), true);
         }
 
         return new ImportPathState(path.resolve(childFile), isInternal);
