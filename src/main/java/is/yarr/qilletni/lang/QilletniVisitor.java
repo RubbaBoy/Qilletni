@@ -22,6 +22,7 @@ import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.IntType;
+import is.yarr.qilletni.lang.types.JavaType;
 import is.yarr.qilletni.lang.types.ListType;
 import is.yarr.qilletni.lang.types.QilletniType;
 import is.yarr.qilletni.lang.types.SongType;
@@ -825,6 +826,21 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         return null;
     }
 
+    @Override
+    public JavaType visitJava_expr(QilletniParser.Java_exprContext ctx) {
+        if (ctx.ID() != null) {
+            var scope = symbolTable.currentScope();
+            return scope.<JavaType>lookup(ctx.ID().getText()).getValue();
+        }
+
+        if (ctx.function_call() != null) {
+            return this.<JavaType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+        }
+        
+        // Has to be empty
+        return new JavaType(null);
+    }
+
     // Entity
 
     @Override
@@ -850,6 +866,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 initializedProperties.put(name, type);
             }
         });
+
+        System.out.println("unorderedUninitializedProperties = " + unorderedUninitializedProperties);
+        System.out.println("initializedProperties = " + initializedProperties);
 
         List<String> params = visitNode(ctx.entity_constructor());
         if (params.size() != unorderedUninitializedProperties.size() || !params.stream().allMatch(unorderedUninitializedProperties::containsKey)) {
@@ -882,7 +901,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         var type = ctx.type;
 
-        if (ctx.int_expr() == null && ctx.str_expr() == null && ctx.bool_expr() == null && ctx.collection_expr() == null && ctx.song_expr() == null && ctx.weights_expr() == null && ctx.entity_initialize() == null) {
+        if (ctx.int_expr() == null && ctx.str_expr() == null && ctx.bool_expr() == null && ctx.collection_expr() == null && ctx.song_expr() == null && ctx.weights_expr() == null && ctx.entity_initialize() == null && ctx.java_expr() == null) {
             // undefined property
             if (ctx.ID().size() == 2) { // is an Entity
                 return new EntityProperty<>(text, new UninitializedType(entityDefinitionManager.lookup(ctx.ID(0).getText()))); // pass the entity name? TODO
@@ -900,9 +919,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(ctx.collection_expr(), CollectionType.class);
             case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(ctx.song_expr(), SongType.class);
             case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(ctx.weights_expr(), WeightsType.class);
-            case QilletniLexer.ID -> null;
+            case QilletniLexer.JAVA_TYPE -> visitQilletniTypedNode(ctx.java_expr(), JavaType.class);
+            case QilletniLexer.ID -> visitQilletniTypedNode(ctx.entity_initialize(), EntityType.class);
             default -> throw new RuntimeException("This should not be possible, unknown type");
         };
+
+        System.out.println("value = " + value);
 
         return new EntityProperty<>(text, value);
     }

@@ -27,8 +27,10 @@ STRING_TYPE : 'string';
 BOOLEAN_TYPE : 'boolean';
 COLLECTION_TYPE : 'collection';
 SONG_TYPE : 'song';
+JAVA_TYPE : 'java';
 
 ENTITY: 'entity';
+EMPTY: 'empty';
 NEW: 'new';
 
 ORDER_PARAM   : 'order' -> pushMode(ORDER_MODE);

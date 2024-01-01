@@ -4,6 +4,7 @@ import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public sealed class ListType extends QilletniType permits TypelessListType {
@@ -36,6 +37,19 @@ public sealed class ListType extends QilletniType permits TypelessListType {
     @Override
     public QilletniTypeClass<ListType> getTypeClass() {
         return listType;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ListType listType1 = (ListType) o;
+        return Objects.equals(items, listType1.items) && Objects.equals(listType, listType1.listType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(items, listType);
     }
 
     @Override

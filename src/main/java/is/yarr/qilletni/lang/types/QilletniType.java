@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Internal types for Qilletni programs.
  */
-public sealed abstract class QilletniType permits BooleanType, CollectionType, EntityType, FunctionType, IntType, ListType, SongType, StringType, WeightsType {
+public sealed abstract class QilletniType permits BooleanType, CollectionType, EntityType, FunctionType, IntType, JavaType, ListType, SongType, StringType, WeightsType {
     
     final List<FunctionType> associatedFunctions = new ArrayList<>();
 //    final List<String> associatedProperties = new ArrayList<>();

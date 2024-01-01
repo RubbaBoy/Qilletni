@@ -8,6 +8,7 @@ import is.yarr.qilletni.lang.types.QilletniType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 public class Scope {
@@ -135,6 +136,19 @@ public class Scope {
 
     public Map<String, Symbol<?>> getAllSymbols() {
         return symbolTable;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Scope scope = (Scope) o;
+        return scopeId == scope.scopeId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scopeId);
     }
 
     @Override

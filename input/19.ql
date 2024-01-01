@@ -1,23 +1,19 @@
 import "!std/core.ql"
 
 Map map = new Map()
-map.putt(1, 2)
-map.put(1, 2)
+map.put(1, 200)
 
-
-fun balls(map, a) on Map {
-    print("balls! " + a)
-    print(map)
+fun foo(map) on Map {
+    print("balls! " + map)
 }
 
-fun foo() {}
-
-
-map.balls("woahh")
-int d = 123
-
 print(map)
+print(map.get(1))
 
-print(random(1, 1000))
-//print("a = " + a)
+print(map.containsKey("hi"))
+map.put("hi", 100)
 
+print(map.containsKey("hi"))
+print(map.get("hi"))
+
+map.foo()

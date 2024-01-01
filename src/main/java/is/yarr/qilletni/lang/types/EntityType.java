@@ -4,6 +4,7 @@ import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.types.entity.EntityDefinition;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class EntityType extends QilletniType {
@@ -42,6 +43,19 @@ public final class EntityType extends QilletniType {
     @Override
     public QilletniTypeClass<EntityType> getTypeClass() {
         return entityDefinition.getQilletniTypeClass();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EntityType that = (EntityType) o;
+        return Objects.equals(entityScope, that.entityScope) && Objects.equals(entityDefinition, that.entityDefinition);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(entityScope, entityDefinition);
     }
 
     @Override

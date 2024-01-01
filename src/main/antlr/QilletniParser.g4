@@ -34,6 +34,7 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | collection_expr
     | song_expr
     | weights_expr
+    | java_expr
     | list_expression
     ;
 
@@ -104,6 +105,12 @@ list_expression
     | ID
     ;
 
+java_expr
+    : function_call
+    | EMPTY
+    | ID
+    ;
+
 function_call
     : ID '(' expr_list? ')'
     ;
@@ -135,6 +142,7 @@ asmt
     | type=COLLECTION_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=SONG_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=WEIGHTS_KEYWORD (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=JAVA_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=ID (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET ASSIGN expr
     | ID ASSIGN expr
@@ -206,6 +214,7 @@ entity_property_declaration
     | type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
     | type=SONG_TYPE ID (ASSIGN song_expr)?
     | type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?
+    | type=JAVA_TYPE ID (ASSIGN java_expr)?
     | type=ID ID (ASSIGN entity_initialize)?
     ;
 
