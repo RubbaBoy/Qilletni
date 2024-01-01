@@ -12,6 +12,7 @@ import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
 import is.yarr.qilletni.lang.exceptions.QilletniException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.Symbol;
@@ -236,7 +237,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
             LOGGER.debug("(new) {} = {}", id, assignmentValue);
             currentScope.define(Symbol.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
-        } else if (ctx.expr_assign != null) {
+        } else if (ctx.expr_assign != null) { // foo.bar = baz
+
+            if (id.startsWith("_")) {
+                throw new VariableNotFoundException(ctx.expr_assign, "Cannot access private variable");
+            }
+            
             var entity = visitQilletniTypedNode(ctx.expr(0), EntityType.class);
             var propertyValue = visitQilletniTypedNode(ctx.expr(1));
             var entityScope = entity.getEntityScope();
@@ -279,6 +285,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 LOGGER.debug("Visiting expr! ID: {}", ctx.ID());
                 return currentScope.lookup(idText).getValue();
             } else { // foo.baz
+                if (idText.startsWith("_")) {
+                    throw new VariableNotFoundException(ctx, "Cannot access private variable");
+                }
+                
                 var entity = visitQilletniTypedNode(ctx.expr(), EntityType.class);
                 LOGGER.debug("Getting property {} on entity {}", idText, entity.typeName());
                 var entityScope = entity.getEntityScope();
@@ -287,6 +297,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.DOT() != null) { // foo.bar()
+            if (ctx.function_call().ID().getText().startsWith("_")) {
+                throw new FunctionInvocationException(ctx, "Cannot invoke private function");
+            }
+            
             var leftExpr = visitQilletniTypedNode(ctx.expr());
             return visitFunctionCallWithContext(ctx.function_call(), leftExpr).orElseThrow(FunctionDidntReturnException::new);
         }
@@ -867,10 +881,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
         });
 
-        System.out.println("unorderedUninitializedProperties = " + unorderedUninitializedProperties);
-        System.out.println("initializedProperties = " + initializedProperties);
-
-        List<String> params = visitNode(ctx.entity_constructor());
+        List<String> params = ctx.entity_constructor() == null ? Collections.emptyList() : visitNode(ctx.entity_constructor());
         if (params.size() != unorderedUninitializedProperties.size() || !params.stream().allMatch(unorderedUninitializedProperties::containsKey)) {
             throw new InvalidConstructor(ctx, "Constructor parameters must match uninitialized properties of the entity");
         }

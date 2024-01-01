@@ -15,5 +15,3 @@ map.put("hi", 100)
 
 print(map.containsKey("hi"))
 print(map.get("hi"))
-
-map.foo()

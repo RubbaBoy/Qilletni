@@ -9,13 +9,13 @@ import java.util.HashMap;
 
 public class MapFunctions {
     
-    public static JavaType emptyJavaMap() {
+    public static JavaType _emptyJavaMap() {
         return new JavaType(new HashMap<>());
     }
 
     @NativeOn("Map")
     public static void put(EntityType entity, QilletniType key, QilletniType value) {
-        JavaType javaType = entity.getEntityScope().<JavaType>lookup("map").getValue();
+        JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
         
         hashMap.put(key, value);
@@ -23,7 +23,7 @@ public class MapFunctions {
 
     @NativeOn("Map")
     public static QilletniType get(EntityType entity, QilletniType key) {
-        JavaType javaType = entity.getEntityScope().<JavaType>lookup("map").getValue();
+        JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
         
         return hashMap.get(key);
@@ -31,7 +31,7 @@ public class MapFunctions {
     
     @NativeOn("Map")
     public static boolean containsKey(EntityType entity, QilletniType key) {
-        JavaType javaType = entity.getEntityScope().<JavaType>lookup("map").getValue();
+        JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
         
         return hashMap.containsKey(key);
@@ -39,7 +39,7 @@ public class MapFunctions {
     
     @NativeOn("Map")
     public static boolean containsValue(EntityType entity, QilletniType key) {
-        JavaType javaType = entity.getEntityScope().<JavaType>lookup("map").getValue();
+        JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
         
         return hashMap.containsValue(key);

@@ -13,6 +13,7 @@ public class SymbolTable {
     
     public Scope initScope(Scope globalScope) {
         currentScopeStack.push(globalScope);
+        currentScopeStack.push(new Scope(globalScope));
         return globalScope;
     }
 
@@ -78,5 +79,13 @@ public class SymbolTable {
 
     public List<Stack<Scope>> getAllScopes() {
         return previousScopeStacks;
+    }
+
+    @Override
+    public String toString() {
+        return "SymbolTable{" +
+                "currentScopeStack=" + currentScopeStack +
+                ", previousScopeStacks=" + previousScopeStacks +
+                '}';
     }
 }

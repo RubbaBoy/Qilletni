@@ -5,29 +5,34 @@ import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.QilletniType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Scope {
-    
+
     private static int scopeCount = 0;
 
     // List<Symbol<?>> because of method overloading
-    private final Map<String, Symbol<?>> symbolTable = new HashMap<>();
     private final Map<String, List<Symbol<FunctionType>>> functionSymbolTable = new HashMap<>();
+    private final Map<String, Symbol<?>> symbolTable = new HashMap<>();
 
+    private final ScopeType scopeType;
     private final Scope parent;
     private final int scopeId;
 
     public Scope() {
+        this.scopeType = ScopeType.GLOBAL;
         this.parent = null;
         this.scopeId = scopeCount++;
     }
 
     public Scope(Scope parent) {
+        this.scopeType = ScopeType.LOCAL;
         this.parent = parent;
         this.scopeId = scopeCount++;
     }
@@ -44,8 +49,8 @@ public class Scope {
 
             return symbol;
         }
-        
-        if (parent != null && parent.isDefined(name)) {
+
+        if (!name.startsWith("_") && parent != null && parent.isDefined(name)) {
             return parent.lookup(name);
         }
 
@@ -117,6 +122,11 @@ public class Scope {
     }
 
     public void defineFunction(Symbol<FunctionType> functionSymbol) {
+        if (parent != null && parent.scopeType == ScopeType.GLOBAL && !functionSymbol.getName().startsWith("_")) {
+            parent.defineFunction(functionSymbol);
+            return;
+        }
+        
         if (isFunctionDefined(functionSymbol.getName())) {
             var functions = lookupFunction(functionSymbol.getName());
             var targetParamCount = functionSymbol.getValue().getParams().length;
@@ -161,6 +171,23 @@ public class Scope {
                 stringBuilder.append(", ");
             }
         }
+
+        stringBuilder.append(" | ");
+
+        var arr2 = functionSymbolTable.keySet().toArray(String[]::new);
+        for (int i = 0; i < arr2.length; i++) {
+            var val = functionSymbolTable.get(arr2[0]);
+            stringBuilder.append(arr2[i]).append(" = [").append(val.stream().map(Symbol::getValue).map(FunctionType::toString).collect(Collectors.joining(", "))).append("]");
+            if (i != arr.length - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+
         return stringBuilder + "]";
+    }
+    
+    enum ScopeType {
+        GLOBAL,
+        LOCAL
     }
 }

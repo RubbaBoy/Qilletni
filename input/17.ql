@@ -1,4 +1,4 @@
-import "std/core.ql"
+import "!std/core.ql"
 
 int[] nums = [1, 2, 3, 4, 5]
 

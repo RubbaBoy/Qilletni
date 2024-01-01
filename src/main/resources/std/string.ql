@@ -1,11 +1,17 @@
-native fun length(str) on string
+// Gets the length of the string
+native fun length() on string
 
-native fun contains(str, comparing) on string
+// Checks if the string contains the given string
+native fun contains(comparing) on string
 
-native fun substring(str, beginIndex) on string
+// Returns a substring of the current string from the given index
+native fun substring(beginIndex) on string
 
-native fun substring(str, beginIndex, endIndex) on string
+// Returns a substring of the current string from and to specified indices
+native fun substring(beginIndex, endIndex) on string
 
-native fun toUpper(str) on string
+// Returns the string in all uppercase
+native fun toUpper() on string
 
-native fun toLower(str) on string
+// Returns the string in all lowercase
+native fun toLower() on string
