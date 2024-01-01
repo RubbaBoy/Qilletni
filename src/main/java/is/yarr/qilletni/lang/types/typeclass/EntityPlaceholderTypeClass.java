@@ -35,19 +35,4 @@ public class EntityPlaceholderTypeClass extends QilletniTypeClass<EntityType> {
     public QilletniTypeClass<?> getSubType() {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public boolean equals(Object o) {
-        System.out.println("aaaa");
-        if (this == o) return true;
-        if (o == null || !(o instanceof QilletniTypeClass<?>)) return false;
-        System.out.println("HERE");
-        QilletniTypeClass<?> that = (QilletniTypeClass<?>) o;
-        return Objects.equals(getTypeName(), that.getTypeName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.getTypeName());
-    }
 }

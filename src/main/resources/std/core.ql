@@ -1,6 +1,8 @@
 import "string.ql"
-import "list.ql"
 import "math.ql"
+import "util/list.ql"
+import "util/map.ql"
+import "util/jpointer.ql"
 
 // Prints a string representation of the given object to the console
 // obj may be of any type

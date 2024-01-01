@@ -104,14 +104,13 @@ public class QilletniTypeClass<T extends QilletniType> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        QilletniTypeClass<?> that = (QilletniTypeClass<?>) o;
-        return Objects.equals(internalType, that.internalType) && Objects.equals(entityDefinition, that.entityDefinition) && Objects.equals(typeName, that.typeName);
+        if (!(o instanceof QilletniTypeClass<?> that)) return false;
+        return Objects.equals(internalType, that.internalType) /* && Objects.equals(entityDefinition, that.entityDefinition) */ && Objects.equals(typeName, that.typeName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(internalType, entityDefinition, typeName);
+        return Objects.hash(internalType, /* entityDefinition, */ typeName);
     }
 
     @Override

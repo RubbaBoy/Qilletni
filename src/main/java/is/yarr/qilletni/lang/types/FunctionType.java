@@ -12,24 +12,26 @@ public final class FunctionType extends QilletniType {
     private final String[] params;
     private final boolean isNative;
     private final QilletniTypeClass<?> onType;
+    private final boolean isExternallyDefined;
     
     // Only set if isNative is false
     private final QilletniParser.BodyContext bodyContext;
 
-    private FunctionType(String name, String[] params, boolean isNative, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
+    private FunctionType(String name, String[] params, boolean isNative, boolean isExternallyDefined, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
         this.isNative = isNative;
         this.name = name;
         this.params = params;
         this.onType = onType;
+        this.isExternallyDefined = isExternallyDefined;
         this.bodyContext = bodyContext;
     }
     
-    public static FunctionType createImplementedFunction(String name, String[] params, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
-        return new FunctionType(name, params, false, onType, bodyContext);
+    public static FunctionType createImplementedFunction(String name, String[] params, boolean isExternallyDefined, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
+        return new FunctionType(name, params, false, isExternallyDefined, onType, bodyContext);
     }
     
-    public static FunctionType createNativeFunction(String name, String[] params, QilletniTypeClass<?> onType) {
-        return new FunctionType(name, params, true, onType, null);
+    public static FunctionType createNativeFunction(String name, String[] params, boolean isExternallyDefined, QilletniTypeClass<?> onType) {
+        return new FunctionType(name, params, true, isExternallyDefined, onType, null);
     }
 
     public String getName() {
@@ -51,6 +53,16 @@ public final class FunctionType extends QilletniType {
 
     public QilletniTypeClass<?> getOnType() {
         return onType;
+    }
+
+    /**
+     * If the function was defined outside of an entity. Used with {@link #getOnType()}, this can tell if the function
+     * has the first instance parameter or not.
+     * 
+     * @return If the function is defined outside of an entity
+     */
+    public boolean isExternallyDefined() {
+        return isExternallyDefined;
     }
 
     public QilletniParser.BodyContext getBodyContext() {

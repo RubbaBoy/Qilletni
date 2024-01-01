@@ -1,10 +1,12 @@
 package is.yarr.qilletni.lang.internal;
 
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
+import is.yarr.qilletni.lang.exceptions.QilletniException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.lang.types.QilletniType;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.TypeUtils;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessFlag;
@@ -13,7 +15,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class NativeFunctionHandler {
     
@@ -50,15 +54,14 @@ public class NativeFunctionHandler {
         for (Annotation annotation : annotations) {
             if (annotation instanceof NativeOn nativeOn) {
                 // If the type isn't found, assume it is an entity that isn't known yet
-                return Optional.of(TypeUtils.getTypeFromString(nativeOn.value())
-                        .orElseGet(() -> QilletniTypeClass.createEntityTypePlaceholder(nativeOn.value())));
+                return Optional.of(TypeUtils.getTypeFromStringOrEntity(nativeOn.value()));
             }
         }
         
         return Optional.empty();
     }
     
-    public QilletniType invokeNativeMethod(String name, List<QilletniType> params, QilletniTypeClass<?> invokedUponType) {
+    public QilletniType invokeNativeMethod(ParserRuleContext ctx, String name, List<QilletniType> params, QilletniTypeClass<?> invokedUponType) {
         var paramCount = params.size();
         if (invokedUponType != null) {
             paramCount--;
@@ -66,13 +69,15 @@ public class NativeFunctionHandler {
 
         var method = nativeMethods.get(new MethodSignature(name, paramCount, invokedUponType));
         if (method == null) {
-            throw new NativeMethodNotBoundException("Native method not bound to anything!");
+            throw new NativeMethodNotBoundException(ctx, "Native method not bound to anything!");
         }
 
         try {
             return typeAdapterInvoker.invokeMethod(method, params);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
+        } catch (QilletniException e) {
+            throw new QilletniException(ctx, e.getMessage());
         }
     }
     

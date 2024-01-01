@@ -33,13 +33,9 @@ public class TypeUtils {
                 .findFirst();
     }
     
-    public static <T extends QilletniType> QilletniTypeClass<T> getTypeFromInternalType(Class<T> internalQilletniType) {
-        return QilletniTypeClass.types()
-                .stream()
-                .filter(type -> internalQilletniType.equals(type.getInternalType()))
-                .findFirst()
-                .map(type -> (QilletniTypeClass<T>) type)
-                .orElseThrow(() -> new IllegalStateException("Invalid internal type: " + internalQilletniType.getSimpleName()));
+    public static QilletniTypeClass<?> getTypeFromStringOrEntity(String stringType) {
+        return getTypeFromString(stringType)
+                .orElseGet(() -> QilletniTypeClass.createEntityTypePlaceholder(stringType));
     }
     
 //    public static Class<? extends QilletniType> getTypeFromString(String stringType) {

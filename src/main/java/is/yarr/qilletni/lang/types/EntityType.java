@@ -16,37 +16,12 @@ public final class EntityType extends QilletniType {
         this.entityDefinition = entityDefinition;
     }
 
-//    public QilletniType getProperty(String name) {
-//        if (!properties.containsKey(name)) {
-//            throw new VariableNotFoundException("Property " + name + " not found on entity " + name);
-//        }
-//        return properties.get(name);
-//    }
-//    
-//    public void setProperty(String name, QilletniType value) {
-//        if (!properties.containsKey(name)) {
-//            throw new VariableNotFoundException("Property " + name + " not found on entity " + name);
-//        }
-//        
-//        var oldValue = properties.get(name);
-//        // Ensure right type
-//        properties.put(name, TypeUtils.safelyCast(value, oldValue.getClass()));
-//    }
-
     public EntityDefinition getEntityDefinition() {
         return entityDefinition;
     }
 
     public Scope getEntityScope() {
         return entityScope;
-    }
-
-    @Override
-    public String toString() {
-        return "EntityType{" +
-                ", entityScope=" + entityScope +
-                ", entityDefinition=" + entityDefinition +
-                '}';
     }
 
     @Override
@@ -67,5 +42,13 @@ public final class EntityType extends QilletniType {
     @Override
     public QilletniTypeClass<EntityType> getTypeClass() {
         return entityDefinition.getQilletniTypeClass();
+    }
+
+    @Override
+    public String toString() {
+        return "EntityType{" +
+                ", entityScope=" + entityScope +
+                ", entityDefinition=" + entityDefinition +
+                '}';
     }
 }

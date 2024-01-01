@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
@@ -74,7 +75,8 @@ public class QilletniProgramRunner {
     }
 
     private void runProgram(InputStream stream, ImportPathState pathState) throws IOException {
-        runProgram(CharStreams.fromStream(stream), pathState);
+        var data = new String(new BufferedInputStream(stream).readAllBytes());
+        runProgram(CharStreams.fromString(data, pathState.path().getFileName().toString()), pathState);
     }
 
     public void runProgram(CharStream charStream, ImportPathState pathState) {

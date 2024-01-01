@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.types.entity;
 
 import is.yarr.qilletni.CollectionUtility;
 import is.yarr.qilletni.CollectionUtility.Entry;
+import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.Scope;
@@ -62,11 +63,11 @@ public class EntityDefinition {
         var scope = new Scope(globalScope);
 
         if (uninitializedParams.size() != constructorParams.size()) {
-            throw new InvalidSyntaxException("Invalid constructor invocation");
+            throw new InvalidParameterException("Invalid constructor invocation");
         }
 
         for (Entry(var name, var qilletniType) : CollectionUtility.getRecordEntries(properties)) {
-            scope.define(Symbol.createGenericSymbol(name, TypeUtils.getTypeFromInternalType(qilletniType.getClass()), qilletniType));
+            scope.define(Symbol.createGenericSymbol(name, qilletniType.getTypeClass(), qilletniType));
         }
 
         int index = 0;

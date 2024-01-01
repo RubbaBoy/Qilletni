@@ -11,7 +11,7 @@ public class EntityDefinitionManager {
     
     public EntityDefinition lookup(String entityType) {
         if (!entityDefinitionMap.containsKey(entityType)) {
-            throw new VariableNotFoundException("Entity not found with type name " + entityType);
+            throw new VariableNotFoundException(String.format("Entity not found with type name \"%s\"", entityType));
         }
         
         return entityDefinitionMap.get(entityType);
