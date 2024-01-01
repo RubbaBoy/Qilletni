@@ -114,6 +114,11 @@ public class Scope {
     }
 
     public <T extends QilletniType> void define(Symbol<T> symbol) {
+        if (parent != null && parent.scopeType == ScopeType.GLOBAL && !symbol.getName().startsWith("_")) {
+            parent.define(symbol);
+            return;
+        }
+        
         if (isDirectlyDefined(symbol.getName())) {
             throw new AlreadyDefinedException("Symbol " + symbol.getName() + " has already been defined!");
         }
