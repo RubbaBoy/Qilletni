@@ -32,12 +32,12 @@ public class TypeTest {
     
     @Test
     void testBoolean() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 boolean t = true
                 boolean f = false
                 """);
-        
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(2, symbols.size());
         
         var t = symbols.get("t");
@@ -51,11 +51,11 @@ public class TypeTest {
     
     @Test
     void testInt() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 int i = 42
                 """);
-        
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
         
         var i = symbols.get("i");
@@ -65,11 +65,11 @@ public class TypeTest {
     
     @Test
     void testString() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 string s = "foo"
                 """);
-        
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
         
         var s = symbols.get("s");
@@ -79,11 +79,11 @@ public class TypeTest {
 
     @Test
     void testSongWithNameAndArtist() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 song s = "God Knows" by "Knocked Loose"
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var songSymbol = symbols.get("s");
@@ -97,11 +97,11 @@ public class TypeTest {
 
     @Test
     void testSongWithUrl() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 song s = "https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe"
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var songSymbol = symbols.get("s");
@@ -115,14 +115,14 @@ public class TypeTest {
     
     @Test
     void testWeights() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 weights w =
                     | 3x "God Knows" by "Knocked Loose"
                     | 2x "https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe"
                     | 10% "US" by "Apex Alpha"
                 """);
-        
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
         
         var weightsSymbol = symbols.get("w");
@@ -152,11 +152,11 @@ public class TypeTest {
 
     @Test
     void testCollection() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 collection c = "My Playlist #59" created by "rubbaboy"
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var collectionSymbol = symbols.get("c");
@@ -172,11 +172,11 @@ public class TypeTest {
 
     @Test
     void testCollectionWithOrder() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 collection c = "My Playlist #59" created by "rubbaboy" order[shuffle]
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var collectionSymbol = symbols.get("c");
@@ -192,13 +192,13 @@ public class TypeTest {
 
     @Test
     void testCollectionWithWeights() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 weights w = emptyWeights()
                 
                 collection c = "My Playlist #59" created by "rubbaboy" weights[w]
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(2, symbols.size());
 
         var weights = (WeightsType) symbols.get("w").getValue();
@@ -216,11 +216,11 @@ public class TypeTest {
 
     @Test
     void testCollectionWithWeightsFunction() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 collection c = "My Playlist #59" created by "rubbaboy" weights[emptyWeights()]
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var collectionSymbol = symbols.get("c");
@@ -236,13 +236,13 @@ public class TypeTest {
 
     @Test
     void testCollectionWithWeightsAndOrder() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 weights w = emptyWeights()
                 
                 collection c = "My Playlist #59" created by "rubbaboy" order[shuffle] weights[w]
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(2, symbols.size());
 
         var weights = (WeightsType) symbols.get("w").getValue();
@@ -260,11 +260,11 @@ public class TypeTest {
 
     @Test
     void testList() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 int[] i = [1, 2, 3]
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var listSymbol = symbols.get("i");
@@ -280,11 +280,11 @@ public class TypeTest {
 
     @Test
     void testEmptyList() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 int[] i = []
                 """);
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var listSymbol = symbols.get("i");

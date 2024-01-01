@@ -2,6 +2,7 @@ package is.yarr.qilletni;
 
 import is.yarr.qilletni.lang.runner.ImportPathState;
 import is.yarr.qilletni.lang.runner.QilletniProgramRunner;
+import is.yarr.qilletni.lang.table.SymbolTable;
 import org.antlr.v4.runtime.CharStreams;
 
 import java.util.List;
@@ -17,12 +18,14 @@ public class QilletniProgramTester {
         this.nativeFunctionClasses = nativeFunctionClasses;
     }
     
-    public QilletniProgramRunner runProgram(String program) {
+    public RanProgram runProgram(String program) {
         var runner = new QilletniProgramRunner();
         runner.getNativeFunctionHandler().registerClasses(nativeFunctionClasses.toArray(Class[]::new));
-        runner.runProgram(CharStreams.fromString(importStatement + "\n" + program), ImportPathState.VIRTUAL_STATE);
+        var symbolTable = runner.runProgram(CharStreams.fromString(importStatement + "\n" + program), ImportPathState.VIRTUAL_STATE);
         
-        return runner;
+        return new RanProgram(runner, symbolTable);
     }
+    
+    record RanProgram(QilletniProgramRunner runner, SymbolTable symbolTable) {}
     
 }

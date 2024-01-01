@@ -11,19 +11,24 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public class Scope {
+    
+    private static int scopeCount = 0;
 
     // List<Symbol<?>> because of method overloading
     private final Map<String, Symbol<?>> symbolTable = new HashMap<>();
     private final Map<String, List<Symbol<FunctionType>>> functionSymbolTable = new HashMap<>();
 
     private final Scope parent;
+    private final int scopeId;
 
     public Scope() {
         this.parent = null;
+        this.scopeId = scopeCount++;
     }
 
     public Scope(Scope parent) {
         this.parent = parent;
+        this.scopeId = scopeCount++;
     }
 
     public <T extends QilletniType> Symbol<T> lookup(String name) {
@@ -134,7 +139,7 @@ public class Scope {
 
     @Override
     public String toString() {
-        var stringBuilder = new StringBuilder("Scope[");
+        var stringBuilder = new StringBuilder("Scope(" + scopeId + ")[");
         var arr = symbolTable.values().toArray(Symbol[]::new);
         for (int i = 0; i < arr.length; i++) {
             stringBuilder.append(arr[i].getName()).append(" = ").append(arr[i].getValue().stringValue());

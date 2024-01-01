@@ -23,13 +23,14 @@ public class EntityTest {
     
     @Test
     void testEntityCreationWithoutProperties() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     Foo()
                 }
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(0, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
@@ -40,7 +41,7 @@ public class EntityTest {
     
     @Test
     void testEntityCreationWithProperties() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     int i
                     string s
@@ -48,8 +49,9 @@ public class EntityTest {
                     Foo(i, s)
                 }
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(0, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
@@ -70,15 +72,16 @@ public class EntityTest {
 
     @Test
     void testEntityInstantiationWithoutProperties() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     Foo()
                 }
                 
                 Foo foo = new Foo()
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
@@ -93,7 +96,7 @@ public class EntityTest {
 
     @Test
     void testEntityInstantiationWithProperties() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     int i
                     string s
@@ -103,8 +106,9 @@ public class EntityTest {
                 
                 Foo foo = new Foo(123, "bar")
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
@@ -128,7 +132,7 @@ public class EntityTest {
 
     @Test
     void testEntityInstantiationWithPropertiesAndRearrangedConstructor() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     int i
                     string s
@@ -138,8 +142,9 @@ public class EntityTest {
                 
                 Foo foo = new Foo("bar", 123)
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
@@ -163,7 +168,7 @@ public class EntityTest {
 
     @Test
     void testEntityInstantiationWithPredefinedProperties() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     int i = 123
                     string s
@@ -173,8 +178,9 @@ public class EntityTest {
                 
                 Foo foo = new Foo("bar")
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
@@ -198,7 +204,7 @@ public class EntityTest {
 
     @Test
     void testEntityInstantiationWithOnlyPredefinedProperties() {
-        var runner = programTester.runProgram("""
+        var ranProgram = programTester.runProgram("""
                 entity Foo {
                     int i = 123
                     
@@ -207,8 +213,9 @@ public class EntityTest {
                 
                 Foo foo = new Foo()
                 """);
+        var runner = ranProgram.runner();
 
-        var symbols = runner.getSymbolTable().currentScope().getAllSymbols();
+        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
         assertEquals(1, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();

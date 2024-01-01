@@ -26,7 +26,7 @@ public final class EntityType extends QilletniType {
 
     @Override
     public String stringValue() {
-        var entitySymbols = entityScope.getAllSymbols(); 
+        var entitySymbols = entityScope.getAllSymbols();
         var propertyString = entitySymbols.keySet()
                 .stream()
                 .map(propertyName -> String.format("%s = %s", propertyName, entitySymbols.get(propertyName).getValue().stringValue()))

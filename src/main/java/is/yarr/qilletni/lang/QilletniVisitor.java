@@ -548,6 +548,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var swappedScope = false;
         var hasOnType = invokedOn != null;
         if (hasOnType && invokedOn instanceof EntityType entityType) {
+            LOGGER.debug("SWAP scope!");
             symbolTable.swapScope(entityType.getEntityScope());
             swappedScope = true;
             hasOnType = false;
@@ -570,6 +571,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         // This isn't needed if it's implemented, as it has no additional type param
         if ((swappedScope && functionType.isNative()) || (swappedScope && functionType.isExternallyDefined())) {
             hasOnType = true;
+            
+            // Return to normal scope if either native (wouldn't really make a difference but might as well) or
+            // if it is externally defined, so it is invoked normally.
+            symbolTable.unswapScope();
+            swappedScope = false;
         }
 
         var functionParams = new ArrayList<>(Arrays.asList(functionType.getParams()));
@@ -606,6 +612,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         symbolTable.endFunctionCall();
 
         if (swappedScope) {
+            LOGGER.debug("UNSWAP scope!");
             symbolTable.unswapScope();
         }
 

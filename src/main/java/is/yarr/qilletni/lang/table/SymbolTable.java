@@ -1,5 +1,8 @@
 package is.yarr.qilletni.lang.table;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Stack;
 
@@ -21,9 +24,7 @@ public class SymbolTable {
     public Scope pushScope() {
         var parentScope = currentScopeStack.isEmpty() ? null : currentScopeStack.peek();
         var scope = new Scope(parentScope);
-        currentScopeStack.push(scope);
-        previousScopeStacks.add(currentScopeStack);
-        return scope;
+        return currentScopeStack.push(scope);
     }
     
     public Scope swapScope(Scope newScope) {

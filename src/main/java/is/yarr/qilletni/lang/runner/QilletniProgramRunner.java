@@ -22,26 +22,29 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QilletniProgramRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniProgramRunner.class);
 
-    private final SymbolTable symbolTable;
+    private final List<SymbolTable> symbolTables;
     private final Scope globalScope;
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
 
     public QilletniProgramRunner() {
-        this.symbolTable = new SymbolTable();
+        this.symbolTables = new ArrayList<>();
         this.globalScope = new Scope();
         this.entityDefinitionManager = new EntityDefinitionManager();
         this.nativeFunctionHandler = createNativeFunctionHandler();
     }
 
-    public QilletniProgramRunner(SymbolTable symbolTable, Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler) {
-        this.symbolTable = symbolTable;
+    public QilletniProgramRunner(Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler) {
+        this.symbolTables = new ArrayList<>();
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
         this.nativeFunctionHandler = nativeFunctionHandler;
@@ -66,27 +69,32 @@ public class QilletniProgramRunner {
         return nativeFunctionHandler;
     }
 
-    public void runProgram(Path file) throws IOException {
-        runProgram(file, new ImportPathState(file.getParent(), false));
+    public SymbolTable runProgram(Path file) throws IOException {
+        return runProgram(file, new ImportPathState(file.getParent(), false));
     }
 
-    private void runProgram(Path file, ImportPathState pathState) throws IOException {
-        runProgram(CharStreams.fromPath(file), pathState);
+    private SymbolTable runProgram(Path file, ImportPathState pathState) throws IOException {
+        return runProgram(CharStreams.fromString(Files.readString(file), file.getFileName().toString()), pathState);
     }
 
-    private void runProgram(InputStream stream, ImportPathState pathState) throws IOException {
+    private SymbolTable runProgram(InputStream stream, ImportPathState pathState) throws IOException {
         var data = new String(new BufferedInputStream(stream).readAllBytes());
-        runProgram(CharStreams.fromString(data, pathState.path().getFileName().toString()), pathState);
+        return runProgram(CharStreams.fromString(data, pathState.path().getFileName().toString()), pathState);
     }
 
-    public void runProgram(CharStream charStream, ImportPathState pathState) {
+    public SymbolTable runProgram(CharStream charStream, ImportPathState pathState) {
         var lexer = new QilletniLexer(charStream);
         var tokenStream = new CommonTokenStream(lexer);
         var qilletniParser = new QilletniParser(tokenStream);
+        
+        var symbolTable = new SymbolTable();
+        symbolTables.add(symbolTable);
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
         var qilletniVisitor = new QilletniVisitor(symbolTable, globalScope, entityDefinitionManager, nativeFunctionHandler, importedFile -> importFileFromStream(pathState.importFrom(importedFile)));
         qilletniVisitor.visit(programContext);
+        
+        return symbolTable;
     }
 
     private void importFileFromStream(ImportPathState pathState) {
@@ -105,8 +113,8 @@ public class QilletniProgramRunner {
         }
     }
 
-    public SymbolTable getSymbolTable() {
-        return symbolTable;
+    public List<SymbolTable> getSymbolTables() {
+        return symbolTables;
     }
 
     public NativeFunctionHandler getNativeFunctionHandler() {
