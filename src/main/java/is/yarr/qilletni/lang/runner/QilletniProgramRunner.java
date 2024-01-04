@@ -13,6 +13,8 @@ import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.IntType;
 import is.yarr.qilletni.lang.types.StringType;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.music.MusicCache;
+import is.yarr.qilletni.music.MusicPopulator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -35,15 +37,21 @@ public class QilletniProgramRunner {
     private final Scope globalScope;
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
+    private final MusicCache musicCache;
+    private final MusicPopulator musicPopulator;
 
-    public QilletniProgramRunner() {
+    public QilletniProgramRunner(MusicCache musicCache) {
+        this.musicCache = musicCache;
         this.symbolTables = new ArrayList<>();
         this.globalScope = new Scope();
         this.entityDefinitionManager = new EntityDefinitionManager();
         this.nativeFunctionHandler = createNativeFunctionHandler();
+        this.musicPopulator = new MusicPopulator(musicCache);
     }
 
-    public QilletniProgramRunner(Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler) {
+    public QilletniProgramRunner(Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator) {
+        this.musicCache = musicCache;
+        this.musicPopulator = musicPopulator;
         this.symbolTables = new ArrayList<>();
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -91,7 +99,7 @@ public class QilletniProgramRunner {
         symbolTables.add(symbolTable);
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, globalScope, entityDefinitionManager, nativeFunctionHandler, importedFile -> importFileFromStream(pathState.importFrom(importedFile)));
+        var qilletniVisitor = new QilletniVisitor(symbolTable, globalScope, entityDefinitionManager, nativeFunctionHandler, musicPopulator, importedFile -> importFileFromStream(pathState.importFrom(importedFile)));
         qilletniVisitor.visit(programContext);
         
         return symbolTable;

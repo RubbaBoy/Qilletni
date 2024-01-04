@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessFlag;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class NativeFunctionHandler {
     
-    private final Map<MethodSignature, Method> nativeMethods = new HashMap<>();
+    private final Map<MethodSignature, InvocableMethod> nativeMethods = new HashMap<>();
     
     private final TypeAdapterInvoker typeAdapterInvoker;
 
@@ -32,9 +33,12 @@ public class NativeFunctionHandler {
     public void registerClasses(Class<?>... nativeMethodClass) {
         for (var clazz : nativeMethodClass) {
             var invokedOn = getNativeOn(clazz.getDeclaredAnnotations());
+            var beforeAnyInvocationMethod = getBeforeAnyInvocationMethod(clazz).orElse(null);
             
             for (var declaredMethod : clazz.getDeclaredMethods()) {
-                if (!(declaredMethod.accessFlags().contains(AccessFlag.PUBLIC) && declaredMethod.accessFlags().contains(AccessFlag.STATIC))) {
+                if (hasAnnotation(declaredMethod, BeforeAnyInvocation.class) ||
+                        !(declaredMethod.accessFlags().contains(AccessFlag.PUBLIC) &&
+                                declaredMethod.accessFlags().contains(AccessFlag.STATIC))) {
                     continue;
                 }
                 
@@ -45,9 +49,20 @@ public class NativeFunctionHandler {
                     paramCount--;
                 }
                 
-                nativeMethods.put(new MethodSignature(declaredMethod.getName(), paramCount, methodInvokedOn.orElse(null)), declaredMethod);
+                nativeMethods.put(new MethodSignature(declaredMethod.getName(), paramCount, methodInvokedOn.orElse(null)), new InvocableMethod(declaredMethod, beforeAnyInvocationMethod));
             }
         }
+    }
+    
+    private Optional<Method> getBeforeAnyInvocationMethod(Class<?> nativeMethodClass) {
+        return Arrays.stream(nativeMethodClass.getDeclaredMethods())
+                .filter(method -> hasAnnotation(method, BeforeAnyInvocation.class))
+                .findFirst();
+    }
+    
+    private boolean hasAnnotation(Method method, Class<?> annotationClass) {
+        return Arrays.stream(method.getDeclaredAnnotations())
+                .anyMatch(annotationClass::isInstance);
     }
     
     private Optional<QilletniTypeClass<?>> getNativeOn(Annotation[] annotations) {
@@ -67,13 +82,17 @@ public class NativeFunctionHandler {
             paramCount--;
         }
 
-        var method = nativeMethods.get(new MethodSignature(name, paramCount, invokedUponType));
-        if (method == null) {
+        var invocableMethod = nativeMethods.get(new MethodSignature(name, paramCount, invokedUponType));
+        if (invocableMethod == null) {
             throw new NativeMethodNotBoundException(ctx, "Native method not bound to anything!");
         }
 
         try {
-            return typeAdapterInvoker.invokeMethod(method, params);
+            if (invocableMethod.beforeAny() != null) {
+                typeAdapterInvoker.invokeMethod(invocableMethod.beforeAny(), params);
+            }
+            
+            return typeAdapterInvoker.invokeMethod(invocableMethod.method(), params);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         } catch (QilletniException e) {
@@ -83,4 +102,14 @@ public class NativeFunctionHandler {
     
     record MethodSignature(String name, int params, QilletniTypeClass<?> nativeOn) {
     }
+
+    /**
+     * A set of native methods that may be invoked in Qilletni.
+     * 
+     * @param method The actual method to invoke and return its value from
+     * @param beforeAny A nullable, class-wide method that is invoked before any methods in the class are invoked. This
+     *                  is used for setup of objects where many methods in a class have repeating behavior (e.g.
+     *                  populating music-related types.  
+     */
+    record InvocableMethod(Method method, Method beforeAny) {}
 }

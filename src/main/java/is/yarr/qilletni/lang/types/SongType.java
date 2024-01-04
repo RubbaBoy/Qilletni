@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.lang.types.song.SongDefinition;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.music.Track;
 
 public final class SongType extends QilletniType {
     
@@ -9,6 +10,7 @@ public final class SongType extends QilletniType {
     private String url;
     private String title;
     private String artist;
+    private Track track;
     
     public SongType(String url) {
         this.songDefinition = SongDefinition.URL;
@@ -52,7 +54,15 @@ public final class SongType extends QilletniType {
     public void setArtist(String artist) {
         this.artist = artist;
     }
-    
+
+    public Track getTrack() {
+        return track;
+    }
+
+    public void setTrack(Track track) {
+        this.track = track;
+    }
+
     @Override
     public String stringValue() {
         if (songDefinition == SongDefinition.URL) {

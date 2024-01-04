@@ -30,6 +30,15 @@ public final class StringType extends QilletniType {
     }
 
     @Override
+    public boolean qilletniEquals(QilletniType qilletniType) {
+        if (!(qilletniType instanceof StringType comparing)) {
+            return false;
+        }
+
+        return this.value.equals(comparing.value);
+    }
+
+    @Override
     public QilletniTypeClass<StringType> getTypeClass() {
         return QilletniTypeClass.STRING;
     }

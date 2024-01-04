@@ -27,6 +27,15 @@ public final class BooleanType extends QilletniType {
     }
 
     @Override
+    public boolean qilletniEquals(QilletniType qilletniType) {
+        if (!(qilletniType instanceof BooleanType comparing)) {
+            return false;
+        }
+        
+        return this.value == comparing.value;
+    }
+
+    @Override
     public QilletniTypeClass<BooleanType> getTypeClass() {
         return QilletniTypeClass.BOOLEAN;
     }

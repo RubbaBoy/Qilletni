@@ -41,6 +41,7 @@ ELSE_KEYWORD: 'else';
 FOR_KEYWORD: 'for';
 RANGE_INFINITY: 'infinity';
 RANGE_OP: '..';
+COLON: ':';
 
 
 PLAY : 'play';

@@ -23,6 +23,7 @@ running
 expr: LEFT_PAREN expr RIGHT_PAREN
     | ID PLUS ID // handled separately due to appending of different types
     | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET
+    | expr REL_OP expr
     | expr DOT function_call
     | expr DOT ID
     | entity_initialize
@@ -39,8 +40,7 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     ;
 
 bool_expr
-    : int_expr REL_OP int_expr
-    | function_call
+    : function_call
     | BOOL
     ;
 
@@ -173,7 +173,7 @@ function_def_params
     ;
 
 if_stmt
-    : IF_KEYWORD '('  bool_expr ')' '{' body '}' elseif_list else_body
+    : IF_KEYWORD '('  expr ')' '{' body '}' elseif_list else_body
     ;
 
 else_body
@@ -182,7 +182,7 @@ else_body
     ;
 
 elseif_list
-    : ELSE_KEYWORD IF_KEYWORD '(' bool_expr ')' '{' body '}' elseif_list
+    : ELSE_KEYWORD IF_KEYWORD '(' expr ')' '{' body '}' elseif_list
     | // epsilon
     ;
 
@@ -193,10 +193,15 @@ for_stmt
 for_expr
     : bool_expr
     | range
+    | foreach_range
     ;
 
 range
     : ID RANGE_OP (INT | RANGE_INFINITY)
+    ;
+
+foreach_range
+    : ID COLON ID
     ;
 
 entity_def

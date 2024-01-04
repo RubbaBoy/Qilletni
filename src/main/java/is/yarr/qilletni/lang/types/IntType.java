@@ -26,6 +26,15 @@ public final class IntType extends QilletniType {
     }
 
     @Override
+    public boolean qilletniEquals(QilletniType qilletniType) {
+        if (!(qilletniType instanceof IntType comparing)) {
+            return false;
+        }
+
+        return this.value == comparing.value;
+    }
+
+    @Override
     public QilletniTypeClass<IntType> getTypeClass() {
         return QilletniTypeClass.INT;
     }

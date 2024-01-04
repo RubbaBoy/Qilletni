@@ -1,9 +1,8 @@
 package is.yarr.qilletni.lib.core.nativefunctions;
 
 import is.yarr.qilletni.lang.types.QilletniType;
-import is.yarr.qilletni.lang.types.StringType;
 
-public class IOFunctions {
+public class CoreFunctions {
 
     /**
      * Prints a string representation of the given object.
@@ -14,8 +13,11 @@ public class IOFunctions {
         System.out.println(qilletniType.stringValue());
     }
     
-    public static String add(int a, int b) {
-        return String.valueOf(a + b);
+    public static String getEnv(String name) {
+        return System.getenv(name);
     }
-
+    
+    public static boolean hasEnv(String name) {
+        return System.getenv(name) != null;
+    }
 }
