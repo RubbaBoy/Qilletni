@@ -493,7 +493,7 @@ public class SpotifyMusicCache implements MusicCache {
 
                 // Replacing the artist list to ones that are known to be in the database
                 var newArtists = album.getArtists().stream().map(Artist::getId).map(artistMap::get).toList();
-                var savingAlbum = new SpotifyAlbum(album.getId(), album.getId(), newArtists);
+                var savingAlbum = new SpotifyAlbum(album.getId(), album.getName(), newArtists);
 
                 session.save(savingAlbum);
                 return savingAlbum;

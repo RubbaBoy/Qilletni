@@ -18,6 +18,7 @@ import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.Symbol;
 import is.yarr.qilletni.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.table.TableUtils;
+import is.yarr.qilletni.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.EntityType;
@@ -867,7 +868,31 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     @Override
+    public AlbumType visitAlbum_expr(QilletniParser.Album_exprContext ctx) {
+        if (ctx.ID() != null) {
+            var scope = symbolTable.currentScope();
+            return scope.<AlbumType>lookup(ctx.ID().getText()).getValue();
+        }
+
+        if (ctx.function_call() != null) {
+            return this.<AlbumType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+        }
+
+        var urlOrName = ctx.album_url_or_name_pair();
+        if (urlOrName.STRING().size() == 1) {
+            return new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+        }
+
+        return new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+    }
+
+    @Override
     public Object visitSong_url_or_name_pair(QilletniParser.Song_url_or_name_pairContext ctx) {
+        throw new RuntimeException("This should never be visited!");
+    }
+
+    @Override
+    public Object visitAlbum_url_or_name_pair(QilletniParser.Album_url_or_name_pairContext ctx) {
         throw new RuntimeException("This should never be visited!");
     }
 
@@ -1007,6 +1032,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(ctx.collection_expr(), CollectionType.class);
             case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(ctx.song_expr(), SongType.class);
             case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(ctx.weights_expr(), WeightsType.class);
+            case QilletniLexer.ALBUM_TYPE -> visitQilletniTypedNode(ctx.album_expr(), AlbumType.class);
             case QilletniLexer.JAVA_TYPE -> visitQilletniTypedNode(ctx.java_expr(), JavaType.class);
             case QilletniLexer.ID -> visitQilletniTypedNode(ctx.entity_initialize(), EntityType.class);
             default -> throw new RuntimeException("This should not be possible, unknown type");

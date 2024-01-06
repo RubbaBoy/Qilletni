@@ -10,6 +10,7 @@ public final class SongType extends QilletniType {
     private String url;
     private String title;
     private String artist;
+    private AlbumType albumType;
     private Track track;
     
     public SongType(String url) {
@@ -55,12 +56,22 @@ public final class SongType extends QilletniType {
         this.artist = artist;
     }
 
+    public AlbumType getAlbum() {
+        return albumType;
+    }
+
+    public void setAlbum(AlbumType albumType) {
+        this.albumType = albumType;
+    }
+
     public Track getTrack() {
         return track;
     }
 
     public void setTrack(Track track) {
         this.track = track;
+        
+        setAlbum(new AlbumType(track.getAlbum()));
     }
 
     @Override

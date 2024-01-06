@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Internal types for Qilletni programs.
  */
-public sealed abstract class QilletniType permits BooleanType, CollectionType, EntityType, FunctionType, IntType, JavaType, ListType, SongType, StringType, WeightsType {
+public sealed abstract class QilletniType permits AlbumType, BooleanType, CollectionType, EntityType, FunctionType, IntType, JavaType, ListType, SongType, StringType, WeightsType {
     public abstract String stringValue();
     
     public boolean qilletniEquals(QilletniType qilletniType) {

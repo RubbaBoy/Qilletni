@@ -2,6 +2,7 @@ package is.yarr.qilletni.lib.core.nativefunctions;
 
 import is.yarr.qilletni.lang.internal.BeforeAnyInvocation;
 import is.yarr.qilletni.lang.internal.NativeOn;
+import is.yarr.qilletni.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.SongType;
 import is.yarr.qilletni.music.MusicPopulator;
 
@@ -41,6 +42,10 @@ public class SongFunctions {
     
     public static String toString(SongType songType) {
         return songType.stringValue();
+    }
+    
+    public static AlbumType getAlbum(SongType songType) {
+        return songType.getAlbum();
     }
     
 }

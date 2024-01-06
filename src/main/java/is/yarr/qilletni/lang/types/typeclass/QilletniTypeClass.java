@@ -1,5 +1,6 @@
 package is.yarr.qilletni.lang.types.typeclass;
 
+import is.yarr.qilletni.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.EntityType;
@@ -23,12 +24,13 @@ public class QilletniTypeClass<T extends QilletniType> {
     public static final QilletniTypeClass<StringType> STRING = new QilletniTypeClass<>(StringType.class, "string");
     public static final QilletniTypeClass<CollectionType> COLLECTION = new QilletniTypeClass<>(CollectionType.class, "collection");
     public static final QilletniTypeClass<SongType> SONG = new QilletniTypeClass<>(SongType.class, "song");
+    public static final QilletniTypeClass<AlbumType> ALBUM = new QilletniTypeClass<>(AlbumType.class, "album");
     public static final QilletniTypeClass<WeightsType> WEIGHTS = new QilletniTypeClass<>(WeightsType.class, "weights");
     public static final QilletniTypeClass<FunctionType> FUNCTION = new QilletniTypeClass<>(FunctionType.class, "func");
     public static final QilletniTypeClass<ListType> LIST = new QilletniTypeClass<>(ListType.class, "list");
     public static final QilletniTypeClass<JavaType> JAVA = new QilletniTypeClass<>(JavaType.class, "java");
     
-    private static final List<QilletniTypeClass<?>> types = List.of(INT, BOOLEAN, STRING, COLLECTION, SONG, WEIGHTS, FUNCTION, LIST, JAVA);
+    private static final List<QilletniTypeClass<?>> types = List.of(INT, BOOLEAN, STRING, COLLECTION, SONG, ALBUM, WEIGHTS, FUNCTION, LIST, JAVA);
 
     /**
      * The internal QilletniType class of the type

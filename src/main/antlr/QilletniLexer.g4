@@ -27,6 +27,7 @@ STRING_TYPE : 'string';
 BOOLEAN_TYPE : 'boolean';
 COLLECTION_TYPE : 'collection';
 SONG_TYPE : 'song';
+ALBUM_TYPE : 'album';
 JAVA_TYPE : 'java';
 
 ENTITY: 'entity';
@@ -68,7 +69,6 @@ RETURN : 'return';
 
 
 BY            : 'by';
-CREATED       : 'created';
 //STR_LITERAL   : '"' STR '"';
 
 LQUOTE : '"' -> more, mode(STR);

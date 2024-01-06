@@ -34,6 +34,7 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | str_expr
     | collection_expr
     | song_expr
+    | album_expr
     | weights_expr
     | java_expr
     | list_expression
@@ -81,14 +82,25 @@ song_expr
     | ID
     ;
 
+album_expr
+    : function_call
+    | album_url_or_name_pair
+    | ID
+    ;
+
 song_url_or_name_pair
     : STRING
-    | STRING BY STRING
+    | STRING SONG_TYPE? BY STRING
     ;
 
 collection_url_or_name_pair
     : STRING
-    | STRING CREATED BY STRING
+    | STRING COLLECTION_TYPE BY STRING
+    ;
+
+album_url_or_name_pair
+    : STRING
+    | STRING ALBUM_TYPE BY STRING
     ;
 
 weights_expr
@@ -142,6 +154,7 @@ asmt
     | type=COLLECTION_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=SONG_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=WEIGHTS_KEYWORD (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=ALBUM_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=JAVA_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=ID (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET ASSIGN expr
@@ -219,6 +232,7 @@ entity_property_declaration
     | type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
     | type=SONG_TYPE ID (ASSIGN song_expr)?
     | type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?
+    | type=ALBUM_TYPE ID (ASSIGN album_expr)?
     | type=JAVA_TYPE ID (ASSIGN java_expr)?
     | type=ID ID (ASSIGN entity_initialize)?
     ;
