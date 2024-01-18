@@ -9,6 +9,12 @@ public class EntityDefinitionManager {
     
     private final Map<String, EntityDefinition> entityDefinitionMap = new HashMap<>();
     
+    private static EntityDefinitionManager musicDefinitionManager;
+    
+    public EntityDefinitionManager() {
+        musicDefinitionManager = this;
+    }
+    
     public EntityDefinition lookup(String entityType) {
         if (!entityDefinitionMap.containsKey(entityType)) {
             throw new VariableNotFoundException(String.format("Entity not found with type name \"%s\"", entityType));
@@ -19,5 +25,9 @@ public class EntityDefinitionManager {
     
     public void defineEntity(EntityDefinition entityDefinition) {
         entityDefinitionMap.put(entityDefinition.getTypeName(), entityDefinition);
+    }
+    
+    public static EntityDefinitionManager getInstance() {
+        return musicDefinitionManager;
     }
 }

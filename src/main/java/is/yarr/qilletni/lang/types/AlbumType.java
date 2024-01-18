@@ -1,6 +1,8 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.SpotifyDataUtility;
 import is.yarr.qilletni.lang.types.album.AlbumDefinition;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.music.Album;
 import is.yarr.qilletni.music.Artist;
@@ -12,7 +14,10 @@ public final class AlbumType extends QilletniType {
     private AlbumDefinition albumDefinition;
     private String url;
     private String title;
-    private List<String> artists;
+    private String artist;
+    
+    private EntityType artistType;
+    private ListType artistsType;
     private Album album;
 
     public AlbumType(String url) {
@@ -23,13 +28,13 @@ public final class AlbumType extends QilletniType {
     public AlbumType(String title, String artist) {
         this.albumDefinition = AlbumDefinition.TITLE_ARTIST;
         this.title = title;
-        this.artists = List.of(artist);
+        this.artist = artist;
     }
     
     public AlbumType(Album album) {
         this.albumDefinition = AlbumDefinition.TITLE_ARTIST;
-        this.title = album.getName();
-        this.artists = album.getArtists().stream().map(Artist::getName).toList();
+        
+        populateSpotifyData(album);
     }
 
     public AlbumDefinition getAlbumDefinition() {
@@ -40,39 +45,61 @@ public final class AlbumType extends QilletniType {
         this.albumDefinition = albumDefinition;
     }
 
-    public String getUrl() {
+    public String getSuppliedUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getTitle() {
+    public String getSuppliedTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    /**
+     * Returns the user-supplier artist. This should only be used for populating spotify data via
+     * {@link #populateSpotifyData(Album)}.
+     * 
+     * @return The user-supplier artist name
+     */
+    public String getSuppliedArtist() {
+        return artist;
     }
 
-    public String getArtist() {
-        return artists.get(0);
+    public EntityType getArtist(EntityDefinitionManager entityDefinitionManager) {
+        SpotifyDataUtility.requireNonNull(album, "Internal Album is null, #populateSpotifyData must be invoked prior to getting API data");
+
+        if (artistType != null) {
+            return artistType;
+        }
+
+        var trackArtist = album.getArtist();
+        var artistEntity = entityDefinitionManager.lookup("Artist");
+        return artistType = artistEntity.createInstance(new StringType(trackArtist.getId()), new StringType(trackArtist.getName()));
     }
 
-    public List<String> getArtists() {
-        return artists;
-    }
+    public ListType getArtists(EntityDefinitionManager entityDefinitionManager) {
+        SpotifyDataUtility.requireNonNull(album, "Internal Album is null, #populateSpotifyData must be invoked prior to getting API data");
 
-    public void setArtists(List<String> artists) {
-        this.artists = artists;
+        if (artistsType != null) {
+            return artistsType;
+        }
+
+        var trackArtists = album.getArtists();
+        var artistEntity = entityDefinitionManager.lookup("Artist");
+        var artistEntities = trackArtists.stream()
+                .map(artist -> (QilletniType) artistEntity.createInstance(new StringType(artist.getId()), new StringType(artist.getName())))
+                .toList();
+
+        return artistsType = new ListType(QilletniTypeClass.createListOfType(artistEntity.getQilletniTypeClass()), artistEntities);
     }
 
     public Album getAlbum() {
         return album;
     }
 
-    public void setAlbum(Album album) {
+    public boolean isSpotifyDataPopulated() {
+        return album != null;
+    }
+
+    public void populateSpotifyData(Album album) {
         this.album = album;
     }
 
@@ -82,7 +109,7 @@ public final class AlbumType extends QilletniType {
             return String.format("album(%s)", url);
         }
 
-        return String.format("album(\"%s\" by \"%s\")", title, artists.get(0));
+        return String.format("album(\"%s\" by \"%s\")", title, artist);
     }
 
     @Override
@@ -96,7 +123,7 @@ public final class AlbumType extends QilletniType {
                 "albumDefinition=" + albumDefinition +
                 ", url='" + url + '\'' +
                 ", title='" + title + '\'' +
-                ", artist='" + artists + '\'' +
+                ", artist='" + artist + '\'' +
                 ", album=" + album +
                 '}';
     }

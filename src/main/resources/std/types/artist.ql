@@ -1,6 +1,14 @@
 entity Artist {
-    string id
-    string name
+    string _id
+    string _name
     
-    Artist(id, name)
+    Artist(_id, _name)
+    
+    fun getId() {
+        return _id    
+    }
+    
+    fun getName() {
+        return _name
+    }
 }

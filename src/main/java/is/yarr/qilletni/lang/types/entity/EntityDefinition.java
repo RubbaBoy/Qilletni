@@ -42,25 +42,29 @@ public class EntityDefinition {
      * Consumes the entity's scope and populates it with a function each, that belong to the entity instance.
      */
     private final List<Consumer<Scope>> entityFunctionPopulators;
-    private final Scope globalScope;
+    private final Scope parentScope;
     
     private final QilletniTypeClass<EntityType> qilletniTypeClass;
 
-    public EntityDefinition(String typeName, Map<String, QilletniType> properties, Map<String, UninitializedType> uninitializedParams, List<Consumer<Scope>> entityFunctionPopulators, Scope globalScope) {
+    public EntityDefinition(String typeName, Map<String, QilletniType> properties, Map<String, UninitializedType> uninitializedParams, List<Consumer<Scope>> entityFunctionPopulators, Scope parentScope) {
         this.typeName = typeName;
         this.qilletniTypeClass = new QilletniTypeClass<>(this, typeName);
         this.properties = properties;
         this.uninitializedParams = uninitializedParams;
         this.entityFunctionPopulators = entityFunctionPopulators;
-        this.globalScope = globalScope;
+        this.parentScope = parentScope;
     }
 
     public EntityType createInstance(List<QilletniType> constructorParams) {
         return new EntityType(createScope(constructorParams), this);
     }
 
+    public EntityType createInstance(QilletniType... constructorParams) {
+        return createInstance(List.of(constructorParams));
+    }
+
     private Scope createScope(List<QilletniType> constructorParams) {
-        var scope = new Scope(globalScope);
+        var scope = new Scope(parentScope);
 
         if (uninitializedParams.size() != constructorParams.size()) {
             throw new InvalidParameterException("Invalid constructor invocation");

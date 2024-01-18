@@ -4,16 +4,24 @@ import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.types.FunctionType;
 import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Scope {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(Scope.class);
 
     private static int scopeCount = 0;
 
@@ -50,7 +58,10 @@ public class Scope {
             return symbol;
         }
 
-        if (!name.startsWith("_") && parent != null && parent.isDefined(name)) {
+        var dontLookupVar = name.startsWith("_") && parent != null &&
+                (parent.scopeType == ScopeType.GLOBAL && parent.isDefined(name));
+        
+        if (!dontLookupVar) {
             return parent.lookup(name);
         }
 
@@ -58,33 +69,51 @@ public class Scope {
     }
 
     public Symbol<FunctionType> lookupFunction(String name, int params) {
+        return lookupFunction(name, params, null);
+    }
+
+    public Symbol<FunctionType> lookupFunction(String name, int params, QilletniTypeClass<?> onType) {
+        return lookupFunctionOptionally(name, params, onType)
+                .orElseThrow(() -> new VariableNotFoundException(String.format("Function %s%s with %d params not found", name, onType != null ? " on " + onType.getTypeName() : "", params)));
+    }
+
+    public Optional<Symbol<FunctionType>> lookupFunctionOptionally(String name, int params, QilletniTypeClass<?> onType) {
+        LOGGER.debug("Looking up {}({}) on {}", name, params, onType);
         if (parent != null && parent.isFunctionDefined(name)) {
-            return parent.lookupFunction(name, params);
+            LOGGER.debug("Checking in parent");
+            var foundParentOptional = parent.lookupFunctionOptionally(name, params, onType);
+            if (foundParentOptional.isPresent()) {
+                return foundParentOptional;
+            }
         }
 
         var symbols = lookupFunction(name);
         return symbols.stream().filter(symbol -> {
-                    var callingParamCount = symbol.getParamCount();
-                    if (symbol.getValue().getOnType() != null) {
-                        callingParamCount--;
+                    if (!Objects.equals(symbol.getValue().getOnType(), onType)) {
+                        return false;
                     }
-                    return callingParamCount == params;
+
+                    if (onType != null) {
+                        LOGGER.debug("{} == {}", onType, symbol.getValue().getOnType());
+                    }
+                    
+                    return symbol.getValue().getInvokingParamCount() == params;
                 })
-                .findFirst()
-                .orElseThrow(() -> new VariableNotFoundException("Function " + name + " with " + params + " params not found"));
+                .findFirst();
     }
 
     public List<Symbol<FunctionType>> lookupFunction(String name) {
+        var allFunctions = new ArrayList<Symbol<FunctionType>>();
         if (parent != null && parent.isFunctionDefined(name)) {
-            return parent.lookupFunction(name);
+            allFunctions.addAll(parent.lookupFunction(name));
         }
 
-        var functions = functionSymbolTable.get(name);
-        if (functions == null) {
+        allFunctions.addAll(functionSymbolTable.getOrDefault(name, Collections.emptyList()));
+        if (allFunctions.isEmpty()) {
             throw new VariableNotFoundException("Function " + name + " not found!");
         }
 
-        return functions;
+        return allFunctions;
     }
 
     public boolean isDefined(String name) {
@@ -127,16 +156,20 @@ public class Scope {
     }
 
     public void defineFunction(Symbol<FunctionType> functionSymbol) {
-        if (parent != null && parent.scopeType == ScopeType.GLOBAL && !functionSymbol.getName().startsWith("_")) {
+        if (parent != null && parent.scopeType == ScopeType.GLOBAL &&
+                !functionSymbol.getName().startsWith("_") &&
+                // If not on an entity (should be in its own scope)
+                (functionSymbol.getValue().getOnType() == null || functionSymbol.getValue().getOnType().isNativeType())) {
             parent.defineFunction(functionSymbol);
             return;
         }
         
         if (isFunctionDefined(functionSymbol.getName())) {
             var functions = lookupFunction(functionSymbol.getName());
-            var targetParamCount = functionSymbol.getValue().getParams().length;
-            if (functions.stream().anyMatch(symbol -> symbol.getParamCount() == targetParamCount)) {
-                throw new AlreadyDefinedException("Function " + functionSymbol.getName() + " has already been defined!");
+            var targetParamCount = functionSymbol.getValue().getInvokingParamCount();
+            var targetOnType = functionSymbol.getValue().getOnType();
+            if (functions.stream().anyMatch(symbol -> symbol.getValue().getInvokingParamCount() == targetParamCount && Objects.equals(symbol.getValue().getOnType(), targetOnType))) {
+                throw new AlreadyDefinedException(String.format("Function %s on %s has already been defined!", functionSymbol.getName(), targetOnType));
             }
         }
 
@@ -181,9 +214,9 @@ public class Scope {
 
         var arr2 = functionSymbolTable.keySet().toArray(String[]::new);
         for (int i = 0; i < arr2.length; i++) {
-            var val = functionSymbolTable.get(arr2[0]);
+            var val = functionSymbolTable.get(arr2[i]);
             stringBuilder.append(arr2[i]).append(" = [").append(val.stream().map(Symbol::getValue).map(FunctionType::toString).collect(Collectors.joining(", "))).append("]");
-            if (i != arr.length - 1) {
+            if (i != arr2.length - 1) {
                 stringBuilder.append(", ");
             }
         }

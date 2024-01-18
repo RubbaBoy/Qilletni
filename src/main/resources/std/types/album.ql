@@ -1,8 +1,9 @@
-entity Album {
-    string id
-    string name
-    Artist artist
-    Artist[] artists
-    
-    Album(id, name, artist, artists)
-}
+native fun getId() on album
+
+native fun getUrl() on album
+
+native fun getName() on album
+
+native fun getArtist() on album
+
+native fun getAllArtists() on album

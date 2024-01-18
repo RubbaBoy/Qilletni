@@ -1,7 +1,9 @@
 package is.yarr.qilletni.music;
 
 import is.yarr.qilletni.lang.exceptions.InvalidURLException;
+import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
 import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
+import is.yarr.qilletni.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.SongType;
 import is.yarr.qilletni.lang.types.song.SongDefinition;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ public class MusicPopulator {
 
     /**
      * If eager loading is enabled, the given song is populated. Otherwise, nothing occurs.
+     * TODO: Make this into some kind of factory for SongTypes?
      * 
      * @param songType The song to populate
      * @return The supplied {@link SongType}
@@ -37,24 +40,53 @@ public class MusicPopulator {
         return songType;
     }
     
-    public SongType populateSong(SongType songType) {
-        if (songType.getTrack() != null) {
-            return songType;
+    public void populateSong(SongType songType) {
+        if (songType.isSpotifyDataPopulated()) {
+            return;
         }
         
         LOGGER.info("Populating song: {}", songType);
         
-        Track foundTrack;
-        if (songType.getSongDefinition() == SongDefinition.TITLE_ARTIST) {
-            foundTrack = musicCache.getTrack(songType.getTitle(), songType.getArtist())
-                    .orElseThrow(() -> new SongNotFoundException(String.format("Song \"%s\" by \"%s\" not found", songType.getTitle(), songType.getArtist())));
-        } else {
-            foundTrack = musicCache.getTrackById(getUrlId(songType.getUrl()))
-                    .orElseThrow(() -> new SongNotFoundException(String.format("Song with ID \"%s\" not found", songType.getUrl())));
+        var foundTrack = switch (songType.getSongDefinition()) {
+            case TITLE_ARTIST -> musicCache.getTrack(songType.getSuppliedTitle(), songType.getSuppliedArtist())
+                    .orElseThrow(() -> new SongNotFoundException(String.format("Song \"%s\" by \"%s\" not found", songType.getSuppliedTitle(), songType.getSuppliedArtist())));
+            case URL -> musicCache.getTrackById(getUrlId(songType.getSuppliedUrl()))
+                    .orElseThrow(() -> new SongNotFoundException(String.format("Song with ID \"%s\" not found", songType.getSuppliedUrl())));
+        };
+        
+        songType.populateSpotifyData(foundTrack);
+    }
+
+    /**
+     * If eager loading is enabled, the given album is populated. Otherwise, nothing occurs.
+     * TODO: Make this into some kind of factory for AlbumTypes?
+     * 
+     * @param albumType The album to populate
+     * @return The supplied {@link AlbumType}
+     */
+    public AlbumType initiallyPopulateAlbum(AlbumType albumType) {
+        if (EAGER_MUSIC_LOAD) {
+            populateAlbum(albumType);
         }
         
-        songType.setTrack(foundTrack);
-        return songType;
+        return albumType;
+    }
+    
+    public void populateAlbum(AlbumType albumType) {
+        if (albumType.isSpotifyDataPopulated()) {
+            return;
+        }
+        
+        LOGGER.debug("Populating album: {}", albumType);
+
+        var foundAlbum = switch (albumType.getAlbumDefinition()) {
+            case TITLE_ARTIST -> musicCache.getAlbum(albumType.getSuppliedTitle(), albumType.getSuppliedArtist())
+                    .orElseThrow(() -> new AlbumNotFoundException(String.format("Album \"%s\" by \"%s\" not found", albumType.getSuppliedTitle(), albumType.getSuppliedArtist())));
+            case URL -> musicCache.getAlbumById(getUrlId(albumType.getSuppliedUrl()))
+                    .orElseThrow(() -> new AlbumNotFoundException(String.format("Album with ID \"%s\" not found", albumType.getSuppliedUrl())));
+        };
+        
+        albumType.populateSpotifyData(foundAlbum);
     }
 
     public static MusicPopulator getInstance() {

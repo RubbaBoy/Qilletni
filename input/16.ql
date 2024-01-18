@@ -1,4 +1,4 @@
-import "std/core.ql"
+import "!std/core.ql"
 
 entity Pair {
     int x

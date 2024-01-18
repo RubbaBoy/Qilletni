@@ -105,13 +105,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         scopedDefineFunction(scope, ctx, onType, onType, true);
     }
 
-    private void scopedVisitEntityFunctionDef(Scope scope, QilletniParser.Function_defContext ctx, QilletniTypeClass<?> nativeOnType) {
-        QilletniTypeClass<?> onType = null;
-        if (ctx.function_on_type() != null) {
-            onType = visitNode(ctx.function_on_type());
-        }
-
-        scopedDefineFunction(scope, ctx, onType, nativeOnType, false);
+    private void scopedVisitEntityFunctionDef(Scope scope, QilletniParser.Function_defContext ctx, QilletniTypeClass<?> onType) {
+        scopedDefineFunction(scope, ctx, onType, onType, false);
     }
 
     private void scopedDefineFunction(Scope scope, QilletniParser.Function_defContext ctx, QilletniTypeClass<?> implOnType, QilletniTypeClass<?> nativeOnType, boolean isExternallyDefined) {
@@ -121,17 +116,25 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         var params = new ArrayList<String>(visitNode(ctx.function_def_params()));
 
+        int definedParamCount = params.size();
+
         if (ctx.NATIVE() != null) {
-            if (nativeOnType != null) {
-                params.add(0, "on_instance");
+            int invokingParamCount = params.size();
+            
+            if (implOnType != null) {
+                definedParamCount++;
             }
-
+            
             // If it is native, force it to have the on type of the entity
-            scope.defineFunction(Symbol.createFunctionSymbol(id, params.size(), FunctionType.createNativeFunction(id, params.toArray(String[]::new), isExternallyDefined, nativeOnType)));
+            scope.defineFunction(Symbol.createFunctionSymbol(id, FunctionType.createNativeFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, nativeOnType)));
         } else {
-            LOGGER.debug("{} params = {} on type = {}", id, params, implOnType);
-
-            scope.defineFunction(Symbol.createFunctionSymbol(id, params.size(), FunctionType.createImplementedFunction(id, params.toArray(String[]::new), isExternallyDefined, implOnType, ctx.body())));
+            int invokingParamCount = params.size();
+            if (implOnType != null && isExternallyDefined) {
+                invokingParamCount--;
+            }
+            
+            LOGGER.debug("{} params = {} (defined: {}) on type = {}", id, params, definedParamCount, implOnType);
+            scope.defineFunction(Symbol.createFunctionSymbol(id, FunctionType.createImplementedFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, implOnType, ctx.body())));
         }
     }
 
@@ -159,6 +162,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 case QilletniLexer.STRING_TYPE -> createQilletniList(expr, QilletniTypeClass.STRING);
                 case QilletniLexer.COLLECTION_TYPE -> createQilletniList(expr, QilletniTypeClass.COLLECTION);
                 case QilletniLexer.SONG_TYPE -> createQilletniList(expr, QilletniTypeClass.SONG);
+                case QilletniLexer.ALBUM_TYPE -> createQilletniList(expr, QilletniTypeClass.ALBUM);
                 case QilletniLexer.WEIGHTS_KEYWORD -> createQilletniList(expr, QilletniTypeClass.WEIGHTS);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
@@ -222,6 +226,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
                     yield musicPopulator.initiallyPopulateSong(new SongType(stringType.stringValue()));
                 }
+                case QilletniLexer.ALBUM_TYPE -> musicPopulator.initiallyPopulateAlbum(visitQilletniTypedNode(expr, AlbumType.class));
                 case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(expr, WeightsType.class);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
@@ -391,10 +396,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var symbol = terminalNode.getSymbol();
             var type = symbol.getType();
             if (type == QilletniLexer.ID) {
-                value = StringType.fromType(symbolTable.currentScope().<StringType>lookup(symbol.getText()).getValue());
+                value = StringType.fromType(symbolTable.currentScope().lookup(symbol.getText()).getValue());
             } else if (type == QilletniLexer.STRING) {
                 var stringLiteral = symbol.getText();
-                value = new StringType(stringLiteral.substring(1, stringLiteral.length() - 1));
+                value = new StringType(stringLiteral.substring(1, stringLiteral.length() - 1).translateEscapes());
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
             value = this.<StringType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
@@ -601,15 +606,21 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var id = ctx.ID().getText();
 
         LOGGER.debug("invokedOn = {}", invokedOn);
-        var swappedScope = false;
+//        var swappedScope = false;
         var hasOnType = invokedOn != null;
-        if (hasOnType && invokedOn instanceof EntityType entityType) {
+        
+        
+//        LOGGER.debug("swap scope = ({} != null) && {}", invokedOn, invokedOn instanceof EntityType);
+        var swappedLookupScope = false;
+        // swap lookup scope
+        if (invokedOn instanceof EntityType entityType) {
             LOGGER.debug("SWAP scope!");
+//            swappedScope = true;
+//            hasOnType = false;
+            swappedLookupScope = true;
             symbolTable.swapScope(entityType.getEntityScope());
-            swappedScope = true;
-            hasOnType = false;
         }
-
+        
         var scope = symbolTable.currentScope();
 
         List<QilletniType> params = new ArrayList<>();
@@ -617,43 +628,51 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             params.addAll(visitNode(ctx.expr_list()));
         }
 
-        var functionType = scope.lookupFunction(id, params.size()).getValue();
+        var functionType = scope.lookupFunction(id, params.size(), invokedOn != null ? invokedOn.getTypeClass() : null).getValue();
 
         if (hasOnType && !functionType.getOnType().equals(invokedOn.getTypeClass())) {
             throw new FunctionInvocationException(ctx, "Function not to be invoked on " + invokedOn.getTypeClass() + " should be " + functionType.getOnType());
         }
 
+        var swapInvocationScope = false;
+        
         // If this has an on type and is native, we need to allow it to look it up in the native function handler with the on type
         // This isn't needed if it's implemented, as it has no additional type param
-        if ((swappedScope && functionType.isNative()) || (swappedScope && functionType.isExternallyDefined())) {
-            hasOnType = true;
-            
-            // Return to normal scope if either native (wouldn't really make a difference but might as well) or
-            // if it is externally defined, so it is invoked normally.
-            symbolTable.unswapScope();
-            swappedScope = false;
+        if (swappedLookupScope) {
+            if (functionType.isNative() || functionType.isExternallyDefined()) {
+                // Return to normal scope if either native (wouldn't really make a difference but might as well) or
+                // if it is externally defined, so it is invoked normally.
+                symbolTable.unswapScope();
+            } else {
+                swapInvocationScope = true;
+            }
         }
-
+        
+        LOGGER.debug("swapInvocatioonScope = !({} || {})", functionType.isNative(), functionType.isExternallyDefined());
+        
         var functionParams = new ArrayList<>(Arrays.asList(functionType.getParams()));
 
-        var expectedParamLength = functionParams.size();
-        if (hasOnType) {
-            expectedParamLength--;
-        }
-
+        var expectedParamLength = functionType.getInvokingParamCount();
+        
         if (expectedParamLength != params.size()) {
-            throw new InvalidParameterException(ctx, "Expected " + expectedParamLength + " parameters, got " + params.size());
+            throw new InvalidParameterException(ctx, "Expected " + expectedParamLength + " parameters, got " + params.size() + " onType: " + hasOnType);
         }
 
         QilletniTypeClass<?> invokingUponExpressionType = null;
-        if (hasOnType) {
-            params.add(0, invokedOn);
+        // If there is an on type param, add it
+        LOGGER.debug("{} != {}", functionType.getInvokingParamCount(), functionType.getDefinedParamCount());
+        LOGGER.debug("func: {}", functionType.getName());
+        if (invokedOn != null) {
             invokingUponExpressionType = invokedOn.getTypeClass();
+            
+            if (functionType.getInvokingParamCount() != functionType.getDefinedParamCount()) {
+                params.add(0, invokedOn);
+            }
         }
 
         if (functionType.isNative()) {
             LOGGER.debug("Invoking native! {}", functionType.getName());
-            return Optional.ofNullable((T) nativeFunctionHandler.invokeNativeMethod(ctx, functionType.getName(), params, invokingUponExpressionType));
+            return Optional.ofNullable((T) nativeFunctionHandler.invokeNativeMethod(ctx, functionType.getName(), params, functionType.getDefinedParamCount(), invokingUponExpressionType));
         }
 
         var functionScope = symbolTable.functionCall();
@@ -667,7 +686,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         symbolTable.endFunctionCall();
 
-        if (swappedScope) {
+        if (swapInvocationScope) {
             LOGGER.debug("UNSWAP scope!");
             symbolTable.unswapScope();
         }
@@ -813,10 +832,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     public BooleanType visitForeachRange(QilletniParser.Foreach_rangeContext ctx, int index) {
         var scope = symbolTable.currentScope();
-        var variableName = ctx.ID(0).getText();
-        var listName = ctx.ID(1).getText();
-        
-        var list = scope.<ListType>lookup(listName).getValue();
+        var variableName = ctx.ID().getText();
+        var list = visitQilletniTypedNode(ctx.expr(), ListType.class);
         
         if (index >= list.getItems().size()) {
             return BooleanType.FALSE;
@@ -880,10 +897,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         var urlOrName = ctx.album_url_or_name_pair();
         if (urlOrName.STRING().size() == 1) {
-            return new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+            return musicPopulator.initiallyPopulateAlbum(new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText())));
         }
 
-        return new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+        return musicPopulator.initiallyPopulateAlbum(new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText())));
     }
 
     @Override
@@ -962,9 +979,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public EntityDefinition visitEntity_def(QilletniParser.Entity_defContext ctx) {
         var entityName = ctx.ID().getText();
-
+        
+        var scope = symbolTable.currentScope();
+        
         EntityAttributes attributes = createEntityBody(ctx.entity_body(), entityName);
-        var entityDefinition = new EntityDefinition(entityName, attributes.properties(), attributes.constructorParams(), attributes.entityFunctionPopulators(), globalScope);
+        var entityDefinition = new EntityDefinition(entityName, attributes.properties(), attributes.constructorParams(), attributes.entityFunctionPopulators(), scope);
         LOGGER.debug("Define entity: {}", entityName);
         entityDefinitionManager.defineEntity(entityDefinition);
 
@@ -993,11 +1012,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 unorderedUninitializedProperties::get, (o1, o2) -> o1, LinkedHashMap::new));
 
         // We don't have the actual QilletniTypeClass for the entity yet, so use a placeholder type
-        var nativeOnType = QilletniTypeClass.createEntityTypePlaceholder(entityName);
+        var onType = QilletniTypeClass.createEntityTypePlaceholder(entityName);
 
         List<Consumer<Scope>> functionPopulators = ctx.function_def()
                 .stream()
-                .map(functionDef -> (Consumer<Scope>) (Scope scope) -> scopedVisitEntityFunctionDef(scope, functionDef, nativeOnType))
+                .map(functionDef -> (Consumer<Scope>) (Scope scope) -> scopedVisitEntityFunctionDef(scope, functionDef, onType))
                 .toList();
 
         return new EntityAttributes(initializedProperties, uninitializedProperties, functionPopulators);

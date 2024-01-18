@@ -10,14 +10,11 @@ native fun getArtist() on song
 // Gets a list of Artist entities on the song
 native fun getAllArtists() on song
 
+// Gets the Album the song is on
+native fun getAlbum() on song
+
 // Gets the title of the song
 native fun getTitle() on song
 
-// Gets the Album entity the song is on
-native fun getAlbum() on song
-
 // Gets the duration of the song in milliseconds
 native fun getDuration() on song
-
-// Gives the string representation of the object
-native fun toString() on song

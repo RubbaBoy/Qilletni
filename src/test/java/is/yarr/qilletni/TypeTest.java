@@ -37,14 +37,13 @@ public class TypeTest {
                 boolean f = false
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(2, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
         
-        var t = symbols.get("t");
+        var t = symbols.lookup("t");
         assertEquals(QilletniTypeClass.BOOLEAN, t.getType());
         assertTrue(((BooleanType) t.getValue()).getValue());
         
-        var f = symbols.get("f");
+        var f = symbols.lookup("f");
         assertEquals(QilletniTypeClass.BOOLEAN, f.getType());
         assertFalse(((BooleanType) f.getValue()).getValue());
     }
@@ -55,10 +54,9 @@ public class TypeTest {
                 int i = 42
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
         
-        var i = symbols.get("i");
+        var i = symbols.lookup("i");
         assertEquals(QilletniTypeClass.INT, i.getType());
         assertEquals(42, ((IntType) i.getValue()).getValue());
     }
@@ -69,10 +67,9 @@ public class TypeTest {
                 string s = "foo"
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
         
-        var s = symbols.get("s");
+        var s = symbols.lookup("s");
         assertEquals(QilletniTypeClass.STRING, s.getType());
         assertEquals("foo", ((StringType) s.getValue()).getValue());
     }
@@ -83,16 +80,15 @@ public class TypeTest {
                 song s = "God Knows" by "Knocked Loose"
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var songSymbol = symbols.get("s");
+        var songSymbol = symbols.lookup("s");
         assertEquals(QilletniTypeClass.SONG, songSymbol.getType());
         var song = (SongType) songSymbol.getValue();
         
-        assertEquals("God Knows", song.getTitle());
-        assertEquals("Knocked Loose", song.getArtist());
-        assertNull(song.getUrl());
+        assertEquals("God Knows", song.getSuppliedTitle());
+        assertEquals("Knocked Loose", song.getSuppliedArtist());
+        assertNull(song.getSuppliedUrl());
     }
 
     @Test
@@ -101,16 +97,15 @@ public class TypeTest {
                 song s = "https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe"
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var songSymbol = symbols.get("s");
+        var songSymbol = symbols.lookup("s");
         assertEquals(QilletniTypeClass.SONG, songSymbol.getType());
         var song = (SongType) songSymbol.getValue();
         
-        assertNull(song.getTitle());
-        assertNull(song.getArtist());
-        assertEquals("https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe", song.getUrl());
+        assertNull(song.getSuppliedTitle());
+        assertNull(song.getSuppliedArtist());
+        assertEquals("https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe", song.getSuppliedUrl());
     }
     
     @Test
@@ -122,10 +117,9 @@ public class TypeTest {
                     | 10% "US" by "Apex Alpha"
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
         
-        var weightsSymbol = symbols.get("w");
+        var weightsSymbol = symbols.lookup("w");
         assertEquals(QilletniTypeClass.WEIGHTS, weightsSymbol.getType());
         var weights = (WeightsType) weightsSymbol.getValue();
         
@@ -135,19 +129,19 @@ public class TypeTest {
         var firstWeight = weightEntries.get(0);
         assertEquals(3, firstWeight.getWeightAmount());
         assertEquals(WeightUnit.MULTIPLIER, firstWeight.getWeightUnit());
-        assertEquals("God Knows", firstWeight.getSong().getTitle());
-        assertEquals("Knocked Loose", firstWeight.getSong().getArtist());
+        assertEquals("God Knows", firstWeight.getSong().getSuppliedTitle());
+        assertEquals("Knocked Loose", firstWeight.getSong().getSuppliedArtist());
 
         var secondWeight = weightEntries.get(1);
         assertEquals(2, secondWeight.getWeightAmount());
         assertEquals(WeightUnit.MULTIPLIER, secondWeight.getWeightUnit());
-        assertEquals("https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe", secondWeight.getSong().getUrl());
+        assertEquals("https://open.spotify.com/track/3M1RZOhzt4lG3vpSYwffhe", secondWeight.getSong().getSuppliedUrl());
 
         var thirdWeight = weightEntries.get(2);
         assertEquals(10, thirdWeight.getWeightAmount());
         assertEquals(WeightUnit.PERCENT, thirdWeight.getWeightUnit());
-        assertEquals("US", thirdWeight.getSong().getTitle());
-        assertEquals("Apex Alpha", thirdWeight.getSong().getArtist());
+        assertEquals("US", thirdWeight.getSong().getSuppliedTitle());
+        assertEquals("Apex Alpha", thirdWeight.getSong().getSuppliedArtist());
     }
 
     @Test
@@ -156,10 +150,9 @@ public class TypeTest {
                 collection c = "My Playlist #59" created by "rubbaboy"
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var collectionSymbol = symbols.get("c");
+        var collectionSymbol = symbols.lookup("c");
         assertEquals(QilletniTypeClass.COLLECTION, collectionSymbol.getType());
         var collection = (CollectionType) collectionSymbol.getValue();
         
@@ -176,10 +169,9 @@ public class TypeTest {
                 collection c = "My Playlist #59" created by "rubbaboy" order[shuffle]
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var collectionSymbol = symbols.get("c");
+        var collectionSymbol = symbols.lookup("c");
         assertEquals(QilletniTypeClass.COLLECTION, collectionSymbol.getType());
         var collection = (CollectionType) collectionSymbol.getValue();
 
@@ -198,12 +190,11 @@ public class TypeTest {
                 collection c = "My Playlist #59" created by "rubbaboy" weights[w]
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(2, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var weights = (WeightsType) symbols.get("w").getValue();
+        var weights = (WeightsType) symbols.lookup("w").getValue();
 
-        var collectionSymbol = symbols.get("c");
+        var collectionSymbol = symbols.lookup("c");
         assertEquals(QilletniTypeClass.COLLECTION, collectionSymbol.getType());
         var collection = (CollectionType) collectionSymbol.getValue();
         
@@ -220,10 +211,9 @@ public class TypeTest {
                 collection c = "My Playlist #59" created by "rubbaboy" weights[emptyWeights()]
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var collectionSymbol = symbols.get("c");
+        var collectionSymbol = symbols.lookup("c");
         assertEquals(QilletniTypeClass.COLLECTION, collectionSymbol.getType());
         var collection = (CollectionType) collectionSymbol.getValue();
         
@@ -242,12 +232,11 @@ public class TypeTest {
                 collection c = "My Playlist #59" created by "rubbaboy" order[shuffle] weights[w]
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(2, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var weights = (WeightsType) symbols.get("w").getValue();
+        var weights = (WeightsType) symbols.lookup("w").getValue();
 
-        var collectionSymbol = symbols.get("c");
+        var collectionSymbol = symbols.lookup("c");
         assertEquals(QilletniTypeClass.COLLECTION, collectionSymbol.getType());
         var collection = (CollectionType) collectionSymbol.getValue();
         
@@ -264,10 +253,9 @@ public class TypeTest {
                 int[] i = [1, 2, 3]
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var listSymbol = symbols.get("i");
+        var listSymbol = symbols.lookup("i");
         assertEquals(QilletniTypeClass.LIST, listSymbol.getType());
         
         var list = (ListType) listSymbol.getValue();
@@ -284,10 +272,9 @@ public class TypeTest {
                 int[] i = []
                 """);
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
-        var listSymbol = symbols.get("i");
+        var listSymbol = symbols.lookup("i");
         assertEquals(QilletniTypeClass.LIST, listSymbol.getType());
         
         var list = (ListType) listSymbol.getValue();

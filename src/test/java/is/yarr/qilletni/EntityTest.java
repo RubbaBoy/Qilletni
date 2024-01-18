@@ -30,9 +30,6 @@ public class EntityTest {
                 """);
         var runner = ranProgram.runner();
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(0, symbols.size());
-
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var definition = entityDefinitionManager.lookup("Foo");
         assertEquals("Foo", definition.getTypeName());
@@ -50,9 +47,6 @@ public class EntityTest {
                 }
                 """);
         var runner = ranProgram.runner();
-
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(0, symbols.size());
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var entityDefinition = entityDefinitionManager.lookup("Foo");
@@ -81,17 +75,14 @@ public class EntityTest {
                 """);
         var runner = ranProgram.runner();
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var entityDefinition = entityDefinitionManager.lookup("Foo");
 
-        var entitySymbol = symbols.get("foo");
+        var entitySymbol = symbols.lookup("foo");
         assertEquals(entityDefinition, entitySymbol.getType().getEntityDefinition());
         var entity = (EntityType) entitySymbol.getValue();
-        
-        assertEquals(0, entity.getEntityScope().getAllSymbols().size());
     }
 
     @Test
@@ -108,24 +99,22 @@ public class EntityTest {
                 """);
         var runner = ranProgram.runner();
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var entityDefinition = entityDefinitionManager.lookup("Foo");
 
-        var entitySymbol = symbols.get("foo");
+        var entitySymbol = symbols.lookup("foo");
         assertEquals(entityDefinition, entitySymbol.getType().getEntityDefinition());
         var entity = (EntityType) entitySymbol.getValue();
         
-        var entitySymbols = entity.getEntityScope().getAllSymbols();
-        assertEquals(2, entitySymbols.size());
+        var entitySymbols = entity.getEntityScope();
 
-        var iSymbol = entitySymbols.get("i");
+        var iSymbol = entitySymbols.lookup("i");
         assertEquals(QilletniTypeClass.INT, iSymbol.getType());
         assertEquals(123, ((IntType) iSymbol.getValue()).getValue());
 
-        var sSymbol = entitySymbols.get("s");
+        var sSymbol = entitySymbols.lookup("s");
         assertEquals(QilletniTypeClass.STRING, sSymbol.getType());
         assertEquals("bar", ((StringType) sSymbol.getValue()).getValue());
     }
@@ -144,24 +133,22 @@ public class EntityTest {
                 """);
         var runner = ranProgram.runner();
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var entityDefinition = entityDefinitionManager.lookup("Foo");
 
-        var entitySymbol = symbols.get("foo");
+        var entitySymbol = symbols.lookup("foo");
         assertEquals(entityDefinition, entitySymbol.getType().getEntityDefinition());
         var entity = (EntityType) entitySymbol.getValue();
         
-        var entitySymbols = entity.getEntityScope().getAllSymbols();
-        assertEquals(2, entitySymbols.size());
+        var entitySymbols = entity.getEntityScope();
 
-        var iSymbol = entitySymbols.get("i");
+        var iSymbol = entitySymbols.lookup("i");
         assertEquals(QilletniTypeClass.INT, iSymbol.getType());
         assertEquals(123, ((IntType) iSymbol.getValue()).getValue());
 
-        var sSymbol = entitySymbols.get("s");
+        var sSymbol = entitySymbols.lookup("s");
         assertEquals(QilletniTypeClass.STRING, sSymbol.getType());
         assertEquals("bar", ((StringType) sSymbol.getValue()).getValue());
     }
@@ -180,24 +167,22 @@ public class EntityTest {
                 """);
         var runner = ranProgram.runner();
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var entityDefinition = entityDefinitionManager.lookup("Foo");
 
-        var entitySymbol = symbols.get("foo");
+        var entitySymbol = symbols.lookup("foo");
         assertEquals(entityDefinition, entitySymbol.getType().getEntityDefinition());
         var entity = (EntityType) entitySymbol.getValue();
 
-        var entitySymbols = entity.getEntityScope().getAllSymbols();
-        assertEquals(2, entitySymbols.size());
+        var entitySymbols = entity.getEntityScope();
 
-        var iSymbol = entitySymbols.get("i");
+        var iSymbol = entitySymbols.lookup("i");
         assertEquals(QilletniTypeClass.INT, iSymbol.getType());
         assertEquals(123, ((IntType) iSymbol.getValue()).getValue());
 
-        var sSymbol = entitySymbols.get("s");
+        var sSymbol = entitySymbols.lookup("s");
         assertEquals(QilletniTypeClass.STRING, sSymbol.getType());
         assertEquals("bar", ((StringType) sSymbol.getValue()).getValue());
     }
@@ -215,20 +200,18 @@ public class EntityTest {
                 """);
         var runner = ranProgram.runner();
 
-        var symbols = ranProgram.symbolTable().currentScope().getAllSymbols();
-        assertEquals(1, symbols.size());
+        var symbols = ranProgram.symbolTable().currentScope();
 
         var entityDefinitionManager = runner.getEntityDefinitionManager();
         var entityDefinition = entityDefinitionManager.lookup("Foo");
 
-        var entitySymbol = symbols.get("foo");
+        var entitySymbol = symbols.lookup("foo");
         assertEquals(entityDefinition, entitySymbol.getType().getEntityDefinition());
         var entity = (EntityType) entitySymbol.getValue();
 
-        var entitySymbols = entity.getEntityScope().getAllSymbols();
-        assertEquals(1, entitySymbols.size());
+        var entitySymbols = entity.getEntityScope();
 
-        var iSymbol = entitySymbols.get("i");
+        var iSymbol = entitySymbols.lookup("i");
         assertEquals(QilletniTypeClass.INT, iSymbol.getType());
         assertEquals(123, ((IntType) iSymbol.getValue()).getValue());
     }

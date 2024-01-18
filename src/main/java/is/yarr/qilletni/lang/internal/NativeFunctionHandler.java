@@ -7,6 +7,8 @@ import is.yarr.qilletni.lang.types.QilletniType;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.TypeUtils;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessFlag;
@@ -16,11 +18,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class NativeFunctionHandler {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(NativeFunctionHandler.class);
     
     private final Map<MethodSignature, InvocableMethod> nativeMethods = new HashMap<>();
     
@@ -45,9 +47,11 @@ public class NativeFunctionHandler {
                 var methodInvokedOn = invokedOn.or(() -> getNativeOn(declaredMethod.getDeclaredAnnotations()));
                 
                 var paramCount = declaredMethod.getParameterCount();
-                if (methodInvokedOn.isPresent()) {
-                    paramCount--;
-                }
+//                if (methodInvokedOn.isPresent()) {
+//                    paramCount--;
+//                }
+                
+                LOGGER.debug("native func {} params: {}", declaredMethod.getName(), paramCount);
                 
                 nativeMethods.put(new MethodSignature(declaredMethod.getName(), paramCount, methodInvokedOn.orElse(null)), new InvocableMethod(declaredMethod, beforeAnyInvocationMethod));
             }
@@ -76,13 +80,9 @@ public class NativeFunctionHandler {
         return Optional.empty();
     }
     
-    public QilletniType invokeNativeMethod(ParserRuleContext ctx, String name, List<QilletniType> params, QilletniTypeClass<?> invokedUponType) {
-        var paramCount = params.size();
-        if (invokedUponType != null) {
-            paramCount--;
-        }
-
-        var invocableMethod = nativeMethods.get(new MethodSignature(name, paramCount, invokedUponType));
+    public QilletniType invokeNativeMethod(ParserRuleContext ctx, String name, List<QilletniType> params, int definedParamCount, QilletniTypeClass<?> invokedUponType) {
+        LOGGER.debug("invokeNativeMethod({}, {}, {})", name, definedParamCount, invokedUponType);
+        var invocableMethod = nativeMethods.get(new MethodSignature(name, definedParamCount, invokedUponType));
         if (invocableMethod == null) {
             throw new NativeMethodNotBoundException(ctx, "Native method not bound to anything!");
         }

@@ -1,5 +1,7 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.SpotifyDataUtility;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.song.SongDefinition;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.music.Track;
@@ -10,6 +12,9 @@ public final class SongType extends QilletniType {
     private String url;
     private String title;
     private String artist;
+
+    private EntityType artistType;
+    private ListType artistsType;
     private AlbumType albumType;
     private Track track;
     
@@ -32,46 +37,66 @@ public final class SongType extends QilletniType {
         this.songDefinition = songDefinition;
     }
 
-    public String getUrl() {
+    public String getSuppliedUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getTitle() {
+    public String getSuppliedTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getArtist() {
+    public String getSuppliedArtist() {
         return artist;
     }
 
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
     public AlbumType getAlbum() {
-        return albumType;
-    }
+        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
 
-    public void setAlbum(AlbumType albumType) {
-        this.albumType = albumType;
+        if (albumType != null) {
+            return albumType;
+        }
+        
+        return albumType = new AlbumType(track.getAlbum());
+    }
+    
+    public EntityType getArtist(EntityDefinitionManager entityDefinitionManager) {
+        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+        
+        if (artistType != null) {
+            return artistType;
+        }
+
+        var trackArtist = track.getArtist();
+        var artistEntity = entityDefinitionManager.lookup("Artist");
+        return artistType = artistEntity.createInstance(new StringType(trackArtist.getId()), new StringType(trackArtist.getName()));
+    }
+    
+    public ListType getArtists(EntityDefinitionManager entityDefinitionManager) {
+        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+
+        if (artistsType != null) {
+            return artistsType;
+        }
+        
+        var trackArtists = track.getArtists();
+        var artistEntity = entityDefinitionManager.lookup("Artist");
+        var artistEntities = trackArtists.stream()
+                .map(artist -> (QilletniType) artistEntity.createInstance(new StringType(artist.getId()), new StringType(artist.getName())))
+                .toList();
+
+        return artistsType = new ListType(QilletniTypeClass.createListOfType(artistEntity.getQilletniTypeClass()), artistEntities);
     }
 
     public Track getTrack() {
-        return track;
+        return SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+    }
+    
+    public boolean isSpotifyDataPopulated() {
+        return track != null;
     }
 
-    public void setTrack(Track track) {
+    public void populateSpotifyData(Track track) {
         this.track = track;
-        
-        setAlbum(new AlbumType(track.getAlbum()));
     }
 
     @Override

@@ -177,7 +177,7 @@ function_def
     ;
 
 function_on_type
-    : ON type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ID)
+    : ON type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | ALBUM_TYPE | WEIGHTS_KEYWORD | ID)
     ;
 
 function_def_params
@@ -214,7 +214,7 @@ range
     ;
 
 foreach_range
-    : ID COLON ID
+    : ID COLON expr
     ;
 
 entity_def

@@ -10,6 +10,8 @@ public final class FunctionType extends QilletniType {
     
     private final String name;
     private final String[] params;
+    private final int invokingParamCount;
+    private final int definedParamCount;
     private final boolean isNative;
     private final QilletniTypeClass<?> onType;
     private final boolean isExternallyDefined;
@@ -17,21 +19,23 @@ public final class FunctionType extends QilletniType {
     // Only set if isNative is false
     private final QilletniParser.BodyContext bodyContext;
 
-    private FunctionType(String name, String[] params, boolean isNative, boolean isExternallyDefined, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
+    private FunctionType(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isNative, boolean isExternallyDefined, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
+        this.invokingParamCount = invokingParamCount;
         this.isNative = isNative;
         this.name = name;
         this.params = params;
+        this.definedParamCount = definedParamCount;
         this.onType = onType;
         this.isExternallyDefined = isExternallyDefined;
         this.bodyContext = bodyContext;
     }
     
-    public static FunctionType createImplementedFunction(String name, String[] params, boolean isExternallyDefined, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
-        return new FunctionType(name, params, false, isExternallyDefined, onType, bodyContext);
+    public static FunctionType createImplementedFunction(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isExternallyDefined, QilletniTypeClass<?> onType, QilletniParser.BodyContext bodyContext) {
+        return new FunctionType(name, params, invokingParamCount, definedParamCount, false, isExternallyDefined, onType, bodyContext);
     }
     
-    public static FunctionType createNativeFunction(String name, String[] params, boolean isExternallyDefined, QilletniTypeClass<?> onType) {
-        return new FunctionType(name, params, true, isExternallyDefined, onType, null);
+    public static FunctionType createNativeFunction(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isExternallyDefined, QilletniTypeClass<?> onType) {
+        return new FunctionType(name, params, invokingParamCount, definedParamCount, true, isExternallyDefined, onType, null);
     }
 
     public String getName() {
@@ -45,6 +49,24 @@ public final class FunctionType extends QilletniType {
      */
     public String[] getParams() {
         return params;
+    }
+
+    /**
+     * Gets the number of parameters the function is defined with. If this is native, this includes the self param.
+     * 
+     * @return The number of parameters defined with
+     */
+    public int getDefinedParamCount() {
+        return definedParamCount;
+    }
+
+    /**
+     * The number of parameters the function accepts when it is being invoked. This is the size of {@link #getParams()}.
+     * 
+     * @return The number of parameters that are accepted upon invocation
+     */
+    public int getInvokingParamCount() {
+        return invokingParamCount;
     }
 
     public boolean isNative() {

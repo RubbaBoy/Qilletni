@@ -18,20 +18,11 @@ import java.util.Objects;
 public class Symbol<T extends QilletniType> {
     
     private final String name;
-    private final int paramCount;
     private final QilletniTypeClass<T> type;
     private T value;
 
     public Symbol(String name, QilletniTypeClass<T> type, T value) {
         this.name = name;
-        this.paramCount = -1;
-        this.type = type;
-        this.value = value;
-    }
-
-    private Symbol(String name, int paramCount, QilletniTypeClass<T> type, T value) {
-        this.name = name;
-        this.paramCount = paramCount;
         this.type = type;
         this.value = value;
     }
@@ -40,16 +31,12 @@ public class Symbol<T extends QilletniType> {
         return new Symbol<>(name, (QilletniTypeClass<T>) type, value);
     }
     
-    public static Symbol<FunctionType> createFunctionSymbol(String name, int paramCount, FunctionType value) {
-        return new Symbol<>(name, paramCount, QilletniTypeClass.FUNCTION, value);
+    public static Symbol<FunctionType> createFunctionSymbol(String name, FunctionType value) {
+        return new Symbol<>(name, QilletniTypeClass.FUNCTION, value);
     }
 
     public String getName() {
         return name;
-    }
-
-    public int getParamCount() {
-        return paramCount;
     }
 
     public QilletniTypeClass<T> getType() {
@@ -127,19 +114,18 @@ public class Symbol<T extends QilletniType> {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Symbol<?> symbol = (Symbol<?>) object;
-        return paramCount == symbol.paramCount && Objects.equals(name, symbol.name) && type == symbol.type && Objects.equals(value, symbol.value);
+        return Objects.equals(name, symbol.name) && type == symbol.type && Objects.equals(value, symbol.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, paramCount, type, value);
+        return Objects.hash(name, type, value);
     }
 
     @Override
     public String toString() {
         return "Symbol{" +
                 "name='" + name + '\'' +
-                ", paramCount=" + paramCount +
                 ", type=" + type +
                 ", value=" + value +
                 '}';

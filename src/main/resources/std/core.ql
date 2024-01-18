@@ -3,6 +3,8 @@ import "math.ql"
 import "util/list.ql"
 import "util/map.ql"
 import "types/song.ql"
+import "types/album.ql"
+import "types/artist.ql"
 
 // Prints a string representation of the given object to the console
 // obj may be of any type
