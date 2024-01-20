@@ -1,12 +1,11 @@
 package is.yarr.qilletni.music;
 
-import is.yarr.qilletni.lang.exceptions.InvalidURLException;
 import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
 import is.yarr.qilletni.lang.exceptions.music.InvalidURLOrIDException;
 import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
 import is.yarr.qilletni.lang.types.AlbumType;
+import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.SongType;
-import is.yarr.qilletni.lang.types.song.SongDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +87,38 @@ public class MusicPopulator {
         };
         
         albumType.populateSpotifyData(foundAlbum);
+    }
+
+    /**
+     * If eager loading is enabled, the given album is populated. Otherwise, nothing occurs.
+     * TODO: Make this into some kind of factory for CollectionTypes?
+     * 
+     * @param collectionType The album to populate
+     * @return The supplied {@link AlbumType}
+     */
+    public CollectionType initiallyPopulateCollection(CollectionType collectionType) {
+        if (EAGER_MUSIC_LOAD) {
+            populateCollection(collectionType);
+        }
+        
+        return collectionType;
+    }
+    
+    public void populateCollection(CollectionType collectionType) {
+        if (collectionType.isSpotifyDataPopulated()) {
+            return;
+        }
+        
+        LOGGER.debug("Populating collection: {}", collectionType);
+
+        var foundPlaylist = switch (collectionType.getCollectionDefinition()) {
+            case NAME_CREATOR -> musicCache.getPlaylist(collectionType.getSuppliedName(), collectionType.getSuppliedCreator())
+                    .orElseThrow(() -> new AlbumNotFoundException(String.format("Collection \"%s\" by \"%s\" not found", collectionType.getSuppliedName(), collectionType.getSuppliedCreator())));
+            case URL -> musicCache.getPlaylistById(getUrlId(collectionType.getSuppliedUrl()))
+                    .orElseThrow(() -> new AlbumNotFoundException(String.format("Album with ID \"%s\" not found", collectionType.getSuppliedUrl())));
+        };
+        
+        collectionType.populateSpotifyData(foundPlaylist);
     }
 
     public static MusicPopulator getInstance() {

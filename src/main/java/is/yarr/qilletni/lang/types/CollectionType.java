@@ -1,8 +1,11 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.SpotifyDataUtility;
 import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
 import is.yarr.qilletni.lang.types.collection.CollectionOrder;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.music.Playlist;
 
 public final class CollectionType extends QilletniType {
 
@@ -12,6 +15,8 @@ public final class CollectionType extends QilletniType {
     private String creator;
     private CollectionOrder order = CollectionOrder.SEQUENTIAL;
     private WeightsType weights;
+    private Playlist playlist;
+    private EntityType creatorType;
 
     public CollectionType(String url) {
         this.collectionDefinition = CollectionDefinition.URL;
@@ -32,28 +37,16 @@ public final class CollectionType extends QilletniType {
         this.collectionDefinition = collectionDefinition;
     }
 
-    public String getUrl() {
+    public String getSuppliedUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getName() {
+    public String getSuppliedName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCreator() {
+    public String getSuppliedCreator() {
         return creator;
-    }
-
-    public void setCreator(String creator) {
-        this.creator = creator;
     }
 
     public CollectionOrder getOrder() {
@@ -70,6 +63,30 @@ public final class CollectionType extends QilletniType {
 
     public void setWeights(WeightsType weights) {
         this.weights = weights;
+    }
+    
+    public EntityType getCreator(EntityDefinitionManager entityDefinitionManager) {
+        SpotifyDataUtility.requireNonNull(playlist, "Internal Playlist is null, #populateSpotifyData must be invoked prior to getting API data");
+
+        if (creatorType != null) {
+            return creatorType;
+        }
+
+        var creator = playlist.getCreator();
+        var artistEntity = entityDefinitionManager.lookup("User");
+        return creatorType = artistEntity.createInstance(new StringType(creator.getId()), new StringType(creator.getName()));
+    }
+
+    public Playlist getPlaylist() {
+        return SpotifyDataUtility.requireNonNull(playlist, "Internal Playlist is null, #populateSpotifyData must be invoked prior to getting API data");
+    }
+
+    public boolean isSpotifyDataPopulated() {
+        return playlist != null;
+    }
+
+    public void populateSpotifyData(Playlist playlist) {
+        this.playlist = playlist;
     }
 
     @Override

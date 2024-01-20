@@ -441,7 +441,7 @@ public class SpotifyMusicCache implements MusicCache {
                 session.save(databaseUser = user);
             }
 
-            var newPlaylist = new SpotifyPlaylist(playlist.getId(), playlist.getTitle(), databaseUser);
+            var newPlaylist = new SpotifyPlaylist(playlist.getId(), playlist.getTitle(), databaseUser, playlist.getTrackCount());
             LOGGER.debug("new playlist = {}", newPlaylist);
             session.save(newPlaylist);
             return newPlaylist;

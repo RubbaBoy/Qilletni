@@ -157,8 +157,8 @@ public class TypeTest {
         var collection = (CollectionType) collectionSymbol.getValue();
         
         assertEquals(CollectionDefinition.NAME_CREATOR, collection.getCollectionDefinition());
-        assertEquals("My Playlist #59", collection.getName());
-        assertEquals("rubbaboy", collection.getCreator());
+        assertEquals("My Playlist #59", collection.getSuppliedName());
+        assertEquals("rubbaboy", collection.getSuppliedCreator());
         assertEquals(CollectionOrder.SEQUENTIAL, collection.getOrder());
         assertNull(collection.getWeights());
     }
@@ -176,8 +176,8 @@ public class TypeTest {
         var collection = (CollectionType) collectionSymbol.getValue();
 
         assertEquals(CollectionDefinition.NAME_CREATOR, collection.getCollectionDefinition());
-        assertEquals("My Playlist #59", collection.getName());
-        assertEquals("rubbaboy", collection.getCreator());
+        assertEquals("My Playlist #59", collection.getSuppliedName());
+        assertEquals("rubbaboy", collection.getSuppliedCreator());
         assertEquals(CollectionOrder.SHUFFLE, collection.getOrder());
         assertNull(collection.getWeights());
     }
@@ -199,8 +199,8 @@ public class TypeTest {
         var collection = (CollectionType) collectionSymbol.getValue();
         
         assertEquals(CollectionDefinition.NAME_CREATOR, collection.getCollectionDefinition());
-        assertEquals("My Playlist #59", collection.getName());
-        assertEquals("rubbaboy", collection.getCreator());
+        assertEquals("My Playlist #59", collection.getSuppliedName());
+        assertEquals("rubbaboy", collection.getSuppliedCreator());
         assertEquals(CollectionOrder.SEQUENTIAL, collection.getOrder());
         assertEquals(weights, collection.getWeights());
     }
@@ -218,8 +218,8 @@ public class TypeTest {
         var collection = (CollectionType) collectionSymbol.getValue();
         
         assertEquals(CollectionDefinition.NAME_CREATOR, collection.getCollectionDefinition());
-        assertEquals("My Playlist #59", collection.getName());
-        assertEquals("rubbaboy", collection.getCreator());
+        assertEquals("My Playlist #59", collection.getSuppliedName());
+        assertEquals("rubbaboy", collection.getSuppliedCreator());
         assertEquals(CollectionOrder.SEQUENTIAL, collection.getOrder());
         assertEquals(0, collection.getWeights().getWeightEntries().size());
     }
@@ -241,8 +241,8 @@ public class TypeTest {
         var collection = (CollectionType) collectionSymbol.getValue();
         
         assertEquals(CollectionDefinition.NAME_CREATOR, collection.getCollectionDefinition());
-        assertEquals("My Playlist #59", collection.getName());
-        assertEquals("rubbaboy", collection.getCreator());
+        assertEquals("My Playlist #59", collection.getSuppliedName());
+        assertEquals("rubbaboy", collection.getSuppliedCreator());
         assertEquals(CollectionOrder.SHUFFLE, collection.getOrder());
         assertEquals(weights, collection.getWeights());
     }

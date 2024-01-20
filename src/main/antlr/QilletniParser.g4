@@ -7,7 +7,7 @@ parser grammar QilletniParser;
 options { tokenVocab=QilletniLexer; }
 		
 prog
-    : import_file* running+ EOF;
+    : import_file* running* EOF;
 
 import_file
     : IMPORT STRING

@@ -186,7 +186,7 @@ public class SpotifyMusicFetcher implements MusicFetcher {
             var spotifyApi = authorizer.getSpotifyApi();
 
             var album = spotifyApi.getAlbum(id).build().execute();
-
+            
             return Optional.of(createAlbum(album));
         } catch (IOException | ParseException | SpotifyWebApiException e) {
             throw new RuntimeException(e);
@@ -236,7 +236,6 @@ public class SpotifyMusicFetcher implements MusicFetcher {
             var offset = 0;
             var lastTotal = 0;
             do {
-                LOGGER.debug("offset = {}", offset);
                 var trackPaging = spotifyApi.getPlaylistsItems(playlist.getId())
                         .limit(MAX_PAGE_LIMIT)
                         .offset(offset)
@@ -314,11 +313,11 @@ public class SpotifyMusicFetcher implements MusicFetcher {
     }
     
     private SpotifyPlaylist createPlaylistEntity(se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified playlist) {
-        return new SpotifyPlaylist(playlist.getId(), playlist.getName(), createUserEntity(playlist.getOwner()));
+        return new SpotifyPlaylist(playlist.getId(), playlist.getName(), createUserEntity(playlist.getOwner()), playlist.getTracks().getTotal());
     }
     
     private SpotifyPlaylist createPlaylistEntity(se.michaelthelin.spotify.model_objects.specification.Playlist playlist) {
-        return new SpotifyPlaylist(playlist.getId(), playlist.getName(), createUserEntity(playlist.getOwner()));
+        return new SpotifyPlaylist(playlist.getId(), playlist.getName(), createUserEntity(playlist.getOwner()), playlist.getTracks().getTotal());
     }
     
     private SpotifyArtist createArtist(se.michaelthelin.spotify.model_objects.specification.Artist artist) {

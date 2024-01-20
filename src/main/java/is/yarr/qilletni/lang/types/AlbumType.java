@@ -92,7 +92,7 @@ public final class AlbumType extends QilletniType {
     }
 
     public Album getAlbum() {
-        return album;
+        return SpotifyDataUtility.requireNonNull(album, "Internal Album is null, #populateSpotifyData must be invoked prior to getting API data");
     }
 
     public boolean isSpotifyDataPopulated() {

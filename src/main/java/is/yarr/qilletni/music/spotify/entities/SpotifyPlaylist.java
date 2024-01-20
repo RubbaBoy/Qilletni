@@ -17,6 +17,7 @@ public class SpotifyPlaylist implements Playlist {
     @Id
     private String id;
     private String title;
+    private int trackCount;
     
     @ManyToOne(fetch = FetchType.EAGER)
     private SpotifyUser creator;
@@ -26,10 +27,11 @@ public class SpotifyPlaylist implements Playlist {
 
     public SpotifyPlaylist() {}
 
-    public SpotifyPlaylist(String id, String title, SpotifyUser creator) {
+    public SpotifyPlaylist(String id, String title, SpotifyUser creator, int trackCount) {
         this.id = id;
         this.title = title;
         this.creator = creator;
+        this.trackCount = trackCount;
         this.spotifyPlaylistIndex = new SpotifyPlaylistIndex(Collections.emptyList(), new Date(0));
     }
 
@@ -50,7 +52,7 @@ public class SpotifyPlaylist implements Playlist {
 
     @Override
     public int getTrackCount() {
-        return spotifyPlaylistIndex.getTracks().size();
+        return trackCount;
     }
 
     public SpotifyPlaylistIndex getSpotifyPlaylistIndex() {

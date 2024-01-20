@@ -1,6 +1,7 @@
 package is.yarr.qilletni.lib;
 
 import is.yarr.qilletni.lib.core.nativefunctions.AlbumFunctions;
+import is.yarr.qilletni.lib.core.nativefunctions.CollectionFunctions;
 import is.yarr.qilletni.lib.core.nativefunctions.CoreFunctions;
 import is.yarr.qilletni.lib.core.nativefunctions.ListFunctions;
 import is.yarr.qilletni.lib.core.nativefunctions.MapFunctions;
@@ -14,7 +15,7 @@ public class LibraryInit {
     public static void registerFunctions(NativeFunctionHandler nativeFunctionHandler) {
         nativeFunctionHandler.registerClasses(MathFunctions.class, CoreFunctions.class,
                 StringFunctions.class, ListFunctions.class, MapFunctions.class,
-                SongFunctions.class, AlbumFunctions.class);
+                SongFunctions.class, AlbumFunctions.class, CollectionFunctions.class);
     }
 
 }
