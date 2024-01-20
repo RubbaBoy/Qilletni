@@ -14,7 +14,7 @@ public class CollectionFunctions {
 
     @BeforeAnyInvocation
     public static void setupSong(CollectionType collectionType) {
-        MusicPopulator.getInstance().populateCollection(collectionType);
+        MusicPopulator.getInstance().initiallyPopulateCollection(collectionType);
     }
 
     public static String getId(CollectionType collectionType) {

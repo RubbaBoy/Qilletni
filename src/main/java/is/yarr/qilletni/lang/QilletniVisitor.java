@@ -219,7 +219,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         yield TypeUtils.safelyCast(value, CollectionType.class);
                     }
 
-                    yield new CollectionType(stringType.stringValue());
+                    yield musicPopulator.initiallyPopulateCollection(new CollectionType(stringType.stringValue()));
                 }
                 case QilletniLexer.SONG_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
@@ -1165,7 +1165,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             collectionType.setWeights(visitNode(ctx.weights_define()));
         }
 
-        return collectionType;
+        return musicPopulator.initiallyPopulateCollection(collectionType);
     }
 
     @Override
