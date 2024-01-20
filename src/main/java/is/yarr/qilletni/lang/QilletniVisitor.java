@@ -39,6 +39,7 @@ import is.yarr.qilletni.lang.types.entity.EntityAttributes;
 import is.yarr.qilletni.lang.types.entity.EntityDefinition;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.entity.UninitializedType;
+import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.weights.WeightEntry;
 import is.yarr.qilletni.lang.types.weights.WeightUnit;
@@ -71,14 +72,16 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final MusicPopulator musicPopulator;
+    private final ListTypeTransformer listTypeTransformer;
     private final Consumer<String> importConsumer;
 
-    public QilletniVisitor(SymbolTable symbolTable, Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
         this.nativeFunctionHandler = nativeFunctionHandler;
         this.musicPopulator = musicPopulator;
+        this.listTypeTransformer = listTypeTransformer;
         this.importConsumer = importConsumer;
     }
 
@@ -157,18 +160,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.type != null && ctx.LEFT_SBRACKET() != null) { // defining a new list
             var expr = ctx.expr(0);
             ListType assignmentValue = switch (ctx.type.getType()) {
-                case QilletniLexer.INT_TYPE -> createQilletniList(expr, QilletniTypeClass.INT);
-                case QilletniLexer.BOOLEAN_TYPE -> createQilletniList(expr, QilletniTypeClass.BOOLEAN);
-                case QilletniLexer.STRING_TYPE -> createQilletniList(expr, QilletniTypeClass.STRING);
-                case QilletniLexer.COLLECTION_TYPE -> createQilletniList(expr, QilletniTypeClass.COLLECTION);
-                case QilletniLexer.SONG_TYPE -> createQilletniList(expr, QilletniTypeClass.SONG);
-                case QilletniLexer.ALBUM_TYPE -> createQilletniList(expr, QilletniTypeClass.ALBUM);
-                case QilletniLexer.WEIGHTS_KEYWORD -> createQilletniList(expr, QilletniTypeClass.WEIGHTS);
+                case QilletniLexer.INT_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.INT);
+                case QilletniLexer.BOOLEAN_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.BOOLEAN);
+                case QilletniLexer.STRING_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.STRING);
+                case QilletniLexer.COLLECTION_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.COLLECTION);
+                case QilletniLexer.SONG_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.SONG);
+                case QilletniLexer.ALBUM_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.ALBUM);
+                case QilletniLexer.WEIGHTS_KEYWORD -> createListOfTypeFromExpression(expr, QilletniTypeClass.WEIGHTS);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
 
                     var expectedEntity = entityDefinitionManager.lookup(entityName).getQilletniTypeClass();
-                    var entityNode = createQilletniList(expr, QilletniTypeClass.createEntityTypePlaceholder(entityName));
+                    var entityNode = createListOfTypeFromExpression(expr, QilletniTypeClass.createEntityTypePlaceholder(entityName));
 
                     var listSubtypeClass = entityNode.getSubType();
                     if (!listSubtypeClass.equals(expectedEntity)) {
@@ -226,7 +229,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
                     yield musicPopulator.initiallyPopulateSong(new SongType(stringType.stringValue()));
                 }
-                case QilletniLexer.ALBUM_TYPE -> musicPopulator.initiallyPopulateAlbum(visitQilletniTypedNode(expr, AlbumType.class));
+                case QilletniLexer.ALBUM_TYPE -> {
+                    var value = visitQilletniTypedNode(expr);
+                    if (!(value instanceof StringType stringType)) {
+                        yield TypeUtils.safelyCast(value, AlbumType.class);
+                    }
+                    
+                    yield musicPopulator.initiallyPopulateAlbum(new AlbumType(stringType.stringValue()));
+                }
                 case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(expr, WeightsType.class);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
@@ -276,8 +286,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public QilletniType visitExpr(QilletniParser.ExprContext ctx) {
         var currentScope = symbolTable.currentScope();
-        if (ctx.ID().size() == 1) {
-            var idText = ctx.ID(0).getText();
+        if (ctx.ID() != null) {
+            var idText = ctx.ID().getText();
 
             if (ctx.LEFT_SBRACKET() != null) { // foo[123]
                 var list = currentScope.<ListType>lookup(idText).getValue().getItems();
@@ -352,32 +362,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return visitQilletniTypedNode(ctx.getChild(1));
         }
 
-        if (ctx.ID().size() == 2) { // id + id
-            var leftId = currentScope.lookup(ctx.ID(0).getText()).getValue();
-            var rightId = currentScope.lookup(ctx.ID(1).getText()).getValue();
+        if (ctx.PLUS() != null) { // id + id
+            var leftExpr = visitQilletniTypedNode(ctx.expr(0));
+            var rightExpr = visitQilletniTypedNode(ctx.expr(1));
 
-            if (leftId instanceof StringType leftString) {
-                var leftValue = leftString.getValue();
-
-                Object rightAppending = "";
-                if (rightId instanceof IntType rightInt) {
-                    rightAppending = rightInt.getValue();
-                } else if (rightId instanceof StringType rightString) {
-                    rightAppending = rightString.getValue();
-                }
-
-                return new StringType(leftValue + rightAppending);
-            } else if (leftId instanceof IntType leftInt) {
+            if (leftExpr instanceof IntType leftInt && rightExpr instanceof IntType rightInt) {
                 var leftValue = leftInt.getValue();
-
-                if (rightId instanceof IntType rightInt) {
-                    var rightValue = rightInt.getValue();
-                    return new IntType(leftValue + rightValue);
-                } else if (rightId instanceof StringType rightString) {
-                    var rightValue = rightString.getValue();
-                    return new StringType(leftValue + rightValue);
-                }
+                var rightValue = rightInt.getValue();
+                
+                return new IntType(leftValue + rightValue);
             }
+
+            return new StringType(leftExpr.stringValue() + rightExpr.stringValue());
         }
 
         if (ctx.function_call() != null) {
@@ -539,23 +535,86 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public ListType visitList_expression(QilletniParser.List_expressionContext ctx) {
-        if (ctx.ID() != null) {
+        return createListOfAnyType(ctx);
+    }
+
+    /**
+     * Checks if the {@link ListType} has already been computed, or empty. If so, return the list. If not, return an
+     * empty optional.
+     * 
+     * @param ctx The list expression
+     * @return The already computed list, if it exists
+     */
+    private Optional<ListType> checkAlreadyComputedList(QilletniParser.List_expressionContext ctx) {
+        if (ctx.type == null && ctx.ID() != null) {
             var scope = symbolTable.currentScope();
-            return scope.<ListType>lookup(ctx.ID().getText()).getValue();
+            return Optional.of(scope.<ListType>lookup(ctx.ID().getText()).getValue());
         }
 
         if (ctx.expr_list() == null) {
-            return new TypelessListType();
+            return Optional.of(new TypelessListType());
+        }
+        
+        return Optional.empty();
+    }
+    
+    private ListType createListOfAnyType(QilletniParser.List_expressionContext ctx) {
+        if (ctx.type != null) {
+            var listType = TypeUtils.getTypeFromStringOrEntity(ctx.type.getText());
+            return createListOfType(ctx, listType);
+        }
+        
+        return checkAlreadyComputedList(ctx).orElseGet(() -> {
+            var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
+
+            var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
+            if (typeList.size() > 1) {
+                throw new TypeMismatchException(ctx, "Multiple types found in list");
+            }
+
+            return new ListType(typeList.get(0), items);
+        });
+    }
+    
+    private <T extends QilletniType> ListType createListOfType(QilletniParser.List_expressionContext ctx, QilletniTypeClass<T> listType) {
+        return checkAlreadyComputedList(ctx).orElseGet(() -> {
+            var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
+
+            var transformedItems = items.stream().map(listItem -> {
+                if (listItem.getTypeClass().equals(listType)) {
+                    return listItem;
+                }
+
+                return listTypeTransformer.transformType(listType, listItem);
+            }).toList();
+
+            return new ListType(listType, transformedItems);
+        });
+    }
+
+    /**
+     * Creates a {@link ListType} of the type {@code listType} from an {@link ParserRuleContext} that is assumed to have
+     * one child of {@link is.yarr.qilletni.antlr.QilletniParser.List_expressionContext}.
+     *
+     * @param exprCtx           The expression context that is assumed to be a list
+     * @param listType          The type the list should be in the end
+     * @return The created list
+     * @param <T> The type of the list items should be converted to
+     */
+    private <T extends QilletniType> ListType createListOfTypeFromExpression(ParserRuleContext exprCtx, QilletniTypeClass<T> listType) {
+        var ctx = exprCtx.getChild(QilletniParser.List_expressionContext.class, 0);
+        
+        if (ctx == null) {
+            throw new TypeMismatchException(exprCtx, "Expected list expression");
+        }
+        
+        var list = createListOfType(ctx, listType);
+
+        if (list instanceof TypelessListType) {
+            return new ListType(listType, Collections.emptyList());
         }
 
-        var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
-
-        var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
-        if (typeList.size() > 1) {
-            throw new TypeMismatchException(ctx, "Multiple types found in list");
-        }
-
-        return new ListType(typeList.get(0), items);
+        return list;
     }
 
     @Override
@@ -877,11 +936,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         var urlOrName = ctx.song_url_or_name_pair();
-        if (urlOrName.STRING().size() == 1) {
-            return musicPopulator.initiallyPopulateSong(new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText())));
+        SongType songType;
+        if (ctx.STRING() != null) {
+            songType = new SongType(ctx.STRING().getText());
+        } else {
+            songType = new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
-        return musicPopulator.initiallyPopulateSong(new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText())));
+        return musicPopulator.initiallyPopulateSong(songType);
     }
 
     @Override
@@ -896,11 +958,15 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         var urlOrName = ctx.album_url_or_name_pair();
-        if (urlOrName.STRING().size() == 1) {
-            return musicPopulator.initiallyPopulateAlbum(new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText())));
+        
+        AlbumType albumType;
+        if (ctx.STRING() != null) {
+            albumType = new AlbumType(StringUtility.removeQuotes(ctx.STRING().getText()));
+        } else {
+            albumType = new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
-        return musicPopulator.initiallyPopulateAlbum(new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText())));
+        return musicPopulator.initiallyPopulateAlbum(albumType);
     }
 
     @Override
@@ -1085,8 +1151,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         var urlOrName = ctx.collection_url_or_name_pair();
         CollectionType collectionType;
-        if (urlOrName.STRING().size() == 1) {
-            collectionType = new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()));
+        if (ctx.STRING() != null) {
+            collectionType = new CollectionType(StringUtility.removeQuotes(ctx.STRING().getText()));
         } else {
             collectionType = new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
@@ -1136,20 +1202,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         return new CollectionLimit(Integer.parseInt(ctx.INT().getText()), limitUnit);
-    }
-
-    private <T extends QilletniType> ListType createQilletniList(ParserRuleContext ctx, QilletniTypeClass<T> listType) {
-        ListType list = visitNode(ctx);
-
-        if (list instanceof TypelessListType) {
-            return new ListType(listType, Collections.emptyList());
-        }
-
-        if (!listType.equals(list.getSubType())) {
-            throw new TypeMismatchException(ctx, "Expected list of " + listType.getTypeName() + " but received " + list.getSubType().getTypeName());
-        }
-
-        return list;
     }
 
     public <T extends QilletniType> T visitQilletniTypedNode(ParseTree ctx, Class<T> expectedType) {

@@ -147,7 +147,7 @@ public class TypeTest {
     @Test
     void testCollection() {
         var ranProgram = programTester.runProgram("""
-                collection c = "My Playlist #59" created by "rubbaboy"
+                collection c = "My Playlist #59" collection by "rubbaboy"
                 """);
 
         var symbols = ranProgram.symbolTable().currentScope();
@@ -166,7 +166,7 @@ public class TypeTest {
     @Test
     void testCollectionWithOrder() {
         var ranProgram = programTester.runProgram("""
-                collection c = "My Playlist #59" created by "rubbaboy" order[shuffle]
+                collection c = "My Playlist #59" collection by "rubbaboy" order[shuffle]
                 """);
 
         var symbols = ranProgram.symbolTable().currentScope();
@@ -187,7 +187,7 @@ public class TypeTest {
         var ranProgram = programTester.runProgram("""
                 weights w = emptyWeights()
                 
-                collection c = "My Playlist #59" created by "rubbaboy" weights[w]
+                collection c = "My Playlist #59" collection by "rubbaboy" weights[w]
                 """);
 
         var symbols = ranProgram.symbolTable().currentScope();
@@ -208,7 +208,7 @@ public class TypeTest {
     @Test
     void testCollectionWithWeightsFunction() {
         var ranProgram = programTester.runProgram("""
-                collection c = "My Playlist #59" created by "rubbaboy" weights[emptyWeights()]
+                collection c = "My Playlist #59" collection by "rubbaboy" weights[emptyWeights()]
                 """);
 
         var symbols = ranProgram.symbolTable().currentScope();
@@ -229,7 +229,7 @@ public class TypeTest {
         var ranProgram = programTester.runProgram("""
                 weights w = emptyWeights()
                 
-                collection c = "My Playlist #59" created by "rubbaboy" order[shuffle] weights[w]
+                collection c = "My Playlist #59" collection by "rubbaboy" order[shuffle] weights[w]
                 """);
 
         var symbols = ranProgram.symbolTable().currentScope();

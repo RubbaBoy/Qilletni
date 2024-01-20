@@ -21,9 +21,9 @@ running
 
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
-    | ID PLUS ID // handled separately due to appending of different types
     | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET
     | expr REL_OP expr
+    | expr PLUS expr
     | expr DOT function_call
     | expr DOT ID
     | entity_initialize
@@ -65,6 +65,7 @@ str_expr
 collection_expr
     : function_call
     | collection_url_or_name_pair order_define? weights_define?
+    | STRING
     | ID
     ;
 
@@ -79,28 +80,27 @@ weights_define
 song_expr
     : function_call
     | song_url_or_name_pair
+    | STRING
     | ID
     ;
 
 album_expr
     : function_call
     | album_url_or_name_pair
+    | STRING
     | ID
     ;
 
 song_url_or_name_pair
-    : STRING
-    | STRING SONG_TYPE? BY STRING
+    : STRING SONG_TYPE? BY STRING
     ;
 
 collection_url_or_name_pair
-    : STRING
-    | STRING COLLECTION_TYPE BY STRING
+    : STRING COLLECTION_TYPE BY STRING
     ;
 
 album_url_or_name_pair
-    : STRING
-    | STRING ALBUM_TYPE BY STRING
+    : STRING ALBUM_TYPE BY STRING
     ;
 
 weights_expr
@@ -113,7 +113,7 @@ single_weight
     ;
 
 list_expression
-    : LEFT_SBRACKET expr_list? RIGHT_SBRACKET
+    : type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? LEFT_SBRACKET expr_list? RIGHT_SBRACKET
     | ID
     ;
 

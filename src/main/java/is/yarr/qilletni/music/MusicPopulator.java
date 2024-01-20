@@ -2,6 +2,7 @@ package is.yarr.qilletni.music;
 
 import is.yarr.qilletni.lang.exceptions.InvalidURLException;
 import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
+import is.yarr.qilletni.lang.exceptions.music.InvalidURLOrIDException;
 import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
 import is.yarr.qilletni.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.SongType;
@@ -45,7 +46,7 @@ public class MusicPopulator {
             return;
         }
         
-        LOGGER.info("Populating song: {}", songType);
+        LOGGER.debug("Populating song: {}", songType);
         
         var foundTrack = switch (songType.getSongDefinition()) {
             case TITLE_ARTIST -> musicCache.getTrack(songType.getSuppliedTitle(), songType.getSuppliedArtist())
@@ -113,6 +114,6 @@ public class MusicPopulator {
             }
         }
         
-        throw new InvalidURLException(String.format("Invalid URL or ID: \"%s\"", url));
+        throw new InvalidURLOrIDException(String.format("Invalid URL or ID: \"%s\"", url));
     }
 }
