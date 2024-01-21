@@ -4,9 +4,11 @@ import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
 import is.yarr.qilletni.lang.exceptions.music.InvalidURLOrIDException;
 import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
-import is.yarr.qilletni.lang.types.AlbumType;
-import is.yarr.qilletni.lang.types.CollectionType;
-import is.yarr.qilletni.lang.types.SongType;
+import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.lang.types.AlbumTypeImpl;
+import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.lang.types.SongTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +33,7 @@ public class MusicPopulator {
      * TODO: Make this into some kind of factory for SongTypes?
      * 
      * @param songType The song to populate
-     * @return The supplied {@link SongType}
+     * @return The supplied {@link SongTypeImpl}
      */
     public SongType initiallyPopulateSong(SongType songType) {
         if (EAGER_MUSIC_LOAD) {
@@ -63,7 +65,7 @@ public class MusicPopulator {
      * TODO: Make this into some kind of factory for AlbumTypes?
      * 
      * @param albumType The album to populate
-     * @return The supplied {@link AlbumType}
+     * @return The supplied {@link AlbumTypeImpl}
      */
     public AlbumType initiallyPopulateAlbum(AlbumType albumType) {
         if (EAGER_MUSIC_LOAD) {
@@ -95,7 +97,7 @@ public class MusicPopulator {
      * TODO: Make this into some kind of factory for CollectionTypes?
      * 
      * @param collectionType The album to populate
-     * @return The supplied {@link AlbumType}
+     * @return The supplied {@link AlbumTypeImpl}
      */
     public CollectionType initiallyPopulateCollection(CollectionType collectionType) {
         if (EAGER_MUSIC_LOAD) {

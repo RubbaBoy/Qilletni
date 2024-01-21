@@ -3,18 +3,23 @@ package is.yarr.qilletni.lang.runner;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.lang.QilletniVisitor;
+import is.yarr.qilletni.lang.table.ScopeImpl;
+import is.yarr.qilletni.lang.types.BooleanTypeImpl;
+import is.yarr.qilletni.lang.types.IntTypeImpl;
+import is.yarr.qilletni.lang.types.StringTypeImpl;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformerFactory;
 import is.yarr.qilletni.lib.LibraryInit;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
-import is.yarr.qilletni.lang.table.Scope;
+import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.lang.table.SymbolTable;
-import is.yarr.qilletni.lang.types.BooleanType;
-import is.yarr.qilletni.lang.types.IntType;
-import is.yarr.qilletni.lang.types.StringType;
-import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.api.lang.types.BooleanType;
+import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.music.MusicPopulator;
 import org.antlr.v4.runtime.CharStream;
@@ -36,7 +41,7 @@ public class QilletniProgramRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniProgramRunner.class);
 
     private final List<SymbolTable> symbolTables;
-    private final Scope globalScope;
+    private final ScopeImpl globalScope;
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final MusicCache musicCache;
@@ -46,8 +51,8 @@ public class QilletniProgramRunner {
     public QilletniProgramRunner(MusicCache musicCache) {
         this.musicCache = musicCache;
         this.symbolTables = new ArrayList<>();
-        this.globalScope = new Scope();
-        this.entityDefinitionManager = new EntityDefinitionManager();
+        this.globalScope = new ScopeImpl();
+        this.entityDefinitionManager = new EntityDefinitionManagerImpl();
         this.nativeFunctionHandler = createNativeFunctionHandler();
         this.musicPopulator = new MusicPopulator(musicCache);
         
@@ -55,7 +60,7 @@ public class QilletniProgramRunner {
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
     }
 
-    public QilletniProgramRunner(Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer) {
+    public QilletniProgramRunner(ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer) {
         this.musicCache = musicCache;
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
@@ -72,14 +77,14 @@ public class QilletniProgramRunner {
 
         LibraryInit.registerFunctions(nativeFunctionHandler);
 
-        typeAdapterRegistrar.registerTypeAdapter(BooleanType.class, Boolean.class, BooleanType::new);
-        typeAdapterRegistrar.registerTypeAdapter(boolean.class, BooleanType.class, BooleanType::getValue);
+        typeAdapterRegistrar.registerTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
+        typeAdapterRegistrar.registerTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
 
-        typeAdapterRegistrar.registerTypeAdapter(IntType.class, Integer.class, IntType::new);
-        typeAdapterRegistrar.registerTypeAdapter(int.class, IntType.class, IntType::getValue);
+        typeAdapterRegistrar.registerTypeAdapter(IntTypeImpl.class, Integer.class, IntTypeImpl::new);
+        typeAdapterRegistrar.registerTypeAdapter(int.class, IntTypeImpl.class, IntType::getValue);
 
-        typeAdapterRegistrar.registerTypeAdapter(StringType.class, String.class, StringType::new);
-        typeAdapterRegistrar.registerTypeAdapter(String.class, StringType.class, StringType::getValue);
+        typeAdapterRegistrar.registerTypeAdapter(StringTypeImpl.class, String.class, StringTypeImpl::new);
+        typeAdapterRegistrar.registerTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
 
         return nativeFunctionHandler;
     }

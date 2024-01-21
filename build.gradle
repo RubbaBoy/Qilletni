@@ -22,9 +22,6 @@ dependencies {
     implementation 'org.antlr:antlr4-runtime:4.13.1'
     antlr 'org.antlr:antlr4:4.13.1'
     
-    implementation 'org.hibernate:hibernate-core:5.5.7.Final'
-    implementation 'org.postgresql:postgresql:42.3.8'
-    
     implementation project(':qilletni-api')
     implementation project(':qilletni-spotify')
 }

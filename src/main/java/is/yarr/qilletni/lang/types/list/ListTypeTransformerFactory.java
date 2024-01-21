@@ -1,10 +1,13 @@
 package is.yarr.qilletni.lang.types.list;
 
-import is.yarr.qilletni.lang.types.AlbumType;
-import is.yarr.qilletni.lang.types.CollectionType;
-import is.yarr.qilletni.lang.types.SongType;
-import is.yarr.qilletni.lang.types.StringType;
-import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.lang.types.AlbumTypeImpl;
+import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.lang.types.CollectionTypeImpl;
+import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.lang.types.SongTypeImpl;
+import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 
 /**
  * Creates instances of {@link ListTypeTransformer}.
@@ -27,15 +30,15 @@ public class ListTypeTransformerFactory {
     }
     
     private SongType transformStringToSong(StringType stringType) {
-        return new SongType(stringType.stringValue());
+        return new SongTypeImpl(stringType.stringValue());
     }
     
     private AlbumType transformStringToAlbum(StringType stringType) {
-        return new AlbumType(stringType.stringValue());
+        return new AlbumTypeImpl(stringType.stringValue());
     }
     
     private CollectionType transformStringToCollection(StringType stringType) {
-        return new CollectionType(stringType.stringValue());
+        return new CollectionTypeImpl(stringType.stringValue());
     }
     
 }

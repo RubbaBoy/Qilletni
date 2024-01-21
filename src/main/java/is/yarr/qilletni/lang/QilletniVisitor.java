@@ -15,34 +15,48 @@ import is.yarr.qilletni.lang.exceptions.QilletniException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
-import is.yarr.qilletni.lang.table.Scope;
-import is.yarr.qilletni.lang.table.Symbol;
+import is.yarr.qilletni.api.lang.table.Scope;
+import is.yarr.qilletni.lang.table.ScopeImpl;
+import is.yarr.qilletni.lang.table.SymbolImpl;
 import is.yarr.qilletni.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.table.TableUtils;
-import is.yarr.qilletni.lang.types.AlbumType;
-import is.yarr.qilletni.lang.types.BooleanType;
-import is.yarr.qilletni.lang.types.CollectionType;
-import is.yarr.qilletni.lang.types.EntityType;
-import is.yarr.qilletni.lang.types.FunctionType;
-import is.yarr.qilletni.lang.types.IntType;
-import is.yarr.qilletni.lang.types.JavaType;
-import is.yarr.qilletni.lang.types.ListType;
-import is.yarr.qilletni.lang.types.QilletniType;
-import is.yarr.qilletni.lang.types.SongType;
-import is.yarr.qilletni.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.lang.types.AlbumTypeImpl;
+import is.yarr.qilletni.api.lang.types.BooleanType;
+import is.yarr.qilletni.lang.types.BooleanTypeImpl;
+import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.lang.types.CollectionTypeImpl;
+import is.yarr.qilletni.lang.types.EntityTypeImpl;
+import is.yarr.qilletni.lang.types.FunctionTypeImpl;
+import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.lang.types.IntTypeImpl;
+import is.yarr.qilletni.api.lang.types.JavaType;
+import is.yarr.qilletni.lang.types.JavaTypeImpl;
+import is.yarr.qilletni.api.lang.types.ListType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.ListTypeImpl;
+import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.lang.types.SongTypeImpl;
+import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.TypeUtils;
 import is.yarr.qilletni.lang.types.TypelessListType;
-import is.yarr.qilletni.lang.types.WeightsType;
-import is.yarr.qilletni.lang.types.collection.CollectionLimit;
-import is.yarr.qilletni.lang.types.collection.CollectionLimitUnit;
-import is.yarr.qilletni.lang.types.collection.CollectionOrder;
+import is.yarr.qilletni.api.lang.types.WeightsType;
+import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
+import is.yarr.qilletni.api.lang.types.collection.CollectionLimitUnit;
+import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
+import is.yarr.qilletni.lang.types.WeightsTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityAttributes;
-import is.yarr.qilletni.lang.types.entity.EntityDefinition;
-import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
-import is.yarr.qilletni.lang.types.entity.UninitializedType;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinition;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionImpl;
+import is.yarr.qilletni.api.lang.types.entity.UninitializedType;
+import is.yarr.qilletni.lang.types.entity.UninitializedTypeImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
-import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.lang.types.weights.WeightEntry;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
+import is.yarr.qilletni.lang.types.weights.WeightEntryImpl;
 import is.yarr.qilletni.music.MusicPopulator;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -67,14 +81,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniVisitor.class);
 
     private final SymbolTable symbolTable;
-    private final Scope globalScope;
+    private final ScopeImpl globalScope;
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
     private final Consumer<String> importConsumer;
 
-    public QilletniVisitor(SymbolTable symbolTable, Scope globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -128,7 +142,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             
             // If it is native, force it to have the on type of the entity
-            scope.defineFunction(Symbol.createFunctionSymbol(id, FunctionType.createNativeFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, nativeOnType)));
+            scope.defineFunction(SymbolImpl.createFunctionSymbol(id, FunctionTypeImpl.createNativeFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, nativeOnType)));
         } else {
             int invokingParamCount = params.size();
             if (implOnType != null && isExternallyDefined) {
@@ -136,7 +150,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             
             LOGGER.debug("{} params = {} (defined: {}) on type = {}", id, params, definedParamCount, implOnType);
-            scope.defineFunction(Symbol.createFunctionSymbol(id, FunctionType.createImplementedFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, implOnType, ctx.body())));
+            scope.defineFunction(SymbolImpl.createFunctionSymbol(id, FunctionTypeImpl.createImplementedFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, implOnType, ctx.body())));
         }
     }
 
@@ -184,13 +198,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             };
 
             LOGGER.debug("(new) {}[] = {}", id, assignmentValue);
-            currentScope.define(Symbol.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
+            currentScope.define(SymbolImpl.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
 
             // visitQilletniList
         } else if (ctx.LEFT_SBRACKET() != null) { // foo[123] = expr
-            var listSymbol = currentScope.<ListType>lookup(id);
+            var listSymbol = currentScope.<ListTypeImpl>lookup(id);
             var list = listSymbol.getValue();
-            var index = visitQilletniTypedNode(ctx.int_expr(), IntType.class).getValue();
+            var index = visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class).getValue();
 
             if (index < 0 || index > list.getItems().size()) {
                 throw new ListOutOfBoundsException(ctx, "Attempted to access index " + index + " on a list with a size of " + list.getItems().size());
@@ -209,39 +223,39 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         } else if (ctx.type != null) { // defining a new var
             var expr = ctx.expr(0);
             QilletniType assignmentValue = switch (ctx.type.getType()) {
-                case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(expr, IntType.class);
-                case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(expr, BooleanType.class);
-                case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(expr, StringType.class);
+                case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(expr, IntTypeImpl.class);
+                case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(expr, BooleanTypeImpl.class);
+                case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(expr, StringTypeImpl.class);
                 case QilletniLexer.COLLECTION_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
                     if (!(value instanceof StringType stringType)) {
-                        yield TypeUtils.safelyCast(value, CollectionType.class);
+                        yield TypeUtils.safelyCast(value, CollectionTypeImpl.class);
                     }
 
-                    yield musicPopulator.initiallyPopulateCollection(new CollectionType(stringType.stringValue()));
+                    yield musicPopulator.initiallyPopulateCollection(new CollectionTypeImpl(stringType.stringValue()));
                 }
                 case QilletniLexer.SONG_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
                     if (!(value instanceof StringType stringType)) {
-                        yield TypeUtils.safelyCast(value, SongType.class);
+                        yield TypeUtils.safelyCast(value, SongTypeImpl.class);
                     }
 
-                    yield musicPopulator.initiallyPopulateSong(new SongType(stringType.stringValue()));
+                    yield musicPopulator.initiallyPopulateSong(new SongTypeImpl(stringType.stringValue()));
                 }
                 case QilletniLexer.ALBUM_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
                     if (!(value instanceof StringType stringType)) {
-                        yield TypeUtils.safelyCast(value, AlbumType.class);
+                        yield TypeUtils.safelyCast(value, AlbumTypeImpl.class);
                     }
                     
-                    yield musicPopulator.initiallyPopulateAlbum(new AlbumType(stringType.stringValue()));
+                    yield musicPopulator.initiallyPopulateAlbum(new AlbumTypeImpl(stringType.stringValue()));
                 }
-                case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(expr, WeightsType.class);
+                case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(expr, WeightsTypeImpl.class);
                 case QilletniLexer.ID -> {
                     var entityName = ctx.type.getText();
 
                     var expectedEntity = entityDefinitionManager.lookup(entityName);
-                    var entityNode = visitQilletniTypedNode(expr, EntityType.class);
+                    var entityNode = visitQilletniTypedNode(expr, EntityTypeImpl.class);
 
                     var gotTypeName = entityNode.getEntityDefinition().getTypeName();
                     if (!entityNode.getEntityDefinition().equals(expectedEntity)) {
@@ -254,14 +268,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             };
 
             LOGGER.debug("(new) {} = {}", id, assignmentValue);
-            currentScope.define(Symbol.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
+            currentScope.define(SymbolImpl.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
         } else if (ctx.expr_assign != null) { // foo.bar = baz
 
             if (id.startsWith("_")) {
                 throw new VariableNotFoundException(ctx.expr_assign, "Cannot access private variable");
             }
             
-            var entity = visitQilletniTypedNode(ctx.expr(0), EntityType.class);
+            var entity = visitQilletniTypedNode(ctx.expr(0), EntityTypeImpl.class);
             var propertyValue = visitQilletniTypedNode(ctx.expr(1));
             var entityScope = entity.getEntityScope();
             entityScope.lookup(id).setValue(propertyValue);
@@ -289,8 +303,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var idText = ctx.ID().getText();
 
             if (ctx.LEFT_SBRACKET() != null) { // foo[123]
-                var list = currentScope.<ListType>lookup(idText).getValue().getItems();
-                var index = visitQilletniTypedNode(ctx.int_expr(), IntType.class).getValue();
+                var list = currentScope.<ListTypeImpl>lookup(idText).getValue().getItems();
+                var index = visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class).getValue();
 
                 if (index < 0 || index > list.size()) {
                     throw new ListOutOfBoundsException(ctx, "Attempted to access index " + index + " on a list with a size of " + list.size());
@@ -307,7 +321,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     throw new VariableNotFoundException(ctx, "Cannot access private variable");
                 }
                 
-                var entity = visitQilletniTypedNode(ctx.expr(0), EntityType.class);
+                var entity = visitQilletniTypedNode(ctx.expr(0), EntityTypeImpl.class);
                 LOGGER.debug("Getting property {} on entity {}", idText, entity.typeName());
                 var entityScope = entity.getEntityScope();
                 return entityScope.lookup(idText).getValue();
@@ -329,10 +343,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     areEqual = !areEqual;
                 }
                 
-                return new BooleanType(areEqual);
+                return new BooleanTypeImpl(areEqual);
             } else {
-                var leftInt = TypeUtils.safelyCast(leftType, IntType.class).getValue();
-                var rightInt = TypeUtils.safelyCast(rightType, IntType.class).getValue();
+                var leftInt = TypeUtils.safelyCast(leftType, IntTypeImpl.class).getValue();
+                var rightInt = TypeUtils.safelyCast(rightType, IntTypeImpl.class).getValue();
 
                 LOGGER.debug("Comparing {} {} {}", leftInt, relOpVal, rightInt);
 
@@ -344,7 +358,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     default -> throw new IllegalStateException("Unexpected value: " + relOpVal);
                 };
 
-                return new BooleanType(comparisonResult);
+                return new BooleanTypeImpl(comparisonResult);
             }
         }
 
@@ -369,10 +383,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 var leftValue = leftInt.getValue();
                 var rightValue = rightInt.getValue();
                 
-                return new IntType(leftValue + rightValue);
+                return new IntTypeImpl(leftValue + rightValue);
             }
 
-            return new StringType(leftExpr.stringValue() + rightExpr.stringValue());
+            return new StringTypeImpl(leftExpr.stringValue() + rightExpr.stringValue());
         }
 
         if (ctx.function_call() != null) {
@@ -391,28 +405,28 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var symbol = terminalNode.getSymbol();
             var type = symbol.getType();
             if (type == QilletniLexer.ID) {
-                value = StringType.fromType(symbolTable.currentScope().lookup(symbol.getText()).getValue());
+                value = StringTypeImpl.fromType(symbolTable.currentScope().lookup(symbol.getText()).getValue());
             } else if (type == QilletniLexer.STRING) {
                 var stringLiteral = symbol.getText();
-                value = new StringType(stringLiteral.substring(1, stringLiteral.length() - 1).translateEscapes());
+                value = new StringTypeImpl(stringLiteral.substring(1, stringLiteral.length() - 1).translateEscapes());
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = this.<StringType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+            value = this.<StringTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
         } else if (child instanceof QilletniParser.Str_exprContext) {
             value = visitQilletniTypedNode(child);
         } else if (child instanceof QilletniParser.ExprContext) {
-            value = new StringType(String.valueOf(visitQilletniTypedNode(child)));
+            value = new StringTypeImpl(String.valueOf(visitQilletniTypedNode(child)));
         }
 
         if (ctx.getChildCount() == 3) { // ( str_expr )  or  str_expr + str_expr 
             var middle = ctx.getChild(1);
             if (middle instanceof TerminalNode term && term.getSymbol().getType() == QilletniLexer.PLUS) {
                 if (value == null) {
-                    value = new StringType("null");
+                    value = new StringTypeImpl("null");
                 }
 
                 var add = visitQilletniTypedNode(ctx.getChild(2));
-                value = new StringType(value.getValue() + add.stringValue());
+                value = new StringTypeImpl(value.getValue() + add.stringValue());
             } else if (middle instanceof QilletniParser.Str_exprContext stringExprContext) {
                 value = visitQilletniTypedNode(stringExprContext);
             }
@@ -434,12 +448,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var symbol = terminalNode.getSymbol();
             var type = symbol.getType();
             if (type == QilletniLexer.ID) {
-                value = symbolTable.currentScope().<IntType>lookup(symbol.getText()).getValue();
+                value = symbolTable.currentScope().<IntTypeImpl>lookup(symbol.getText()).getValue();
             } else if (type == QilletniLexer.INT) {
-                value = new IntType(Integer.parseInt(symbol.getText()));
+                value = new IntTypeImpl(Integer.parseInt(symbol.getText()));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = this.<IntType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+            value = this.<IntTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
         } else if (child instanceof QilletniParser.Int_exprContext) {
             value = visitQilletniTypedNode(child);
         }
@@ -461,7 +475,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
 
             IntType add = visitQilletniTypedNode(ctx.getChild(2));
-            value = new IntType(calculate.apply(intVal, add.getValue()));
+            value = new IntTypeImpl(calculate.apply(intVal, add.getValue()));
         }
 
         return value;
@@ -476,12 +490,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var symbol = terminalNode.getSymbol();
             var type = symbol.getType();
             if (type == QilletniLexer.ID) {
-                value = symbolTable.currentScope().<BooleanType>lookup(symbol.getText()).getValue();
+                value = symbolTable.currentScope().<BooleanTypeImpl>lookup(symbol.getText()).getValue();
             } else if (type == QilletniLexer.BOOL) {
-                value = new BooleanType(symbol.getText().equals("true"));
+                value = new BooleanTypeImpl(symbol.getText().equals("true"));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = this.<BooleanType>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+            value = this.<BooleanTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
             ;
         } 
 //        else if (ctx.REL_OP() != null && ctx.getChild(1) instanceof TerminalNode relOp) {
@@ -538,7 +552,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     /**
-     * Checks if the {@link ListType} has already been computed, or empty. If so, return the list. If not, return an
+     * Checks if the {@link ListTypeImpl} has already been computed, or empty. If so, return the list. If not, return an
      * empty optional.
      * 
      * @param ctx The list expression
@@ -547,7 +561,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private Optional<ListType> checkAlreadyComputedList(QilletniParser.List_expressionContext ctx) {
         if (ctx.type == null && ctx.ID() != null) {
             var scope = symbolTable.currentScope();
-            return Optional.of(scope.<ListType>lookup(ctx.ID().getText()).getValue());
+            return Optional.of(scope.<ListTypeImpl>lookup(ctx.ID().getText()).getValue());
         }
 
         if (ctx.expr_list() == null) {
@@ -571,7 +585,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 throw new TypeMismatchException(ctx, "Multiple types found in list");
             }
 
-            return new ListType(typeList.get(0), items);
+            return new ListTypeImpl(typeList.get(0), items);
         });
     }
     
@@ -587,12 +601,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 return listTypeTransformer.transformType(listType, listItem);
             }).toList();
 
-            return new ListType(listType, transformedItems);
+            return new ListTypeImpl(listType, transformedItems);
         });
     }
 
     /**
-     * Creates a {@link ListType} of the type {@code listType} from an {@link ParserRuleContext} that is assumed to have
+     * Creates a {@link ListTypeImpl} of the type {@code listType} from an {@link ParserRuleContext} that is assumed to have
      * one child of {@link is.yarr.qilletni.antlr.QilletniParser.List_expressionContext}.
      *
      * @param exprCtx           The expression context that is assumed to be a list
@@ -610,7 +624,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var list = createListOfType(ctx, listType);
 
         if (list instanceof TypelessListType) {
-            return new ListType(listType, Collections.emptyList());
+            return new ListTypeImpl(listType, Collections.emptyList());
         }
 
         return list;
@@ -671,8 +685,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 //        LOGGER.debug("swap scope = ({} != null) && {}", invokedOn, invokedOn instanceof EntityType);
         var swappedLookupScope = false;
         // swap lookup scope
+        LOGGER.debug("({}) invokedOn = {}, and {}", id, invokedOn, invokedOn instanceof EntityType);
         if (invokedOn instanceof EntityType entityType) {
-            LOGGER.debug("SWAP scope!");
+            LOGGER.debug("SWAP scope! to {}", entityType.getEntityScope().getAllSymbols().keySet());
 //            swappedScope = true;
 //            hasOnType = false;
             swappedLookupScope = true;
@@ -737,10 +752,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         for (int i = 0; i < params.size(); i++) {
             var qilletniType = params.get(i);
-            functionScope.define(Symbol.createGenericSymbol(functionParams.get(i), qilletniType.getTypeClass(), qilletniType));
+            functionScope.define(SymbolImpl.createGenericSymbol(functionParams.get(i), qilletniType.getTypeClass(), qilletniType));
         }
 
-        Optional<T> result = visitNode(functionType.getBodyContext());
+        Optional<T> result = visitNode(functionType.getBody());
 
         symbolTable.endFunctionCall();
 
@@ -857,7 +872,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         // Should never happen
-        return BooleanType.FALSE;
+        return BooleanTypeImpl.FALSE;
     }
 
     @Override
@@ -873,41 +888,41 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var rangeTo = ctx.RANGE_INFINITY() != null ? Integer.MAX_VALUE : Integer.parseInt(ctx.getChild(2).getText());
 
         if (!scope.isDefined(id)) { // first iteration, let it pass
-            scope.define(new Symbol<>(id, QilletniTypeClass.INT, new IntType(0)));
-            return BooleanType.TRUE;
+            scope.define(new SymbolImpl<>(id, QilletniTypeClass.INT, new IntTypeImpl(0)));
+            return BooleanTypeImpl.TRUE;
         }
 
-        var idIntType = scope.<IntType>lookup(id);
+        var idIntType = scope.<IntTypeImpl>lookup(id);
         var newValue = idIntType.getValue().getValue() + 1;
-        idIntType.setValue(new IntType(newValue));
+        idIntType.setValue(new IntTypeImpl(newValue));
 
         if (rangeTo > newValue) {
-            return BooleanType.TRUE;
+            return BooleanTypeImpl.TRUE;
         }
 
-        return BooleanType.FALSE;
+        return BooleanTypeImpl.FALSE;
     }
 
     public BooleanType visitForeachRange(QilletniParser.Foreach_rangeContext ctx, int index) {
         var scope = symbolTable.currentScope();
         var variableName = ctx.ID().getText();
-        var list = visitQilletniTypedNode(ctx.expr(), ListType.class);
+        var list = visitQilletniTypedNode(ctx.expr(), ListTypeImpl.class);
         
         if (index >= list.getItems().size()) {
-            return BooleanType.FALSE;
+            return BooleanTypeImpl.FALSE;
         }
 
         var currentItem = list.getItems().get(index);
 
         if (!scope.isDefined(variableName)) { // first iteration, let it pass
-            scope.define(Symbol.createGenericSymbol(variableName, list.getSubType(), currentItem));
-            return BooleanType.TRUE;
+            scope.define(SymbolImpl.createGenericSymbol(variableName, list.getSubType(), currentItem));
+            return BooleanTypeImpl.TRUE;
         }
         
         var itemType = scope.lookup(variableName);
         itemType.setValue(currentItem);
         
-        return BooleanType.TRUE;
+        return BooleanTypeImpl.TRUE;
     }
     
     @Override
@@ -927,19 +942,19 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public SongType visitSong_expr(QilletniParser.Song_exprContext ctx) {
         if (ctx.ID() != null) {
             var scope = symbolTable.currentScope();
-            return scope.<SongType>lookup(ctx.ID().getText()).getValue();
+            return scope.<SongTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
         if (ctx.function_call() != null) {
-            return this.<SongType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.<SongTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.song_url_or_name_pair();
         SongType songType;
         if (ctx.STRING() != null) {
-            songType = new SongType(ctx.STRING().getText());
+            songType = new SongTypeImpl(ctx.STRING().getText());
         } else {
-            songType = new SongType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            songType = new SongTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
         return musicPopulator.initiallyPopulateSong(songType);
@@ -949,20 +964,20 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public AlbumType visitAlbum_expr(QilletniParser.Album_exprContext ctx) {
         if (ctx.ID() != null) {
             var scope = symbolTable.currentScope();
-            return scope.<AlbumType>lookup(ctx.ID().getText()).getValue();
+            return scope.<AlbumTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
         if (ctx.function_call() != null) {
-            return this.<AlbumType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.<AlbumTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.album_url_or_name_pair();
         
         AlbumType albumType;
         if (ctx.STRING() != null) {
-            albumType = new AlbumType(StringUtility.removeQuotes(ctx.STRING().getText()));
+            albumType = new AlbumTypeImpl(StringUtility.removeQuotes(ctx.STRING().getText()));
         } else {
-            albumType = new AlbumType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            albumType = new AlbumTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
         return musicPopulator.initiallyPopulateAlbum(albumType);
@@ -988,11 +1003,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var scope = symbolTable.currentScope();
 
         if (ctx.ID() != null) {
-            return scope.<WeightsType>lookup(ctx.ID().getText()).getValue();
+            return scope.<WeightsTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
         var weights = ctx.single_weight().stream().map(this::<WeightEntry>visitNode).toList();
-        return new WeightsType(weights);
+        return new WeightsTypeImpl(weights);
     }
 
     @Override
@@ -1001,7 +1016,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var weightInt = Integer.parseInt(weightAmount.INT().getText());
         SongType song = visitQilletniTypedNode(ctx.song_expr());
 
-        return new WeightEntry(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), song);
+        return new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), song);
     }
 
     @Override
@@ -1028,15 +1043,15 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public JavaType visitJava_expr(QilletniParser.Java_exprContext ctx) {
         if (ctx.ID() != null) {
             var scope = symbolTable.currentScope();
-            return scope.<JavaType>lookup(ctx.ID().getText()).getValue();
+            return scope.<JavaTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
         if (ctx.function_call() != null) {
-            return this.<JavaType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.<JavaTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
         
         // Has to be empty
-        return new JavaType(null);
+        return new JavaTypeImpl(null);
     }
 
     // Entity
@@ -1048,7 +1063,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var scope = symbolTable.currentScope();
         
         EntityAttributes attributes = createEntityBody(ctx.entity_body(), entityName);
-        var entityDefinition = new EntityDefinition(entityName, attributes.properties(), attributes.constructorParams(), attributes.entityFunctionPopulators(), scope);
+        var entityDefinition = new EntityDefinitionImpl(entityName, attributes.properties(), attributes.constructorParams(), attributes.entityFunctionPopulators(), scope);
         LOGGER.debug("Define entity: {}", entityName);
         entityDefinitionManager.defineEntity(entityDefinition);
 
@@ -1101,24 +1116,24 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.int_expr() == null && ctx.str_expr() == null && ctx.bool_expr() == null && ctx.collection_expr() == null && ctx.song_expr() == null && ctx.weights_expr() == null && ctx.entity_initialize() == null && ctx.java_expr() == null) {
             // undefined property
             if (ctx.ID().size() == 2) { // is an Entity
-                return new EntityProperty<>(text, new UninitializedType(entityDefinitionManager.lookup(ctx.ID(0).getText()))); // pass the entity name? TODO
+                return new EntityProperty<>(text, new UninitializedTypeImpl(entityDefinitionManager.lookup(ctx.ID(0).getText()))); // pass the entity name? TODO
             }
 
-            return new EntityProperty<>(text, new UninitializedType(TypeUtils.getTypeFromStringOrThrow(type.getText())));
+            return new EntityProperty<>(text, new UninitializedTypeImpl(TypeUtils.getTypeFromStringOrThrow(type.getText())));
         }
 
         // is a defined property
 
         var value = switch (ctx.type.getType()) {
-            case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(ctx.int_expr(), IntType.class);
-            case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(ctx.bool_expr(), BooleanType.class);
-            case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(ctx.str_expr(), StringType.class);
-            case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(ctx.collection_expr(), CollectionType.class);
-            case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(ctx.song_expr(), SongType.class);
-            case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(ctx.weights_expr(), WeightsType.class);
-            case QilletniLexer.ALBUM_TYPE -> visitQilletniTypedNode(ctx.album_expr(), AlbumType.class);
-            case QilletniLexer.JAVA_TYPE -> visitQilletniTypedNode(ctx.java_expr(), JavaType.class);
-            case QilletniLexer.ID -> visitQilletniTypedNode(ctx.entity_initialize(), EntityType.class);
+            case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class);
+            case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(ctx.bool_expr(), BooleanTypeImpl.class);
+            case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(ctx.str_expr(), StringTypeImpl.class);
+            case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(ctx.collection_expr(), CollectionTypeImpl.class);
+            case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(ctx.song_expr(), SongTypeImpl.class);
+            case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(ctx.weights_expr(), WeightsTypeImpl.class);
+            case QilletniLexer.ALBUM_TYPE -> visitQilletniTypedNode(ctx.album_expr(), AlbumTypeImpl.class);
+            case QilletniLexer.JAVA_TYPE -> visitQilletniTypedNode(ctx.java_expr(), JavaTypeImpl.class);
+            case QilletniLexer.ID -> visitQilletniTypedNode(ctx.entity_initialize(), EntityTypeImpl.class);
             default -> throw new RuntimeException("This should not be possible, unknown type");
         };
 
@@ -1141,19 +1156,19 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var scope = symbolTable.currentScope();
 
         if (ctx.ID() != null) {
-            return scope.<CollectionType>lookup(ctx.ID().getText()).getValue();
+            return scope.<CollectionTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
         if (ctx.function_call() != null) {
-            return this.<CollectionType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.<CollectionTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.collection_url_or_name_pair();
         CollectionType collectionType;
         if (ctx.STRING() != null) {
-            collectionType = new CollectionType(StringUtility.removeQuotes(ctx.STRING().getText()));
+            collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(ctx.STRING().getText()));
         } else {
-            collectionType = new CollectionType(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
         if (ctx.order_define() != null) {
@@ -1177,10 +1192,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var scope = symbolTable.currentScope();
 
         if (ctx.ID() != null) {
-            return scope.<WeightsType>lookup(ctx.ID().getText()).getValue();
+            return scope.<WeightsTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
-        return this.<WeightsType>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+        return this.<WeightsTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
     }
 
     @Override

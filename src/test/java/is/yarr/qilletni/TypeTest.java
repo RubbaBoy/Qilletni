@@ -1,18 +1,20 @@
 package is.yarr.qilletni;
 
 import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
-import is.yarr.qilletni.lang.types.BooleanType;
-import is.yarr.qilletni.lang.types.CollectionType;
-import is.yarr.qilletni.lang.types.IntType;
-import is.yarr.qilletni.lang.types.ListType;
-import is.yarr.qilletni.lang.types.QilletniType;
-import is.yarr.qilletni.lang.types.SongType;
-import is.yarr.qilletni.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.BooleanType;
+import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.lang.types.IntTypeImpl;
+import is.yarr.qilletni.api.lang.types.ListType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.lang.types.TypelessListType;
-import is.yarr.qilletni.lang.types.WeightsType;
-import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
-import is.yarr.qilletni.lang.types.collection.CollectionOrder;
-import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.WeightsType;
+import is.yarr.qilletni.api.lang.types.collection.CollectionDefinition;
+import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.types.WeightsTypeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -263,7 +265,7 @@ public class TypeTest {
         
         var items = list.getItems().toArray(QilletniType[]::new);
         assertEquals(3, items.length);
-        assertArrayEquals(new QilletniType[] {new IntType(1), new IntType(2), new IntType(3)}, items);
+        assertArrayEquals(new QilletniType[] {new IntTypeImpl(1), new IntTypeImpl(2), new IntTypeImpl(3)}, items);
     }
 
     @Test
@@ -286,7 +288,7 @@ public class TypeTest {
     
     public static class TypeTestFunctions {
         public static WeightsType emptyWeights() {
-            return new WeightsType(Collections.emptyList());
+            return new WeightsTypeImpl(Collections.emptyList());
         }
     }
     

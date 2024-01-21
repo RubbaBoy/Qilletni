@@ -1,7 +1,8 @@
 package is.yarr.qilletni.lang.types.entity;
 
-import is.yarr.qilletni.lang.table.Scope;
-import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.table.Scope;
+import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.entity.UninitializedType;
 
 import java.util.List;
 import java.util.Map;

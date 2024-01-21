@@ -1,8 +1,9 @@
 package is.yarr.qilletni.lang.table;
 
+import is.yarr.qilletni.api.lang.table.Symbol;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
-import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

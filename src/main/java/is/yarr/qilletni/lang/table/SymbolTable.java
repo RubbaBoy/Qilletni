@@ -1,5 +1,7 @@
 package is.yarr.qilletni.lang.table;
 
+import is.yarr.qilletni.api.lang.table.Scope;
+
 import java.util.List;
 import java.util.Stack;
 
@@ -8,9 +10,9 @@ public class SymbolTable {
     private Stack<Scope> currentScopeStack = new Stack<>();
     private final Stack<Stack<Scope>> previousScopeStacks = new Stack<>();
     
-    public Scope initScope(Scope globalScope) {
+    public Scope initScope(ScopeImpl globalScope) {
         currentScopeStack.push(globalScope);
-        currentScopeStack.push(new Scope(globalScope));
+        currentScopeStack.push(new ScopeImpl(globalScope));
         return globalScope;
     }
 
@@ -21,7 +23,7 @@ public class SymbolTable {
      */
     public Scope pushScope() {
         var parentScope = currentScopeStack.isEmpty() ? null : currentScopeStack.peek();
-        var scope = new Scope(parentScope);
+        var scope = new ScopeImpl(parentScope);
         return currentScopeStack.push(scope);
     }
     
@@ -59,7 +61,7 @@ public class SymbolTable {
         
         currentScopeStack = new Stack<>();
         currentScopeStack.push(functionGlobal);
-        currentScopeStack.push(new Scope(functionGlobal));
+        currentScopeStack.push(new ScopeImpl(functionGlobal));
 
         return currentScopeStack.peek();
     }

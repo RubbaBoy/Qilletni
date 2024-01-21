@@ -2,11 +2,12 @@ package is.yarr.qilletni.lib.core.nativefunctions;
 
 import is.yarr.qilletni.lang.internal.BeforeAnyInvocation;
 import is.yarr.qilletni.lang.internal.NativeOn;
-import is.yarr.qilletni.lang.types.AlbumType;
-import is.yarr.qilletni.lang.types.EntityType;
-import is.yarr.qilletni.lang.types.ListType;
-import is.yarr.qilletni.lang.types.SongType;
-import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.ListType;
+import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.music.MusicPopulator;
 
 import java.util.Objects;
@@ -32,11 +33,11 @@ public class SongFunctions {
     }
 
     public static EntityType getArtist(SongType songType) {
-        return songType.getArtist(EntityDefinitionManager.getInstance());
+        return songType.getArtist(EntityDefinitionManagerImpl.getInstance());
     }
 
     public static ListType getAllArtists(SongType songType) {
-        return songType.getArtists(EntityDefinitionManager.getInstance());
+        return songType.getArtists(EntityDefinitionManagerImpl.getInstance());
     }
     
     public static AlbumType getAlbum(SongType songType) {

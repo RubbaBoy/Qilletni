@@ -1,9 +1,9 @@
 package is.yarr.qilletni;
 
-import is.yarr.qilletni.lang.types.EntityType;
-import is.yarr.qilletni.lang.types.IntType;
-import is.yarr.qilletni.lang.types.StringType;
-import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

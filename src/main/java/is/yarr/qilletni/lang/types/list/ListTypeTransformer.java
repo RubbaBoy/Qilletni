@@ -1,8 +1,9 @@
 package is.yarr.qilletni.lang.types.list;
 
 import is.yarr.qilletni.lang.exceptions.ListTransformerNotFoundException;
-import is.yarr.qilletni.lang.types.QilletniType;
-import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.types.SongTypeImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.function.Function;
 
 /**
  * A class used to convert a {@link QilletniType} from one to another. For example, a type adapter may convert a string
- * of an ID or URL to a {@link is.yarr.qilletni.lang.types.SongType}. 
+ * of an ID or URL to a {@link SongTypeImpl}. 
  */
 public class ListTypeTransformer {
     

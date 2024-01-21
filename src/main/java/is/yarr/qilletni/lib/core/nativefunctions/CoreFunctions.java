@@ -1,6 +1,6 @@
 package is.yarr.qilletni.lib.core.nativefunctions;
 
-import is.yarr.qilletni.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
 
 public class CoreFunctions {
 

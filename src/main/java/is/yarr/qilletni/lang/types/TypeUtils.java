@@ -1,7 +1,8 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
-import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 
 import java.util.Optional;
 

@@ -2,9 +2,10 @@ package is.yarr.qilletni.lib.core.nativefunctions;
 
 import is.yarr.qilletni.lang.internal.BeforeAnyInvocation;
 import is.yarr.qilletni.lang.internal.NativeOn;
-import is.yarr.qilletni.lang.types.CollectionType;
-import is.yarr.qilletni.lang.types.EntityType;
-import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.music.MusicPopulator;
 
 import java.util.Objects;
@@ -30,7 +31,7 @@ public class CollectionFunctions {
     }
 
     public static EntityType getCreator(CollectionType collectionType) {
-        return collectionType.getCreator(EntityDefinitionManager.getInstance());
+        return collectionType.getCreator(EntityDefinitionManagerImpl.getInstance());
     }
     
     public static int getTrackCount(CollectionType collectionType) {
