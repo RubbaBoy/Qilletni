@@ -1,5 +1,6 @@
 package is.yarr.qilletni;
 
+import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
 import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.IntType;
@@ -12,7 +13,6 @@ import is.yarr.qilletni.lang.types.WeightsType;
 import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
 import is.yarr.qilletni.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.lang.types.weights.WeightUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

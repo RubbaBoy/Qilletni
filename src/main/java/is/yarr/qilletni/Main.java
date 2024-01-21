@@ -1,11 +1,6 @@
 package is.yarr.qilletni;
 
 import is.yarr.qilletni.lang.runner.QilletniProgramRunner;
-import is.yarr.qilletni.music.MusicPopulator;
-import is.yarr.qilletni.music.spotify.SpotifyMusicCache;
-import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
-import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
-import is.yarr.qilletni.music.spotify.auth.SpotifyPKCEAuthorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,14 +15,11 @@ public class Main {
     }
     
     private void main(String programFile) throws IOException {
-        SpotifyAuthorizer authorizer = SpotifyPKCEAuthorizer.createWithCodes();
-        authorizer.authorizeSpotify().join();
-
-        var spotifyMusicFetcher = new SpotifyMusicFetcher(authorizer);
-        var musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
+        var provider = ServiceManager.findServiceProvider();
+        LOGGER.debug("Using service provider: {}", provider.getName());
         
-        var qilletniProgramRunner = new QilletniProgramRunner(musicCache);
-
+        provider.initialize().join();
+        var qilletniProgramRunner = new QilletniProgramRunner(provider.getMusicCache());
         qilletniProgramRunner.runProgram(Paths.get("input", programFile));
     }
 }

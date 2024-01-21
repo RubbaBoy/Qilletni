@@ -1,10 +1,9 @@
 package is.yarr.qilletni.music.impl;
 
-import is.yarr.qilletni.music.PlayActor;
-import is.yarr.qilletni.music.Track;
+import is.yarr.qilletni.api.music.PlayActor;
+import is.yarr.qilletni.api.music.Track;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MarkerFactory;
 
 import java.util.concurrent.CompletableFuture;
 

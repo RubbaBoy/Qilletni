@@ -4,7 +4,7 @@ import is.yarr.qilletni.SpotifyDataUtility;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.song.SongDefinition;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.music.Track;
+import is.yarr.qilletni.api.music.Track;
 
 public final class SongType extends QilletniType {
     

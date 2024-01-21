@@ -1,5 +1,6 @@
 package is.yarr.qilletni.music;
 
+import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
 import is.yarr.qilletni.lang.exceptions.music.InvalidURLOrIDException;
 import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;

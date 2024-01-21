@@ -3,7 +3,6 @@ package is.yarr.qilletni.lang.types.list;
 import is.yarr.qilletni.lang.exceptions.ListTransformerNotFoundException;
 import is.yarr.qilletni.lang.types.QilletniType;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
-import net.bytebuddy.dynamic.Transformer;
 
 import java.util.ArrayList;
 import java.util.List;

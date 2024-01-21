@@ -4,10 +4,8 @@ import is.yarr.qilletni.SpotifyDataUtility;
 import is.yarr.qilletni.lang.types.album.AlbumDefinition;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.music.Album;
-import is.yarr.qilletni.music.Artist;
-
-import java.util.List;
+import is.yarr.qilletni.api.music.Album;
+import is.yarr.qilletni.api.music.Artist;
 
 public final class AlbumType extends QilletniType {
 

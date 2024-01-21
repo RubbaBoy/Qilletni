@@ -15,7 +15,7 @@ import is.yarr.qilletni.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.IntType;
 import is.yarr.qilletni.lang.types.StringType;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
-import is.yarr.qilletni.music.MusicCache;
+import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.music.MusicPopulator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

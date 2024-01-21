@@ -1,6 +1,8 @@
 package is.yarr.qilletni.lang.types.weights;
 
+import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
 import is.yarr.qilletni.lang.types.SongType;
+import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
 
 public class WeightEntry {
     private int weightAmount;

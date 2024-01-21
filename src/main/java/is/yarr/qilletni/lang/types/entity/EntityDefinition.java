@@ -1,15 +1,13 @@
 package is.yarr.qilletni.lang.types.entity;
 
-import is.yarr.qilletni.CollectionUtility;
-import is.yarr.qilletni.CollectionUtility.Entry;
+import is.yarr.qilletni.api.CollectionUtility;
+import is.yarr.qilletni.api.CollectionUtility.Entry;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
-import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.Scope;
 import is.yarr.qilletni.lang.table.Symbol;
 import is.yarr.qilletni.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.QilletniType;
-import is.yarr.qilletni.lang.types.TypeUtils;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

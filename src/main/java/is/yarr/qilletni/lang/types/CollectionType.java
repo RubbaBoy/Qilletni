@@ -5,7 +5,7 @@ import is.yarr.qilletni.lang.types.collection.CollectionDefinition;
 import is.yarr.qilletni.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.music.Playlist;
+import is.yarr.qilletni.api.music.Playlist;
 
 public final class CollectionType extends QilletniType {
 
