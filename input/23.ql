@@ -1,4 +1,4 @@
-import "!std/core.ql"
+import "!std:core.ql"
 
 collection rocMetal = "Rochester Metal" collection by "rubbaboy"
 
@@ -9,3 +9,8 @@ print("track count = " + rocMetal.getTrackCount())
 User creator = rocMetal.getCreator()
 print("creator id = " + creator.getId())
 print("creator name = " + creator.getName())
+
+Map map = new Map()
+map.put(1, "Hello")
+
+print(map.get(1))

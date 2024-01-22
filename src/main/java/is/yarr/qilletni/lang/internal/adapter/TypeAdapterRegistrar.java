@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 public class TypeAdapterRegistrar {
     
@@ -14,8 +15,12 @@ public class TypeAdapterRegistrar {
     
     private final List<RegisteredTypeAdapter<?, ?>> typeAdapters = new ArrayList<>();
     
+    public <R, T> void registerExactTypeAdapter(Class<R> returnType, Class<T> convertingType, TypeAdapter<R, T> typeAdapter) {
+        typeAdapters.add(new RegisteredTypeAdapter<>(returnType, convertingType, typeAdapter, true));
+    }
+    
     public <R, T> void registerTypeAdapter(Class<R> returnType, Class<T> convertingType, TypeAdapter<R, T> typeAdapter) {
-        typeAdapters.add(new RegisteredTypeAdapter<>(returnType, convertingType, typeAdapter));
+        typeAdapters.add(new RegisteredTypeAdapter<>(returnType, convertingType, typeAdapter, false));
     }
     
     public <R, T> Optional<TypeAdapter<R, T>> findTypeAdapter(Class<R> returnType, Class<T> convertingType) {
@@ -26,31 +31,24 @@ public class TypeAdapterRegistrar {
     }
 
     /**
-     * Finds a type adapter for the return value of a native method. If multiple are found, a warning is logged and the
-     * first one is chosen.
+     * Finds a type adapter for the return value of a native method. First, exact matches are checked, and then
+     * non-exact class matches are checked.
      * 
      * @param convertingType The type to convert to a Qilletni type
      * @return The found type adapter, if any
      * @param <T> The type being adapted
      */
     public <T> Optional<TypeAdapter<QilletniType, T>> findReturningTypeAdapter(Class<T> convertingType) {
-        var foundAdapters = typeAdapters.stream()
+        return typeAdapters.stream().filter(RegisteredTypeAdapter::exactClassMatch)
                 .filter(adapter -> adapter.convertingType.equals(convertingType))
-                .map(adapter -> (TypeAdapter<QilletniType, T>) adapter.typeAdapter)
-                .toList();
-        
-        if (foundAdapters.isEmpty()) {
-            return Optional.empty();
-        }
-        
-        if (foundAdapters.size() > 1) {
-            LOGGER.warn("Multiple returning adapters found for {}! Choosing the first adapter.", convertingType.getCanonicalName());
-        }
-        
-        return Optional.of(foundAdapters.get(0));
+                .findFirst()
+                .or(() -> typeAdapters.stream().filter(Predicate.not(RegisteredTypeAdapter::exactClassMatch))
+                            .filter(adapter -> adapter.convertingType.isAssignableFrom(convertingType))
+                            .findFirst())
+                .map(adapter -> (TypeAdapter<QilletniType, T>) adapter.typeAdapter);
     }
 
-    record RegisteredTypeAdapter<R, T>(Class<R> returnType, Class<T> convertingType, TypeAdapter<R, T> typeAdapter) {
+    record RegisteredTypeAdapter<R, T>(Class<R> returnType, Class<T> convertingType, TypeAdapter<R, T> typeAdapter, boolean exactClassMatch) {
     }
     
 }

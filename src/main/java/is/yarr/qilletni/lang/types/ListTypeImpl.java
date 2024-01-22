@@ -18,7 +18,7 @@ public sealed class ListTypeImpl implements ListType permits TypelessListType {
         this.items = items;
         this.listType = QilletniTypeClass.createListOfType(innerType);
     }
-
+    
     @Override
     public QilletniTypeClass<?> getSubType() {
         return listType.getSubType();
@@ -32,6 +32,11 @@ public sealed class ListTypeImpl implements ListType permits TypelessListType {
     @Override
     public void setItems(List<QilletniType> items) {
         this.items = Collections.unmodifiableList(items);
+    }
+
+    @Override
+    public ListType copy() {
+        return new ListTypeImpl(listType.getSubType(), items);
     }
 
     @Override

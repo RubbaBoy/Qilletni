@@ -1,40 +1,30 @@
 package is.yarr.qilletni.music;
 
 import is.yarr.qilletni.api.music.MusicCache;
+import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
 import is.yarr.qilletni.lang.exceptions.music.InvalidURLOrIDException;
 import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
 import is.yarr.qilletni.api.lang.types.AlbumType;
-import is.yarr.qilletni.lang.types.AlbumTypeImpl;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.SongType;
-import is.yarr.qilletni.lang.types.SongTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.regex.Pattern;
 
-public class MusicPopulator {
+public class MusicPopulatorImpl implements MusicPopulator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MusicPopulator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MusicPopulatorImpl.class);
     private static final boolean EAGER_MUSIC_LOAD = "true".equals(System.getenv("EAGER_MUSIC_LOAD"));
     
-    private static MusicPopulator musicPopulator;
-
     private final MusicCache musicCache;
 
-    public MusicPopulator(MusicCache musicCache) {
+    public MusicPopulatorImpl(MusicCache musicCache) {
         this.musicCache = musicCache;
-        musicPopulator = this;
     }
 
-    /**
-     * If eager loading is enabled, the given song is populated. Otherwise, nothing occurs.
-     * TODO: Make this into some kind of factory for SongTypes?
-     * 
-     * @param songType The song to populate
-     * @return The supplied {@link SongTypeImpl}
-     */
+    @Override
     public SongType initiallyPopulateSong(SongType songType) {
         if (EAGER_MUSIC_LOAD) {
             populateSong(songType);
@@ -43,6 +33,7 @@ public class MusicPopulator {
         return songType;
     }
     
+    @Override
     public void populateSong(SongType songType) {
         if (songType.isSpotifyDataPopulated()) {
             return;
@@ -60,13 +51,7 @@ public class MusicPopulator {
         songType.populateSpotifyData(foundTrack);
     }
 
-    /**
-     * If eager loading is enabled, the given album is populated. Otherwise, nothing occurs.
-     * TODO: Make this into some kind of factory for AlbumTypes?
-     * 
-     * @param albumType The album to populate
-     * @return The supplied {@link AlbumTypeImpl}
-     */
+    @Override
     public AlbumType initiallyPopulateAlbum(AlbumType albumType) {
         if (EAGER_MUSIC_LOAD) {
             populateAlbum(albumType);
@@ -75,6 +60,7 @@ public class MusicPopulator {
         return albumType;
     }
     
+    @Override
     public void populateAlbum(AlbumType albumType) {
         if (albumType.isSpotifyDataPopulated()) {
             return;
@@ -92,13 +78,7 @@ public class MusicPopulator {
         albumType.populateSpotifyData(foundAlbum);
     }
 
-    /**
-     * If eager loading is enabled, the given album is populated. Otherwise, nothing occurs.
-     * TODO: Make this into some kind of factory for CollectionTypes?
-     * 
-     * @param collectionType The album to populate
-     * @return The supplied {@link AlbumTypeImpl}
-     */
+    @Override
     public CollectionType initiallyPopulateCollection(CollectionType collectionType) {
         if (EAGER_MUSIC_LOAD) {
             populateCollection(collectionType);
@@ -107,6 +87,7 @@ public class MusicPopulator {
         return collectionType;
     }
     
+    @Override
     public void populateCollection(CollectionType collectionType) {
         if (collectionType.isSpotifyDataPopulated()) {
             return;
@@ -122,10 +103,6 @@ public class MusicPopulator {
         };
         
         collectionType.populateSpotifyData(foundPlaylist);
-    }
-
-    public static MusicPopulator getInstance() {
-        return musicPopulator;
     }
 
     /**

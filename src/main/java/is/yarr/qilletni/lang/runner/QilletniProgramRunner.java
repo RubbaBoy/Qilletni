@@ -2,15 +2,16 @@ package is.yarr.qilletni.lang.runner;
 
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
+import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
+import is.yarr.qilletni.lang.types.JavaTypeImpl;
 import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformerFactory;
-import is.yarr.qilletni.lib.LibraryInit;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
@@ -21,7 +22,9 @@ import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.music.MusicCache;
-import is.yarr.qilletni.music.MusicPopulator;
+import is.yarr.qilletni.lib.LibraryRegistrar;
+import is.yarr.qilletni.api.music.MusicPopulator;
+import is.yarr.qilletni.music.MusicPopulatorImpl;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -29,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -47,6 +51,7 @@ public class QilletniProgramRunner {
     private final MusicCache musicCache;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
+    private final LibraryRegistrar libraryRegistrar;
 
     public QilletniProgramRunner(MusicCache musicCache) {
         this.musicCache = musicCache;
@@ -54,13 +59,19 @@ public class QilletniProgramRunner {
         this.globalScope = new ScopeImpl();
         this.entityDefinitionManager = new EntityDefinitionManagerImpl();
         this.nativeFunctionHandler = createNativeFunctionHandler();
-        this.musicPopulator = new MusicPopulator(musicCache);
+        this.musicPopulator = new MusicPopulatorImpl(musicCache);
         
         var listGeneratorFactory = new ListTypeTransformerFactory();
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
+        this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler);
+        
+        libraryRegistrar.registerLibraries();
+        
+        nativeFunctionHandler.addInjectableInstance(musicPopulator);
+        nativeFunctionHandler.addInjectableInstance(entityDefinitionManager);
     }
 
-    public QilletniProgramRunner(ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer) {
+    public QilletniProgramRunner(ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, LibraryRegistrar libraryRegistrar) {
         this.musicCache = musicCache;
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
@@ -68,6 +79,7 @@ public class QilletniProgramRunner {
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
         this.nativeFunctionHandler = nativeFunctionHandler;
+        this.libraryRegistrar = libraryRegistrar;
     }
 
     private static NativeFunctionHandler createNativeFunctionHandler() {
@@ -75,16 +87,16 @@ public class QilletniProgramRunner {
         var typeAdapterInvoker = new TypeAdapterInvoker(typeAdapterRegistrar);
         var nativeFunctionHandler = new NativeFunctionHandler(typeAdapterInvoker);
 
-        LibraryInit.registerFunctions(nativeFunctionHandler);
+        typeAdapterRegistrar.registerExactTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
+        typeAdapterRegistrar.registerExactTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
 
-        typeAdapterRegistrar.registerTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
-        typeAdapterRegistrar.registerTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
+        typeAdapterRegistrar.registerExactTypeAdapter(IntTypeImpl.class, Integer.class, IntTypeImpl::new);
+        typeAdapterRegistrar.registerExactTypeAdapter(int.class, IntTypeImpl.class, IntType::getValue);
 
-        typeAdapterRegistrar.registerTypeAdapter(IntTypeImpl.class, Integer.class, IntTypeImpl::new);
-        typeAdapterRegistrar.registerTypeAdapter(int.class, IntTypeImpl.class, IntType::getValue);
-
-        typeAdapterRegistrar.registerTypeAdapter(StringTypeImpl.class, String.class, StringTypeImpl::new);
-        typeAdapterRegistrar.registerTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
+        typeAdapterRegistrar.registerExactTypeAdapter(StringTypeImpl.class, String.class, StringTypeImpl::new);
+        typeAdapterRegistrar.registerExactTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
+        
+        typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
 
         return nativeFunctionHandler;
     }
@@ -122,7 +134,8 @@ public class QilletniProgramRunner {
             if (pathState.isInternal()) {
                 LOGGER.debug("Importing internal file: {}", pathState.path());
                 
-                runProgram(getClass().getClassLoader().getResourceAsStream(pathState.path().toString()), pathState);
+//                runProgram(getClass().getClassLoader().getResourceAsStream(pathState.path().toString()), pathState);
+                runProgram(libraryRegistrar.findLibraryByPath(pathState.libraryName(), pathState.path()).orElseThrow(FileNotFoundException::new), pathState);
             } else {
                 LOGGER.debug("Importing filesystem file: {}", pathState.path());
 

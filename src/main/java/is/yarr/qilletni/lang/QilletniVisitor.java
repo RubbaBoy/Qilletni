@@ -57,7 +57,7 @@ import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
 import is.yarr.qilletni.lang.types.weights.WeightEntryImpl;
-import is.yarr.qilletni.music.MusicPopulator;
+import is.yarr.qilletni.api.music.MusicPopulator;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;

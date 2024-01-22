@@ -1,3 +1,4 @@
 rootProject.name = 'Qilletni'
 include 'qilletni-api'
 include 'qilletni-spotify'
+include 'qilletni-lib-std'

@@ -1,7 +1,11 @@
 package is.yarr.qilletni.lang.internal;
 
+import is.yarr.qilletni.api.lib.BeforeAnyInvocation;
+import is.yarr.qilletni.api.lib.NativeOn;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
+import is.yarr.qilletni.lang.exceptions.lib.NoNativeLibraryConstructorFoundException;
 import is.yarr.qilletni.lang.exceptions.QilletniException;
+import is.yarr.qilletni.lang.exceptions.lib.UninjectableConstructorTypeException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
@@ -14,6 +18,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessFlag;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -27,9 +32,19 @@ public class NativeFunctionHandler {
     private final Map<MethodSignature, InvocableMethod> nativeMethods = new HashMap<>();
     
     private final TypeAdapterInvoker typeAdapterInvoker;
+    private final List<Object> injectableInstances;
 
     public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker) {
+        this(typeAdapterInvoker, new ArrayList<>());
+    }
+
+    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<Object> injectableInstances) {
         this.typeAdapterInvoker = typeAdapterInvoker;
+        this.injectableInstances = injectableInstances;
+    }
+    
+    public void addInjectableInstance(Object object) {
+        injectableInstances.add(object);
     }
 
     public void registerClasses(Class<?>... nativeMethodClass) {
@@ -39,8 +54,7 @@ public class NativeFunctionHandler {
             
             for (var declaredMethod : clazz.getDeclaredMethods()) {
                 if (hasAnnotation(declaredMethod, BeforeAnyInvocation.class) ||
-                        !(declaredMethod.accessFlags().contains(AccessFlag.PUBLIC) &&
-                                declaredMethod.accessFlags().contains(AccessFlag.STATIC))) {
+                        !declaredMethod.accessFlags().contains(AccessFlag.PUBLIC)) {
                     continue;
                 }
                 
@@ -88,16 +102,46 @@ public class NativeFunctionHandler {
         }
 
         try {
+            var instance = createInstanceForMethod(invocableMethod);
+            
             if (invocableMethod.beforeAny() != null) {
-                typeAdapterInvoker.invokeMethod(invocableMethod.beforeAny(), params);
+                typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), params);
             }
             
-            return typeAdapterInvoker.invokeMethod(invocableMethod.method(), params);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+            return typeAdapterInvoker.invokeMethod(instance, invocableMethod.method(), params);
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new RuntimeException(e);
         } catch (QilletniException e) {
             throw new QilletniException(ctx, e.getMessage());
         }
+    }
+    
+    private Object createInstanceForMethod(InvocableMethod invocableMethod) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+        if (!(invocableMethod.beforeAny() != null && invocableMethod.beforeAny().accessFlags().contains(AccessFlag.STATIC))
+                || !invocableMethod.method().accessFlags().contains(AccessFlag.STATIC)) {
+            var declaringClass = invocableMethod.method().getDeclaringClass();
+            var constructors = declaringClass.getConstructors();
+
+            if (constructors.length == 0) {
+                throw new NoNativeLibraryConstructorFoundException();
+            }
+
+            var constructor = constructors[0];
+
+            Arrays.stream(constructor.getParameterTypes()).filter(paramType ->
+                    injectableInstances.stream().noneMatch(paramType::isInstance))
+                    .findFirst().ifPresent(invalidParam -> {
+                        throw new UninjectableConstructorTypeException(String.format("Attempted to inject uninjectable class %s", invalidParam.getCanonicalName()));        
+                    });
+
+            var params = Arrays.stream(constructor.getParameterTypes()).map(paramType ->
+                    injectableInstances.stream().filter(paramType::isInstance).findFirst().orElse(null))
+                    .toArray(Object[]::new);
+            
+            return constructor.newInstance(params);
+        }
+        
+        return null;
     }
     
     record MethodSignature(String name, int params, QilletniTypeClass<?> nativeOn) {

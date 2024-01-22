@@ -11,16 +11,6 @@ public class EntityDefinitionManagerImpl implements EntityDefinitionManager {
     
     private final Map<String, EntityDefinition> entityDefinitionMap = new HashMap<>();
     
-    private static EntityDefinitionManagerImpl musicDefinitionManager;
-    
-    public EntityDefinitionManagerImpl() {
-        musicDefinitionManager = this;
-    }
-
-    public static EntityDefinitionManager getInstance() {
-        return musicDefinitionManager;
-    }
-    
     @Override
     public EntityDefinition lookup(String entityType) {
         if (!entityDefinitionMap.containsKey(entityType)) {

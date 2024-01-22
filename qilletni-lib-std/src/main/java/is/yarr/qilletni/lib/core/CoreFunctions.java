@@ -1,4 +1,4 @@
-package is.yarr.qilletni.lib.core.nativefunctions;
+package is.yarr.qilletni.lib.core;
 
 import is.yarr.qilletni.api.lang.types.QilletniType;
 

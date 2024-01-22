@@ -1,5 +1,6 @@
 module is.yarr.qilletni.Qilletni.main {
     uses is.yarr.qilletni.api.auth.ServiceProvider;
+    uses is.yarr.qilletni.api.lib.Library;
     
     requires Qilletni.qilletni.api.main;
     requires Qilletni.qilletni.spotify.main;

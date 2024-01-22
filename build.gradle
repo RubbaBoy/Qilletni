@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'antlr'
+    id 'idea'
 }
 
 group = 'is.yarr.qilletni'
@@ -24,6 +25,7 @@ dependencies {
     
     implementation project(':qilletni-api')
     implementation project(':qilletni-spotify')
+    implementation project(':qilletni-lib-std')
 }
 
 tasks.withType(JavaCompile).each {
@@ -53,6 +55,13 @@ sourceSets {
         java.srcDir 'generated-src/antlr/main/'
     }
 }
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
 
 tasks.withType(JavaCompile) {
     options.compilerArgs += "--enable-preview"

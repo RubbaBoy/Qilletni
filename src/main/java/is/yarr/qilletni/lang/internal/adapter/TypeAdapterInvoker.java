@@ -19,7 +19,7 @@ public class TypeAdapterInvoker {
         this.typeAdapterRegistrar = typeAdapterRegistrar;
     }
 
-    public QilletniType invokeMethod(Method method, List<QilletniType> params) throws IllegalAccessException, InvocationTargetException {
+    public QilletniType invokeMethod(Object instance, Method method, List<QilletniType> params) throws IllegalAccessException, InvocationTargetException {
         // params defined in the class
         var javaParams = method.getParameterTypes();
         
@@ -43,7 +43,7 @@ public class TypeAdapterInvoker {
             }
         }
 
-        var invokedResult = method.invoke(null, invokingParams);
+        var invokedResult = method.invoke(instance, invokingParams);
         
         if (invokedResult == null) {
             return null;

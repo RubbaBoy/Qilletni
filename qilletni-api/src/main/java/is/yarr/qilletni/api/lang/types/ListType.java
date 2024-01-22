@@ -10,4 +10,6 @@ public non-sealed interface ListType extends QilletniType {
     List<QilletniType> getItems();
 
     void setItems(List<QilletniType> items);
+    
+    ListType copy();
 }

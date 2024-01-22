@@ -1,10 +1,8 @@
-package is.yarr.qilletni.lib.core.nativefunctions;
+package is.yarr.qilletni.lib.core;
 
-import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
-import is.yarr.qilletni.lang.internal.NativeOn;
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
-import is.yarr.qilletni.lang.types.ListTypeImpl;
+import is.yarr.qilletni.api.lib.NativeOn;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +32,7 @@ public class ListFunctions {
 
     public static void addAll(ListType list, ListType otherList) {
         if (!list.getSubType().equals(otherList.getSubType())) {
-            throw new TypeMismatchException("Cannot add lists of items of mismatched types (" + otherList.getSubType().getTypeName() + " to " + list.getSubType().getTypeName() + ")");
+            throw new RuntimeException("Cannot add lists of items of mismatched types (" + otherList.getSubType().getTypeName() + " to " + list.getSubType().getTypeName() + ")");
         }
         
         var mutableItems = new ArrayList<>(list.getItems());
@@ -48,7 +46,9 @@ public class ListFunctions {
 
     public static ListType subList(ListType list, int fromIndex, int toIndex) {
         var subList = list.getItems().subList(fromIndex, toIndex);
-        return new ListTypeImpl(list.getSubType(), subList);
+        var listCopy = list.copy();
+        listCopy.setItems(subList);
+        return listCopy;
     }
     
 }

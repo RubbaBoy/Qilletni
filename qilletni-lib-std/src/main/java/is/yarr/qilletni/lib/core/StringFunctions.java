@@ -1,6 +1,6 @@
-package is.yarr.qilletni.lib.core.nativefunctions;
+package is.yarr.qilletni.lib.core;
 
-import is.yarr.qilletni.lang.internal.NativeOn;
+import is.yarr.qilletni.api.lib.NativeOn;
 
 @NativeOn("string")
 public class StringFunctions {
