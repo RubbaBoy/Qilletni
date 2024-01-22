@@ -11,6 +11,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class SpotifyTrack implements Track {
@@ -66,6 +67,19 @@ public class SpotifyTrack implements Track {
     @Override
     public int getDuration() {
         return duration;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        SpotifyTrack that = (SpotifyTrack) object;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override

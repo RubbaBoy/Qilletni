@@ -36,6 +36,7 @@ NEW: 'new';
 
 ORDER_PARAM   : 'order' -> pushMode(ORDER_MODE);
 LIMIT_PARAM   : 'limit' -> pushMode(LIMIT_MODE);
+LOOP_PARAM   : 'loop';
 
 IF_KEYWORD: 'if';
 ELSE_KEYWORD: 'else';

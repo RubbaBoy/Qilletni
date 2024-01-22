@@ -4,6 +4,7 @@ import is.yarr.qilletni.StringUtility;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
+import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
@@ -87,8 +88,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
     private final Consumer<String> importConsumer;
+    private final TrackOrchestrator trackOrchestrator;
 
-    public QilletniVisitor(SymbolTable symbolTable, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -96,6 +98,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
         this.importConsumer = importConsumer;
+        this.trackOrchestrator = trackOrchestrator;
     }
 
     @Override
@@ -1022,18 +1025,22 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public Object visitPlay_stmt(QilletniParser.Play_stmtContext ctx) {
         if (ctx.song_expr() != null) {
-            SongType song = visitQilletniTypedNode(ctx.song_expr());
-            LOGGER.debug("Playing {}", song);
+            var song = visitQilletniTypedNode(ctx.song_expr(), SongType.class);
+            musicPopulator.populateSong(song);
+            trackOrchestrator.playTrack(song.getTrack());
             return null;
         }
 
-        var collection = visitQilletniTypedNode(ctx.collection_expr());
+        var collection = visitQilletniTypedNode(ctx.collection_expr(), CollectionType.class);
 
+        musicPopulator.populateCollection(collection);
         if (ctx.collection_limit() != null) {
             CollectionLimit limit = visitNode(ctx.collection_limit());
             LOGGER.debug("Playing collection {} with a limit of {}", collection, limit);
+            trackOrchestrator.playCollection(collection, limit);
         } else {
             LOGGER.debug("Playing collection {}", collection);
+            trackOrchestrator.playCollection(collection, ctx.LOOP_PARAM() != null);
         }
 
         return null;

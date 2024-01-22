@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.runner;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.api.lang.types.JavaType;
+import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
@@ -52,9 +53,11 @@ public class QilletniProgramRunner {
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
     private final LibraryRegistrar libraryRegistrar;
+    private final TrackOrchestrator trackOrchestrator;
 
-    public QilletniProgramRunner(MusicCache musicCache) {
+    public QilletniProgramRunner(MusicCache musicCache, TrackOrchestrator trackOrchestrator) {
         this.musicCache = musicCache;
+        this.trackOrchestrator = trackOrchestrator;
         this.symbolTables = new ArrayList<>();
         this.globalScope = new ScopeImpl();
         this.entityDefinitionManager = new EntityDefinitionManagerImpl();
@@ -71,10 +74,11 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(entityDefinitionManager);
     }
 
-    public QilletniProgramRunner(ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, LibraryRegistrar libraryRegistrar) {
+    public QilletniProgramRunner(ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, LibraryRegistrar libraryRegistrar, TrackOrchestrator trackOrchestrator) {
         this.musicCache = musicCache;
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
+        this.trackOrchestrator = trackOrchestrator;
         this.symbolTables = new ArrayList<>();
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -123,7 +127,7 @@ public class QilletniProgramRunner {
         symbolTables.add(symbolTable);
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, globalScope, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, importedFile -> importFileFromStream(pathState.importFrom(importedFile)));
+        var qilletniVisitor = new QilletniVisitor(symbolTable, globalScope, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, trackOrchestrator, importedFile -> importFileFromStream(pathState.importFrom(importedFile)));
         qilletniVisitor.visit(programContext);
         
         return symbolTable;

@@ -314,18 +314,15 @@ public class SpotifyMusicCache implements MusicCache {
         var spotifyPlaylist = (SpotifyPlaylist) playlist;
         var playlistIndex = spotifyPlaylist.getSpotifyPlaylistIndex();
         
-        LOGGER.debug("playlistIndex = {}", playlistIndex);
+//        LOGGER.debug("playlistIndex = {}", playlistIndex);
 
         
         var expires = Instant.ofEpochMilli(playlistIndex.getLastUpdatedIndex().getTime()).plus(7, ChronoUnit.DAYS); // when it expires
         LOGGER.debug("Should update: {} .isAfter {}", Instant.now(), expires);
         if (Instant.now().isAfter(expires)) {
             var tracks = spotifyMusicFetcher.fetchPlaylistTracks(playlist);
-            System.out.println("tracks = " + tracks);
             
             var playlistTracks = storeTracks(tracks).allTracks();
-
-            System.out.println("playlistTracks = " + playlistTracks);
 
             spotifyPlaylist.setSpotifyPlaylistIndex(new SpotifyPlaylistIndex(playlistTracks.stream()
                     .map(SpotifyTrack.class::cast)

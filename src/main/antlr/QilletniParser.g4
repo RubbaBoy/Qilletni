@@ -168,7 +168,7 @@ collection_limit
 
 play_stmt
     : PLAY song_expr
-    | PLAY COLLECTION_TYPE collection_expr collection_limit?
+    | PLAY collection_expr collection_limit? LOOP_PARAM?
     ;
 
 function_def

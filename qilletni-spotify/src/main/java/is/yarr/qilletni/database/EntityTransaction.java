@@ -1,8 +1,5 @@
 package is.yarr.qilletni.database;
 
-import is.yarr.qilletni.music.spotify.entities.SpotifyTrack;
-import org.hibernate.Criteria;
-import org.hibernate.FetchMode;
 import org.hibernate.Session;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,9 +20,6 @@ public class EntityTransaction implements AutoCloseable {
         Session session = HibernateUtil.getSessionFactory().openSession();
         session.beginTransaction();
 
-        Criteria criteria = session.createCriteria(SpotifyTrack.class);
-        criteria.setFetchMode("roles", FetchMode.EAGER);
-        
         return new EntityTransaction(session);
     }
 
