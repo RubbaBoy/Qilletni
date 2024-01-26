@@ -1,5 +1,6 @@
 package is.yarr.qilletni.lang.internal;
 
+import is.yarr.qilletni.api.lang.internal.NativeFunctionClassInjector;
 import is.yarr.qilletni.api.lib.BeforeAnyInvocation;
 import is.yarr.qilletni.api.lib.NativeOn;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class NativeFunctionHandler {
+public class NativeFunctionHandler implements NativeFunctionClassInjector {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(NativeFunctionHandler.class);
     
@@ -43,8 +44,11 @@ public class NativeFunctionHandler {
         this.injectableInstances = injectableInstances;
     }
     
+    @Override
     public void addInjectableInstance(Object object) {
         injectableInstances.add(object);
+        
+        LOGGER.debug("inj inst: {}", injectableInstances);
     }
 
     public void registerClasses(Class<?>... nativeMethodClass) {

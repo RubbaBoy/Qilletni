@@ -2,12 +2,16 @@ package is.yarr.qilletni.lib;
 
 import is.yarr.qilletni.api.lib.Library;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
+import is.yarr.qilletni.lang.runner.ImportPathState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -18,6 +22,7 @@ public class LibraryRegistrar {
     
     private final NativeFunctionHandler nativeFunctionHandler;
     private final Map<String, Library> libraries = new HashMap<>();
+    private final List<AutoImportFile> autoImportFiles = new ArrayList<>();
 
     public LibraryRegistrar(NativeFunctionHandler nativeFunctionHandler) {
         this.nativeFunctionHandler = nativeFunctionHandler;
@@ -32,6 +37,11 @@ public class LibraryRegistrar {
             } else {
                 libraries.put(library.getImportName(), library);
                 nativeFunctionHandler.registerClasses(library.getNativeClasses().toArray(Class<?>[]::new));
+                library.supplyNativeFunctionBindings(nativeFunctionHandler);
+
+                autoImportFiles.addAll(library.autoImportFiles()
+                        .stream()
+                        .map(file -> new AutoImportFile(file, library.getImportName())).toList());
             }
         }
     }
@@ -45,4 +55,10 @@ public class LibraryRegistrar {
         
         return library.readPath(path.toString().replace("\\", "/"));
     }
+
+    public List<AutoImportFile> getAutoImportFiles() {
+        return autoImportFiles;
+    }
+    
+    public record AutoImportFile(String fileName, String libName) {}
 }

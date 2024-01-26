@@ -20,6 +20,7 @@ public class Main {
         
         provider.initialize().join();
         var qilletniProgramRunner = new QilletniProgramRunner(provider.getMusicCache(), provider.getTrackOrchestrator());
+        qilletniProgramRunner.importInitialFiles();
         qilletniProgramRunner.runProgram(Paths.get("input", programFile));
     }
 }

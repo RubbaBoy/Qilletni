@@ -20,6 +20,11 @@ public final class CollectionTypeImpl implements CollectionType {
     private WeightsType weights;
     private Playlist playlist;
     private EntityType creatorType;
+    
+    public CollectionTypeImpl(Playlist playlist) {
+        this.collectionDefinition = CollectionDefinition.PREPOPULATED;
+        this.playlist = playlist;
+    }
 
     public CollectionTypeImpl(String url) {
         this.collectionDefinition = CollectionDefinition.URL;

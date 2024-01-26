@@ -26,6 +26,8 @@ import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.lib.LibraryRegistrar;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.music.MusicPopulatorImpl;
+import is.yarr.qilletni.music.factories.CollectionTypeFactoryImpl;
+import is.yarr.qilletni.music.factories.SongTypeFactoryImpl;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,6 +75,8 @@ public class QilletniProgramRunner {
         
         nativeFunctionHandler.addInjectableInstance(musicPopulator);
         nativeFunctionHandler.addInjectableInstance(entityDefinitionManager);
+        nativeFunctionHandler.addInjectableInstance(new SongTypeFactoryImpl());
+        nativeFunctionHandler.addInjectableInstance(new CollectionTypeFactoryImpl());
     }
 
     public QilletniProgramRunner(ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicCache musicCache, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, LibraryRegistrar libraryRegistrar, TrackOrchestrator trackOrchestrator) {
@@ -103,6 +108,14 @@ public class QilletniProgramRunner {
         typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
 
         return nativeFunctionHandler;
+    }
+    
+    public void importInitialFiles() {
+        LOGGER.debug("Importing initial files!");
+        
+        libraryRegistrar.getAutoImportFiles().forEach(autoImportFile -> {
+            importFileFromStream(new ImportPathState(Paths.get(autoImportFile.libName() + "\\" + autoImportFile.fileName()), true, autoImportFile.libName()));
+        });
     }
 
     public SymbolTable runProgram(Path file) throws IOException {

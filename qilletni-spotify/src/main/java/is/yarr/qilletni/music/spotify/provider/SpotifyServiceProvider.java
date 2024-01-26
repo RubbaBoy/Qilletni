@@ -8,8 +8,10 @@ import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.music.spotify.SpotifyMusicCache;
 import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
 import is.yarr.qilletni.music.spotify.SpotifyTrackOrchestrator;
+import is.yarr.qilletni.music.spotify.auth.SpotifyApiSingleton;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
 import is.yarr.qilletni.music.spotify.auth.pkce.SpotifyPKCEAuthorizer;
+import is.yarr.qilletni.music.spotify.play.ReroutablePlayActor;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -26,9 +28,10 @@ public class SpotifyServiceProvider implements ServiceProvider {
         
         return authorizer.authorizeSpotify().thenRun(() -> {
             var spotifyMusicFetcher = new SpotifyMusicFetcher(authorizer);
+            SpotifyApiSingleton.setSpotifyAuthorizer(authorizer);
             musicFetcher = spotifyMusicFetcher;
             musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
-            trackOrchestrator = new SpotifyTrackOrchestrator(new ConsolePlayActor(), musicCache);
+            trackOrchestrator = new SpotifyTrackOrchestrator(new ReroutablePlayActor(), musicCache);
         });
     }
 

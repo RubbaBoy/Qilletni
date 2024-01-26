@@ -88,7 +88,7 @@ fragment STR  : (ESC | ~["\\]);
 fragment ESC: '\\' [\\"];
 
 
-WEIGHT_PIPE: '|' -> pushMode(WEIGHT_MODE);
+WEIGHT_PIPE: ('|' | '|!') -> pushMode(WEIGHT_MODE);
 
 mode ORDER_MODE;
 O_WS          : [ \t\n\r]+ -> skip;

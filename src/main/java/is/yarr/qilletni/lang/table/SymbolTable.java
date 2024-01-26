@@ -1,11 +1,15 @@
 package is.yarr.qilletni.lang.table;
 
 import is.yarr.qilletni.api.lang.table.Scope;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Stack;
 
 public class SymbolTable {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(SymbolTable.class);
     
     private Stack<Scope> currentScopeStack = new Stack<>();
     private final Stack<Stack<Scope>> previousScopeStacks = new Stack<>();
@@ -57,7 +61,10 @@ public class SymbolTable {
      */
     public Scope functionCall() {
         previousScopeStacks.push(currentScopeStack);
-        var functionGlobal = currentScopeStack.firstElement();
+        var functionGlobal = currentScopeStack.lastElement();
+        
+        LOGGER.debug("setting parent as: {}", currentScopeStack.firstElement());
+        LOGGER.debug("FULL though is: {}", currentScopeStack.lastElement());
         
         currentScopeStack = new Stack<>();
         currentScopeStack.push(functionGlobal);

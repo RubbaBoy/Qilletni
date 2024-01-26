@@ -1,5 +1,6 @@
 module Qilletni.qilletni.spotify.main {
-    exports is.yarr.qilletni.music.spotify;
+//    exports is.yarr.qilletni.music.spotify;
+    exports is.yarr.qilletni.lib.spotify;
     requires Qilletni.qilletni.api.main;
     
     requires java.persistence;
@@ -23,7 +24,11 @@ module Qilletni.qilletni.spotify.main {
 
     opens is.yarr.qilletni.music.spotify.auth.pkce to com.google.gson;
     opens is.yarr.qilletni.music.spotify.entities to org.hibernate.orm.core;
-    
+    exports is.yarr.qilletni.music.spotify.play;
+
     provides is.yarr.qilletni.api.auth.ServiceProvider
             with is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
+
+    provides is.yarr.qilletni.api.lib.Library
+            with is.yarr.qilletni.lib.spotify.SpotifyLibrary;
 }

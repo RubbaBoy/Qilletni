@@ -93,7 +93,7 @@ public class SpotifyMusicFetcher implements MusicFetcher {
                     .build()
                     .execute();
 
-            return Arrays.stream(tracks).map(this::createTrackEntity).toList();
+            return Arrays.stream(tracks).map(SpotifyMusicFetcher::createTrackEntity).toList();
         } catch (IOException | ParseException | SpotifyWebApiException e) {
             throw new RuntimeException(e);
         }
@@ -103,7 +103,7 @@ public class SpotifyMusicFetcher implements MusicFetcher {
     public Optional<Playlist> fetchPlaylist(String name, String author) {
         LOGGER.debug("fetchPlaylist({}, {})", name, author);
         try {
-            return fetchPlaylistFromUserByName(name, author).map(this::createPlaylistEntity);
+            return fetchPlaylistFromUserByName(name, author).map(SpotifyMusicFetcher::createPlaylistEntity);
         } catch (IOException | ParseException | SpotifyWebApiException e) {
             throw new RuntimeException(e);
         }
@@ -246,7 +246,7 @@ public class SpotifyMusicFetcher implements MusicFetcher {
                         .map(PlaylistTrack::getTrack)
                         .filter(track -> track instanceof se.michaelthelin.spotify.model_objects.specification.Track)
                         .map(se.michaelthelin.spotify.model_objects.specification.Track.class::cast)
-                        .map(this::createTrackEntity)
+                        .map(SpotifyMusicFetcher::createTrackEntity)
                         .toList());
             } while (lastTotal == MAX_PAGE_LIMIT);
 
@@ -289,36 +289,36 @@ public class SpotifyMusicFetcher implements MusicFetcher {
             throw new RuntimeException(e);
         }
     }
-    
-    private Track createTrackEntity(se.michaelthelin.spotify.model_objects.specification.Track track) {
+
+    static Track createTrackEntity(se.michaelthelin.spotify.model_objects.specification.Track track) {
         return new SpotifyTrack(track.getId(), track.getName(), createArtistList(track.getArtists()), createAlbum(track.getAlbum()), track.getDurationMs());
     }
-    
-    private List<SpotifyArtist> createArtistList(ArtistSimplified[] playlistArtists) {
+
+    static List<SpotifyArtist> createArtistList(ArtistSimplified[] playlistArtists) {
         return Arrays.stream(playlistArtists).map(artist -> new SpotifyArtist(artist.getId(), artist.getName())).toList();
     }
-    
-    private SpotifyAlbum createAlbum(se.michaelthelin.spotify.model_objects.specification.Album album) {
+
+    static SpotifyAlbum createAlbum(se.michaelthelin.spotify.model_objects.specification.Album album) {
         return new SpotifyAlbum(album.getId(), album.getName(), createArtistList(album.getArtists()));
     }
-    
-    private SpotifyAlbum createAlbum(AlbumSimplified albumSimplified) {
+
+    static SpotifyAlbum createAlbum(AlbumSimplified albumSimplified) {
         return new SpotifyAlbum(albumSimplified.getId(), albumSimplified.getName(), createArtistList(albumSimplified.getArtists()));
     }
-    
-    private SpotifyUser createUserEntity(se.michaelthelin.spotify.model_objects.specification.User user) {
+
+    static SpotifyUser createUserEntity(se.michaelthelin.spotify.model_objects.specification.User user) {
         return new SpotifyUser(user.getId(), user.getDisplayName());
     }
     
-    private SpotifyPlaylist createPlaylistEntity(se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified playlist) {
+    public static SpotifyPlaylist createPlaylistEntity(se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified playlist) {
         return new SpotifyPlaylist(playlist.getId(), playlist.getName(), createUserEntity(playlist.getOwner()), playlist.getTracks().getTotal());
     }
-    
-    private SpotifyPlaylist createPlaylistEntity(se.michaelthelin.spotify.model_objects.specification.Playlist playlist) {
+
+    public static SpotifyPlaylist createPlaylistEntity(se.michaelthelin.spotify.model_objects.specification.Playlist playlist) {
         return new SpotifyPlaylist(playlist.getId(), playlist.getName(), createUserEntity(playlist.getOwner()), playlist.getTracks().getTotal());
     }
-    
-    private SpotifyArtist createArtist(se.michaelthelin.spotify.model_objects.specification.Artist artist) {
+
+    static SpotifyArtist createArtist(se.michaelthelin.spotify.model_objects.specification.Artist artist) {
         return new SpotifyArtist(artist.getId(), artist.getName());
     }
 }

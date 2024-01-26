@@ -5,7 +5,7 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
-import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
+import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
@@ -751,7 +751,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return Optional.ofNullable((T) nativeFunctionHandler.invokeNativeMethod(ctx, functionType.getName(), params, functionType.getDefinedParamCount(), invokingUponExpressionType));
         }
 
+        LOGGER.debug("1 curr scope = {}", symbolTable.currentScope());
         var functionScope = symbolTable.functionCall();
+
+        LOGGER.debug("2 curr scope = {}", symbolTable.currentScope());
 
         for (int i = 0; i < params.size(); i++) {
             var qilletniType = params.get(i);
@@ -761,6 +764,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         Optional<T> result = visitNode(functionType.getBody());
 
         symbolTable.endFunctionCall();
+
+        LOGGER.debug("3 curr scope = {}", symbolTable.currentScope());
 
         if (swapInvocationScope) {
             LOGGER.debug("UNSWAP scope!");
@@ -1018,8 +1023,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var weightAmount = ctx.weight_amount();
         var weightInt = Integer.parseInt(weightAmount.INT().getText());
         SongType song = visitQilletniTypedNode(ctx.song_expr());
+        var canRepeat = ctx.WEIGHT_PIPE().getText().equals("|!");
 
-        return new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), song);
+        return new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), song, canRepeat);
     }
 
     @Override

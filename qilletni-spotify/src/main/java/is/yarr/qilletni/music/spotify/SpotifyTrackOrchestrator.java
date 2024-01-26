@@ -9,7 +9,7 @@ import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.Track;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
-import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
+import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.music.spotify.exceptions.InvalidWeightException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -92,7 +91,7 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         var tracks = musicCache.getPlaylistTracks(collectionType.getPlaylist());
 
         if (!shuffle) {
-            tracks.forEach(playActor::playTrack);
+            tracks.forEach(track -> playActor.playTrack(track).join());
             return;
         }
 
@@ -102,26 +101,39 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         tracks = prunePercentageWeightedTracks(tracks, collectionType);
         
         Queue<Track> trackQueue = applyWeights(tracks, collectionType);
+        
+        // If the weighted track chosen is this, grab one from the queue instead
+        Track dontPlayNextTrack = null;
 
         while (!trackQueue.isEmpty() && shouldPlayTrack.get()) {
-            var weightedTrackOptional = chooseWeightedTrack(weightDispersion);
+            var weightedTrackContextOptional = chooseWeightedTrack(weightDispersion);
             
-            if (weightedTrackOptional.isPresent()) {
-                weightedTrackOptional.ifPresent(weightedTrack -> {
+            if (weightedTrackContextOptional.isPresent()) {
+                var weightedTrackContext = weightedTrackContextOptional.get();
+                var weightedTrack = weightedTrackContext.track();
+                
+                if (!weightedTrack.equals(dontPlayNextTrack)) {
                     playCallback.accept(weightedTrack);
-                    playActor.playTrack(weightedTrack);
-                });
-            } else {
-                var playingTrack = trackQueue.poll();
-                playCallback.accept(playingTrack);
-                playActor.playTrack(playingTrack);
+                    playActor.playTrack(weightedTrack).join();
 
-                if (trackQueue.isEmpty() && loop) {
-                    trackQueue = applyWeights(tracks, collectionType);
-                    trackQueue = ensureNoBeginningDuplicate(trackQueue, playingTrack);
-                    
-                    LOGGER.debug("Reapplying weights to: {}", trackQueue);
+                    if (!weightedTrackContext.entry().getCanRepeat()) {
+                        dontPlayNextTrack = weightedTrack;
+                    }
+
+                    continue;
                 }
+            }
+            
+            var playingTrack = trackQueue.poll();
+            playCallback.accept(playingTrack);
+            playActor.playTrack(playingTrack).join();
+            dontPlayNextTrack = null;
+
+            if (trackQueue.isEmpty() && loop) {
+                trackQueue = applyWeights(tracks, collectionType);
+                trackQueue = ensureNoBeginningDuplicate(trackQueue, playingTrack);
+                
+                LOGGER.debug("Reapplying weights to: {}", trackQueue);
             }
         }
     }
@@ -171,20 +183,20 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
      * 
      * @return The track to play, if from weighted
      */
-    private List<Optional<Track>> calculateWeightDispersion(CollectionType collectionType, int totalWeightPercentage) {
+    private List<Optional<WeightedTrackContext>> calculateWeightDispersion(CollectionType collectionType, int totalWeightPercentage) {
         var weights = collectionType.getWeights();
 
-        var dispersion = new ArrayList<Optional<Track>>();
+        var dispersion = new ArrayList<Optional<WeightedTrackContext>>();
         if (weights != null) {
             dispersion.addAll(weights.getWeightEntries().stream()
                     .filter(entry -> entry.getWeightUnit() == WeightUnit.PERCENT)
                     .flatMap(weightEntry -> IntStream.range(0, weightEntry.getWeightAmount())
-                            .mapToObj($ -> Optional.of(weightEntry.getSong().getTrack())))
+                            .mapToObj($ -> Optional.of(new WeightedTrackContext(weightEntry))))
                     .toList());
         }
         
         dispersion.addAll(IntStream.range(0, 100 - totalWeightPercentage)
-                .mapToObj($ -> Optional.<Track>empty()).toList());
+                .mapToObj($ -> Optional.<WeightedTrackContext>empty()).toList());
         
         return Collections.unmodifiableList(dispersion);
     }
@@ -195,7 +207,7 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
      * @param weightDispersion The list of possible weighted tracks
      * @return The chosen track, if any
      */
-    private Optional<Track> chooseWeightedTrack(List<Optional<Track>> weightDispersion) {
+    private Optional<WeightedTrackContext> chooseWeightedTrack(List<Optional<WeightedTrackContext>> weightDispersion) {
         var num = ThreadLocalRandom.current().nextInt(0, weightDispersion.size() - 1);
         return weightDispersion.get(num);
     }
@@ -241,9 +253,6 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         var trackCopy = new ArrayList<>(tracks);
         trackCopy.removeIf(removeTracks::contains);
         
-        LOGGER.debug("Pruned from {}", tracks.stream().map(Track::getName).collect(Collectors.joining(", ")));
-        LOGGER.debug("to {}", trackCopy.stream().map(Track::getName).collect(Collectors.joining(", ")));
-        
         return trackCopy;
     }
     
@@ -256,13 +265,9 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
                     .filter(entry -> entry.getWeightUnit() == WeightUnit.MULTIPLIER)
                     .collect(Collectors.toMap(entry -> entry.getSong().getTrack(), entry -> entry.getWeightAmount() - 1));
             
-            LOGGER.debug("trackWeightMap = {}", trackWeightMap);
-            
             trackQueue = tracks.stream()
                     .flatMap(track -> IntStream.range(0, trackWeightMap.getOrDefault(track, 0) + 1).mapToObj($ -> track))
                     .collect(Collectors.toCollection(LinkedList::new));
-            
-            LOGGER.debug("trackQueue = {}", trackQueue.stream().map(Track::getName).collect(Collectors.joining(", ")));
         } else {
             trackQueue = new LinkedList<>(tracks);
         }
@@ -270,5 +275,11 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         Collections.shuffle(trackQueue);
         
         return trackQueue;
+    }
+    
+    record WeightedTrackContext(Track track, WeightEntry entry) {
+        public WeightedTrackContext(WeightEntry entry) {
+            this(entry.getSong().getTrack(), entry);
+        }
     }
 }

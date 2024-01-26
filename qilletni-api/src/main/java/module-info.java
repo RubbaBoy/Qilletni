@@ -2,7 +2,7 @@ module Qilletni.qilletni.api.main {
     exports is.yarr.qilletni.api;
     exports is.yarr.qilletni.api.auth;
     exports is.yarr.qilletni.api.music;
-    exports is.yarr.qilletni.api.music.orchestrator.weights;
+    exports is.yarr.qilletni.api.music.factories;
     
     exports is.yarr.qilletni.api.lang.table;
     exports is.yarr.qilletni.api.lang.types;
@@ -13,4 +13,5 @@ module Qilletni.qilletni.api.main {
     exports is.yarr.qilletni.api.lang.types.song;
     exports is.yarr.qilletni.api.lang.types.weights;
     exports is.yarr.qilletni.api.lib;
+    exports is.yarr.qilletni.api.lang.internal;
 }

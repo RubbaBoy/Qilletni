@@ -136,6 +136,13 @@ public class ScopeImpl implements Scope {
 
     @Override
     public List<Symbol<FunctionType>> lookupFunction(String name) {
+        if (symbolTable.containsKey(name)) {
+            var symbol = symbolTable.get(name);
+            if (symbol.getType().equals(QilletniTypeClass.FUNCTION)) {
+                return List.of((Symbol<FunctionType>) symbol);
+            }
+        }
+        
         var allFunctions = new ArrayList<Symbol<FunctionType>>();
         if (parent != null && parent.isFunctionDefined(name)) {
             allFunctions.addAll(parent.lookupFunction(name));
@@ -174,7 +181,15 @@ public class ScopeImpl implements Scope {
             return true;
         }
 
-        return functionSymbolTable.containsKey(name);
+        if (functionSymbolTable.containsKey(name)) {
+            return true;
+        }
+        
+        if (symbolTable.containsKey(name) && symbolTable.get(name).getType().equals(QilletniTypeClass.FUNCTION)) {
+            return true;
+        }
+        
+        return false;
     }
 
     @Override
@@ -249,7 +264,7 @@ public class ScopeImpl implements Scope {
 
     @Override
     public String toString() {
-        return "Scope(" + scopeId + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", parent = " + parent + ")";
+        return "Scope(" + scopeId + ", " + scopeType.name() + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", parent = " + parent + ")";
 //        var stringBuilder = new StringBuilder("Scope(" + scopeId + ")[");
 //        var arr = symbolTable.values().toArray(Symbol[]::new);
 //        for (int i = 0; i < arr.length; i++) {

@@ -1,7 +1,6 @@
 package is.yarr.qilletni.api.lang.types.weights;
 
 import is.yarr.qilletni.api.lang.types.SongType;
-import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
 
 public interface WeightEntry {
     int getWeightAmount();
@@ -15,4 +14,8 @@ public interface WeightEntry {
     SongType getSong();
 
     void setSong(SongType song);
+    
+    void setCanRepeat(boolean canRepeat);
+    
+    boolean getCanRepeat();
 }

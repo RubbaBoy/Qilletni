@@ -19,7 +19,7 @@ public class QilletniProgramTester {
     }
     
     public RanProgram runProgram(String program) {
-        var runner = new QilletniProgramRunner(null);
+        var runner = new QilletniProgramRunner(null, null);
         runner.getNativeFunctionHandler().registerClasses(nativeFunctionClasses.toArray(Class[]::new));
         var symbolTable = runner.runProgram(CharStreams.fromString(importStatement + "\n" + program), ImportPathState.VIRTUAL_STATE);
         

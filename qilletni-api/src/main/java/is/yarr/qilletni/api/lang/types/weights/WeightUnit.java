@@ -1,4 +1,4 @@
-package is.yarr.qilletni.api.music.orchestrator.weights;
+package is.yarr.qilletni.api.lang.types.weights;
 
 import java.util.Arrays;
 

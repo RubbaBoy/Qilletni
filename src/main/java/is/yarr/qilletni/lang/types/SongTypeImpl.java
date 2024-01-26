@@ -23,6 +23,11 @@ public final class SongTypeImpl implements SongType {
     private AlbumType albumType;
     private Track track;
     
+    public SongTypeImpl(Track track) {
+        this.songDefinition = SongDefinition.PREPOPULATED;
+        this.track = track;
+    }
+    
     public SongTypeImpl(String url) {
         this.songDefinition = SongDefinition.URL;
         this.url = url;
@@ -121,7 +126,11 @@ public final class SongTypeImpl implements SongType {
             return String.format("song(%s)", url);
         }
         
-        return String.format("song(\"%s\" by \"%s\")", title, artist);
+        if (songDefinition == SongDefinition.TITLE_ARTIST) {
+            return String.format("song(\"%s\" by \"%s\")", title, artist);
+        }
+
+        return String.format("song(\"%s\" by \"%s\")", track.getName(), track.getArtist().getName());
     }
 
     @Override
@@ -134,7 +143,11 @@ public final class SongTypeImpl implements SongType {
         if (songDefinition == SongDefinition.URL) {
             return "SongType{url='" + url + "'}";
         }
+
+        if (songDefinition == SongDefinition.TITLE_ARTIST) {
+            return "SongType{title='" + title + "', artist='" + artist + "'}";
+        }
         
-        return "SongType{title='" + title + "', artist='" + artist + "'}";
+        return "SongType{title='" + track.getName() + "', artist='" + track.getArtist().getName() + "'}";
     }
 }

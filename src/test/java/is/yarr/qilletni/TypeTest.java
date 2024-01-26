@@ -1,6 +1,6 @@
 package is.yarr.qilletni;
 
-import is.yarr.qilletni.api.music.orchestrator.weights.WeightUnit;
+import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.api.lang.types.BooleanType;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.IntType;
