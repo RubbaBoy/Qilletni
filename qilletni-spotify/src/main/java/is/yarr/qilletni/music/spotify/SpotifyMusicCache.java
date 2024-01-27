@@ -2,6 +2,7 @@ package is.yarr.qilletni.music.spotify;
 
 import is.yarr.qilletni.api.CollectionUtility;
 import is.yarr.qilletni.api.CollectionUtility.Entry;
+import is.yarr.qilletni.api.exceptions.InvalidURLOrIDException;
 import is.yarr.qilletni.database.EntityTransaction;
 import is.yarr.qilletni.api.music.Album;
 import is.yarr.qilletni.api.music.Artist;
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -376,6 +378,56 @@ public class SpotifyMusicCache implements MusicCache {
         return spotifyMusicFetcher.fetchArtistByName(name)
                 .map(SpotifyArtist.class::cast)
                 .map(this::storeArtist);
+    }
+
+    /**
+     * Searches for the given ID, and returns an Optional containing either a {@link Track}, {@link Playlist}, or a
+     * {@link Album}.
+     *
+     * @return The found object, if any
+     */
+    public Optional<Object> searchAnyId(String id) {
+        try (var entityTransaction = EntityTransaction.beginTransaction()) {
+            var session = entityTransaction.getSession();
+
+            var optional = Optional.<Object>ofNullable(session.find(SpotifyTrack.class, id))
+                    .or(() -> Optional.<Object>ofNullable(session.find(SpotifyPlaylist.class, id)))
+                    .or(() -> Optional.<Object>ofNullable(session.find(SpotifyAlbum.class, id)));
+            
+            if (optional.isPresent()) {
+                return optional;
+            }
+        }
+        
+        var foundOptional = spotifyMusicFetcher.searchAnyId(id);
+        foundOptional.ifPresent(found -> {
+            switch (found) {
+                case SpotifyTrack track -> storeTrack(track);
+                case SpotifyPlaylist playlist -> storePlaylist(playlist);
+                case SpotifyAlbum album -> storeAlbum(album);
+                default -> {}
+            }
+        });
+        
+        return foundOptional;
+    }
+
+    @Override
+    public String getIdFromString(String idOrUrl) {
+        // Regular expression to match Spotify track URLs or an ID
+        var pattern = Pattern.compile("spotify\\.com/track/(\\w{22})|^(\\w{22})$");
+        var matcher = pattern.matcher(idOrUrl);
+
+        if (matcher.find()) {
+            // Check which group has a match
+            for (int i = 1; i <= matcher.groupCount(); i++) {
+                if (matcher.group(i) != null) {
+                    return matcher.group(i);
+                }
+            }
+        }
+
+        throw new InvalidURLOrIDException(String.format("Invalid URL or ID: \"%s\"", idOrUrl));
     }
 
     /**

@@ -6,6 +6,7 @@ play "God Knows" by "Knocked Loose"
 
 weights qtestWeights =
     | 5% "lmho" by "flor"
+//    |! 5% "lmho" by "flor" // Can repeat songs of this weight
 
 print("Playing weighted qtest:")
 

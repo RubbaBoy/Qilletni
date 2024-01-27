@@ -1,12 +1,16 @@
 package is.yarr.qilletni.music.spotify.provider;
 
 import is.yarr.qilletni.api.auth.ServiceProvider;
-import is.yarr.qilletni.api.music.ConsolePlayActor;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
+import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
+import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
+import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
+import is.yarr.qilletni.api.music.factories.SongTypeFactory;
 import is.yarr.qilletni.music.spotify.SpotifyMusicCache;
 import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
+import is.yarr.qilletni.music.spotify.SpotifyStringIdentifier;
 import is.yarr.qilletni.music.spotify.SpotifyTrackOrchestrator;
 import is.yarr.qilletni.music.spotify.auth.SpotifyApiSingleton;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
@@ -18,9 +22,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class SpotifyServiceProvider implements ServiceProvider {
     
-    private MusicCache musicCache;
+    private SpotifyMusicCache musicCache;
     private MusicFetcher musicFetcher;
     private TrackOrchestrator trackOrchestrator;
+    private StringIdentifier stringIdentifier;
     
     @Override
     public CompletableFuture<Void> initialize() {
@@ -53,5 +58,14 @@ public class SpotifyServiceProvider implements ServiceProvider {
     @Override
     public TrackOrchestrator getTrackOrchestrator() {
         return Objects.requireNonNull(trackOrchestrator, "ServiceProvider#initialize must be invoked to initialize TrackOrchestrator");
+    }
+
+    @Override
+    public StringIdentifier getStringIdentifier(SongTypeFactory songTypeFactory, CollectionTypeFactory collectionTypeFactory, AlbumTypeFactory albumTypeFactory) {
+        if (stringIdentifier == null) {
+            return stringIdentifier = new SpotifyStringIdentifier(musicCache, songTypeFactory, collectionTypeFactory, albumTypeFactory);
+        }
+        
+        return stringIdentifier;
     }
 }

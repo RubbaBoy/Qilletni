@@ -1,21 +1,25 @@
 package is.yarr.qilletni.api.lang.types.weights;
 
-import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.music.supplier.TrackSupplier;
 
-public interface WeightEntry {
-    int getWeightAmount();
+public interface WeightEntry extends TrackSupplier {
+    double getWeightAmount();
 
-    void setWeightAmount(int weightAmount);
+    void setWeightAmount(double weightAmount);
 
     WeightUnit getWeightUnit();
 
     void setWeightUnit(WeightUnit weightUnit);
 
-    SongType getSong();
-
-    void setSong(SongType song);
+    void setCanRepeat(boolean canRepeatTrack);
     
-    void setCanRepeat(boolean canRepeat);
+    boolean getCanRepeatTrack();
     
-    boolean getCanRepeat();
+    void setCanRepeatWeight(boolean canRepeatWeight);
+    
+    boolean getCanRepeatWeight();
+    
+    WeightTrackType getTrackType();
+    
+    String getTrackStringValue();
 }

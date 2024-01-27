@@ -2,7 +2,11 @@ package is.yarr.qilletni.api.auth;
 
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
+import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
+import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
+import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
+import is.yarr.qilletni.api.music.factories.SongTypeFactory;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -43,4 +47,11 @@ public interface ServiceProvider {
      * @return The created {@link TrackOrchestrator}
      */
     TrackOrchestrator getTrackOrchestrator();
+
+    /**
+     * Gets the {@link StringIdentifier}.
+     * 
+     * @return The created {@link StringIdentifier}
+     */
+    StringIdentifier getStringIdentifier(SongTypeFactory songTypeFactory, CollectionTypeFactory collectionTypeFactory, AlbumTypeFactory albumTypeFactory);
 }

@@ -109,7 +109,7 @@ weights_expr
     ;
 
 single_weight
-    : WEIGHT_PIPE weight_amount song_expr
+    : WEIGHT_PIPE weight_amount expr
     ;
 
 list_expression

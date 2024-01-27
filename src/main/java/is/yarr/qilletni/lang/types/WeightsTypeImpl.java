@@ -22,10 +22,10 @@ public final class WeightsTypeImpl implements WeightsType {
     @Override
     public String stringValue() {
         return String.format("weights[%s]", String.join(", ", weightEntries.stream()
-                .map(entry -> String.format("%d%s %s",
+                .map(entry -> String.format("%.2f%s %s",
                         entry.getWeightAmount(),
                         entry.getWeightUnit().getStringUnit(),
-                        entry.getSong().stringValue()))
+                        entry.getTrackStringValue()))
                 .toList()));
     }
 

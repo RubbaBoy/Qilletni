@@ -4,6 +4,8 @@ import is.yarr.qilletni.StringUtility;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
+import is.yarr.qilletni.api.music.MusicCache;
+import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
@@ -89,8 +91,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final ListTypeTransformer listTypeTransformer;
     private final Consumer<String> importConsumer;
     private final TrackOrchestrator trackOrchestrator;
+    private final StringIdentifier stringIdentifier;
+    private final MusicCache musicCache;
 
-    public QilletniVisitor(SymbolTable symbolTable, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, StringIdentifier stringIdentifier, MusicCache musicCache, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -99,6 +103,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         this.listTypeTransformer = listTypeTransformer;
         this.importConsumer = importConsumer;
         this.trackOrchestrator = trackOrchestrator;
+        this.stringIdentifier = stringIdentifier;
+        this.musicCache = musicCache;
     }
 
     @Override
@@ -1022,10 +1028,36 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public WeightEntry visitSingle_weight(QilletniParser.Single_weightContext ctx) {
         var weightAmount = ctx.weight_amount();
         var weightInt = Integer.parseInt(weightAmount.INT().getText());
-        SongType song = visitQilletniTypedNode(ctx.song_expr());
-        var canRepeat = ctx.WEIGHT_PIPE().getText().equals("|!");
 
-        return new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), song, canRepeat);
+        var pipe = ctx.WEIGHT_PIPE().getText();
+
+        boolean canRepeatTrack = pipe.equals("|!");
+        boolean canRepeatWeight = !pipe.equals("|~");
+        
+        QilletniType weightValue = visitQilletniTypedNode(ctx.expr());
+        
+        if (weightValue instanceof StringType stringType) {
+            weightValue = stringIdentifier.parseString(stringType.getValue())
+                    .orElseThrow(() -> new TypeMismatchException("Expected a song, collection, or list for weight value"));
+        }
+
+        return switch (weightValue) {
+            case CollectionType collectionType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), musicCache, trackOrchestrator, collectionType, canRepeatTrack, canRepeatWeight);
+            case ListType listType -> {
+                if (!QilletniTypeClass.SONG.equals(listType.getSubType())) {
+                    throw new TypeMismatchException("Expected a song list, got a " + listType.getSubType());
+                }
+
+                listType.getItems().stream()
+                        .map(SongType.class::cast)
+                        .forEach(musicPopulator::populateSong);
+                
+                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), listType, canRepeatTrack, canRepeatWeight);
+            }
+            case SongType songType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), songType, canRepeatTrack, canRepeatWeight);
+            case WeightsType weightsType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), trackOrchestrator, weightsType, canRepeatTrack, canRepeatWeight);
+            default -> throw new TypeMismatchException("Expected a song, collection, or list for weight value");
+        };
     }
 
     @Override

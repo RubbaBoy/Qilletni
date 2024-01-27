@@ -290,6 +290,39 @@ public class SpotifyMusicFetcher implements MusicFetcher {
         }
     }
 
+    /**
+     * Searches for the given ID, and returns an Optional containing either a {@link Track}, {@link Playlist}, or a
+     * {@link Album}.
+     * 
+     * @return The found object, if any
+     */
+    public Optional<Object> searchAnyId(String id) {
+        var spotifyApi = authorizer.getSpotifyApi();
+
+        try {
+            var searched = spotifyApi.searchItem(id, "album,track,playlist").build().execute();
+            
+            var tracks = searched.getTracks().getItems();
+            if (tracks.length > 0 && tracks[0].getId().equals(id)) {
+                return Optional.of(createTrackEntity(tracks[0]));
+            }
+            
+            var playlists = searched.getPlaylists().getItems();
+            if (playlists.length > 0 && playlists[0].getId().equals(id)) {
+                return Optional.of(createPlaylistEntity(playlists[0]));
+            }
+            
+            var albums = searched.getAlbums().getItems();
+            if (albums.length > 0 && albums[0].getId().equals(id)) {
+                return Optional.of(createAlbum(albums[0]));
+            }
+            
+            return Optional.empty();
+        } catch (IOException | SpotifyWebApiException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     static Track createTrackEntity(se.michaelthelin.spotify.model_objects.specification.Track track) {
         return new SpotifyTrack(track.getId(), track.getName(), createArtistList(track.getArtists()), createAlbum(track.getAlbum()), track.getDurationMs());
     }

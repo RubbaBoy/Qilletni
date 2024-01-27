@@ -1,29 +1,96 @@
 package is.yarr.qilletni.lang.types.weights;
 
+import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.api.lang.types.ListType;
+import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
+import is.yarr.qilletni.api.lang.types.weights.WeightTrackType;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.music.MusicCache;
+import is.yarr.qilletni.api.music.Playlist;
+import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.api.music.TrackOrchestrator;
+
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class WeightEntryImpl implements WeightEntry {
-    private int weightAmount;
+    private double weightAmount;
     private WeightUnit weightUnit;
-    private SongType song;
-    private boolean canRepeat;
+    private boolean canRepeatTrack;
+    private boolean canRepeatWeight;
 
-    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, SongType song, boolean canRepeat) {
+    private final WeightTrackType weightTrackType;
+    private SongType song;
+    private ListType songList;
+    private CollectionType collection;
+    private WeightsType weights;
+    private Playlist playlist;
+    private MusicCache musicCache;
+    private TrackOrchestrator trackOrchestrator;
+
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, SongType song, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
         this.weightUnit = weightUnit;
+        this.canRepeatTrack = canRepeatTrack;
+        this.canRepeatWeight = canRepeatWeight;
+        
         this.song = song;
-        this.canRepeat = canRepeat;
+        this.weightTrackType = WeightTrackType.SINGLE_TRACK;
+    }
+
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, ListType songList, boolean canRepeatTrack, boolean canRepeatWeight) {
+        this.weightAmount = weightAmount;
+        this.weightUnit = weightUnit;
+        this.canRepeatTrack = canRepeatTrack;
+        this.canRepeatWeight = canRepeatWeight;
+        
+        this.songList = songList;
+        this.weightTrackType = WeightTrackType.LIST;
+    }
+
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, MusicCache musicCache, TrackOrchestrator trackOrchestrator, CollectionType collection, boolean canRepeatTrack, boolean canRepeatWeight) {
+        this.weightAmount = weightAmount;
+        this.weightUnit = weightUnit;
+        this.musicCache = musicCache;
+        this.trackOrchestrator = trackOrchestrator;
+        this.canRepeatTrack = canRepeatTrack;
+        this.canRepeatWeight = canRepeatWeight;
+
+        this.collection = collection;
+        this.weightTrackType = WeightTrackType.COLLECTION;
+    }
+
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, TrackOrchestrator trackOrchestrator, WeightsType weights, boolean canRepeatTrack, boolean canRepeatWeight) {
+        this.weightAmount = weightAmount;
+        this.weightUnit = weightUnit;
+        this.trackOrchestrator = trackOrchestrator;
+        this.canRepeatTrack = canRepeatTrack;
+        this.canRepeatWeight = canRepeatWeight;
+
+        this.weights = weights;
+        this.weightTrackType = WeightTrackType.WEIGHTS;
+    }
+
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, MusicCache musicCache, Playlist playlist, boolean canRepeatTrack, boolean canRepeatWeight) {
+        this.weightAmount = weightAmount;
+        this.weightUnit = weightUnit;
+        this.musicCache = musicCache;
+        this.canRepeatTrack = canRepeatTrack;
+        this.canRepeatWeight = canRepeatWeight;
+        
+        this.playlist = playlist;
+        this.weightTrackType = WeightTrackType.PLAYLIST;
     }
 
     @Override
-    public int getWeightAmount() {
+    public double getWeightAmount() {
         return weightAmount;
     }
 
     @Override
-    public void setWeightAmount(int weightAmount) {
+    public void setWeightAmount(double weightAmount) {
         this.weightAmount = weightAmount;
     }
 
@@ -38,27 +105,72 @@ public class WeightEntryImpl implements WeightEntry {
     }
 
     @Override
-    public SongType getSong() {
-        return song;
+    public void setCanRepeat(boolean canRepeatTrack) {
+        this.canRepeatTrack = canRepeatTrack;
     }
 
     @Override
-    public void setSong(SongType song) {
-        this.song = song;
+    public boolean getCanRepeatTrack() {
+        return canRepeatTrack;
     }
 
     @Override
-    public void setCanRepeat(boolean canRepeat) {
-        this.canRepeat = canRepeat;
+    public void setCanRepeatWeight(boolean canRepeatWeight) {
+        this.canRepeatWeight = canRepeatWeight;
     }
 
     @Override
-    public boolean getCanRepeat() {
-        return canRepeat;
+    public boolean getCanRepeatWeight() {
+        return canRepeatWeight;
+    }
+
+    @Override
+    public WeightTrackType getTrackType() {
+        return weightTrackType;
+    }
+
+    @Override
+    public Track getTrack() {
+        System.out.println("GETTING TRACK FROM WEIGHT TO = " + weightTrackType);
+        return switch (weightTrackType) {
+            case SINGLE_TRACK -> song.getTrack();
+            case LIST -> {
+                var songs = songList.getItems();
+                yield ((SongType) songs.get(ThreadLocalRandom.current().nextInt(0, songs.size()))).getTrack();
+            }
+            case COLLECTION -> trackOrchestrator.getTrackFromCollection(collection);
+            case WEIGHTS -> trackOrchestrator.getTrackFromWeight(weights);
+            case PLAYLIST -> {
+                var tracks = musicCache.getPlaylistTracks(playlist);
+                yield tracks.get(ThreadLocalRandom.current().nextInt(0, tracks.size()));
+            }
+        };
+    }
+
+    @Override
+    public List<Track> getAllTracks() {
+        return switch (weightTrackType) {
+            case SINGLE_TRACK -> List.of(song.getTrack());
+            case LIST -> songList.getItems().stream().map(SongType.class::cast).map(SongType::getTrack).toList();
+            case COLLECTION -> musicCache.getPlaylistTracks(collection.getPlaylist());
+            case WEIGHTS -> weights.getWeightEntries().stream().flatMap(weightEntry -> weightEntry.getAllTracks().stream()).toList();
+            case PLAYLIST -> musicCache.getPlaylistTracks(playlist);
+        };
+    }
+
+    @Override
+    public String getTrackStringValue() {
+        return switch (weightTrackType) {
+            case SINGLE_TRACK -> song.stringValue();
+            case LIST -> songList.stringValue();
+            case COLLECTION -> collection.stringValue();
+            case WEIGHTS -> weights.stringValue();
+            case PLAYLIST -> String.format("[Raw playlist of ID %s]", playlist.getId());
+        };
     }
 
     @Override
     public String toString() {
-        return "WeightEntry[" + weightAmount + weightUnit.getStringUnit() + " " + song + "]";
+        return "WeightEntry[" + weightAmount + weightUnit.getStringUnit() + " " + getTrackStringValue() + "]";
     }
 }

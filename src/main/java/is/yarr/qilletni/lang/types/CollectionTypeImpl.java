@@ -16,7 +16,7 @@ public final class CollectionTypeImpl implements CollectionType {
     private String url;
     private String name;
     private String creator;
-    private CollectionOrder order = CollectionOrder.SEQUENTIAL;
+    private CollectionOrder order = CollectionOrder.SHUFFLE;
     private WeightsType weights;
     private Playlist playlist;
     private EntityType creatorType;

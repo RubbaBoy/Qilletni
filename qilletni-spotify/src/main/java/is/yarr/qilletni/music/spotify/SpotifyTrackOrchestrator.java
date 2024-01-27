@@ -1,6 +1,7 @@
 package is.yarr.qilletni.music.spotify;
 
 import is.yarr.qilletni.api.lang.types.CollectionType;
+import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
 import is.yarr.qilletni.api.lang.types.collection.CollectionLimitUnit;
 import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
@@ -11,6 +12,7 @@ import is.yarr.qilletni.api.music.Track;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.music.spotify.exceptions.InvalidWeightException;
+import is.yarr.qilletni.music.spotify.orchestration.WeightDispersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,17 +20,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class SpotifyTrackOrchestrator implements TrackOrchestrator {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyTrackOrchestrator.class);
 
     private final PlayActor playActor;
@@ -43,7 +45,7 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
     public void playTrack(Track track) {
         playActor.playTrack(track);
     }
-    
+
     /*
      * Notes regarding weights:
      * If a collection is sequential, weights are not used
@@ -63,113 +65,174 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
     @Override
     public void playCollection(CollectionType collectionType, CollectionLimit collectionLimit) {
         LOGGER.debug("Play {} tracks from collection: {}", collectionType.getPlaylist().getTitle(), collectionLimit);
-        
+
         if (collectionLimit.limitUnit() == CollectionLimitUnit.COUNT) {
             playCollectionCountLimited(collectionType, collectionLimit.limitCount(), true);
         } else {
             playCollectionTimeLimited(collectionType, calculateLimitMilliseconds(collectionLimit), true);
         }
     }
-    
+
+    @Override
+    public Track getTrackFromCollection(CollectionType collectionType) {
+        var atomicTrack = new AtomicReference<Track>();
+        
+        conditionallyPlayCollection(collectionType, true, atomicTrack::set, () -> atomicTrack.get() == null);
+
+        System.out.println("atomicTrack = " + atomicTrack);
+        
+        return atomicTrack.get();
+    }
+
+    @Override
+    public Track getTrackFromWeight(WeightsType weightsType) {
+        var atomicTrack = new AtomicReference<Track>();
+
+        conditionallyPlayWeightedTracks(Collections.emptyList(), weightsType, CollectionOrder.SHUFFLE, true, atomicTrack::set, () -> atomicTrack.get() == null);
+
+        System.out.println("atomicTrack = " + atomicTrack);
+
+        return atomicTrack.get();
+    }
+
     private void playCollectionTimeLimited(CollectionType collectionType, long limitMilliseconds, boolean loop) {
         var totalTimePassed = new AtomicInteger();
-        
-        conditionallyPlayCollection(collectionType, loop, track -> totalTimePassed.addAndGet(track.getDuration()),
+
+        conditionallyPlayCollection(collectionType, loop, track -> {
+                    totalTimePassed.addAndGet(track.getDuration());
+                    playActor.playTrack(track).join();
+                },
                 () -> totalTimePassed.get() < limitMilliseconds);
     }
-    
+
     private void playCollectionCountLimited(CollectionType collectionType, int count, boolean loop) {
         var totalTracksPlayed = new AtomicInteger();
-        
-        conditionallyPlayCollection(collectionType, loop, $ -> totalTracksPlayed.incrementAndGet(),
+
+        conditionallyPlayCollection(collectionType, loop, track -> {
+                    totalTracksPlayed.incrementAndGet();
+                    playActor.playTrack(track).join();
+                },
                 () -> totalTracksPlayed.get() < count);
     }
-    
-    private void conditionallyPlayCollection(CollectionType collectionType, boolean loop, Consumer<Track> playCallback, Supplier<Boolean> shouldPlayTrack) {
-        var shuffle = collectionType.getOrder() == CollectionOrder.SHUFFLE;
 
+    private void conditionallyPlayCollection(CollectionType collectionType, boolean loop, Consumer<Track> playCallback, Supplier<Boolean> shouldPlayTrack) {
         var tracks = musicCache.getPlaylistTracks(collectionType.getPlaylist());
 
-        if (!shuffle) {
-            tracks.forEach(track -> playActor.playTrack(track).join());
+        System.out.println("tracks = " + tracks);
+        
+        conditionallyPlayWeightedTracks(tracks, collectionType.getWeights(), collectionType.getOrder(), loop, playCallback, shouldPlayTrack);
+    }
+
+    private void conditionallyPlayWeightedTracks(List<Track> tracks, WeightsType weights, CollectionOrder collectionOrder, boolean loop, Consumer<Track> playCallback, Supplier<Boolean> shouldPlayTrack) {
+        if (collectionOrder == CollectionOrder.SEQUENTIAL) {
+            for (Track track : tracks) {
+                if (!shouldPlayTrack.get()) {
+                    System.out.println("Shouldnt play track!");
+                    break;
+                }
+
+                System.out.println("Addept!");
+                playCallback.accept(track);
+            }
+            
             return;
         }
 
-        int totalWeightPercentage = validateWeights(collectionType);
-        var weightDispersion = calculateWeightDispersion(collectionType, totalWeightPercentage);
+        validateWeights(weights);
+        var weightDispersion = WeightDispersion.initializeWeightDispersion(weights);
 
-        tracks = prunePercentageWeightedTracks(tracks, collectionType);
-        
-        Queue<Track> trackQueue = applyWeights(tracks, collectionType);
-        
+        tracks = prunePercentageWeightedTracks(tracks, weights);
+
+        System.out.println("pruned tracks = " + tracks);
+
+        boolean initiallyEmpty = tracks.isEmpty();
+        Queue<Track> trackQueue = applyWeights(tracks, weights);
+
+        System.out.println("trackQueue = " + trackQueue);
+
         // If the weighted track chosen is this, grab one from the queue instead
         Track dontPlayNextTrack = null;
+        WeightEntry dontPlayWeight = null;
+        boolean isRetry = false;
 
-        while (!trackQueue.isEmpty() && shouldPlayTrack.get()) {
-            var weightedTrackContextOptional = chooseWeightedTrack(weightDispersion);
+        while ((initiallyEmpty || !trackQueue.isEmpty()) && (isRetry || shouldPlayTrack.get())) {
+            isRetry = false;
             
+            var weightedTrackContextOptional = weightDispersion.selectWeight();
+
+            System.out.println("weightedTrackContextOptional = " + weightedTrackContextOptional);
+            System.out.flush();
+
             if (weightedTrackContextOptional.isPresent()) {
-                var weightedTrackContext = weightedTrackContextOptional.get();
-                var weightedTrack = weightedTrackContext.track();
-                
-                if (!weightedTrack.equals(dontPlayNextTrack)) {
-                    playCallback.accept(weightedTrack);
-                    playActor.playTrack(weightedTrack).join();
+                var weightEntry = weightedTrackContextOptional.get();
+                var weightedTrack = weightEntry.getTrack();
 
-                    if (!weightedTrackContext.entry().getCanRepeat()) {
-                        dontPlayNextTrack = weightedTrack;
-                    }
-
+                if (weightedTrack.equals(dontPlayNextTrack) || weightEntry.equals(dontPlayWeight)) {
+                    isRetry = true;
                     continue;
                 }
-            }
-            
-            var playingTrack = trackQueue.poll();
-            playCallback.accept(playingTrack);
-            playActor.playTrack(playingTrack).join();
-            dontPlayNextTrack = null;
-
-            if (trackQueue.isEmpty() && loop) {
-                trackQueue = applyWeights(tracks, collectionType);
-                trackQueue = ensureNoBeginningDuplicate(trackQueue, playingTrack);
                 
-                LOGGER.debug("Reapplying weights to: {}", trackQueue);
+                playCallback.accept(weightedTrack);
+
+                if (!weightEntry.getCanRepeatTrack() || !weightEntry.getCanRepeatWeight()) {
+                    dontPlayNextTrack = weightedTrack;
+                }
+                
+                if (!weightEntry.getCanRepeatWeight()) {
+                    dontPlayWeight = weightEntry;
+                }
+
+                continue;
+            }
+
+            if (!initiallyEmpty) {
+                var playingTrack = trackQueue.poll();
+                playCallback.accept(playingTrack);
+                dontPlayNextTrack = null;
+                dontPlayWeight = null;
+
+                if (trackQueue.isEmpty() && loop) {
+                    trackQueue = applyWeights(tracks, weights);
+                    trackQueue = ensureNoBeginningDuplicate(trackQueue, playingTrack);
+
+                    LOGGER.debug("Reapplying weights to: {}", trackQueue);
+                }
             }
         }
     }
-    
+
     private Queue<Track> ensureNoBeginningDuplicate(Queue<Track> tracks, Track previouslyPlayed) {
         if (tracks.size() > 1 && tracks.peek() != null && tracks.peek().equals(previouslyPlayed)) {
             LOGGER.debug("Shuffled queue starts with previously played song, {}", previouslyPlayed.getName());
             var indexToPlace = ThreadLocalRandom.current().nextInt(0, tracks.size() - 2) + 1;
-            
+
             LOGGER.debug("Will place at {}", indexToPlace);
 
             tracks.poll();
-            
+
             var newTracks = new LinkedList<Track>();
             for (int i = 0; i < indexToPlace; i++) {
                 newTracks.add(tracks.poll());
             }
-            
+
             newTracks.add(previouslyPlayed);
 
             for (int i = 0; i < tracks.size(); i++) {
                 newTracks.add(tracks.poll());
             }
-            
+
             LOGGER.debug("New shuffled queue = {}", newTracks.stream().map(Track::getName).collect(Collectors.joining(", ")));
-            
+
             return newTracks;
         }
-        
+
         return tracks;
     }
 
     /**
      * Calculates the number of milliseconds the {@link CollectionLimit} represents. If the unit is of type
      * {@link CollectionLimitUnit#COUNT}, -1 is returned.
-     * 
+     *
      * @param collectionLimit The collection limit to calculate
      * @return The number of milliseconds
      */
@@ -178,108 +241,62 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
     }
 
     /**
-     * Calculates with weights what weighted track to choose, returning an empty optional if a track should be selected
-     * from the queue.
-     * 
-     * @return The track to play, if from weighted
+     * Checks if the weights are valid, meaning they don't exceed a total of 100%
+     *
+     * @param weights The weights to validate
      */
-    private List<Optional<WeightedTrackContext>> calculateWeightDispersion(CollectionType collectionType, int totalWeightPercentage) {
-        var weights = collectionType.getWeights();
-
-        var dispersion = new ArrayList<Optional<WeightedTrackContext>>();
-        if (weights != null) {
-            dispersion.addAll(weights.getWeightEntries().stream()
-                    .filter(entry -> entry.getWeightUnit() == WeightUnit.PERCENT)
-                    .flatMap(weightEntry -> IntStream.range(0, weightEntry.getWeightAmount())
-                            .mapToObj($ -> Optional.of(new WeightedTrackContext(weightEntry))))
-                    .toList());
-        }
-        
-        dispersion.addAll(IntStream.range(0, 100 - totalWeightPercentage)
-                .mapToObj($ -> Optional.<WeightedTrackContext>empty()).toList());
-        
-        return Collections.unmodifiableList(dispersion);
-    }
-
-    /**
-     * Choose a random track from the dispersion.
-     * 
-     * @param weightDispersion The list of possible weighted tracks
-     * @return The chosen track, if any
-     */
-    private Optional<WeightedTrackContext> chooseWeightedTrack(List<Optional<WeightedTrackContext>> weightDispersion) {
-        var num = ThreadLocalRandom.current().nextInt(0, weightDispersion.size() - 1);
-        return weightDispersion.get(num);
-    }
-    
-    /**
-     * Checks if the weights are valid, and returns the total percentage used up by weights.
-     * 
-     * @param collectionType The collection holding the weights
-     * @return The total weighted percentage
-     */
-    private int validateWeights(CollectionType collectionType) {
-        var weights = collectionType.getWeights();
-        
+    private void validateWeights(WeightsType weights) {
         if (weights == null) {
-            return 0;
+            return;
         }
 
-        int totalPercent = weights.getWeightEntries().stream()
+        double totalPercent = weights.getWeightEntries().stream()
                 .filter(entry -> entry.getWeightUnit() == WeightUnit.PERCENT)
                 .map(WeightEntry::getWeightAmount)
-                .reduce(Integer::sum)
-                .orElse(0);
-        
+                .reduce(Double::sum)
+                .orElse(0D);
+
         if (totalPercent > 100) {
             throw new InvalidWeightException("Total weight percentage cannot go over 100%! Current total is " + totalPercent + "%");
         }
-        
-        return totalPercent;
     }
-    
-    private List<Track> prunePercentageWeightedTracks(List<Track> tracks, CollectionType collectionType) {
-        var weights = collectionType.getWeights();
 
+    private List<Track> prunePercentageWeightedTracks(List<Track> tracks, WeightsType weights) {
         if (weights == null) {
             return tracks;
         }
 
         var removeTracks = weights.getWeightEntries().stream()
                 .filter(entry -> entry.getWeightUnit() == WeightUnit.PERCENT)
-                .map(entry -> entry.getSong().getTrack())
+                .flatMap(entry -> entry.getAllTracks().stream())
                 .toList();
-        
+
         var trackCopy = new ArrayList<>(tracks);
         trackCopy.removeIf(removeTracks::contains);
         
         return trackCopy;
     }
-    
-    private Queue<Track> applyWeights(List<Track> tracks, CollectionType collectionType) {
-        var weights = collectionType.getWeights();
-        
+
+    private Queue<Track> applyWeights(List<Track> tracks, WeightsType weights) {
         LinkedList<Track> trackQueue;
-        if (weights != null) {
+        
+        if (weights != null && !tracks.isEmpty()) {
+            record TrackMapWeight(Track track, WeightEntry weight) {}
+            
             var trackWeightMap = weights.getWeightEntries().stream()
                     .filter(entry -> entry.getWeightUnit() == WeightUnit.MULTIPLIER)
-                    .collect(Collectors.toMap(entry -> entry.getSong().getTrack(), entry -> entry.getWeightAmount() - 1));
-            
+                    .flatMap(entry -> entry.getAllTracks().stream().map(track -> new TrackMapWeight(track, entry)))
+                    .collect(Collectors.toMap(TrackMapWeight::track, trackMapWeight -> (int) (trackMapWeight.weight.getWeightAmount() - 1)));
+
             trackQueue = tracks.stream()
                     .flatMap(track -> IntStream.range(0, trackWeightMap.getOrDefault(track, 0) + 1).mapToObj($ -> track))
                     .collect(Collectors.toCollection(LinkedList::new));
         } else {
             trackQueue = new LinkedList<>(tracks);
         }
-        
+
         Collections.shuffle(trackQueue);
-        
+
         return trackQueue;
-    }
-    
-    record WeightedTrackContext(Track track, WeightEntry entry) {
-        public WeightedTrackContext(WeightEntry entry) {
-            this(entry.getSong().getTrack(), entry);
-        }
     }
 }

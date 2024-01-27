@@ -28,5 +28,13 @@ public interface MusicCache {
     Optional<Artist> getArtistById(String id);
     
     Optional<Artist> getArtistByName(String name);
+
+    /**
+     * Takes in a URL or an ID and returns the ID.
+     *
+     * @param idOrUrl The URL or ID
+     * @return The ID
+     */
+    String getIdFromString(String idOrUrl);
     
 }

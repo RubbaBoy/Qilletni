@@ -8,7 +8,7 @@ import is.yarr.qilletni.lang.types.CollectionTypeImpl;
 public class CollectionTypeFactoryImpl implements CollectionTypeFactory {
     
     @Override
-    public CollectionType createSongFromTrack(Playlist playlist) {
+    public CollectionType createCollectionFromTrack(Playlist playlist) {
         return new CollectionTypeImpl(playlist);
     }
 }

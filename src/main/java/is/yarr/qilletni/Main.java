@@ -19,7 +19,7 @@ public class Main {
         LOGGER.debug("Using service provider: {}", provider.getName());
         
         provider.initialize().join();
-        var qilletniProgramRunner = new QilletniProgramRunner(provider.getMusicCache(), provider.getTrackOrchestrator());
+        var qilletniProgramRunner = new QilletniProgramRunner(provider);
         qilletniProgramRunner.importInitialFiles();
         qilletniProgramRunner.runProgram(Paths.get("input", programFile));
     }

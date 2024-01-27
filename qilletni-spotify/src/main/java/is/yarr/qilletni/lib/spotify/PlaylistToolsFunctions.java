@@ -2,7 +2,6 @@ package is.yarr.qilletni.lib.spotify;
 
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.ListType;
-import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.SongType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
@@ -24,12 +23,12 @@ public class PlaylistToolsFunctions {
     
     public CollectionType createPlaylist(String name) {
         var playlist = playlistCreator.createPlaylist(name).join();
-        return collectionTypeFactory.createSongFromTrack(playlist);
+        return collectionTypeFactory.createCollectionFromTrack(playlist);
     }
 
     public CollectionType createPlaylist(String name, String description) {
         var playlist = playlistCreator.createPlaylist(name, description).join();
-        return collectionTypeFactory.createSongFromTrack(playlist);
+        return collectionTypeFactory.createCollectionFromTrack(playlist);
     }
 
     public void addToPlaylist(CollectionType collectionType, ListType songList) {
