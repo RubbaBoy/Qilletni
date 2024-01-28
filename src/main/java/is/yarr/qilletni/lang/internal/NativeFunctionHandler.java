@@ -47,8 +47,6 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     @Override
     public void addInjectableInstance(Object object) {
         injectableInstances.add(object);
-        
-        LOGGER.debug("inj inst: {}", injectableInstances);
     }
 
     public void registerClasses(Class<?>... nativeMethodClass) {

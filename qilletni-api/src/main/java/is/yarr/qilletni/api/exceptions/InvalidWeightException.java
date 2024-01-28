@@ -1,4 +1,4 @@
-package is.yarr.qilletni.music.spotify.exceptions;
+package is.yarr.qilletni.api.exceptions;
 
 public class InvalidWeightException extends RuntimeException {
 

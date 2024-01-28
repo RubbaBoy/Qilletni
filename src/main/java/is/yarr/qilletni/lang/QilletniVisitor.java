@@ -4,6 +4,8 @@ import is.yarr.qilletni.StringUtility;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
+import is.yarr.qilletni.api.exceptions.InvalidWeightException;
+import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
@@ -686,10 +688,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private <T extends QilletniType> Optional<T> visitFunctionCallWithContext(QilletniParser.Function_callContext ctx, QilletniType invokedOn) {
         var id = ctx.ID().getText();
 
+        List<QilletniType> params = new ArrayList<>();
+        if (ctx.expr_list() != null) {
+            params.addAll(visitNode(ctx.expr_list()));
+        }
+
         LOGGER.debug("invokedOn = {}", invokedOn);
 //        var swappedScope = false;
         var hasOnType = invokedOn != null;
-        
         
 //        LOGGER.debug("swap scope = ({} != null) && {}", invokedOn, invokedOn instanceof EntityType);
         var swappedLookupScope = false;
@@ -704,11 +710,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
         
         var scope = symbolTable.currentScope();
-
-        List<QilletniType> params = new ArrayList<>();
-        if (ctx.expr_list() != null) {
-            params.addAll(visitNode(ctx.expr_list()));
-        }
 
         var functionType = scope.lookupFunction(id, params.size(), invokedOn != null ? invokedOn.getTypeClass() : null).getValue();
 
@@ -848,7 +849,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Optional<QilletniType> visitFor_stmt(QilletniParser.For_stmtContext ctx) {
-        var scope = symbolTable.pushScope();
+        var scope = symbolTable.pushScope(); // The scope for only holding the incrementing var
 
         var range = ctx.for_expr().range();
         if (range != null) {
@@ -859,7 +860,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         for (int i = 0; visitForExpression(ctx.for_expr(), i).getValue(); i++) {
+            symbolTable.pushScope(); // The actual inner for loop scope that gets reset every iteration
             Optional<QilletniType> bodyReturn = visitNode(ctx.body());
+
+            symbolTable.popScope();
             if (bodyReturn.isPresent()) {
                 return bodyReturn;
             }
@@ -1055,7 +1059,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), listType, canRepeatTrack, canRepeatWeight);
             }
             case SongType songType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), songType, canRepeatTrack, canRepeatWeight);
-            case WeightsType weightsType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), trackOrchestrator, weightsType, canRepeatTrack, canRepeatWeight);
+            case WeightsType weightsType -> {
+                var totalPercent = WeightUtils.validateWeights(weightsType);
+                if (totalPercent != 100) {
+                    throw new InvalidWeightException("Nested weights must have percentage values adding up to 100%");
+                }
+                
+                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), trackOrchestrator, weightsType, canRepeatTrack, canRepeatWeight);
+            }
             default -> throw new TypeMismatchException("Expected a song, collection, or list for weight value");
         };
     }

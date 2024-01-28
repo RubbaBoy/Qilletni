@@ -6,12 +6,12 @@ import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
 import is.yarr.qilletni.api.lang.types.collection.CollectionLimitUnit;
 import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
+import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.Track;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
-import is.yarr.qilletni.music.spotify.exceptions.InvalidWeightException;
 import is.yarr.qilletni.music.spotify.orchestration.WeightDispersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,8 +79,6 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         
         conditionallyPlayCollection(collectionType, true, atomicTrack::set, () -> atomicTrack.get() == null);
 
-        System.out.println("atomicTrack = " + atomicTrack);
-        
         return atomicTrack.get();
     }
 
@@ -89,8 +87,6 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         var atomicTrack = new AtomicReference<Track>();
 
         conditionallyPlayWeightedTracks(Collections.emptyList(), weightsType, CollectionOrder.SHUFFLE, true, atomicTrack::set, () -> atomicTrack.get() == null);
-
-        System.out.println("atomicTrack = " + atomicTrack);
 
         return atomicTrack.get();
     }
@@ -118,8 +114,6 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
     private void conditionallyPlayCollection(CollectionType collectionType, boolean loop, Consumer<Track> playCallback, Supplier<Boolean> shouldPlayTrack) {
         var tracks = musicCache.getPlaylistTracks(collectionType.getPlaylist());
 
-        System.out.println("tracks = " + tracks);
-        
         conditionallyPlayWeightedTracks(tracks, collectionType.getWeights(), collectionType.getOrder(), loop, playCallback, shouldPlayTrack);
     }
 
@@ -127,28 +121,22 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
         if (collectionOrder == CollectionOrder.SEQUENTIAL) {
             for (Track track : tracks) {
                 if (!shouldPlayTrack.get()) {
-                    System.out.println("Shouldnt play track!");
                     break;
                 }
 
-                System.out.println("Addept!");
                 playCallback.accept(track);
             }
             
             return;
         }
 
-        validateWeights(weights);
+        WeightUtils.validateWeights(weights);
         var weightDispersion = WeightDispersion.initializeWeightDispersion(weights);
 
         tracks = prunePercentageWeightedTracks(tracks, weights);
 
-        System.out.println("pruned tracks = " + tracks);
-
         boolean initiallyEmpty = tracks.isEmpty();
         Queue<Track> trackQueue = applyWeights(tracks, weights);
-
-        System.out.println("trackQueue = " + trackQueue);
 
         // If the weighted track chosen is this, grab one from the queue instead
         Track dontPlayNextTrack = null;
@@ -159,9 +147,6 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
             isRetry = false;
             
             var weightedTrackContextOptional = weightDispersion.selectWeight();
-
-            System.out.println("weightedTrackContextOptional = " + weightedTrackContextOptional);
-            System.out.flush();
 
             if (weightedTrackContextOptional.isPresent()) {
                 var weightEntry = weightedTrackContextOptional.get();
@@ -238,27 +223,6 @@ public class SpotifyTrackOrchestrator implements TrackOrchestrator {
      */
     private long calculateLimitMilliseconds(CollectionLimit collectionLimit) {
         return collectionLimit.limitUnit().getTimeUnit().toMillis(collectionLimit.limitCount());
-    }
-
-    /**
-     * Checks if the weights are valid, meaning they don't exceed a total of 100%
-     *
-     * @param weights The weights to validate
-     */
-    private void validateWeights(WeightsType weights) {
-        if (weights == null) {
-            return;
-        }
-
-        double totalPercent = weights.getWeightEntries().stream()
-                .filter(entry -> entry.getWeightUnit() == WeightUnit.PERCENT)
-                .map(WeightEntry::getWeightAmount)
-                .reduce(Double::sum)
-                .orElse(0D);
-
-        if (totalPercent > 100) {
-            throw new InvalidWeightException("Total weight percentage cannot go over 100%! Current total is " + totalPercent + "%");
-        }
     }
 
     private List<Track> prunePercentageWeightedTracks(List<Track> tracks, WeightsType weights) {

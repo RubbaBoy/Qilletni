@@ -51,21 +51,17 @@ public final class EntityTypeImpl implements EntityType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        EntityTypeImpl that = (EntityTypeImpl) o;
-        return Objects.equals(entityScope, that.entityScope) && Objects.equals(entityDefinition, that.entityDefinition);
+        if (!(o instanceof EntityTypeImpl that)) return false;
+        return Objects.equals(entityScope.getAllSymbols(), that.entityScope.getAllSymbols()) && Objects.equals(entityDefinition, that.entityDefinition);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(entityScope, entityDefinition);
+        return Objects.hash(entityScope.getAllSymbols(), entityDefinition.getTypeName());
     }
 
     @Override
     public String toString() {
-        return "EntityType{" +
-                ", entityScope=" + entityScope +
-                ", entityDefinition=" + entityDefinition +
-                '}';
+        return stringValue();
     }
 }

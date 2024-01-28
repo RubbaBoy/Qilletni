@@ -17,4 +17,10 @@ entity Map {
     
     // Checks if the value is anywhere in the map
     native fun containsValue(key)
+    
+    // Gets a list of all keys in the map
+    native fun keys()
+    
+    // Gets a list of all values in the map
+    native fun values()
 }

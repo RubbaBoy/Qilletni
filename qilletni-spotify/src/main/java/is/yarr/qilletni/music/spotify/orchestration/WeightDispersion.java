@@ -33,7 +33,6 @@ public class WeightDispersion {
      * @return A found {@link WeightEntry}, if any
      */
     public Optional<WeightEntry> selectWeight() {
-        System.out.println("scaledWeights = " + scaledWeights);
         return weightedChoice(100 * scalingFactor, scaledWeights);
     }
 
@@ -52,7 +51,6 @@ public class WeightDispersion {
         var scaledWeights = new ArrayList<DispersedWeightEntry>();
 
         for (var weightEntry : weightEntries) {
-            System.out.println("weightEntry = " + weightEntry);
             cumulative += (int) (weightEntry.getWeightAmount() * scalingFactor);
             scaledWeights.add(new DispersedWeightEntry(weightEntry, cumulative));
         }

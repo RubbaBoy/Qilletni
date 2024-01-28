@@ -252,8 +252,7 @@ public class ScopeImpl implements Scope {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ScopeImpl scope = (ScopeImpl) o;
+        if (!(o instanceof ScopeImpl scope)) return false;
         return scopeId == scope.scopeId;
     }
 

@@ -4,13 +4,17 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.lang.types.JavaType;
+import is.yarr.qilletni.api.lang.types.ListType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.lang.QilletniVisitor;
+import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
 import is.yarr.qilletni.lang.types.JavaTypeImpl;
+import is.yarr.qilletni.lang.types.ListTypeImpl;
 import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
@@ -117,6 +121,17 @@ public class QilletniProgramRunner {
 
         typeAdapterRegistrar.registerExactTypeAdapter(StringTypeImpl.class, String.class, StringTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
+
+        typeAdapterRegistrar.registerTypeAdapter(ListType.class, List.class, list -> {
+            var qilletniList = (List<QilletniType>) list;
+
+            var typeList = qilletniList.stream().map(QilletniType::getTypeClass).distinct().toList();
+            if (typeList.size() > 1) {
+                throw new TypeMismatchException("Multiple types found in list");
+            }
+
+            return new ListTypeImpl(qilletniList.get(0).getTypeClass(), qilletniList);
+        });
         
         typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
 

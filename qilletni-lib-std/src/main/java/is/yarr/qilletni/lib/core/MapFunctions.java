@@ -5,7 +5,9 @@ import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lib.NativeOn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MapFunctions {
     
@@ -43,5 +45,21 @@ public class MapFunctions {
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
         
         return hashMap.containsValue(key);
+    }
+    
+    @NativeOn("Map")
+    public static List<QilletniType> keys(EntityType entity) {
+        JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
+        HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
+        
+        return new ArrayList<>(hashMap.keySet());
+    }
+    
+    @NativeOn("Map")
+    public static List<QilletniType> values(EntityType entity) {
+        JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
+        HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
+        
+        return new ArrayList<>(hashMap.values());
     }
 }

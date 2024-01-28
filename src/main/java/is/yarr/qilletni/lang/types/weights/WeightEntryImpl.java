@@ -131,7 +131,6 @@ public class WeightEntryImpl implements WeightEntry {
 
     @Override
     public Track getTrack() {
-        System.out.println("GETTING TRACK FROM WEIGHT TO = " + weightTrackType);
         return switch (weightTrackType) {
             case SINGLE_TRACK -> song.getTrack();
             case LIST -> {
