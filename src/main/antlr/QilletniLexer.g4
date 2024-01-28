@@ -17,6 +17,10 @@ BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 
 
 PLUS : '+';
+INCREMENT : '++';
+DECREMENT : '--';
+PLUS_EQUALS : '+=';
+MINUS_EQUALS : '-=';
 OP            : '*' | '/' | '%' | '+' | '-';
 
 WEIGHTS_KEYWORD : 'weights';

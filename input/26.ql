@@ -28,8 +28,8 @@ weights metalWeights =
 play "My Playlist #59" collection by "rubbaboy" weights[metalWeights] limit[200]
 
 // Add played songs to a playlist
-collection myPlaylist = createPlaylist("Metal Day Queue (With |~)")
-addToPlaylist(myPlaylist, songList)
+//collection myPlaylist = createPlaylist("Metal Day Queue (With |~)")
+//addToPlaylist(myPlaylist, songList)
 
 print(songList)
 
@@ -50,7 +50,9 @@ for (songPlayed : songList) {
     
     if (allArtistsPlayed.containsKey(artist)) {
         ArtistStats stats = allArtistsPlayed.get(artist)
-        stats.songs = stats.songs + 1
+        print("For " + stats + " adding 1!")
+        stats.songs++
+        print("Now is: " + stats.songs)
     } else {
         ArtistStats stats = new ArtistStats(artist)
         allArtistsPlayed.put(artist, stats)

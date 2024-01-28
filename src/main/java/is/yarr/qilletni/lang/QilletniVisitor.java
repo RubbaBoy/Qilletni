@@ -15,6 +15,7 @@ import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
+import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
 import is.yarr.qilletni.lang.exceptions.QilletniException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
@@ -310,23 +311,80 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public QilletniType visitExpr(QilletniParser.ExprContext ctx) {
         var currentScope = symbolTable.currentScope();
+
+        BiFunction<Integer, Integer, Integer> operation = (ctx.INCREMENT(0) != null || ctx.PLUS_EQUALS() != null) ? ((a, b) -> a + b) : ((a, b) -> a - b);
+        
+        if (ctx.post_crement != null && ctx.pre_crement != null) {
+            throw new InvalidSyntaxException("Cannot have one increment or decrements at a time");
+        }
+        
         if (ctx.ID() != null) {
             var idText = ctx.ID().getText();
 
             if (ctx.LEFT_SBRACKET() != null) { // foo[123]
-                var list = currentScope.<ListTypeImpl>lookup(idText).getValue().getItems();
-                var index = visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class).getValue();
+                var list = currentScope.<ListTypeImpl>lookup(idText).getValue();
+                var index = visitQilletniTypedNode(ctx.expr(0), IntTypeImpl.class).getValue();
 
-                if (index < 0 || index > list.size()) {
-                    throw new ListOutOfBoundsException(ctx, "Attempted to access index " + index + " on a list with a size of " + list.size());
+                if (index < 0 || index > list.getItems().size()) {
+                    throw new ListOutOfBoundsException(ctx, "Attempted to access index " + index + " on a list with a size of " + list.getItems().size());
                 }
 
-                return list.get(index);
+                if ((ctx.post_crement != null || ctx.pre_crement != null || ctx.post_crement_equals != null) && !list.getSubType().equals(QilletniTypeClass.INT)) {
+                    throw new TypeMismatchException("Cannot increment/decrement from a " + list.getSubType().getTypeName() + "[]");
+                }
+                
+                if (ctx.post_crement != null || ctx.post_crement_equals != null) {
+                    var incrementBy = 1;
+                    if (ctx.post_crement_equals != null) {
+                        incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
+                    }
+                    
+                    var item = (IntType) list.getItems().get(index);
+                    var oldVal = item.getValue();
+                    list.getItems().set(index, new IntTypeImpl(operation.apply(oldVal, incrementBy)));
+                    return new IntTypeImpl(oldVal);
+                }
+                
+                if (ctx.pre_crement != null) {
+                    var item = (IntType) list.getItems().get(index);
+                    var newItem = new IntTypeImpl(operation.apply(item.getValue(), 1));
+                    list.getItems().set(index, newItem);
+                    return newItem;
+                }
+
+                return list.getItems().get(index);
             }
 
             if (ctx.DOT() == null) { // id
                 LOGGER.debug("Visiting expr! ID: {}", ctx.ID());
-                return currentScope.lookup(idText).getValue();
+                
+                var variableSymbol = currentScope.lookup(idText);
+                var variable = variableSymbol.getValue();
+                
+                if ((ctx.post_crement != null || ctx.pre_crement != null || ctx.post_crement_equals != null) && !variable.getTypeClass().equals(QilletniTypeClass.INT)) {
+                    throw new TypeMismatchException("Cannot increment/decrement from a " + variable.getTypeClass().getTypeName());
+                }
+
+                if (ctx.post_crement != null || ctx.post_crement_equals != null) {
+                    var incrementBy = 1;
+                    if (ctx.post_crement_equals != null) {
+                        incrementBy = visitQilletniTypedNode(ctx.expr(0), IntType.class).getValue();
+                    }
+                    
+                    var intVar = (IntType) variable;
+                    var oldVal = intVar.getValue();
+                    variableSymbol.setValue(new IntTypeImpl(operation.apply(oldVal, incrementBy)));
+                    return new IntTypeImpl(oldVal);
+                }
+
+                if (ctx.pre_crement != null) {
+                    var intVar = (IntType) variable;
+                    var newVal = new IntTypeImpl(operation.apply(intVar.getValue(), 1));
+                    variableSymbol.setValue(newVal);
+                    return newVal;
+                }
+                
+                return variable;
             } else { // foo.baz
                 if (idText.startsWith("_")) {
                     throw new VariableNotFoundException(ctx, "Cannot access private variable");
@@ -335,7 +393,27 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 var entity = visitQilletniTypedNode(ctx.expr(0), EntityTypeImpl.class);
                 LOGGER.debug("Getting property {} on entity {}", idText, entity.typeName());
                 var entityScope = entity.getEntityScope();
-                return entityScope.lookup(idText).getValue();
+                var entityPropertySymbol = entityScope.lookup(idText);
+                var entityProperty = entityPropertySymbol.getValue();
+
+                if ((ctx.post_crement != null || ctx.post_crement_equals != null) && !entityProperty.getTypeClass().equals(QilletniTypeClass.INT)) {
+                    throw new TypeMismatchException("Cannot increment/decrement from a " + entityProperty.getTypeClass().getTypeName());
+                }
+
+                if (ctx.post_crement != null || ctx.post_crement_equals != null) {
+                    var incrementBy = 1;
+                    if (ctx.post_crement_equals != null) {
+                        incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
+                    }
+                    
+                    var intVar = (IntType) entityProperty;
+                    var newVal = new IntTypeImpl(operation.apply(intVar.getValue(), incrementBy));
+                    entityPropertySymbol.setValue(newVal);
+                    
+                    return new IntTypeImpl(intVar.getValue());
+                }
+                
+                return entityProperty;
             }
         }
         
@@ -507,52 +585,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
             value = this.<BooleanTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
-            ;
         } 
-//        else if (ctx.REL_OP() != null && ctx.getChild(1) instanceof TerminalNode relOp) {
-//            var leftChild = ctx.getChild(0);
-//            var rightChild = ctx.getChild(2);
-//            System.out.println("leftChild = " + leftChild.getClass());
-//            System.out.println("leftChild = " + leftChild.getText());
-//            var leftType = visitQilletniTypedNode(leftChild);
-//            var rightType = visitQilletniTypedNode(rightChild);
-//
-//            var relOpVal = relOp.getSymbol().getText();
-//
-//            if ("!==".contains(relOpVal)) {
-//                BiFunction<Comparable<?>, Comparable<?>, Boolean> compareMethod = relOpVal.equals("==") ?
-//                        Objects::equals : (a, b) -> !Objects.equals(a, b);
-//
-//                if (leftChild instanceof QilletniParser.Int_exprContext && rightChild instanceof QilletniParser.Int_exprContext) {
-//                    var leftInt = TypeUtils.safelyCast(leftType, IntType.class).getValue();
-//                    var rightInt = TypeUtils.safelyCast(rightType, IntType.class).getValue();
-//
-//                    return new BooleanType(compareMethod.apply(leftInt, rightInt));
-//                } else if (leftChild instanceof QilletniParser.Bool_exprContext && rightChild instanceof QilletniParser.Bool_exprContext) {
-//                    var leftBool = TypeUtils.safelyCast(leftType, BooleanType.class).getValue();
-//                    var rightBool = TypeUtils.safelyCast(rightType, BooleanType.class).getValue();
-//
-//                    return new BooleanType(compareMethod.apply(leftBool, rightBool));
-//                }
-//
-//                throw new TypeMismatchException(ctx, "Cannot compare differing types");
-//            } else {
-//                var leftInt = TypeUtils.safelyCast(leftType, IntType.class).getValue();
-//                var rightInt = TypeUtils.safelyCast(rightType, IntType.class).getValue();
-//
-//                LOGGER.debug("Comparing {} {} {}", leftInt, relOpVal, rightInt);
-//
-//                var comparisonResult = switch (relOpVal) {
-//                    case ">" -> leftInt > rightInt;
-//                    case "<" -> leftInt < rightInt;
-//                    case "<=" -> leftInt <= rightInt;
-//                    case ">=" -> leftInt >= rightInt;
-//                    default -> throw new IllegalStateException("Unexpected value: " + relOpVal);
-//                };
-//
-//                return new BooleanType(comparisonResult);
-//            }
-//        }
 
         return value;
     }
@@ -665,7 +698,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return visitNode(ctx.for_stmt());
         }
 
-        visitNode(ctx.stmt());
+        if (ctx.stmt() != null) {
+            visitNode(ctx.stmt());
+        }
+
+        if (ctx.expr() != null) {
+            visitNode(ctx.expr());
+        }
+        
         return Optional.empty();
     }
 

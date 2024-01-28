@@ -21,11 +21,15 @@ running
 
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
-    | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET
+    | pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET int_expr RIGHT_SBRACKET post_crement=(INCREMENT | DECREMENT)?
+    | pre_crement=(INCREMENT | DECREMENT)? ID post_crement=(INCREMENT | DECREMENT)?
+    | ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
+    | ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | expr REL_OP expr
     | expr PLUS expr
     | expr DOT function_call
-    | expr DOT ID
+    | expr DOT ID post_crement=(INCREMENT | DECREMENT)?
+    | expr DOT ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | entity_initialize
     | function_call
     | ID
@@ -135,6 +139,7 @@ body_stmt
     : if_stmt
     | for_stmt
     | stmt
+    | expr
     ;
 
 return_stmt
