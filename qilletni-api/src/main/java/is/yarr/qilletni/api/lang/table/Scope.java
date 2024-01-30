@@ -32,9 +32,15 @@ public interface Scope {
     ScopeType getScopeType();
 
     Scope getParent();
+    
+    String getDebugDesc();
+    
+    void setDebugDesc(String desc);
 
     enum ScopeType {
         GLOBAL,
-        LOCAL
+        FUNCTION,
+        LOCAL,
+        ENTITY
     }
 }

@@ -14,17 +14,17 @@ import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
-import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
 import is.yarr.qilletni.lang.exceptions.QilletniException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
+import is.yarr.qilletni.lang.internal.FunctionInvokerImpl;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolImpl;
-import is.yarr.qilletni.lang.table.SymbolTable;
+import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.table.TableUtils;
 import is.yarr.qilletni.api.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.AlbumTypeImpl;
@@ -71,11 +71,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -86,7 +86,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniVisitor.class);
 
-    private final SymbolTable symbolTable;
+    private SymbolTable symbolTable;
     private final ScopeImpl globalScope;
     private final EntityDefinitionManager entityDefinitionManager;
     private final NativeFunctionHandler nativeFunctionHandler;
@@ -96,8 +96,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final TrackOrchestrator trackOrchestrator;
     private final StringIdentifier stringIdentifier;
     private final MusicCache musicCache;
+    private final FunctionInvokerImpl functionInvoker;
 
-    public QilletniVisitor(SymbolTable symbolTable, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, StringIdentifier stringIdentifier, MusicCache musicCache, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, StringIdentifier stringIdentifier, MusicCache musicCache, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -108,6 +109,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         this.trackOrchestrator = trackOrchestrator;
         this.stringIdentifier = stringIdentifier;
         this.musicCache = musicCache;
+        this.functionInvoker = new FunctionInvokerImpl(symbolTable, symbolTableMap, nativeFunctionHandler);
+        
+//        FunctionInvokerImpl.setVisitNode(this::visitNode);
     }
 
     @Override
@@ -357,6 +361,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
             if (ctx.DOT() == null) { // id
                 LOGGER.debug("Visiting expr! ID: {}", ctx.ID());
+                LOGGER.debug("with current scope: {}", symbolTable);
                 
                 var variableSymbol = currentScope.lookup(idText);
                 var variable = variableSymbol.getValue();
@@ -457,7 +462,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             
             var leftExpr = visitQilletniTypedNode(ctx.expr(0));
-            return visitFunctionCallWithContext(ctx.function_call(), leftExpr).orElseThrow(FunctionDidntReturnException::new);
+            return functionInvoker.invokeFunction(ctx.function_call(), leftExpr).orElseThrow(FunctionDidntReturnException::new);
         }
 
         if (ctx.LEFT_PAREN() != null) { // ( expr )
@@ -479,7 +484,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.function_call() != null) {
-            return visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return functionInvoker.invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         return visitQilletniTypedNode(ctx.getChild(0), QilletniType.class);
@@ -500,7 +505,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = new StringTypeImpl(stringLiteral.substring(1, stringLiteral.length() - 1).translateEscapes());
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = this.<StringTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+            value = this.functionInvoker.<StringType>invokeFunction(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
         } else if (child instanceof QilletniParser.Str_exprContext) {
             value = visitQilletniTypedNode(child);
         } else if (child instanceof QilletniParser.ExprContext) {
@@ -542,7 +547,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = new IntTypeImpl(Integer.parseInt(symbol.getText()));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = this.<IntTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+            value = this.functionInvoker.<IntType>invokeFunction(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
         } else if (child instanceof QilletniParser.Int_exprContext) {
             value = visitQilletniTypedNode(child);
         }
@@ -584,7 +589,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = new BooleanTypeImpl(symbol.getText().equals("true"));
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
-            value = this.<BooleanTypeImpl>visitFunctionCallWithContext(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+            value = this.functionInvoker.<BooleanType>invokeFunction(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
         } 
 
         return value;
@@ -713,7 +718,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public Object visitStmt(QilletniParser.StmtContext ctx) {
         if (ctx.DOT() != null) { // foo.bar()
             var leftExpr = visitQilletniTypedNode(ctx.expr());
-            visitFunctionCallWithContext(ctx.function_call(), leftExpr);
+            functionInvoker.invokeFunction(ctx.function_call(), leftExpr);
             return null;
         }
 
@@ -721,110 +726,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         return null;
     }
 
-    private <T extends QilletniType> Optional<T> visitFunctionCallWithContext(QilletniParser.Function_callContext ctx) {
-        return visitFunctionCallWithContext(ctx, null);
-    }
-
-    private <T extends QilletniType> Optional<T> visitFunctionCallWithContext(QilletniParser.Function_callContext ctx, QilletniType invokedOn) {
-        var id = ctx.ID().getText();
-
-        List<QilletniType> params = new ArrayList<>();
-        if (ctx.expr_list() != null) {
-            params.addAll(visitNode(ctx.expr_list()));
-        }
-
-        LOGGER.debug("invokedOn = {}", invokedOn);
-//        var swappedScope = false;
-        var hasOnType = invokedOn != null;
-        
-//        LOGGER.debug("swap scope = ({} != null) && {}", invokedOn, invokedOn instanceof EntityType);
-        var swappedLookupScope = false;
-        // swap lookup scope
-        LOGGER.debug("({}) invokedOn = {}, and {}", id, invokedOn, invokedOn instanceof EntityType);
-        if (invokedOn instanceof EntityType entityType) {
-            LOGGER.debug("SWAP scope! to {}", entityType.getEntityScope().getAllSymbols().keySet());
-//            swappedScope = true;
-//            hasOnType = false;
-            swappedLookupScope = true;
-            symbolTable.swapScope(entityType.getEntityScope());
-        }
-        
-        var scope = symbolTable.currentScope();
-
-        var functionType = scope.lookupFunction(id, params.size(), invokedOn != null ? invokedOn.getTypeClass() : null).getValue();
-
-        if (hasOnType && !functionType.getOnType().equals(invokedOn.getTypeClass())) {
-            throw new FunctionInvocationException(ctx, "Function not to be invoked on " + invokedOn.getTypeClass() + " should be " + functionType.getOnType());
-        }
-
-        var swapInvocationScope = false;
-        
-        // If this has an on type and is native, we need to allow it to look it up in the native function handler with the on type
-        // This isn't needed if it's implemented, as it has no additional type param
-        if (swappedLookupScope) {
-            if (functionType.isNative() || functionType.isExternallyDefined()) {
-                // Return to normal scope if either native (wouldn't really make a difference but might as well) or
-                // if it is externally defined, so it is invoked normally.
-                symbolTable.unswapScope();
-            } else {
-                swapInvocationScope = true;
-            }
-        }
-        
-        LOGGER.debug("swapInvocatioonScope = !({} || {})", functionType.isNative(), functionType.isExternallyDefined());
-        
-        var functionParams = new ArrayList<>(Arrays.asList(functionType.getParams()));
-
-        var expectedParamLength = functionType.getInvokingParamCount();
-        
-        if (expectedParamLength != params.size()) {
-            throw new InvalidParameterException(ctx, "Expected " + expectedParamLength + " parameters, got " + params.size() + " onType: " + hasOnType);
-        }
-
-        QilletniTypeClass<?> invokingUponExpressionType = null;
-        // If there is an on type param, add it
-        LOGGER.debug("{} != {}", functionType.getInvokingParamCount(), functionType.getDefinedParamCount());
-        LOGGER.debug("func: {}", functionType.getName());
-        if (invokedOn != null) {
-            invokingUponExpressionType = invokedOn.getTypeClass();
-            
-            if (functionType.getInvokingParamCount() != functionType.getDefinedParamCount()) {
-                params.add(0, invokedOn);
-            }
-        }
-
-        if (functionType.isNative()) {
-            LOGGER.debug("Invoking native! {}", functionType.getName());
-            return Optional.ofNullable((T) nativeFunctionHandler.invokeNativeMethod(ctx, functionType.getName(), params, functionType.getDefinedParamCount(), invokingUponExpressionType));
-        }
-
-        LOGGER.debug("1 curr scope = {}", symbolTable.currentScope());
-        var functionScope = symbolTable.functionCall();
-
-        LOGGER.debug("2 curr scope = {}", symbolTable.currentScope());
-
-        for (int i = 0; i < params.size(); i++) {
-            var qilletniType = params.get(i);
-            functionScope.define(SymbolImpl.createGenericSymbol(functionParams.get(i), qilletniType.getTypeClass(), qilletniType));
-        }
-
-        Optional<T> result = visitNode(functionType.getBody());
-
-        symbolTable.endFunctionCall();
-
-        LOGGER.debug("3 curr scope = {}", symbolTable.currentScope());
-
-        if (swapInvocationScope) {
-            LOGGER.debug("UNSWAP scope!");
-            symbolTable.unswapScope();
-        }
-
-        return result;
-    }
-
     @Override
     public Optional<QilletniType> visitFunction_call(QilletniParser.Function_callContext ctx) {
-        return visitFunctionCallWithContext(ctx);
+        return functionInvoker.invokeFunction(ctx);
     }
 
     @Override
@@ -1004,7 +908,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.function_call() != null) {
-            return this.<SongTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.functionInvoker.<SongType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.song_url_or_name_pair();
@@ -1026,7 +930,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.function_call() != null) {
-            return this.<AlbumTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.functionInvoker.<AlbumType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.album_url_or_name_pair();
@@ -1143,7 +1047,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.function_call() != null) {
-            return this.<JavaTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.functionInvoker.<JavaType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
         
         // Has to be empty
@@ -1256,7 +1160,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.function_call() != null) {
-            return this.<CollectionTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+            return this.functionInvoker.<CollectionType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
         var urlOrName = ctx.collection_url_or_name_pair();
@@ -1291,7 +1195,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return scope.<WeightsTypeImpl>lookup(ctx.ID().getText()).getValue();
         }
 
-        return this.<WeightsTypeImpl>visitFunctionCallWithContext(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
+        return this.functionInvoker.<WeightsType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
     }
 
     @Override
@@ -1334,6 +1238,25 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
         }
     }
+
+//    public <T> T visitNode(SymbolTable symbolTable, ParseTree ctx) {
+//        var oldsOne = this.symbolTable;
+//        this.symbolTable = symbolTable;
+//        
+//        LOGGER.debug("Setting symbol table to {} when it was {}", symbolTable, oldsOne);
+//
+//        System.out.println("\n\n");
+//        for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
+//            System.out.println(stackTraceElement);
+//        }
+//        System.out.println("\n\n");
+//        
+//        
+//        var ret = this.<T>visitNode(ctx);
+//        this.symbolTable = oldsOne;
+//        
+//        return ret;
+//    }
 
     public <T> T visitNode(ParseTree ctx) {
         try {

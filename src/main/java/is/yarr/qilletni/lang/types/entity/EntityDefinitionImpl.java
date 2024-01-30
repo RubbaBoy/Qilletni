@@ -68,7 +68,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
     }
 
     private Scope createScope(List<QilletniType> constructorParams) {
-        var scope = new ScopeImpl(parentScope);
+        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "entity");
 
         if (uninitializedParams.size() != constructorParams.size()) {
             throw new InvalidParameterException("Invalid constructor invocation");

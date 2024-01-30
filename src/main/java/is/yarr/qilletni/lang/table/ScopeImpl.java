@@ -34,6 +34,7 @@ public class ScopeImpl implements Scope {
     private final ScopeType scopeType;
     private final Scope parent;
     private final int scopeId;
+    private String debugDesc = "";
 
     public ScopeImpl() {
         this.scopeType = ScopeType.GLOBAL;
@@ -41,10 +42,22 @@ public class ScopeImpl implements Scope {
         this.scopeId = scopeCount++;
     }
 
+    public ScopeImpl(String debugDesc) {
+        this.scopeType = ScopeType.GLOBAL;
+        this.parent = null;
+        this.scopeId = scopeCount++;
+        this.debugDesc = debugDesc;
+    }
+
     public ScopeImpl(Scope parent) {
-        this.scopeType = ScopeType.LOCAL;
+        this(parent, ScopeType.LOCAL, "");
+    }
+
+    public ScopeImpl(Scope parent, ScopeType scopeType, String debugDesc) {
+        this.scopeType = scopeType;
         this.parent = parent;
         this.scopeId = scopeCount++;
+        this.debugDesc = debugDesc;
     }
 
     @Override
@@ -86,7 +99,7 @@ public class ScopeImpl implements Scope {
         
         LOGGER.debug("checkParentForVar: {}", checkParentForVar);
 //        LOGGER.debug("var {} checking parent? {} parent = {}", name, checkParentForVar, parent.getAllSymbols().keySet());
-        LOGGER.debug("in this: {}", symbolTable.keySet());
+        LOGGER.debug("in this: {}", this);
         
         
         if (checkParentForVar) {
@@ -194,10 +207,10 @@ public class ScopeImpl implements Scope {
 
     @Override
     public <T extends QilletniType> void define(Symbol<T> symbol) {
-        if (parent != null && parent.getScopeType() == ScopeType.GLOBAL && !symbol.getName().startsWith("_")) {
-            parent.define(symbol);
-            return;
-        }
+//        if (parent != null && parent.getScopeType() == ScopeType.GLOBAL && !symbol.getName().startsWith("_")) {
+//            parent.define(symbol);
+//            return;
+//        }
         
         if (isDirectlyDefined(symbol.getName())) {
             throw new AlreadyDefinedException("Symbol " + symbol.getName() + " has already been defined!");
@@ -250,6 +263,16 @@ public class ScopeImpl implements Scope {
     }
 
     @Override
+    public String getDebugDesc() {
+        return debugDesc;
+    }
+
+    @Override
+    public void setDebugDesc(String desc) {
+        this.debugDesc = desc;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof ScopeImpl scope)) return false;
@@ -263,7 +286,7 @@ public class ScopeImpl implements Scope {
 
     @Override
     public String toString() {
-        return "Scope(" + scopeId + ", " + scopeType.name() + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", parent = " + parent + ")";
+        return "Scope(" + scopeId + ", " + (!debugDesc.isEmpty() ? (debugDesc + ", ") : "") + scopeType.name() + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", parent = " + parent + ")";
 //        var stringBuilder = new StringBuilder("Scope(" + scopeId + ")[");
 //        var arr = symbolTable.values().toArray(Symbol[]::new);
 //        for (int i = 0; i < arr.length; i++) {

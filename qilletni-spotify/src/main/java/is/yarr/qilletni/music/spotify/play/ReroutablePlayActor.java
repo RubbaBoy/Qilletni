@@ -24,4 +24,8 @@ public class ReroutablePlayActor implements PlayActor {
     public static void resetReroutedPlayTrack() {
         reroutedPlayTrack = defaultPlayActor::playTrack;
     }
+    
+    public static PlayActor getDefaultPlay() {
+        return defaultPlayActor;
+    }
 }

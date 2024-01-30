@@ -1,11 +1,14 @@
 package is.yarr.qilletni.lang.internal;
 
+import is.yarr.qilletni.api.lang.internal.FunctionInvoker;
 import is.yarr.qilletni.api.lang.internal.NativeFunctionClassInjector;
+import is.yarr.qilletni.api.lang.table.Scope;
+import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lib.BeforeAnyInvocation;
 import is.yarr.qilletni.api.lib.NativeOn;
+import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
 import is.yarr.qilletni.lang.exceptions.lib.NoNativeLibraryConstructorFoundException;
-import is.yarr.qilletni.lang.exceptions.QilletniException;
 import is.yarr.qilletni.lang.exceptions.lib.UninjectableConstructorTypeException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.api.lang.types.QilletniType;
@@ -17,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessFlag;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -34,14 +38,18 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     
     private final TypeAdapterInvoker typeAdapterInvoker;
     private final List<Object> injectableInstances;
-
-    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker) {
-        this(typeAdapterInvoker, new ArrayList<>());
+    private final Map<SymbolTable, QilletniVisitor> symbolTables;
+    
+    private final static Constructor<?> functionInvokerConstructor = FunctionInvokerImpl.class.getConstructors()[0];
+    
+    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, Map<SymbolTable, QilletniVisitor> symbolTables) {
+        this(typeAdapterInvoker, new ArrayList<>(), symbolTables);
     }
 
-    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<Object> injectableInstances) {
+    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<Object> injectableInstances, Map<SymbolTable, QilletniVisitor> symbolTables) {
         this.typeAdapterInvoker = typeAdapterInvoker;
         this.injectableInstances = injectableInstances;
+        this.symbolTables = symbolTables;
     }
     
     @Override
@@ -96,15 +104,15 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         return Optional.empty();
     }
     
-    public QilletniType invokeNativeMethod(ParserRuleContext ctx, String name, List<QilletniType> params, int definedParamCount, QilletniTypeClass<?> invokedUponType) {
+    public QilletniType invokeNativeMethod(SymbolTable symbolTable, String name, List<QilletniType> params, int definedParamCount, QilletniTypeClass<?> invokedUponType) {
         LOGGER.debug("invokeNativeMethod({}, {}, {})", name, definedParamCount, invokedUponType);
         var invocableMethod = nativeMethods.get(new MethodSignature(name, definedParamCount, invokedUponType));
         if (invocableMethod == null) {
-            throw new NativeMethodNotBoundException(ctx, "Native method not bound to anything!");
+            throw new NativeMethodNotBoundException("Native method not bound to anything!");
         }
 
         try {
-            var instance = createInstanceForMethod(invocableMethod);
+            var instance = createInstanceForMethod(symbolTable, invocableMethod);
             
             if (invocableMethod.beforeAny() != null) {
                 typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), params);
@@ -113,12 +121,10 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
             return typeAdapterInvoker.invokeMethod(instance, invocableMethod.method(), params);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
             throw new RuntimeException(e);
-        } catch (QilletniException e) {
-            throw new QilletniException(ctx, e.getMessage());
         }
     }
     
-    private Object createInstanceForMethod(InvocableMethod invocableMethod) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+    private Object createInstanceForMethod(SymbolTable symbolTable, InvocableMethod invocableMethod) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         if (!(invocableMethod.beforeAny() != null && invocableMethod.beforeAny().accessFlags().contains(AccessFlag.STATIC))
                 || !invocableMethod.method().accessFlags().contains(AccessFlag.STATIC)) {
             var declaringClass = invocableMethod.method().getDeclaringClass();
@@ -137,7 +143,18 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
                     });
 
             var params = Arrays.stream(constructor.getParameterTypes()).map(paramType ->
-                    injectableInstances.stream().filter(paramType::isInstance).findFirst().orElse(null))
+                    injectableInstances.stream().filter(paramType::isInstance).map(obj -> {
+                        if (obj instanceof UnimplementedFunctionInvoker) {
+                            try {
+                                LOGGER.debug("New instance of stuff {}", symbolTable.currentScope());
+                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this);
+                            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                        
+                        return obj;
+                    }).findFirst().orElse(null))
                     .toArray(Object[]::new);
             
             return constructor.newInstance(params);
