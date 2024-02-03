@@ -21,6 +21,8 @@ public interface Scope {
 
     boolean isDefined(String name);
 
+    boolean isDirectlyDefined(String name);
+
     boolean isFunctionDefined(String name);
 
     <T extends QilletniType> void define(Symbol<T> symbol);

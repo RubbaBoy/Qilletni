@@ -1,5 +1,6 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
@@ -8,19 +9,19 @@ import java.util.Objects;
 
 public final class IntTypeImpl implements IntType {
     
-    private int value;
+    private long value;
 
-    public IntTypeImpl(int value) {
+    public IntTypeImpl(long value) {
         this.value = value;
     }
 
     @Override
-    public int getValue() {
+    public long getValue() {
         return value;
     }
 
     @Override
-    public void setValue(int value) {
+    public void setValue(long value) {
         this.value = value;
     }
 
@@ -31,11 +32,13 @@ public final class IntTypeImpl implements IntType {
 
     @Override
     public boolean qilletniEquals(QilletniType qilletniType) {
-        if (!(qilletniType instanceof IntTypeImpl comparing)) {
-            return false;
+        if (qilletniType instanceof IntType intType) {
+            return value == intType.getValue();
+        } else if (qilletniType instanceof DoubleType doubleType) {
+            return value == doubleType.getValue();
         }
-
-        return this.value == comparing.value;
+        
+        return false;
     }
 
     @Override

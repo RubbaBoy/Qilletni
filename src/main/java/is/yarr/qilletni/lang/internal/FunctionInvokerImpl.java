@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.internal;
 
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.api.lang.internal.FunctionInvoker;
+import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.FunctionType;
@@ -11,8 +12,9 @@ import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.QilletniException;
+import is.yarr.qilletni.lang.stack.QilletniStackTraceElementImpl;
+import is.yarr.qilletni.lang.stack.StackUtils;
 import is.yarr.qilletni.lang.table.SymbolImpl;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,27 +23,28 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 public class FunctionInvokerImpl implements FunctionInvoker {
     
     private final SymbolTable symbolTable;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final Map<SymbolTable, QilletniVisitor> symbolTableMap;
-
-//    private static BiFunction<SymbolTable, ParseTree, ?> visitNode;
     
+    // There is a FunctionInvokerImpl for every native method call (and in QilletniVisitor, which is not copied), so this can persist from invocation
+    private final QilletniStackTrace currentStackTrace;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionInvokerImpl.class);
 
     public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler) {
+        this(symbolTable, symbolTableMap, nativeFunctionHandler, null);
+    }
+
+    public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler, QilletniStackTrace qilletniStackTrace) {
         this.symbolTable = symbolTable;
         this.symbolTableMap = symbolTableMap;
         this.nativeFunctionHandler = nativeFunctionHandler;
+        this.currentStackTrace = qilletniStackTrace;
     }
-
-//    public static void setVisitNode(BiFunction<SymbolTable, ParseTree, ?> visitNode) {
-//        FunctionInvokerImpl.visitNode = visitNode;
-//    }
 
     @Override
     public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params) {
@@ -169,6 +172,19 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         } catch (QilletniException e) {
             throw new QilletniException(ctx, e);
         }
+    }
+
+    /**
+     * Pushed a stack trace from a Qilletni method.
+     */
+    private void pushLocalStackTrace(QilletniParser.Function_callContext ctx) {
+        var parsedContext = StackUtils.parseContext(ctx);
+        
+//        currentStackTrace.pushStackTraceElement(new QilletniStackTraceElementImpl("lib", parsedContext.fileName(), parsedContext.methodName(), parsedContext.line(), parsedContext.column()));
+    }
+    
+    private void pushNativeStackTrace() {
+        
     }
 
     @Override

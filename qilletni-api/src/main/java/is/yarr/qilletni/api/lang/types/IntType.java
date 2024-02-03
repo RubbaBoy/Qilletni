@@ -1,7 +1,7 @@
 package is.yarr.qilletni.api.lang.types;
 
 public non-sealed interface IntType extends QilletniType {
-    int getValue();
+    long getValue();
 
-    void setValue(int value);
+    void setValue(long value);
 }

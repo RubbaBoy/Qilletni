@@ -21,12 +21,15 @@ INCREMENT : '++';
 DECREMENT : '--';
 PLUS_EQUALS : '+=';
 MINUS_EQUALS : '-=';
-OP            : '*' | '/' | '%' | '+' | '-';
+// ~/ is int division
+OP            : '*' | '/~' | '%' | '-';
+DIV_DOUBLE_OP : '/';
 
 WEIGHTS_KEYWORD : 'weights';
 
 // keywords
 INT_TYPE : 'int';
+DOUBLE_TYPE : 'double';
 STRING_TYPE : 'string';
 BOOLEAN_TYPE : 'boolean';
 COLLECTION_TYPE : 'collection';
@@ -88,6 +91,7 @@ mode DEFAULT_MODE;
 
 ID            : [a-zA-Z_][a-zA-Z_0-9]*;
 INT           : [0-9]+ ;
+DOUBLE          : ([0-9]+'D' | [0-9]+'.'[0-9]+'D'?);
 fragment STR  : (ESC | ~["\\]);
 fragment ESC: '\\' [\\"];
 

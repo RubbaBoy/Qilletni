@@ -5,6 +5,8 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
+import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
+import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.StringIdentifier;
@@ -33,6 +35,7 @@ import is.yarr.qilletni.lang.types.BooleanTypeImpl;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.CollectionTypeImpl;
+import is.yarr.qilletni.lang.types.DoubleTypeImpl;
 import is.yarr.qilletni.lang.types.EntityTypeImpl;
 import is.yarr.qilletni.lang.types.FunctionTypeImpl;
 import is.yarr.qilletni.api.lang.types.IntType;
@@ -97,8 +100,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final StringIdentifier stringIdentifier;
     private final MusicCache musicCache;
     private final FunctionInvokerImpl functionInvoker;
+    private final QilletniStackTrace qilletniStackTrace;
 
-    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, StringIdentifier stringIdentifier, MusicCache musicCache, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, StringIdentifier stringIdentifier, MusicCache musicCache, QilletniStackTrace qilletniStackTrace, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.entityDefinitionManager = entityDefinitionManager;
@@ -109,9 +113,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         this.trackOrchestrator = trackOrchestrator;
         this.stringIdentifier = stringIdentifier;
         this.musicCache = musicCache;
-        this.functionInvoker = new FunctionInvokerImpl(symbolTable, symbolTableMap, nativeFunctionHandler);
-        
-//        FunctionInvokerImpl.setVisitNode(this::visitNode);
+        this.qilletniStackTrace = qilletniStackTrace;
+        this.functionInvoker = new FunctionInvokerImpl(symbolTable, symbolTableMap, nativeFunctionHandler, qilletniStackTrace);
     }
 
     @Override
@@ -190,6 +193,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var expr = ctx.expr(0);
             ListType assignmentValue = switch (ctx.type.getType()) {
                 case QilletniLexer.INT_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.INT);
+                case QilletniLexer.DOUBLE_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.DOUBLE);
                 case QilletniLexer.BOOLEAN_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.BOOLEAN);
                 case QilletniLexer.STRING_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.STRING);
                 case QilletniLexer.COLLECTION_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.COLLECTION);
@@ -232,20 +236,30 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
 
             var mutableItems = new ArrayList<>(list.getItems());
-            mutableItems.set(index, expressionValue);
+            mutableItems.set((int) index, expressionValue);
             list.setItems(mutableItems);
 
             listSymbol.setValue(list); // Not really needed
         } else if (ctx.type != null) { // defining a new var
             var expr = ctx.expr(0);
             QilletniType assignmentValue = switch (ctx.type.getType()) {
-                case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(expr, IntTypeImpl.class);
-                case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(expr, BooleanTypeImpl.class);
-                case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(expr, StringTypeImpl.class);
+                case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(expr, IntType.class);
+                case QilletniLexer.DOUBLE_TYPE -> {
+                    var value = visitQilletniTypedNode(expr);
+                    
+                    if (!(value instanceof IntType intType)) {
+                        yield TypeUtils.safelyCast(value, DoubleType.class);
+                    }
+                    
+                    yield new DoubleTypeImpl(intType.getValue());
+                }
+                case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(expr, BooleanType.class);
+                case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(expr, StringType.class);
                 case QilletniLexer.COLLECTION_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
+                    LOGGER.debug("value = {}", value);
                     if (!(value instanceof StringType stringType)) {
-                        yield TypeUtils.safelyCast(value, CollectionTypeImpl.class);
+                        yield TypeUtils.safelyCast(value, CollectionType.class);
                     }
 
                     yield musicPopulator.initiallyPopulateCollection(new CollectionTypeImpl(stringType.stringValue()));
@@ -253,7 +267,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 case QilletniLexer.SONG_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
                     if (!(value instanceof StringType stringType)) {
-                        yield TypeUtils.safelyCast(value, SongTypeImpl.class);
+                        yield TypeUtils.safelyCast(value, SongType.class);
                     }
 
                     yield musicPopulator.initiallyPopulateSong(new SongTypeImpl(stringType.stringValue()));
@@ -261,7 +275,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 case QilletniLexer.ALBUM_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
                     if (!(value instanceof StringType stringType)) {
-                        yield TypeUtils.safelyCast(value, AlbumTypeImpl.class);
+                        yield TypeUtils.safelyCast(value, AlbumType.class);
                     }
                     
                     yield musicPopulator.initiallyPopulateAlbum(new AlbumTypeImpl(stringType.stringValue()));
@@ -271,7 +285,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     var entityName = ctx.type.getText();
 
                     var expectedEntity = entityDefinitionManager.lookup(entityName);
-                    var entityNode = visitQilletniTypedNode(expr, EntityTypeImpl.class);
+                    var entityNode = visitQilletniTypedNode(expr, EntityType.class);
 
                     var gotTypeName = entityNode.getEntityDefinition().getTypeName();
                     if (!entityNode.getEntityDefinition().equals(expectedEntity)) {
@@ -316,7 +330,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public QilletniType visitExpr(QilletniParser.ExprContext ctx) {
         var currentScope = symbolTable.currentScope();
 
-        BiFunction<Integer, Integer, Integer> operation = (ctx.INCREMENT(0) != null || ctx.PLUS_EQUALS() != null) ? ((a, b) -> a + b) : ((a, b) -> a - b);
+        BiFunction<Long, Long, Long> operation = (ctx.INCREMENT(0) != null || ctx.PLUS_EQUALS() != null) ? ((a, b) -> a + b) : ((a, b) -> a - b);
         
         if (ctx.post_crement != null && ctx.pre_crement != null) {
             throw new InvalidSyntaxException("Cannot have one increment or decrements at a time");
@@ -338,25 +352,25 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
                 
                 if (ctx.post_crement != null || ctx.post_crement_equals != null) {
-                    var incrementBy = 1;
+                    var incrementBy = 1L;
                     if (ctx.post_crement_equals != null) {
                         incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
                     }
                     
-                    var item = (IntType) list.getItems().get(index);
+                    var item = (IntType) list.getItems().get((int) index);
                     var oldVal = item.getValue();
-                    list.getItems().set(index, new IntTypeImpl(operation.apply(oldVal, incrementBy)));
+                    list.getItems().set((int) index, new IntTypeImpl(operation.apply(oldVal, incrementBy)));
                     return new IntTypeImpl(oldVal);
                 }
                 
                 if (ctx.pre_crement != null) {
-                    var item = (IntType) list.getItems().get(index);
-                    var newItem = new IntTypeImpl(operation.apply(item.getValue(), 1));
-                    list.getItems().set(index, newItem);
+                    var item = (IntType) list.getItems().get((int) index);
+                    var newItem = new IntTypeImpl(operation.apply(item.getValue(), 1L));
+                    list.getItems().set((int) index, newItem);
                     return newItem;
                 }
 
-                return list.getItems().get(index);
+                return list.getItems().get((int) index);
             }
 
             if (ctx.DOT() == null) { // id
@@ -371,7 +385,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
 
                 if (ctx.post_crement != null || ctx.post_crement_equals != null) {
-                    var incrementBy = 1;
+                    var incrementBy = 1L;
                     if (ctx.post_crement_equals != null) {
                         incrementBy = visitQilletniTypedNode(ctx.expr(0), IntType.class).getValue();
                     }
@@ -384,7 +398,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
                 if (ctx.pre_crement != null) {
                     var intVar = (IntType) variable;
-                    var newVal = new IntTypeImpl(operation.apply(intVar.getValue(), 1));
+                    var newVal = new IntTypeImpl(operation.apply(intVar.getValue(), 1L));
                     variableSymbol.setValue(newVal);
                     return newVal;
                 }
@@ -406,7 +420,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
 
                 if (ctx.post_crement != null || ctx.post_crement_equals != null) {
-                    var incrementBy = 1;
+                    var incrementBy = 1L;
                     if (ctx.post_crement_equals != null) {
                         incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
                     }
@@ -439,16 +453,32 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 
                 return new BooleanTypeImpl(areEqual);
             } else {
-                var leftInt = TypeUtils.safelyCast(leftType, IntTypeImpl.class).getValue();
-                var rightInt = TypeUtils.safelyCast(rightType, IntTypeImpl.class).getValue();
+                double left;
+                double right;
+                
+                if (leftType instanceof IntType intType) {
+                    left = intType.getValue();
+                } else if (leftType instanceof DoubleType doubleType) {
+                    left = doubleType.getValue();
+                } else {
+                    throw new TypeMismatchException("Can only compare number types!");
+                }
+                
+                if (rightType instanceof IntType intType) {
+                    right = intType.getValue();
+                } else if (rightType instanceof DoubleType doubleType) {
+                    right = doubleType.getValue();
+                } else {
+                    throw new TypeMismatchException("Can only compare number types!");
+                }
 
-                LOGGER.debug("Comparing {} {} {}", leftInt, relOpVal, rightInt);
+                LOGGER.debug("Comparing {} {} {}", left, relOpVal, right);
 
                 var comparisonResult = switch (relOpVal) {
-                    case ">" -> leftInt > rightInt;
-                    case "<" -> leftInt < rightInt;
-                    case "<=" -> leftInt <= rightInt;
-                    case ">=" -> leftInt >= rightInt;
+                    case ">" -> left > right;
+                    case "<" -> left < right;
+                    case "<=" -> left <= right;
+                    case ">=" -> left >= right;
                     default -> throw new IllegalStateException("Unexpected value: " + relOpVal);
                 };
 
@@ -533,7 +563,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public IntType visitInt_expr(QilletniParser.Int_exprContext ctx) {
         var child = ctx.getChild(0);
 
-        if (ctx.LEFT_PAREN() != null) {
+        if (ctx.wrap != null) {
             child = ctx.getChild(1);
         }
 
@@ -545,6 +575,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 value = symbolTable.currentScope().<IntTypeImpl>lookup(symbol.getText()).getValue();
             } else if (type == QilletniLexer.INT) {
                 value = new IntTypeImpl(Integer.parseInt(symbol.getText()));
+            } else if (type == QilletniLexer.INT_TYPE) {
+                value = new IntTypeImpl((int) visitQilletniTypedNode(ctx.double_expr(), DoubleType.class).getValue());
             }
         } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
             value = this.functionInvoker.<IntType>invokeFunction(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
@@ -552,18 +584,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             value = visitQilletniTypedNode(child);
         }
 
-        if (ctx.OP() != null || ctx.PLUS() != null) {
-            var operation = ctx.OP() != null ? ctx.OP().getText() : "+";
-            BiFunction<Integer, Integer, Integer> calculate = switch (operation) {
+        if (ctx.op != null) {
+            var operation = ctx.op.getText();
+            BiFunction<Long, Long, Long> calculate = switch (operation) {
                 case "*" -> (a, b) -> a * b;
-                case "/" -> (a, b) -> a / b;
+                case "/~" -> (a, b) -> a / b;
                 case "%" -> (a, b) -> a % b;
                 case "+" -> (a, b) -> a + b;
                 case "-" -> (a, b) -> a - b;
                 default -> throw new IllegalStateException("Unexpected value: " + ctx.OP().getText());
             };
 
-            var intVal = 0;
+            var intVal = 0L;
             if (value != null) {
                 intVal = value.getValue();
             }
@@ -573,6 +605,72 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         return value;
+    }
+
+    @Override
+    public DoubleType visitDouble_expr(QilletniParser.Double_exprContext ctx) {
+        var child = ctx.getChild(0);
+        
+        if (ctx.wrap != null) {
+            child = ctx.getChild(1);
+        }
+
+        if (child instanceof TerminalNode terminalNode) {
+            var symbol = terminalNode.getSymbol();
+            var type = symbol.getType();
+            if (type == QilletniLexer.ID) {
+                return symbolTable.currentScope().<DoubleType>lookup(symbol.getText()).getValue();
+            } else if (type == QilletniLexer.DOUBLE) {
+                return new DoubleTypeImpl(Double.parseDouble(symbol.getText().replace("D", "")));
+            } else if (type == QilletniLexer.DOUBLE_TYPE) {
+                return new DoubleTypeImpl(visitQilletniTypedNode(ctx.int_expr(0), IntType.class).getValue());
+            }
+        } else if (child instanceof QilletniParser.Function_callContext functionCallContext) {
+            return this.functionInvoker.<DoubleType>invokeFunction(functionCallContext).orElseThrow(FunctionDidntReturnException::new);
+        }
+        
+        if (ctx.ii_op != null) {
+            var firstNum = visitQilletniTypedNode(ctx.int_expr(0), IntType.class).getValue();
+            var secondNum = visitQilletniTypedNode(ctx.int_expr(1), IntType.class).getValue();
+            return new DoubleTypeImpl(((double) firstNum) / ((double) secondNum));
+        }
+
+        Function<String, BiFunction<Double, Double, Double>> calculateFunction = op -> switch (op) {
+            case "*" -> (a, b) -> a * b;
+            case "/~" -> (a, b) -> (double) ((int) (a / b));
+            case "/" -> (a, b) -> a / b;
+            case "%" -> (a, b) -> a % b;
+            case "+" -> (a, b) -> a + b;
+            case "-" -> (a, b) -> a - b;
+            default -> throw new IllegalStateException("Unexpected value: " + ctx.OP().getText());
+        };
+
+        double firstNum = 0;
+        double secondNum = 0;
+        BiFunction<Double, Double, Double> calculate = null;
+        
+        if (ctx.dd_op != null) {
+            calculate = calculateFunction.apply(ctx.dd_op.getText());
+
+            firstNum = visitQilletniTypedNode(ctx.double_expr(0), DoubleType.class).getValue();
+            secondNum = visitQilletniTypedNode(ctx.double_expr(1), DoubleType.class).getValue();
+        }
+        
+        if (ctx.di_op != null) {
+            calculate = calculateFunction.apply(ctx.di_op.getText());
+
+            firstNum = visitQilletniTypedNode(ctx.double_expr(0), DoubleType.class).getValue();
+            secondNum = visitQilletniTypedNode(ctx.int_expr(0), IntType.class).getValue();
+        }
+        
+        if (ctx.id_op != null) {
+            calculate = calculateFunction.apply(ctx.id_op.getText());
+
+            firstNum = visitQilletniTypedNode(ctx.int_expr(0), IntType.class).getValue();
+            secondNum = visitQilletniTypedNode(ctx.double_expr(0), DoubleType.class).getValue();
+        }
+        
+        return new DoubleTypeImpl(calculate.apply(firstNum, secondNum));
     }
 
     @Override
@@ -796,12 +894,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var scope = symbolTable.pushScope(); // The scope for only holding the incrementing var
 
         var range = ctx.for_expr().range();
-        if (range != null) {
-            var id = range.ID().getText();
-            if (scope.isDefined(id)) {
-                throw new AlreadyDefinedException("Symbol " + id + " has already been defined!");
-            }
-        }
+//        if (range != null) {
+//            var id = range.ID().getText();
+//            if (scope.isDefined(id)) {
+//                throw new AlreadyDefinedException("Symbol " + id + " has already been defined!");
+//            }
+//        }
 
         for (int i = 0; visitForExpression(ctx.for_expr(), i).getValue(); i++) {
             symbolTable.pushScope(); // The actual inner for loop scope that gets reset every iteration
@@ -828,7 +926,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.bool_expr() != null) {
             return visitQilletniTypedNode(ctx.bool_expr());
         } else if (ctx.range() != null) {
-            return visitQilletniTypedNode(ctx.range());
+            LOGGER.debug("range = {}", ctx.range().getText());
+            return visitQilletniTypedNode(ctx.range(), BooleanType.class);
         } else if (ctx.foreach_range() != null) {
             return visitForeachRange(ctx.foreach_range(), index);
         }
@@ -849,12 +948,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         var rangeTo = ctx.RANGE_INFINITY() != null ? Integer.MAX_VALUE : Integer.parseInt(ctx.getChild(2).getText());
 
-        if (!scope.isDefined(id)) { // first iteration, let it pass
+        if (!scope.isDirectlyDefined(id)) { // first iteration, let it pass
             scope.define(new SymbolImpl<>(id, QilletniTypeClass.INT, new IntTypeImpl(0)));
             return BooleanTypeImpl.TRUE;
         }
 
-        var idIntType = scope.<IntTypeImpl>lookup(id);
+        var idIntType = scope.<IntType>lookup(id);
         var newValue = idIntType.getValue().getValue() + 1;
         idIntType.setValue(new IntTypeImpl(newValue));
 

@@ -5,31 +5,41 @@ import "!spotify:playlist_tools.ql"
 song[] songList = []
 redirectPlayToList(songList)
 
+// |   - Disallows song repeats, allows weight repeats
+// |!  - Allows for song repeats
+// |~  - Disallows weight repeats (and track)
+
 weights powerRotation =
-    | 20% "Empty Mirror" by "Colony Collapse"
-    | 50% ["Terror" by "Dread Engine",
-            "Ghost In The Graveyard" by "Divine Fallacy",
+    |! 10% "Empty Mirror" by "Colony Collapse"
+    | 85% ["Wildfire" by "Icreatedamonster",
+            "Burn Victim" by "Methwitch",
             "Man Made Disaster" by "Divine Fallacy",
+            "Firestarter" by "SUMR",
             "Dead Dreams" by "Glasswaves",
-            "Impulse" by "Harroway",
             "Hell (I let the Devil In)" by "Breakwaters",
-            "Anxiety" by "Breakwaters",
-            "Distance" by "Sleepwalker"]
-    | 30% ["Heavy Rain" by "Konami Kode",
+            "Anxiety" by "Then It Ends",
+            "Distance" by "Sleep Waker",
+            "Claustrophobic" by "Before I Turn",
+            "White Lady" by "Before I Turn",
+            "Some Things to Chase" by "Lights & Apparitions"]
+    | 5% ["Heavy Rain" by "Konami Kode",
             "Puke" by "No Life",
+            "Decay" by "Elwood Stray",
             "Blood Petals (feat. Julian Latouche)" by "Revoid",
-            "All or Nothing" by "Foundations"]
+            "All or Nothing" by "Foundations",
+            "Peacekeeper" by "Confessions of a Traitor",
+            "Melatonin" by "Sleep Waker"]
 
 weights metalWeights =
 //    |! 100% "Distance" by "Sleep Waker"
    |~ 50% powerRotation
 
 // Play songs
-play "My Playlist #59" collection by "rubbaboy" weights[metalWeights] limit[200]
+play "My Playlist #59" collection by "rubbaboy" weights[metalWeights] limit[8h]
 
 // Add played songs to a playlist
-//collection myPlaylist = createPlaylist("Metal Day Queue (With |~)")
-//addToPlaylist(myPlaylist, songList)
+collection myPlaylist = createPlaylist("Metal Day Queue 2/2")
+addToPlaylist(myPlaylist, songList)
 
 print(songList)
 

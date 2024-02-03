@@ -1,3 +1,6 @@
+import "!spotify:play_redirect.ql"
+import "!spotify:playlist_tools.ql"
+
 entity Foo {
     int _i
     
@@ -10,3 +13,9 @@ entity Foo {
 
 Foo foo = new Foo(100)
 print(foo.getI())
+
+int i = foo.getI()
+print("i = " + i)
+
+collection myPlaylist = createPlaylist("test10")
+print(myPlaylist)

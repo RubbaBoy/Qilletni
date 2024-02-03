@@ -184,7 +184,7 @@ public class ScopeImpl implements Scope {
      * @param name The name of the symbol to look up
      * @return If the symbol is defined in the current scope
      */
-    private boolean isDirectlyDefined(String name) {
+    public boolean isDirectlyDefined(String name) {
         return symbolTable.containsKey(name) || functionSymbolTable.containsKey(name);
     }
 

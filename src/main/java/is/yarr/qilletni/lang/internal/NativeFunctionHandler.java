@@ -147,6 +147,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
                         if (obj instanceof UnimplementedFunctionInvoker) {
                             try {
                                 LOGGER.debug("New instance of stuff {}", symbolTable.currentScope());
+//                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, qilletniStackTrace.copyStackTrace(), this);
                                 return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this);
                             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);

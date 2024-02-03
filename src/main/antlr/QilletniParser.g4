@@ -21,6 +21,7 @@ running
 
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
+    | function_call
     | pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET int_expr RIGHT_SBRACKET post_crement=(INCREMENT | DECREMENT)?
     | pre_crement=(INCREMENT | DECREMENT)? ID post_crement=(INCREMENT | DECREMENT)?
     | ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
@@ -31,10 +32,10 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | expr DOT ID post_crement=(INCREMENT | DECREMENT)?
     | expr DOT ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | entity_initialize
-    | function_call
     | ID
     | bool_expr
     | int_expr
+    | double_expr
     | str_expr
     | collection_expr
     | song_expr
@@ -50,11 +51,23 @@ bool_expr
     ;
 
 int_expr
-    : int_expr PLUS int_expr
-    | int_expr OP int_expr
-    | LEFT_PAREN int_expr RIGHT_PAREN
+    : int_expr op=(OP | PLUS) int_expr
+    | wrap=LEFT_PAREN int_expr RIGHT_PAREN
+    | INT_TYPE LEFT_PAREN double_expr RIGHT_PAREN
     | function_call
     | INT
+    | ID
+    ;
+
+double_expr
+    : int_expr ii_op=DIV_DOUBLE_OP int_expr
+    | double_expr dd_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
+    | double_expr di_op=(OP | PLUS | DIV_DOUBLE_OP) int_expr
+    | int_expr id_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
+    | wrap=LEFT_PAREN double_expr RIGHT_PAREN
+    | DOUBLE_TYPE LEFT_PAREN int_expr RIGHT_PAREN
+    | function_call
+    | DOUBLE
     | ID
     ;
 
@@ -154,6 +167,7 @@ body
 
 asmt
     : type=INT_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=DOUBLE_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=STRING_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=BOOLEAN_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=COLLECTION_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr

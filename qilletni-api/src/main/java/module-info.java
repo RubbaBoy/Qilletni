@@ -4,6 +4,7 @@ module Qilletni.qilletni.api.main {
     exports is.yarr.qilletni.api.music;
     exports is.yarr.qilletni.api.music.factories;
     
+    exports is.yarr.qilletni.api.lang.stack;
     exports is.yarr.qilletni.api.lang.table;
     exports is.yarr.qilletni.api.lang.types;
     exports is.yarr.qilletni.api.lang.types.typeclass;
