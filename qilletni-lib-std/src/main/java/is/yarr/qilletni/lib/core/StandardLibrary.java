@@ -26,7 +26,8 @@ public class StandardLibrary implements Library {
     @Override
     public List<Class<?>> getNativeClasses() {
         return List.of(AlbumFunctions.class, ArtistFunctions.class, CollectionFunctions.class, CoreFunctions.class,
-                ListFunctions.class, MapFunctions.class, MathFunctions.class, SongFunctions.class, StringFunctions.class);
+                ListFunctions.class, MapFunctions.class, MathFunctions.class, SongFunctions.class, StringFunctions.class,
+                DateFunctions.class);
     }
 
     @Override

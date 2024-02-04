@@ -20,4 +20,8 @@ public class CoreFunctions {
     public static boolean hasEnv(String name) {
         return System.getenv(name) != null;
     }
+    
+    public static long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
 }

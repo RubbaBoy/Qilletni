@@ -12,3 +12,6 @@ native fun getEnv(name)
 
 // Checks if an environment variable is set
 native fun hasEnv(name)
+
+// Gets the current time in milliseconds
+native fun currentTimeMillis()

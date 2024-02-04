@@ -13,6 +13,7 @@ import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.StringIdentifier;
@@ -32,6 +33,7 @@ import is.yarr.qilletni.lang.types.JavaTypeImpl;
 import is.yarr.qilletni.lang.types.ListTypeImpl;
 import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
+import is.yarr.qilletni.lang.types.entity.EntityInitializerImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformerFactory;
 import is.yarr.qilletni.lib.LibraryRegistrar;
@@ -64,7 +66,9 @@ public class QilletniProgramRunner {
     private final Map<SymbolTable, QilletniVisitor> symbolTables;
     private final ScopeImpl globalScope;
     private final EntityDefinitionManager entityDefinitionManager;
+    private final TypeAdapterRegistrar typeAdapterRegistrar;
     private final NativeFunctionHandler nativeFunctionHandler;
+    private final EntityInitializer entityInitializer;
     private final MusicCache musicCache;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
@@ -79,7 +83,9 @@ public class QilletniProgramRunner {
         this.symbolTables = new HashMap<>();
         this.globalScope = new ScopeImpl("global");
         this.entityDefinitionManager = new EntityDefinitionManagerImpl();
-        this.nativeFunctionHandler = createNativeFunctionHandler(symbolTables);
+        this.typeAdapterRegistrar = createTypeAdapterRegistrar();
+        this.nativeFunctionHandler = createNativeFunctionHandler(typeAdapterRegistrar, symbolTables);
+        this.entityInitializer = new EntityInitializerImpl(typeAdapterRegistrar, entityDefinitionManager);
         this.musicPopulator = new MusicPopulatorImpl(musicCache);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
 
@@ -98,23 +104,22 @@ public class QilletniProgramRunner {
 
         nativeFunctionHandler.addInjectableInstance(musicPopulator);
         nativeFunctionHandler.addInjectableInstance(entityDefinitionManager);
+        nativeFunctionHandler.addInjectableInstance(entityInitializer);
         nativeFunctionHandler.addInjectableInstance(songTypeFactory);
         nativeFunctionHandler.addInjectableInstance(collectionTypeFactory);
         nativeFunctionHandler.addInjectableInstance(albumTypeFactory);
         nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker());
     }
-
-    private static NativeFunctionHandler createNativeFunctionHandler(Map<SymbolTable, QilletniVisitor> symbolTables) {
+    
+    private static TypeAdapterRegistrar createTypeAdapterRegistrar() {
         var typeAdapterRegistrar = new TypeAdapterRegistrar();
-        var typeAdapterInvoker = new TypeAdapterInvoker(typeAdapterRegistrar);
-        var nativeFunctionHandler = new NativeFunctionHandler(typeAdapterInvoker, symbolTables);
-
+        
         typeAdapterRegistrar.registerExactTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
 
         typeAdapterRegistrar.registerExactTypeAdapter(IntTypeImpl.class, Long.class, IntTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(long.class, IntTypeImpl.class, IntType::getValue);
-        
+
         typeAdapterRegistrar.registerExactTypeAdapter(IntTypeImpl.class, Integer.class, i -> new IntTypeImpl((long) i));
         typeAdapterRegistrar.registerExactTypeAdapter(int.class, IntTypeImpl.class, intType -> (int) intType.getValue());
 
@@ -131,10 +136,14 @@ public class QilletniProgramRunner {
 
             return new ListTypeImpl(qilletniList.get(0).getTypeClass(), qilletniList);
         });
-        
-        typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
 
-        return nativeFunctionHandler;
+        typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
+        
+        return typeAdapterRegistrar;
+    }
+
+    private static NativeFunctionHandler createNativeFunctionHandler(TypeAdapterRegistrar typeAdapterRegistrar, Map<SymbolTable, QilletniVisitor> symbolTables) {
+        return new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables);
     }
     
     public void importInitialFiles() {

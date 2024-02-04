@@ -67,7 +67,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
         return createInstance(List.of(constructorParams));
     }
 
-    private Scope createScope(List<QilletniType> constructorParams) {
+    protected Scope createScope(List<QilletniType> constructorParams) {
         var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "entity");
 
         if (uninitializedParams.size() != constructorParams.size()) {

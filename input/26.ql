@@ -38,7 +38,9 @@ weights metalWeights =
 play "My Playlist #59" collection by "rubbaboy" weights[metalWeights] limit[8h]
 
 // Add played songs to a playlist
-collection myPlaylist = createPlaylist("Metal Day Queue 2/2")
+
+Date today = newDateNow()
+collection myPlaylist = createPlaylist("Metal Day Queue " + today.getMonth() + "/" + today.getDay())
 addToPlaylist(myPlaylist, songList)
 
 print(songList)

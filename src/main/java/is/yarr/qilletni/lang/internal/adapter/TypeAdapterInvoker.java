@@ -55,7 +55,7 @@ public class TypeAdapterInvoker {
             return qilletniResult;
         }
 
-        var typeAdapter = typeAdapterRegistrar.findReturningTypeAdapter(invokedResult.getClass())
+        var typeAdapter = typeAdapterRegistrar.findAnyTypeAdapter(invokedResult.getClass())
                 .orElseThrow(() -> new NoTypeAdapterException(invokedResult.getClass()));
         
         var adapted = typeAdapter.convertCastedType(invokedResult);

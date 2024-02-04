@@ -891,15 +891,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Optional<QilletniType> visitFor_stmt(QilletniParser.For_stmtContext ctx) {
-        var scope = symbolTable.pushScope(); // The scope for only holding the incrementing var
-
-        var range = ctx.for_expr().range();
-//        if (range != null) {
-//            var id = range.ID().getText();
-//            if (scope.isDefined(id)) {
-//                throw new AlreadyDefinedException("Symbol " + id + " has already been defined!");
-//            }
-//        }
+        symbolTable.pushScope(); // The scope for only holding the incrementing var
 
         for (int i = 0; visitForExpression(ctx.for_expr(), i).getValue(); i++) {
             symbolTable.pushScope(); // The actual inner for loop scope that gets reset every iteration

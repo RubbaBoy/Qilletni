@@ -31,14 +31,14 @@ public class TypeAdapterRegistrar {
     }
 
     /**
-     * Finds a type adapter for the return value of a native method. First, exact matches are checked, and then
-     * non-exact class matches are checked.
+     * Finds a type adapter that converts any java type to any {@link QilletniType}. First, exact matches are checked,
+     * and then non-exact class matches are checked.
      * 
      * @param convertingType The type to convert to a Qilletni type
      * @return The found type adapter, if any
      * @param <T> The type being adapted
      */
-    public <T> Optional<TypeAdapter<QilletniType, T>> findReturningTypeAdapter(Class<T> convertingType) {
+    public <T> Optional<TypeAdapter<QilletniType, T>> findAnyTypeAdapter(Class<T> convertingType) {
         return typeAdapters.stream().filter(RegisteredTypeAdapter::exactClassMatch)
                 .filter(adapter -> adapter.convertingType.equals(convertingType))
                 .findFirst()
