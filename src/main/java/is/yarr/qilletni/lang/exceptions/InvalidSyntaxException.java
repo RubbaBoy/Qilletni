@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class InvalidSyntaxException extends QilletniException {
+public class InvalidSyntaxException extends QilletniContextException {
 
     public InvalidSyntaxException() {
     }

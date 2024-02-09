@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class InvalidParameterException extends QilletniException {
+public class InvalidParameterException extends QilletniContextException {
 
     public InvalidParameterException() {
     }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class QilletniStackTraceImpl implements QilletniStackTrace {
     
@@ -39,13 +40,20 @@ public class QilletniStackTraceImpl implements QilletniStackTrace {
     }
 
     @Override
-    public void printStackTrace() {
-        LOGGER.debug("TODO: print stack trace");
+    public String displayStackTrace() {
+        return "Stack trace:\n" + stackTraceElements.stream().map(QilletniStackTraceElement::displayString).collect(Collectors.joining("\n"));
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public QilletniStackTrace cloneStackTrace() {
         return new QilletniStackTraceImpl((Stack<QilletniStackTraceElement>) stackTraceElements.clone());
+    }
+
+    @Override
+    public String toString() {
+        return "QilletniStackTraceImpl{" +
+                "stackTraceElements=" + stackTraceElements +
+                '}';
     }
 }

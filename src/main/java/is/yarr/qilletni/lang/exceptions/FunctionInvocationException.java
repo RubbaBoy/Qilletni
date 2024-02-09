@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class FunctionInvocationException extends QilletniException {
+public class FunctionInvocationException extends QilletniContextException {
 
     public FunctionInvocationException() {
     }

@@ -42,4 +42,9 @@ public class QilletniStackTraceElementImpl implements QilletniStackTraceElement 
     public int getColumn() {
         return column;
     }
+
+    @Override
+    public String displayString() {
+        return String.format("\tat [%s] %s %s:%d%s", library, methodName + "(..)", fileName, line, column != -1 ? ":" + column : "");
+    }
 }

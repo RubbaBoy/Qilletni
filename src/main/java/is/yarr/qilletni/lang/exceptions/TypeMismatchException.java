@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class TypeMismatchException extends QilletniException {
+public class TypeMismatchException extends QilletniContextException {
 
     public TypeMismatchException() {
     }

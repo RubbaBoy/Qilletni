@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class UnsetJavaReferenceException extends QilletniException {
+public class UnsetJavaReferenceException extends QilletniContextException {
     
     public UnsetJavaReferenceException() {
     }

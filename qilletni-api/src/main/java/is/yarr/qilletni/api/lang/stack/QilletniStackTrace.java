@@ -10,7 +10,7 @@ public interface QilletniStackTrace {
     
     List<QilletniStackTraceElement> getStackTrace();
     
-    void printStackTrace();
+    String displayStackTrace();
 
     QilletniStackTrace cloneStackTrace();
     

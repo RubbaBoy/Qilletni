@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class ListOutOfBoundsException extends QilletniException {
+public class ListOutOfBoundsException extends QilletniContextException {
 
     public ListOutOfBoundsException() {
     }

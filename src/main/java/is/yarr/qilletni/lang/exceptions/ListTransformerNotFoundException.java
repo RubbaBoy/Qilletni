@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class ListTransformerNotFoundException extends QilletniException {
+public class ListTransformerNotFoundException extends QilletniContextException {
     
     public ListTransformerNotFoundException() {
         super();

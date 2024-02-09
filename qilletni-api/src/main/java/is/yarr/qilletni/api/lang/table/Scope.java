@@ -43,6 +43,7 @@ public interface Scope {
         GLOBAL,
         FUNCTION,
         LOCAL,
-        ENTITY
+        ENTITY,
+        FILE
     }
 }

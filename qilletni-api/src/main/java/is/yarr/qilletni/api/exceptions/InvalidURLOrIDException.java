@@ -1,6 +1,6 @@
 package is.yarr.qilletni.api.exceptions;
 
-public class InvalidURLOrIDException extends RuntimeException {
+public class InvalidURLOrIDException extends QilletniException {
 
     public InvalidURLOrIDException() {
     }

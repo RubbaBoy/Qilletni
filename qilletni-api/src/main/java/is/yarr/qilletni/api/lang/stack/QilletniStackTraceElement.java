@@ -12,4 +12,6 @@ public interface QilletniStackTraceElement {
     
     int getColumn();
     
+    String displayString();
+    
 }

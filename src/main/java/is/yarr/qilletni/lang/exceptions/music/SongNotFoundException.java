@@ -1,9 +1,9 @@
 package is.yarr.qilletni.lang.exceptions.music;
 
-import is.yarr.qilletni.lang.exceptions.QilletniException;
+import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class SongNotFoundException extends QilletniException {
+public class SongNotFoundException extends QilletniContextException {
 
     public SongNotFoundException() {
     }

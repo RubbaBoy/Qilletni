@@ -1,6 +1,6 @@
 package is.yarr.qilletni.lang.exceptions;
 
-public class NoTypeAdapterException extends QilletniException {
+public class NoTypeAdapterException extends QilletniContextException {
     public NoTypeAdapterException(Class<?> to) {
         super("No type adapter for converting to " + to.getCanonicalName());
     }

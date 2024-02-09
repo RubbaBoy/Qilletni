@@ -27,7 +27,7 @@ public class SymbolTableImpl implements SymbolTable {
     @Override
     public Scope initScope(Scope globalScope) {
 //        currentScopeStack.push(globalScope);
-        currentScope = new ScopeImpl(globalScope, Scope.ScopeType.LOCAL, "file local");
+        currentScope = new ScopeImpl(globalScope, Scope.ScopeType.FILE, "file local");
         return globalScope;
     }
 
@@ -76,7 +76,7 @@ public class SymbolTableImpl implements SymbolTable {
         previousScopeStacks.push(currentScope);
         
         var global = currentScope.getParent();
-        if (currentScope.getScopeType() == Scope.ScopeType.ENTITY) {
+        if (currentScope.getScopeType() == Scope.ScopeType.ENTITY || currentScope.getScopeType() == Scope.ScopeType.FILE) {
             global = currentScope;
         }
         

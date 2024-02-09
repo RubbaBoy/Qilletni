@@ -1,20 +1,21 @@
 package is.yarr.qilletni.lang.internal;
 
-import is.yarr.qilletni.api.lang.internal.FunctionInvoker;
+import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.internal.NativeFunctionClassInjector;
-import is.yarr.qilletni.api.lang.table.Scope;
+import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lib.BeforeAnyInvocation;
 import is.yarr.qilletni.api.lib.NativeOn;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
-import is.yarr.qilletni.lang.exceptions.lib.NoNativeLibraryConstructorFoundException;
-import is.yarr.qilletni.lang.exceptions.lib.UninjectableConstructorTypeException;
+import is.yarr.qilletni.lang.exceptions.QilletniContextException;
+import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
+import is.yarr.qilletni.lang.exceptions.lib.NoNativeLibraryConstructorFoundContextException;
+import is.yarr.qilletni.lang.exceptions.lib.UninjectableConstructorTypeContextException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.types.TypeUtils;
-import org.antlr.v4.runtime.ParserRuleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +105,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         return Optional.empty();
     }
     
-    public QilletniType invokeNativeMethod(SymbolTable symbolTable, String name, List<QilletniType> params, int definedParamCount, QilletniTypeClass<?> invokedUponType) {
+    public QilletniType invokeNativeMethod(SymbolTable symbolTable, QilletniStackTrace qilletniStackTrace, String name, List<QilletniType> params, int definedParamCount, QilletniTypeClass<?> invokedUponType) {
         LOGGER.debug("invokeNativeMethod({}, {}, {})", name, definedParamCount, invokedUponType);
         var invocableMethod = nativeMethods.get(new MethodSignature(name, definedParamCount, invokedUponType));
         if (invocableMethod == null) {
@@ -112,26 +113,46 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         }
 
         try {
-            var instance = createInstanceForMethod(symbolTable, invocableMethod);
+            var instance = createInstanceForMethod(symbolTable, qilletniStackTrace, invocableMethod);
             
             if (invocableMethod.beforeAny() != null) {
                 typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), params);
             }
             
             return typeAdapterInvoker.invokeMethod(instance, invocableMethod.method(), params);
-        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            throw getQilletniNativeInvocationException(qilletniStackTrace, e);
         }
     }
-    
-    private Object createInstanceForMethod(SymbolTable symbolTable, InvocableMethod invocableMethod) throws InvocationTargetException, InstantiationException, IllegalAccessException {
+
+    private static QilletniNativeInvocationException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e) {
+        Throwable throwable = e;
+        if (throwable instanceof InvocationTargetException ite) {
+            throwable = ite.getCause();
+        }
+
+        var theirMessage = throwable.getMessage();
+
+        if (theirMessage == null) {
+            theirMessage = "An exception of " + throwable.getClass().getSimpleName() + " occurred in a native method";
+        } else {
+            theirMessage = "An exception of " + throwable.getClass().getSimpleName() + " occurred in a native method: " + theirMessage;
+        }
+
+        var qce = new QilletniNativeInvocationException(throwable);
+        qce.setQilletniStackTrace(qilletniStackTrace);
+        qce.setMessage(theirMessage);
+        return qce;
+    }
+
+    private Object createInstanceForMethod(SymbolTable symbolTable, QilletniStackTrace qilletniStackTrace, InvocableMethod invocableMethod) throws InvocationTargetException, InstantiationException, IllegalAccessException {
         if (!(invocableMethod.beforeAny() != null && invocableMethod.beforeAny().accessFlags().contains(AccessFlag.STATIC))
                 || !invocableMethod.method().accessFlags().contains(AccessFlag.STATIC)) {
             var declaringClass = invocableMethod.method().getDeclaringClass();
             var constructors = declaringClass.getConstructors();
 
             if (constructors.length == 0) {
-                throw new NoNativeLibraryConstructorFoundException();
+                throw new NoNativeLibraryConstructorFoundContextException();
             }
 
             var constructor = constructors[0];
@@ -139,7 +160,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
             Arrays.stream(constructor.getParameterTypes()).filter(paramType ->
                     injectableInstances.stream().noneMatch(paramType::isInstance))
                     .findFirst().ifPresent(invalidParam -> {
-                        throw new UninjectableConstructorTypeException(String.format("Attempted to inject uninjectable class %s", invalidParam.getCanonicalName()));        
+                        throw new UninjectableConstructorTypeContextException(String.format("Attempted to inject uninjectable class %s", invalidParam.getCanonicalName()));        
                     });
 
             var params = Arrays.stream(constructor.getParameterTypes()).map(paramType ->
@@ -147,8 +168,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
                         if (obj instanceof UnimplementedFunctionInvoker) {
                             try {
                                 LOGGER.debug("New instance of stuff {}", symbolTable.currentScope());
-//                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, qilletniStackTrace.copyStackTrace(), this);
-                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this);
+                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, qilletniStackTrace.cloneStackTrace(), this);
                             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }

@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class InvalidConstructor extends QilletniException {
+public class InvalidConstructor extends QilletniContextException {
 
     public InvalidConstructor() {
     }

@@ -5,6 +5,7 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
+import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
@@ -12,13 +13,12 @@ import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.TrackOrchestrator;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
-import is.yarr.qilletni.lang.exceptions.AlreadyDefinedException;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
 import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
-import is.yarr.qilletni.lang.exceptions.QilletniException;
+import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.internal.FunctionInvokerImpl;
@@ -1358,11 +1358,29 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
             return (T) result;
         } catch (QilletniException e) {
-            if (!e.isSourceSet() && ctx instanceof ParserRuleContext parserRuleContext) {
-                e.setSource(parserRuleContext);
-            }
+            if (e instanceof QilletniContextException qce) {
+                if (!qce.isSourceSet() && ctx instanceof ParserRuleContext parserRuleContext) {
+                    qce.setSource(parserRuleContext);
+                }
 
-            throw e;
+                if (qce.getQilletniStackTrace() == null) {
+                    qce.setQilletniStackTrace(qilletniStackTrace);
+                }
+                
+                throw e;
+            } else {
+                QilletniContextException qce;
+                
+                if (ctx instanceof ParserRuleContext parserRuleContext) {
+                    qce = new QilletniContextException(parserRuleContext, e);
+                } else {
+                    qce = new QilletniContextException(e);
+                }
+
+                qce.setQilletniStackTrace(qilletniStackTrace);
+                
+                throw qce;
+            }
         }
     }
 

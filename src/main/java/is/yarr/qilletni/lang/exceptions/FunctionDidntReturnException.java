@@ -2,7 +2,7 @@ package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class FunctionDidntReturnException extends QilletniException {
+public class FunctionDidntReturnException extends QilletniContextException {
 
     public FunctionDidntReturnException() {
     }
