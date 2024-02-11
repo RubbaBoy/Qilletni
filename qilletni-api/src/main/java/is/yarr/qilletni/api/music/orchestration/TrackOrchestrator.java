@@ -1,8 +1,9 @@
-package is.yarr.qilletni.api.music;
+package is.yarr.qilletni.api.music.orchestration;
 
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
+import is.yarr.qilletni.api.music.Track;
 
 public interface TrackOrchestrator {
 

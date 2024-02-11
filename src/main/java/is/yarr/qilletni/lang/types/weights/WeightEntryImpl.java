@@ -7,10 +7,9 @@ import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
 import is.yarr.qilletni.api.lang.types.weights.WeightTrackType;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.api.lang.types.SongType;
-import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.Track;
-import is.yarr.qilletni.api.music.TrackOrchestrator;
+import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -27,8 +26,7 @@ public class WeightEntryImpl implements WeightEntry {
     private CollectionType collection;
     private WeightsType weights;
     private Playlist playlist;
-    private MusicCache musicCache;
-    private TrackOrchestrator trackOrchestrator;
+    private DynamicProvider dynamicProvider;
 
     public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, SongType song, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
@@ -50,11 +48,10 @@ public class WeightEntryImpl implements WeightEntry {
         this.weightTrackType = WeightTrackType.LIST;
     }
 
-    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, MusicCache musicCache, TrackOrchestrator trackOrchestrator, CollectionType collection, boolean canRepeatTrack, boolean canRepeatWeight) {
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, CollectionType collection, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
         this.weightUnit = weightUnit;
-        this.musicCache = musicCache;
-        this.trackOrchestrator = trackOrchestrator;
+        this.dynamicProvider = dynamicProvider;
         this.canRepeatTrack = canRepeatTrack;
         this.canRepeatWeight = canRepeatWeight;
 
@@ -62,10 +59,10 @@ public class WeightEntryImpl implements WeightEntry {
         this.weightTrackType = WeightTrackType.COLLECTION;
     }
 
-    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, TrackOrchestrator trackOrchestrator, WeightsType weights, boolean canRepeatTrack, boolean canRepeatWeight) {
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, WeightsType weights, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
         this.weightUnit = weightUnit;
-        this.trackOrchestrator = trackOrchestrator;
+        this.dynamicProvider = dynamicProvider;
         this.canRepeatTrack = canRepeatTrack;
         this.canRepeatWeight = canRepeatWeight;
 
@@ -73,10 +70,10 @@ public class WeightEntryImpl implements WeightEntry {
         this.weightTrackType = WeightTrackType.WEIGHTS;
     }
 
-    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, MusicCache musicCache, Playlist playlist, boolean canRepeatTrack, boolean canRepeatWeight) {
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, Playlist playlist, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
         this.weightUnit = weightUnit;
-        this.musicCache = musicCache;
+        this.dynamicProvider = dynamicProvider;
         this.canRepeatTrack = canRepeatTrack;
         this.canRepeatWeight = canRepeatWeight;
         
@@ -131,6 +128,9 @@ public class WeightEntryImpl implements WeightEntry {
 
     @Override
     public Track getTrack() {
+        final var trackOrchestrator = dynamicProvider.getTrackOrchestrator();
+        final var musicCache = dynamicProvider.getMusicCache();
+        
         return switch (weightTrackType) {
             case SINGLE_TRACK -> song.getTrack();
             case LIST -> {
@@ -148,6 +148,8 @@ public class WeightEntryImpl implements WeightEntry {
 
     @Override
     public List<Track> getAllTracks() {
+        final var musicCache = dynamicProvider.getMusicCache();
+        
         return switch (weightTrackType) {
             case SINGLE_TRACK -> List.of(song.getTrack());
             case LIST -> songList.getItems().stream().map(SongType.class::cast).map(SongType::getTrack).toList();

@@ -3,15 +3,15 @@ package is.yarr.qilletni.music.spotify.provider;
 import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
+import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.StringIdentifier;
-import is.yarr.qilletni.api.music.TrackOrchestrator;
+import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
 import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
 import is.yarr.qilletni.api.music.factories.SongTypeFactory;
 import is.yarr.qilletni.music.spotify.SpotifyMusicCache;
 import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
 import is.yarr.qilletni.music.spotify.SpotifyStringIdentifier;
-import is.yarr.qilletni.music.spotify.SpotifyTrackOrchestrator;
 import is.yarr.qilletni.music.spotify.auth.SpotifyApiSingleton;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
 import is.yarr.qilletni.music.spotify.auth.pkce.SpotifyPKCEAuthorizer;
@@ -19,6 +19,7 @@ import is.yarr.qilletni.music.spotify.play.ReroutablePlayActor;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 
 public class SpotifyServiceProvider implements ServiceProvider {
     
@@ -28,7 +29,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
     private StringIdentifier stringIdentifier;
     
     @Override
-    public CompletableFuture<Void> initialize() {
+    public CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction) {
         SpotifyAuthorizer authorizer = SpotifyPKCEAuthorizer.createWithCodes();
         
         return authorizer.authorizeSpotify().thenRun(() -> {
@@ -36,7 +37,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
             SpotifyApiSingleton.setSpotifyAuthorizer(authorizer);
             musicFetcher = spotifyMusicFetcher;
             musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
-            trackOrchestrator = new SpotifyTrackOrchestrator(new ReroutablePlayActor(), musicCache);
+            trackOrchestrator = defaultTrackOrchestratorFunction.apply(new ReroutablePlayActor(), musicCache);
         });
     }
 

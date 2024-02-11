@@ -190,6 +190,10 @@ play_stmt
     | PLAY collection_expr collection_limit? LOOP_PARAM?
     ;
 
+provider_stmt
+    : PROVIDER str_expr ('{' body '}')?
+    ;
+
 function_def
     : FUNCTION_DEF ID '(' function_def_params ')' function_on_type? '{' body '}'
     | NATIVE FUNCTION_DEF ID '(' function_def_params ')' function_on_type?
@@ -270,6 +274,7 @@ stmt
     | function_call
     | entity_def
     | expr DOT function_call
+    | provider_stmt
     ;
 
 

@@ -1,4 +1,4 @@
-package is.yarr.qilletni.music.spotify.orchestration;
+package is.yarr.qilletni.music.orchestration;
 
 import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.weights.WeightEntry;

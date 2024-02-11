@@ -26,28 +26,6 @@ public class EntityTransaction implements AutoCloseable {
     public Session getSession() {
         return session;
     }
-    
-    public <T> List<T> findAllEntitiesFromExpression(Class<T> entityType, Function<CriteriaBuilder, Expression<Boolean>> predicates) {
-        var session = getSession();
-
-        var builder = session.getCriteriaBuilder();
-        var criteria = builder.createQuery(entityType);
-        
-        criteria.where(predicates.apply(builder));
-        
-        return session.createQuery(criteria).getResultList();
-    }
-    
-    public <T> List<T> findAllEntitiesFromPredicates(Class<T> entityType, Function<CriteriaBuilder, List<Predicate>> predicates) {
-        var session = getSession();
-
-        var builder = session.getCriteriaBuilder();
-        var criteria = builder.createQuery(entityType);
-        
-        criteria.where(predicates.apply(builder).toArray(Predicate[]::new));
-        
-        return session.createQuery(criteria).getResultList();
-    }
 
     @Override
     public void close() {

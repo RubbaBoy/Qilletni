@@ -54,6 +54,7 @@ COLON: ':';
 
 
 PLAY : 'play';
+PROVIDER : 'provider';
 FUNCTION_DEF : 'fun';
 NATIVE : 'native';
 ON: 'on';

@@ -7,12 +7,32 @@ import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
 import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
+import is.yarr.qilletni.api.lang.table.Scope;
+import is.yarr.qilletni.api.lang.table.SymbolTable;
+import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.api.lang.types.BooleanType;
+import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.DoubleType;
-import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
-import is.yarr.qilletni.api.music.MusicCache;
-import is.yarr.qilletni.api.music.StringIdentifier;
-import is.yarr.qilletni.api.music.TrackOrchestrator;
+import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.api.lang.types.JavaType;
+import is.yarr.qilletni.api.lang.types.ListType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.WeightsType;
+import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
+import is.yarr.qilletni.api.lang.types.collection.CollectionLimitUnit;
+import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinition;
+import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.api.lang.types.entity.UninitializedType;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
+import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
+import is.yarr.qilletni.api.music.MusicPopulator;
+import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
@@ -23,50 +43,28 @@ import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.internal.FunctionInvokerImpl;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
-import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolImpl;
-import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.lang.table.TableUtils;
-import is.yarr.qilletni.api.lang.types.AlbumType;
 import is.yarr.qilletni.lang.types.AlbumTypeImpl;
-import is.yarr.qilletni.api.lang.types.BooleanType;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
-import is.yarr.qilletni.api.lang.types.CollectionType;
-import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.lang.types.CollectionTypeImpl;
 import is.yarr.qilletni.lang.types.DoubleTypeImpl;
 import is.yarr.qilletni.lang.types.EntityTypeImpl;
 import is.yarr.qilletni.lang.types.FunctionTypeImpl;
-import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
-import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.lang.types.JavaTypeImpl;
-import is.yarr.qilletni.api.lang.types.ListType;
-import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.lang.types.ListTypeImpl;
-import is.yarr.qilletni.api.lang.types.SongType;
 import is.yarr.qilletni.lang.types.SongTypeImpl;
-import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.TypeUtils;
 import is.yarr.qilletni.lang.types.TypelessListType;
-import is.yarr.qilletni.api.lang.types.WeightsType;
-import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
-import is.yarr.qilletni.api.lang.types.collection.CollectionLimitUnit;
-import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.lang.types.WeightsTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityAttributes;
-import is.yarr.qilletni.api.lang.types.entity.EntityDefinition;
-import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionImpl;
-import is.yarr.qilletni.api.lang.types.entity.UninitializedType;
 import is.yarr.qilletni.lang.types.entity.UninitializedTypeImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
-import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
 import is.yarr.qilletni.lang.types.weights.WeightEntryImpl;
-import is.yarr.qilletni.api.music.MusicPopulator;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -89,30 +87,24 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniVisitor.class);
 
-    private SymbolTable symbolTable;
+    private final SymbolTable symbolTable;
     private final ScopeImpl globalScope;
+    private final DynamicProvider dynamicProvider;
     private final EntityDefinitionManager entityDefinitionManager;
-    private final NativeFunctionHandler nativeFunctionHandler;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
     private final Consumer<String> importConsumer;
-    private final TrackOrchestrator trackOrchestrator;
-    private final StringIdentifier stringIdentifier;
-    private final MusicCache musicCache;
     private final FunctionInvokerImpl functionInvoker;
     private final QilletniStackTrace qilletniStackTrace;
 
-    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, ScopeImpl globalScope, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, TrackOrchestrator trackOrchestrator, StringIdentifier stringIdentifier, MusicCache musicCache, QilletniStackTrace qilletniStackTrace, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, ScopeImpl globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, QilletniStackTrace qilletniStackTrace, Consumer<String> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
+        this.dynamicProvider = dynamicProvider;
         this.entityDefinitionManager = entityDefinitionManager;
-        this.nativeFunctionHandler = nativeFunctionHandler;
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
         this.importConsumer = importConsumer;
-        this.trackOrchestrator = trackOrchestrator;
-        this.stringIdentifier = stringIdentifier;
-        this.musicCache = musicCache;
         this.qilletniStackTrace = qilletniStackTrace;
         this.functionInvoker = new FunctionInvokerImpl(symbolTable, symbolTableMap, nativeFunctionHandler, qilletniStackTrace);
     }
@@ -1076,12 +1068,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         QilletniType weightValue = visitQilletniTypedNode(ctx.expr());
         
         if (weightValue instanceof StringType stringType) {
-            weightValue = stringIdentifier.parseString(stringType.getValue())
+            weightValue = dynamicProvider.getStringIdentifier().parseString(stringType.getValue())
                     .orElseThrow(() -> new TypeMismatchException("Expected a song, collection, or list for weight value"));
         }
 
         return switch (weightValue) {
-            case CollectionType collectionType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), musicCache, trackOrchestrator, collectionType, canRepeatTrack, canRepeatWeight);
+            case CollectionType collectionType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, collectionType, canRepeatTrack, canRepeatWeight);
             case ListType listType -> {
                 if (!QilletniTypeClass.SONG.equals(listType.getSubType())) {
                     throw new TypeMismatchException("Expected a song list, got a " + listType.getSubType());
@@ -1100,7 +1092,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     throw new InvalidWeightException("Nested weights must have percentage values adding up to 100%");
                 }
                 
-                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), trackOrchestrator, weightsType, canRepeatTrack, canRepeatWeight);
+                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, weightsType, canRepeatTrack, canRepeatWeight);
             }
             default -> throw new TypeMismatchException("Expected a song, collection, or list for weight value");
         };
@@ -1108,6 +1100,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Object visitPlay_stmt(QilletniParser.Play_stmtContext ctx) {
+        final var trackOrchestrator = dynamicProvider.getTrackOrchestrator();
+        
         if (ctx.song_expr() != null) {
             var song = visitQilletniTypedNode(ctx.song_expr(), SongType.class);
             musicPopulator.populateSong(song);
@@ -1127,6 +1121,27 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             trackOrchestrator.playCollection(collection, ctx.LOOP_PARAM() != null);
         }
 
+        return null;
+    }
+
+    @Override
+    public Object visitProvider_stmt(QilletniParser.Provider_stmtContext ctx) {
+        var providerName = visitQilletniTypedNode(ctx.str_expr(), StringType.class).getValue();
+        
+        // TODO: switch provider
+        
+        var currentProviderName = dynamicProvider.getCurrentProvider().getName();
+        
+        dynamicProvider.switchProvider(providerName);
+        
+        if (ctx.body() != null) {
+            var retValue = visitNode(ctx.body());
+
+            dynamicProvider.switchProvider(currentProviderName);
+            
+            return retValue;
+        }
+        
         return null;
     }
 

@@ -1,4 +1,4 @@
-package is.yarr.qilletni.music.spotify;
+package is.yarr.qilletni.music.orchestration;
 
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.WeightsType;
@@ -10,9 +10,8 @@ import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.Track;
-import is.yarr.qilletni.api.music.TrackOrchestrator;
+import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
-import is.yarr.qilletni.music.spotify.orchestration.WeightDispersion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,14 +28,14 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class SpotifyTrackOrchestrator implements TrackOrchestrator {
+public class DefaultTrackOrchestrator implements TrackOrchestrator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyTrackOrchestrator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTrackOrchestrator.class);
 
     private final PlayActor playActor;
     private final MusicCache musicCache;
 
-    public SpotifyTrackOrchestrator(PlayActor playActor, MusicCache musicCache) {
+    public DefaultTrackOrchestrator(PlayActor playActor, MusicCache musicCache) {
         this.playActor = playActor;
         this.musicCache = musicCache;
     }

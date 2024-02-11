@@ -2,8 +2,12 @@ package is.yarr.qilletni.database;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HibernateUtil {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HibernateUtil.class);
+    
     private static final SessionFactory sessionFactory = buildSessionFactory();
 
     private static SessionFactory buildSessionFactory() {
@@ -16,7 +20,7 @@ public class HibernateUtil {
                     .setProperty("hibernate.connection.password", System.getenv("SPOTIFY_DB_PASSWORD"))
                     .buildSessionFactory();
         } catch (Throwable ex) {
-            System.err.println("Initial SessionFactory creation failed." + ex);
+            LOGGER.error("Initial SessionFactory creation failed", ex);
             throw new ExceptionInInitializerError(ex);
         }
     }

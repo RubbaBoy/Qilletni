@@ -1,12 +1,12 @@
 package is.yarr.qilletni.music;
 
-import is.yarr.qilletni.api.music.MusicCache;
-import is.yarr.qilletni.api.music.MusicPopulator;
-import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
-import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
 import is.yarr.qilletni.api.lang.types.AlbumType;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.music.MusicPopulator;
+import is.yarr.qilletni.api.music.supplier.DynamicProvider;
+import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
+import is.yarr.qilletni.lang.exceptions.music.SongNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,10 +15,10 @@ public class MusicPopulatorImpl implements MusicPopulator {
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicPopulatorImpl.class);
     private static final boolean EAGER_MUSIC_LOAD = "true".equals(System.getenv("EAGER_MUSIC_LOAD"));
     
-    private final MusicCache musicCache;
+    private final DynamicProvider dynamicProvider;
 
-    public MusicPopulatorImpl(MusicCache musicCache) {
-        this.musicCache = musicCache;
+    public MusicPopulatorImpl(DynamicProvider dynamicProvider) {
+        this.dynamicProvider = dynamicProvider;
     }
 
     @Override
@@ -35,6 +35,8 @@ public class MusicPopulatorImpl implements MusicPopulator {
         if (songType.isSpotifyDataPopulated()) {
             return;
         }
+        
+        final var musicCache = dynamicProvider.getMusicCache();
         
         LOGGER.debug("Populating song: {}", songType);
         
@@ -63,6 +65,8 @@ public class MusicPopulatorImpl implements MusicPopulator {
         if (albumType.isSpotifyDataPopulated()) {
             return;
         }
+
+        final var musicCache = dynamicProvider.getMusicCache();
         
         LOGGER.debug("Populating album: {}", albumType);
 
@@ -90,6 +94,8 @@ public class MusicPopulatorImpl implements MusicPopulator {
         if (collectionType.isSpotifyDataPopulated()) {
             return;
         }
+
+        final var musicCache = dynamicProvider.getMusicCache();
         
         LOGGER.debug("Populating collection: {}", collectionType);
 
