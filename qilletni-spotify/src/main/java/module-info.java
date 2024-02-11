@@ -1,5 +1,4 @@
 module Qilletni.qilletni.spotify.main {
-//    exports is.yarr.qilletni.music.spotify;
     exports is.yarr.qilletni.lib.spotify;
     requires Qilletni.qilletni.api.main;
     

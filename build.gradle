@@ -25,6 +25,7 @@ dependencies {
     
     implementation project(':qilletni-api')
     implementation project(':qilletni-spotify')
+    implementation project(':qilletni-provider-demo')
     implementation project(':qilletni-lib-std')
 }
 

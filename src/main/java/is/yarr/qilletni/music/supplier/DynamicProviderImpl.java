@@ -29,7 +29,7 @@ public class DynamicProviderImpl implements DynamicProvider {
 
     @Override
     public void addServiceProvider(ServiceProvider serviceProvider) {
-        providers.put(serviceProvider.getName(), serviceProvider);
+        providers.put(serviceProvider.getName().toLowerCase(), serviceProvider);
     }
 
     @Override
@@ -41,11 +41,11 @@ public class DynamicProviderImpl implements DynamicProvider {
 
     @Override
     public ServiceProvider getProvider(String providerName) {
-        if (!providers.containsKey(providerName)) {
+        if (!providers.containsKey(providerName.toLowerCase())) {
             throw new InvalidProviderException(String.format("No provider of name '%s' found", providerName));
         }
 
-        return providers.get(providerName);
+        return providers.get(providerName.toLowerCase());
     }
 
     @Override

@@ -1128,8 +1128,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public Object visitProvider_stmt(QilletniParser.Provider_stmtContext ctx) {
         var providerName = visitQilletniTypedNode(ctx.str_expr(), StringType.class).getValue();
         
-        // TODO: switch provider
-        
         var currentProviderName = dynamicProvider.getCurrentProvider().getName();
         
         dynamicProvider.switchProvider(providerName);
