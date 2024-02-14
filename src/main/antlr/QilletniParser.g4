@@ -186,8 +186,7 @@ collection_limit
     ;
 
 play_stmt
-    : PLAY song_expr
-    | PLAY collection_expr collection_limit? LOOP_PARAM?
+    : PLAY (ID | expr) collection_limit? LOOP_PARAM?
     ;
 
 provider_stmt

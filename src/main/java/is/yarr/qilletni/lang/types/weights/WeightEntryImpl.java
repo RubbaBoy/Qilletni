@@ -28,9 +28,10 @@ public class WeightEntryImpl implements WeightEntry {
     private Playlist playlist;
     private DynamicProvider dynamicProvider;
 
-    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, SongType song, boolean canRepeatTrack, boolean canRepeatWeight) {
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, SongType song, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
         this.weightUnit = weightUnit;
+        this.dynamicProvider = dynamicProvider;
         this.canRepeatTrack = canRepeatTrack;
         this.canRepeatWeight = canRepeatWeight;
         
@@ -38,9 +39,10 @@ public class WeightEntryImpl implements WeightEntry {
         this.weightTrackType = WeightTrackType.SINGLE_TRACK;
     }
 
-    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, ListType songList, boolean canRepeatTrack, boolean canRepeatWeight) {
+    public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, ListType songList, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
         this.weightUnit = weightUnit;
+        this.dynamicProvider = dynamicProvider;
         this.canRepeatTrack = canRepeatTrack;
         this.canRepeatWeight = canRepeatWeight;
         

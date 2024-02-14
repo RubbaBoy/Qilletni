@@ -37,9 +37,9 @@ public class FunctionInvokerImpl implements FunctionInvoker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionInvokerImpl.class);
 
-    public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler) {
-        this(symbolTable, symbolTableMap, nativeFunctionHandler, null);
-    }
+//    public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler) {
+//        this(symbolTable, symbolTableMap, nativeFunctionHandler, null);
+//    }
 
     public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler, QilletniStackTrace qilletniStackTrace) {
         this.symbolTable = symbolTable;

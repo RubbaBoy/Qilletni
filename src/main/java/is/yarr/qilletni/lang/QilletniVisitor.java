@@ -1083,9 +1083,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         .map(SongType.class::cast)
                         .forEach(musicPopulator::populateSong);
                 
-                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), listType, canRepeatTrack, canRepeatWeight);
+                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, listType, canRepeatTrack, canRepeatWeight);
             }
-            case SongType songType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), songType, canRepeatTrack, canRepeatWeight);
+            case SongType songType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, songType, canRepeatTrack, canRepeatWeight);
             case WeightsType weightsType -> {
                 var totalPercent = WeightUtils.validateWeights(weightsType);
                 if (totalPercent != 100) {
@@ -1102,14 +1102,22 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public Object visitPlay_stmt(QilletniParser.Play_stmtContext ctx) {
         final var trackOrchestrator = dynamicProvider.getTrackOrchestrator();
         
-        if (ctx.song_expr() != null) {
-            var song = visitQilletniTypedNode(ctx.song_expr(), SongType.class);
+        QilletniType playingNode;
+        
+        if (ctx.ID() != null) {
+            var scope = symbolTable.currentScope();
+            playingNode = scope.lookup(ctx.ID().getText()).getValue();
+        } else {
+            playingNode = visitQilletniTypedNode(ctx.expr());
+        }
+        
+        if (playingNode instanceof SongType song) {
             musicPopulator.populateSong(song);
             trackOrchestrator.playTrack(song.getTrack());
             return null;
         }
 
-        var collection = visitQilletniTypedNode(ctx.collection_expr(), CollectionType.class);
+        var collection = (CollectionType) playingNode;
 
         musicPopulator.populateCollection(collection);
         if (ctx.collection_limit() != null) {
@@ -1370,7 +1378,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
 
             return (T) result;
-        } catch (QilletniException e) {
+        } catch (Exception e) {
             if (e instanceof QilletniContextException qce) {
                 if (!qce.isSourceSet() && ctx instanceof ParserRuleContext parserRuleContext) {
                     qce.setSource(parserRuleContext);
