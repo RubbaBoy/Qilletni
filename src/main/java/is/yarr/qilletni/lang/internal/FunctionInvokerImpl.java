@@ -8,6 +8,7 @@ import is.yarr.qilletni.api.lang.stack.QilletniStackTraceElement;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.FunctionType;
+import is.yarr.qilletni.api.lang.types.ImportAliasType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.QilletniVisitor;
@@ -37,9 +38,9 @@ public class FunctionInvokerImpl implements FunctionInvoker {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionInvokerImpl.class);
 
-//    public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler) {
-//        this(symbolTable, symbolTableMap, nativeFunctionHandler, null);
-//    }
+    public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler) {
+        this(symbolTable, symbolTableMap, nativeFunctionHandler, null);
+    }
 
     public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler, QilletniStackTrace qilletniStackTrace) {
         this.symbolTable = symbolTable;
@@ -70,6 +71,13 @@ public class FunctionInvokerImpl implements FunctionInvoker {
             LOGGER.debug("SWAP scope! to {}", entityType.getEntityScope().getAllSymbols().keySet());
             swappedLookupScope = true;
             symbolTable.swapScope(entityType.getEntityScope());
+        } else if (invokedOn instanceof ImportAliasType importAliasType) {
+            LOGGER.debug("SWAP scope! to {}", importAliasType.getScope());
+            swappedLookupScope = true;
+            symbolTable.swapScope(importAliasType.getScope());
+            
+            // It's not actually invoked on
+            invokedOn = null;
         }
 
         var scope = symbolTable.currentScope();
@@ -81,7 +89,7 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         LOGGER.debug("functionType = {}", functionType);
         LOGGER.debug("woar on type: {} invoked on: {}", functionType.getOnType(), invokedOn != null ? invokedOn.getTypeClass() : "-");
         
-        if (hasOnType && !functionType.getOnType().equals(invokedOn.getTypeClass())) {
+        if (hasOnType && invokedOn != null && !functionType.getOnType().equals(invokedOn.getTypeClass())) {
             throw new FunctionInvocationException("Function not to be invoked on " + invokedOn.getTypeClass() + " should be " + functionType.getOnType());
         }
 

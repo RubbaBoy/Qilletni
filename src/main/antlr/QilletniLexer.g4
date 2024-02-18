@@ -9,6 +9,7 @@ tokens {
 }
 
 IMPORT: 'import';
+AS: 'as';
 
 LINE_COMMENT: '//' .*? NEWLINE -> skip; 
 BLOCK_COMMENT: '/*' .*? '*/' -> skip;

@@ -44,6 +44,7 @@ public interface Scope {
         FUNCTION,
         LOCAL,
         ENTITY,
-        FILE
+        FILE,
+        ALIASED_GLOBAL
     }
 }

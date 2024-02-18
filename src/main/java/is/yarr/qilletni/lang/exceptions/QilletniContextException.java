@@ -51,7 +51,7 @@ public class QilletniContextException extends QilletniException {
 
     @Override
     public String getMessage() {
-        return String.format("%s\n%s\n\n%s\n\nInternal stack trace:", Objects.requireNonNullElse(message, ""), sourceLocation, stackTrace.displayStackTrace());
+        return String.format("%s\n%s\n\n%s\n\nInternal stack trace:", Objects.requireNonNullElse(message, ""), sourceLocation, stackTrace != null ? stackTrace.displayStackTrace() : "");
     }
 
     public void setMessage(String message) {

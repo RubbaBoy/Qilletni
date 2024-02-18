@@ -220,10 +220,20 @@ public class ScopeImpl implements Scope {
 
     @Override
     public void defineFunction(Symbol<FunctionType> functionSymbol) {
-        if (parent != null && parent.getScopeType() == ScopeType.GLOBAL &&
+        if (functionSymbol.getName().equals("shit") || functionSymbol.getName().equals("balls")) {
+            LOGGER.debug("{} defineFunction() type = {} parent = {}", functionSymbol.getName(), scopeType, this);
+        }
+        
+        if (parent != null && // scopeType != ScopeType.ALIASED_GLOBAL &&
+                // if it's in an aliased global, don't propagate up
+                ((scopeType != ScopeType.ALIASED_GLOBAL && parent.getScopeType() == ScopeType.GLOBAL) || (parent.getScopeType() == ScopeType.ALIASED_GLOBAL)) &&
                 !functionSymbol.getName().startsWith("_") &&
                 // If not on an entity (should be in its own scope)
                 (functionSymbol.getValue().getOnType() == null || functionSymbol.getValue().getOnType().isNativeType())) {
+            if (functionSymbol.getName().equals("shit") || functionSymbol.getName().equals("balls")) {
+                LOGGER.debug("{} defining in parent!", functionSymbol.getName());
+            }
+            
             parent.defineFunction(functionSymbol);
             return;
         }
@@ -235,6 +245,10 @@ public class ScopeImpl implements Scope {
             if (functions.stream().anyMatch(symbol -> symbol.getValue().getInvokingParamCount() == targetParamCount && Objects.equals(symbol.getValue().getOnType(), targetOnType))) {
                 throw new AlreadyDefinedException(String.format("Function %s on %s has already been defined!", functionSymbol.getName(), targetOnType));
             }
+        }
+
+        if (functionSymbol.getName().equals("shit") || functionSymbol.getName().equals("balls")) {
+            LOGGER.debug("{} defining here!! {}", functionSymbol.getName(), this);
         }
 
         functionSymbolTable.compute(functionSymbol.getName(), (k, v) -> {
@@ -285,7 +299,7 @@ public class ScopeImpl implements Scope {
 
     @Override
     public String toString() {
-        return "Scope(" + scopeId + ", " + (!debugDesc.isEmpty() ? (debugDesc + ", ") : "") + scopeType.name() + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", parent = " + parent + ")";
+        return "Scope(" + scopeId + ", " + (!debugDesc.isEmpty() ? (debugDesc + ", ") : "") + scopeType.name() + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", " + Arrays.toString(functionSymbolTable.keySet().toArray()) + ", parent = " + parent + ")";
 //        var stringBuilder = new StringBuilder("Scope(" + scopeId + ")[");
 //        var arr = symbolTable.values().toArray(Symbol[]::new);
 //        for (int i = 0; i < arr.length; i++) {

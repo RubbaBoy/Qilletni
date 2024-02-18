@@ -14,6 +14,7 @@ import is.yarr.qilletni.api.lang.types.BooleanType;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.ImportAliasType;
 import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.ListType;
@@ -78,6 +79,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -88,16 +90,17 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(QilletniVisitor.class);
 
     private final SymbolTable symbolTable;
-    private final ScopeImpl globalScope;
+    private final Scope globalScope;
     private final DynamicProvider dynamicProvider;
     private final EntityDefinitionManager entityDefinitionManager;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
-    private final Consumer<String> importConsumer;
+    // The file, the namespace
+    private final BiFunction<String, String, Optional<ImportAliasType>> importConsumer;
     private final FunctionInvokerImpl functionInvoker;
     private final QilletniStackTrace qilletniStackTrace;
 
-    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, ScopeImpl globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, QilletniStackTrace qilletniStackTrace, Consumer<String> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, Scope globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, QilletniStackTrace qilletniStackTrace, BiFunction<String, String, Optional<ImportAliasType>> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.dynamicProvider = dynamicProvider;
@@ -112,7 +115,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public Object visitProg(QilletniParser.ProgContext ctx) {
         symbolTable.initScope(globalScope);
-        visitChildren(ctx);
+        ctx.children.forEach(this::visitNode);
         return null;
     }
 
@@ -140,6 +143,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var id = ctx.ID().getText();
 
         LOGGER.debug("Defining func of {}", id);
+        LOGGER.debug("on scope: {}", scope);
 
         var params = new ArrayList<String>(visitNode(ctx.function_def_params()));
 
@@ -401,14 +405,20 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                     throw new VariableNotFoundException(ctx, "Cannot access private variable");
                 }
                 
-                var entity = visitQilletniTypedNode(ctx.expr(0), EntityTypeImpl.class);
-                LOGGER.debug("Getting property {} on entity {}", idText, entity.typeName());
-                var entityScope = entity.getEntityScope();
-                var entityPropertySymbol = entityScope.lookup(idText);
-                var entityProperty = entityPropertySymbol.getValue();
+                var visitedNode = visitQilletniTypedNode(ctx.expr(0));
+                
+                var scope = switch (visitedNode) {
+                    case EntityType entityType -> entityType.getEntityScope();
+                    case ImportAliasType importAliasType -> importAliasType.getScope();
+                    default -> throw new TypeMismatchException("Can only access property of entity or import alias");
+                };
+                
+//                LOGGER.debug("Getting property {} on entity {}", idText, entity.typeName());
+                var propertySymbol = scope.lookup(idText);
+                var property = propertySymbol.getValue();
 
-                if ((ctx.post_crement != null || ctx.post_crement_equals != null) && !entityProperty.getTypeClass().equals(QilletniTypeClass.INT)) {
-                    throw new TypeMismatchException("Cannot increment/decrement from a " + entityProperty.getTypeClass().getTypeName());
+                if ((ctx.post_crement != null || ctx.post_crement_equals != null) && !property.getTypeClass().equals(QilletniTypeClass.INT)) {
+                    throw new TypeMismatchException("Cannot increment/decrement from a " + property.getTypeClass().getTypeName());
                 }
 
                 if (ctx.post_crement != null || ctx.post_crement_equals != null) {
@@ -417,14 +427,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
                     }
                     
-                    var intVar = (IntType) entityProperty;
+                    var intVar = (IntType) property;
                     var newVal = new IntTypeImpl(operation.apply(intVar.getValue(), incrementBy));
-                    entityPropertySymbol.setValue(newVal);
+                    propertySymbol.setValue(newVal);
                     
                     return new IntTypeImpl(intVar.getValue());
                 }
                 
-                return entityProperty;
+                return property;
             }
         }
         
@@ -977,7 +987,25 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Object visitImport_file(QilletniParser.Import_fileContext ctx) {
-        importConsumer.accept(ctx.STRING().getText());
+        String importAs = null;
+
+        if (ctx.ID() != null) {
+            importAs = ctx.ID().getText();
+        }
+        
+        var importAliasOptional = importConsumer.apply(ctx.STRING().getText(), importAs);
+
+        if (importAliasOptional.isPresent()) {
+            var scope = symbolTable.currentScope();
+            if (scope.isDirectlyDefined(importAs)) {
+                var lookedUp = scope.lookup(importAs);
+                if (lookedUp.getType().equals(QilletniTypeClass.IMPORT_ALIAS)) {
+                    
+                }
+            }
+            scope.define(SymbolImpl.createGenericSymbol(importAs, QilletniTypeClass.IMPORT_ALIAS, importAliasOptional.get()));
+        }
+        
         return null;
     }
 
@@ -1350,25 +1378,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
         }
     }
-
-//    public <T> T visitNode(SymbolTable symbolTable, ParseTree ctx) {
-//        var oldsOne = this.symbolTable;
-//        this.symbolTable = symbolTable;
-//        
-//        LOGGER.debug("Setting symbol table to {} when it was {}", symbolTable, oldsOne);
-//
-//        System.out.println("\n\n");
-//        for (StackTraceElement stackTraceElement : Thread.currentThread().getStackTrace()) {
-//            System.out.println(stackTraceElement);
-//        }
-//        System.out.println("\n\n");
-//        
-//        
-//        var ret = this.<T>visitNode(ctx);
-//        this.symbolTable = oldsOne;
-//        
-//        return ret;
-//    }
 
     public <T> T visitNode(ParseTree ctx) {
         try {

@@ -10,7 +10,7 @@ prog
     : import_file* running* EOF;
 
 import_file
-    : IMPORT STRING
+    : IMPORT STRING (AS ID)?
     ;
 
 running

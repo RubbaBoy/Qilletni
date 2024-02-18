@@ -6,6 +6,7 @@ import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.FunctionType;
+import is.yarr.qilletni.api.lang.types.ImportAliasType;
 import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.ListType;
@@ -31,6 +32,7 @@ public class QilletniTypeClass<T extends QilletniType> {
     public static final QilletniTypeClass<FunctionType> FUNCTION = new QilletniTypeClass<>(FunctionType.class, "func");
     public static final QilletniTypeClass<ListType> LIST = new QilletniTypeClass<>(ListType.class, "list");
     public static final QilletniTypeClass<JavaType> JAVA = new QilletniTypeClass<>(JavaType.class, "java");
+    public static final QilletniTypeClass<ImportAliasType> IMPORT_ALIAS = new QilletniTypeClass<>(ImportAliasType.class, "");
     
     private static final List<QilletniTypeClass<?>> types = List.of(INT, DOUBLE, BOOLEAN, STRING, COLLECTION, SONG, ALBUM, WEIGHTS, FUNCTION, LIST, JAVA);
 

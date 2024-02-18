@@ -2,10 +2,12 @@ package is.yarr.qilletni.lang.runner;
 
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
+import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.BooleanType;
+import is.yarr.qilletni.api.lang.types.ImportAliasType;
 import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.ListType;
@@ -16,6 +18,8 @@ import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.QilletniVisitor;
+import is.yarr.qilletni.lang.exceptions.QilletniContextException;
+import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.internal.UnimplementedFunctionInvoker;
@@ -25,6 +29,7 @@ import is.yarr.qilletni.lang.stack.QilletniStackTraceImpl;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolTableImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
+import is.yarr.qilletni.lang.types.ImportAliasTypeImpl;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
 import is.yarr.qilletni.lang.types.JavaTypeImpl;
 import is.yarr.qilletni.lang.types.ListTypeImpl;
@@ -54,6 +59,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class QilletniProgramRunner {
 
@@ -88,11 +94,11 @@ public class QilletniProgramRunner {
         var albumTypeFactory = new AlbumTypeFactoryImpl();
 
         dynamicProvider.initFactories(songTypeFactory, collectionTypeFactory, albumTypeFactory);
-        
+
         var listGeneratorFactory = new ListTypeTransformerFactory();
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
         this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler);
-        
+
         libraryRegistrar.registerLibraries();
 
         nativeFunctionHandler.addInjectableInstance(musicPopulator);
@@ -103,10 +109,10 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(albumTypeFactory);
         nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker());
     }
-    
+
     private static TypeAdapterRegistrar createTypeAdapterRegistrar() {
         var typeAdapterRegistrar = new TypeAdapterRegistrar();
-        
+
         typeAdapterRegistrar.registerExactTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
 
@@ -131,44 +137,56 @@ public class QilletniProgramRunner {
         });
 
         typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
-        
+
         return typeAdapterRegistrar;
     }
 
     private static NativeFunctionHandler createNativeFunctionHandler(TypeAdapterRegistrar typeAdapterRegistrar, Map<SymbolTable, QilletniVisitor> symbolTables) {
         return new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables);
     }
-    
+
     public void importInitialFiles() {
         LOGGER.debug("Importing initial files!");
-        
+
         libraryRegistrar.getAutoImportFiles().forEach(autoImportFile -> {
             importFileFromStream(new ImportPathState(Paths.get(autoImportFile.libName() + "\\" + autoImportFile.fileName()), true, autoImportFile.libName()));
         });
     }
 
     public SymbolTable runProgram(Path file) throws IOException {
-        return runProgram(file, new ImportPathState(file.getParent(), false));
+        return runProgram(file, null);
     }
 
-    private SymbolTable runProgram(Path file, ImportPathState pathState) throws IOException {
-        return runProgram(CharStreams.fromString(Files.readString(file), file.getFileName().toString()), pathState);
+    public SymbolTable runProgram(Path file, Scope global) throws IOException {
+        return runProgram(file, new ImportPathState(file.getParent(), false), global);
     }
 
-    private SymbolTable runProgram(InputStream stream, ImportPathState pathState) throws IOException {
+    private SymbolTable runProgram(Path file, ImportPathState pathState, Scope global) throws IOException {
+        return runProgram(CharStreams.fromString(Files.readString(file), file.getFileName().toString()), pathState, global);
+    }
+
+    private SymbolTable runProgram(InputStream stream, ImportPathState pathState, Scope globalScope) throws IOException {
         var data = new String(new BufferedInputStream(stream).readAllBytes());
-        return runProgram(CharStreams.fromString(data, pathState.path().getFileName().toString()), pathState);
+        return runProgram(CharStreams.fromString(data, pathState.path().getFileName().toString()), pathState, globalScope);
     }
 
     public SymbolTable runProgram(CharStream charStream, ImportPathState pathState) {
+        return runProgram(charStream, pathState, null);
+    }
+
+    public SymbolTable runProgram(CharStream charStream, ImportPathState pathState, Scope globalScope) {
         var lexer = new QilletniLexer(charStream);
         var tokenStream = new CommonTokenStream(lexer);
         var qilletniParser = new QilletniParser(tokenStream);
-        
+
+        var globalOverride = globalScope == null ? this.globalScope : globalScope;
+
         var symbolTable = new SymbolTableImpl(pathState.path().toString());
-        
+
+        LOGGER.debug("global override: {}", globalScope);
+
         QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalScope, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, qilletniStackTrace, importedFile -> importFileFromStream(pathState.importFrom(importedFile)));
+        var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalOverride, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, qilletniStackTrace, (importedFile, importAs) -> importFileFromStream(pathState.importFrom(importedFile), importAs, globalOverride));
         symbolTables.put(symbolTable, qilletniVisitor);
 
         qilletniVisitor.visit(programContext);
@@ -176,21 +194,42 @@ public class QilletniProgramRunner {
         return symbolTable;
     }
 
-    private void importFileFromStream(ImportPathState pathState) {
+    private Optional<ImportAliasType> importFileFromStream(ImportPathState pathState) {
+        return importFileFromStream(pathState, null, globalScope);
+    }
+
+    private Optional<ImportAliasType> importFileFromStream(ImportPathState pathState, String importAs, Scope global) {
         try {
+            SymbolTable symbolTable;
+
+            if (importAs != null) {
+                global = new ScopeImpl(globalScope, Scope.ScopeType.ALIASED_GLOBAL, "fake global");
+            }
+
             if (pathState.isInternal()) {
                 LOGGER.debug("Importing internal file: {}", pathState.path());
-                
-//                runProgram(getClass().getClassLoader().getResourceAsStream(pathState.path().toString()), pathState);
-                runProgram(libraryRegistrar.findLibraryByPath(pathState.libraryName(), pathState.path()).orElseThrow(FileNotFoundException::new), pathState);
+
+                symbolTable = runProgram(libraryRegistrar.findLibraryByPath(pathState.libraryName(), pathState.path()).orElseThrow(FileNotFoundException::new), pathState, global);
             } else {
                 LOGGER.debug("Importing filesystem file: {}", pathState.path());
 
-                runProgram(pathState.path());
+                symbolTable = runProgram(pathState.path(), global);
             }
-        } catch (IOException e) {
+
+            if (importAs != null) {
+                LOGGER.debug("Creating import alias '{}' for: {}", importAs, symbolTable.currentScope());
+                return Optional.of(new ImportAliasTypeImpl(importAs, symbolTable.currentScope()));
+            }
+        } catch (Exception e) {
             LOGGER.error("Unable to import file " + pathState, e);
+
+            var qce = new QilletniNativeInvocationException(e);
+            qce.setQilletniStackTrace(qilletniStackTrace);
+            qce.setMessage(e.getMessage());
+            throw qce;
         }
+
+        return Optional.empty();
     }
 
     public Map<SymbolTable, QilletniVisitor> getSymbolTables() {
