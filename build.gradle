@@ -1,14 +1,15 @@
 plugins {
-    id 'java'
     id 'antlr'
     id 'idea'
+    id 'maven-publish'
 }
 
 group = 'is.yarr.qilletni'
-version = '1.0-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -23,33 +24,21 @@ dependencies {
     implementation 'org.antlr:antlr4-runtime:4.13.1'
     antlr 'org.antlr:antlr4:4.13.1'
     
-    implementation project(':qilletni-api')
-    implementation project(':qilletni-spotify')
-    implementation project(':qilletni-provider-demo')
-    implementation project(':qilletni-lib-std')
+    implementation 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }
 
 tasks.withType(JavaCompile).each {
     it.options.compilerArgs.add('--enable-preview')
 }
 
-//sourceSets {
-//    main {
-//        java {
-//            srcDir "${buildDir}/generated-src/antlr/main"
-//        }
-//    }
-//}
-
 generateGrammarSource {
-//        val pkg = "com.stackoverflow.antlr"
-//        arguments = arguments + listOf("-package", pkg)
         var pkg = 'is.yarr.qilletni.antlr';
         outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/${pkg.split("\\.").join("/")}".toString())
-//        outputDirectory = new File("${project.layout.buildDirectory}/generated-src/antlr/" + "is.yarr.qilletni.antlr".split("\\.").join("/")
     maxHeapSize = "128m"
     arguments += ['-visitor', '-no-listener']
 }
+
+compileJava.dependsOn generateGrammarSource
 
 sourceSets {
     generated {
@@ -63,6 +52,32 @@ idea {
     }
 }
 
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
+    
+    repositories {
+        mavenLocal()
+    }
+
+    java {
+        withSourcesJar()
+        sourceCompatibility = '20'
+        targetCompatibility = '20'
+    }
+    
+    tasks.withType(JavaCompile).each {
+        it.options.compilerArgs.add('--enable-preview')
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+    }
+}
 
 tasks.withType(JavaCompile) {
     options.compilerArgs += "--enable-preview"
@@ -76,7 +91,9 @@ tasks.withType(JavaExec) {
     jvmArgs += '--enable-preview'
 }
 
-compileJava.dependsOn generateGrammarSource
+tasks.named('sourcesJar').configure {
+    dependsOn 'generateGrammarSource'
+}
 
 test {
     useJUnitPlatform()

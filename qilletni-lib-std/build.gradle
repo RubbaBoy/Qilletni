@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'is.yarr.qilletni.lib.core'
@@ -7,29 +8,22 @@ version = '1.0.0'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-api:2.22.1'
-    implementation 'org.apache.logging.log4j:log4j-core:2.22.1'
-    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
-    
-    implementation project(':qilletni-api')
+    compileOnly 'org.apache.logging.log4j:log4j-api:2.22.1'
+    compileOnly 'org.apache.logging.log4j:log4j-core:2.22.1'
+    compileOnly 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
+
+    compileOnly 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
+}
+
+shadowJar {
+    configurations = [project.configurations.runtimeClasspath]
+    archiveClassifier.set('')
 }
 
 tasks.withType(JavaCompile).each {
     it.options.compilerArgs.add('--enable-preview')
 }
-
-//sourceSets {
-//    main {
-//        java {
-//            srcDirs 'src/main/java'
-//        }
-//        resources {
-//            srcDirs 'src/main/resources'
-//            // Check for any exclude rules here that might be ignoring your files
-//        }
-//    }
-//}
-

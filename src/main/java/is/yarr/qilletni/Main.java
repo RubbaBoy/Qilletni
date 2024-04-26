@@ -14,9 +14,9 @@ public class Main {
     }
     
     private void main(String programFile) throws IOException {
-        var dynamicProvider = ServiceManager.createDynamicProvider();
-        var qilletniProgramRunner = new QilletniProgramRunner(dynamicProvider);
-        qilletniProgramRunner.importInitialFiles();
-        qilletniProgramRunner.runProgram(Paths.get("input", programFile));
+//        var dynamicProvider = ServiceManager.createDynamicProvider();
+//        var qilletniProgramRunner = new QilletniProgramRunner(dynamicProvider);
+//        qilletniProgramRunner.importInitialFiles();
+//        qilletniProgramRunner.runProgram(Paths.get("input", programFile));
     }
 }

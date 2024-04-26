@@ -4,6 +4,7 @@ import is.yarr.qilletni.StringUtility;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
+import is.yarr.qilletni.api.CollectionUtility;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
 import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;

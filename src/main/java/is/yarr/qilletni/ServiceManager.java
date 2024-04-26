@@ -14,8 +14,8 @@ public class ServiceManager {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceManager.class);
     
-    public static DynamicProvider createDynamicProvider() {
-        var serviceLoader = ServiceLoader.load(ServiceProvider.class);
+    public static DynamicProvider createDynamicProvider(ClassLoader serviceClassLoader) {
+        var serviceLoader = ServiceLoader.load(ServiceProvider.class, serviceClassLoader);
         
         var providers = serviceLoader.stream().map(ServiceLoader.Provider::get).toList();
 

@@ -19,3 +19,5 @@ print("i = " + i)
 
 collection myPlaylist = createPlaylist("test10")
 print(myPlaylist)
+
+play 

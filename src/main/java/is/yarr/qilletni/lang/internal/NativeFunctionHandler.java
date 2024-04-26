@@ -154,7 +154,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
             if (constructors.length == 0) {
                 throw new NoNativeLibraryConstructorFoundContextException();
             }
-
+            
             var constructor = constructors[0];
 
             Arrays.stream(constructor.getParameterTypes()).filter(paramType ->

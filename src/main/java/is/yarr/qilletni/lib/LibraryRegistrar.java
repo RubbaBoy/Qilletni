@@ -1,12 +1,15 @@
 package is.yarr.qilletni.lib;
 
 import is.yarr.qilletni.api.lib.Library;
+import is.yarr.qilletni.lang.exceptions.lib.LibraryNotFoundException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.runner.ImportPathState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -21,15 +24,17 @@ public class LibraryRegistrar {
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryRegistrar.class);
     
     private final NativeFunctionHandler nativeFunctionHandler;
+    private final LibrarySourceFileResolver librarySourceFileResolver; 
     private final Map<String, Library> libraries = new HashMap<>();
     private final List<AutoImportFile> autoImportFiles = new ArrayList<>();
 
-    public LibraryRegistrar(NativeFunctionHandler nativeFunctionHandler) {
+    public LibraryRegistrar(NativeFunctionHandler nativeFunctionHandler, LibrarySourceFileResolver librarySourceFileResolver) {
         this.nativeFunctionHandler = nativeFunctionHandler;
+        this.librarySourceFileResolver = librarySourceFileResolver;
     }
 
-    public void registerLibraries() {
-        for (var library : ServiceLoader.load(Library.class)) {
+    public void registerLibraries(ClassLoader libraryClassLoader) {
+        for (var library : ServiceLoader.load(Library.class, libraryClassLoader)) {
             LOGGER.debug("Loading library {} v{}", library.getName(), library.getVersion());
 
             if (libraries.containsKey(library.getImportName())) {
@@ -45,20 +50,48 @@ public class LibraryRegistrar {
             }
         }
     }
-    
-    public Optional<InputStream> findLibraryByPath(String libraryName, Path path) {
-        if (libraryName == null || !libraries.containsKey(libraryName)) {
-            return Optional.ofNullable(getClass().getClassLoader().getResourceAsStream(path.toString()));
+
+    /**
+     * Reads a .ql file from a library, returning its contents.
+     * 
+     * @param libraryName The name of the library
+     * @param path The path of the file
+     * @return The contents of the file, if present
+     */
+    public Optional<String> findLibraryByPath(String libraryName, Path path) throws IOException {
+        if (libraryName == null) {
+            try (var resourceStream = getClass().getClassLoader().getResourceAsStream(path.toString())) {
+                if (resourceStream != null) {
+                    return Optional.of(new String(resourceStream.readAllBytes()));
+                }
+                
+                return Optional.empty();
+            }
+        }
+
+        if (!libraries.containsKey(libraryName)) {
+            throw new LibraryNotFoundException("Library '%s' not found".formatted(libraryName));
         }
         
         var library = libraries.get(libraryName);
         
-        return library.readPath(path.toString().replace("\\", "/"));
+        return librarySourceFileResolver.resolveSourcePath(libraryName, path.toString().replace("\\", "/"))
+                .or(() -> library.readPath(path.toString().replace("\\", "/")).map(stream -> {
+                    try {
+                        return new String(stream.readAllBytes());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }));
+    }
+
+    public LibrarySourceFileResolver getLibrarySourceFileResolver() {
+        return librarySourceFileResolver;
     }
 
     public List<AutoImportFile> getAutoImportFiles() {
         return autoImportFiles;
     }
-    
+
     public record AutoImportFile(String fileName, String libName) {}
 }

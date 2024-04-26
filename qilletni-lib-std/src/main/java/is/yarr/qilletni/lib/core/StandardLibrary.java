@@ -10,7 +10,7 @@ public class StandardLibrary implements Library {
     
     @Override
     public String getName() {
-        return "Standard Library";
+        return "core";
     }
 
     @Override
