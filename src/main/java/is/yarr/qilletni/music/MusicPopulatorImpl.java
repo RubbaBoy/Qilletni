@@ -104,7 +104,7 @@ public class MusicPopulatorImpl implements MusicPopulator {
                     .orElseThrow(() -> new AlbumNotFoundException(String.format("Collection \"%s\" by \"%s\" not found", collectionType.getSuppliedName(), collectionType.getSuppliedCreator())));
             case URL -> musicCache.getPlaylistById(musicCache.getIdFromString(collectionType.getSuppliedUrl()))
                     .orElseThrow(() -> new AlbumNotFoundException(String.format("Album with ID \"%s\" not found", collectionType.getSuppliedUrl())));
-            case PREPOPULATED -> collectionType.getPlaylist();
+            case PREPOPULATED, SONG_LIST -> collectionType.getPlaylist();
         };
         
         collectionType.populateSpotifyData(foundPlaylist);

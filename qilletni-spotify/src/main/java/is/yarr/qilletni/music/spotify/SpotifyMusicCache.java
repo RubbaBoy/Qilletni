@@ -2,6 +2,7 @@ package is.yarr.qilletni.music.spotify;
 
 import is.yarr.qilletni.api.CollectionUtility;
 import is.yarr.qilletni.api.CollectionUtility.Entry;
+import is.yarr.qilletni.api.exceptions.IncompatibleProviderTypeException;
 import is.yarr.qilletni.api.exceptions.InvalidURLOrIDException;
 import is.yarr.qilletni.database.EntityTransaction;
 import is.yarr.qilletni.api.music.Album;
@@ -313,11 +314,13 @@ public class SpotifyMusicCache implements MusicCache {
 
     @Override
     public List<Track> getPlaylistTracks(Playlist playlist) {
-        var spotifyPlaylist = (SpotifyPlaylist) playlist;
-        var playlistIndex = spotifyPlaylist.getSpotifyPlaylistIndex();
-        
-//        LOGGER.debug("playlistIndex = {}", playlistIndex);
+        var initialTracks = playlist.getTracks();
+        if (initialTracks.isPresent()) {
+            return initialTracks.get();
+        }
 
+        var spotifyPlaylist = IncompatibleProviderTypeException.ensureType(playlist, SpotifyPlaylist.class);
+        var playlistIndex = spotifyPlaylist.getSpotifyPlaylistIndex();
         
         var expires = Instant.ofEpochMilli(playlistIndex.getLastUpdatedIndex().getTime()).plus(7, ChronoUnit.DAYS); // when it expires
         LOGGER.debug("Should update: {} .isAfter {}", Instant.now(), expires);

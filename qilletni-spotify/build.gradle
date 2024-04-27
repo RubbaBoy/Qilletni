@@ -29,3 +29,8 @@ dependencies {
 
     compileOnly  'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }
+
+shadowJar {
+    configurations = [project.configurations.runtimeClasspath]
+    archiveClassifier.set('')
+}

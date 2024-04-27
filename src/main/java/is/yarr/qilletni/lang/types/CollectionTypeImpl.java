@@ -9,6 +9,10 @@ import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Playlist;
+import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.music.DummyPlaylist;
+
+import java.util.List;
 
 public final class CollectionTypeImpl implements CollectionType {
 
@@ -35,6 +39,11 @@ public final class CollectionTypeImpl implements CollectionType {
         this.collectionDefinition = CollectionDefinition.NAME_CREATOR;
         this.name = name;
         this.creator = creator;
+    }
+    
+    public CollectionTypeImpl(List<Track> tracks) {
+        this.playlist = new DummyPlaylist(tracks);
+        this.collectionDefinition = CollectionDefinition.SONG_LIST;
     }
 
     @Override
@@ -116,6 +125,10 @@ public final class CollectionTypeImpl implements CollectionType {
             return String.format("collection(%s)", url);
         }
 
+        if (collectionDefinition == CollectionDefinition.SONG_LIST) {
+            return "collection(list-expression)";
+        }
+
         return String.format("collection(\"%s\" by \"%s\")", name, creator);
     }
 
@@ -128,6 +141,10 @@ public final class CollectionTypeImpl implements CollectionType {
     public String toString() {
         if (collectionDefinition == CollectionDefinition.URL) {
             return "CollectionType{url='" + url + "'}";
+        }
+        
+        if (collectionDefinition == CollectionDefinition.SONG_LIST) {
+            return "CollectionType{list-expression}";
         }
 
         return "CollectionType{title='" + name + "', artist='" + creator + "'}";

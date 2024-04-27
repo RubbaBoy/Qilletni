@@ -82,6 +82,7 @@ str_expr
 collection_expr
     : function_call
     | collection_url_or_name_pair order_define? weights_define?
+    | COLLECTION_TYPE LEFT_PAREN list_expression RIGHT_PAREN order_define? weights_define?
     | STRING
     | ID
     ;

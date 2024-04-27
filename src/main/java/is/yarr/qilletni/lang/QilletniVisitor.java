@@ -1001,7 +1001,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             if (scope.isDirectlyDefined(importAs)) {
                 var lookedUp = scope.lookup(importAs);
                 if (lookedUp.getType().equals(QilletniTypeClass.IMPORT_ALIAS)) {
-                    
+                    // TODO: Join import aliases
                 }
             }
             scope.define(SymbolImpl.createGenericSymbol(importAs, QilletniTypeClass.IMPORT_ALIAS, importAliasOptional.get()));
@@ -1304,12 +1304,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return this.functionInvoker.<CollectionType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
         }
 
-        var urlOrName = ctx.collection_url_or_name_pair();
         CollectionType collectionType;
-        if (ctx.STRING() != null) {
-            collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(ctx.STRING().getText()));
+        
+        if (ctx.COLLECTION_TYPE() != null) {
+            var songList = createListOfType(ctx.list_expression(), QilletniTypeClass.SONG);
+            collectionType = new CollectionTypeImpl(songList.getItems().stream().map(SongType.class::cast).map(SongType::getTrack).toList());
         } else {
-            collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            var urlOrName = ctx.collection_url_or_name_pair();
+            if (ctx.STRING() != null) {
+                collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(ctx.STRING().getText()));
+            } else {
+                collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            }
         }
 
         if (ctx.order_define() != null) {
