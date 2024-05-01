@@ -5,5 +5,6 @@ public enum WeightTrackType {
     LIST,
     COLLECTION,
     WEIGHTS,
-    PLAYLIST
+    PLAYLIST,
+    FUNCTION
 }

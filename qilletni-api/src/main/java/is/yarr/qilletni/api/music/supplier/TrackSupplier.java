@@ -10,7 +10,8 @@ import java.util.List;
 public interface TrackSupplier {
 
     /**
-     * Gets a {@link Track} from the supplier. This is not guaranteed to be consistent.
+     * Gets a {@link Track} from the supplier. The result of the supplier may return different values for every call if
+     * {@link #isInconsistent()} is {@code true}.
      * 
      * @return A {@link Track}
      */
@@ -19,8 +20,15 @@ public interface TrackSupplier {
     /**
      * Gets all possible {@link Track} values from the supplier.
      * 
-     * @return All possible {@link Track}
+     * @return All possible {@link Track}s
      */
     List<Track> getAllTracks();
+
+    /**
+     * If the {@link Track} returned via {@link #getTrack()} is inconsistent, meaning it may change.
+     *
+     * @return If the supplier is inconsistent
+     */
+    boolean isInconsistent();
     
 }

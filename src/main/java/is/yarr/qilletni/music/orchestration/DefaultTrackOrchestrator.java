@@ -231,6 +231,7 @@ public class DefaultTrackOrchestrator implements TrackOrchestrator {
 
         var removeTracks = weights.getWeightEntries().stream()
                 .filter(entry -> entry.getWeightUnit() == WeightUnit.PERCENT)
+                .filter(entry -> !entry.isInconsistent())
                 .flatMap(entry -> entry.getAllTracks().stream())
                 .toList();
 
@@ -248,6 +249,7 @@ public class DefaultTrackOrchestrator implements TrackOrchestrator {
             
             var trackWeightMap = weights.getWeightEntries().stream()
                     .filter(entry -> entry.getWeightUnit() == WeightUnit.MULTIPLIER)
+                    .filter(entry -> !entry.isInconsistent())
                     .flatMap(entry -> entry.getAllTracks().stream().map(track -> new TrackMapWeight(track, entry)))
                     .collect(Collectors.toMap(TrackMapWeight::track, trackMapWeight -> (int) (trackMapWeight.weight.getWeightAmount() - 1)));
 

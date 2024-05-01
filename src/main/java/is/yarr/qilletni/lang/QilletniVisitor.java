@@ -66,6 +66,7 @@ import is.yarr.qilletni.lang.types.entity.EntityAttributes;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionImpl;
 import is.yarr.qilletni.lang.types.entity.UninitializedTypeImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
+import is.yarr.qilletni.lang.types.weights.LazyWeightEntry;
 import is.yarr.qilletni.lang.types.weights.WeightEntryImpl;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -1094,6 +1095,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         boolean canRepeatTrack = pipe.equals("|!");
         boolean canRepeatWeight = !pipe.equals("|~");
         
+        var weightUnit = WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText());
+        
+        if (ctx.expr().function_call() != null) {
+            return new LazyWeightEntry(weightInt, weightUnit, dynamicProvider, canRepeatTrack, canRepeatWeight, visitQilletniTypedNode(ctx.expr(), SongType.class)::getTrack);
+        }
+        
         QilletniType weightValue = visitQilletniTypedNode(ctx.expr());
         
         if (weightValue instanceof StringType stringType) {
@@ -1102,7 +1109,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         return switch (weightValue) {
-            case CollectionType collectionType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, collectionType, canRepeatTrack, canRepeatWeight);
+            case CollectionType collectionType -> new WeightEntryImpl(weightInt, weightUnit, dynamicProvider, collectionType, canRepeatTrack, canRepeatWeight);
             case ListType listType -> {
                 if (!QilletniTypeClass.SONG.equals(listType.getSubType())) {
                     throw new TypeMismatchException("Expected a song list, got a " + listType.getSubType());
@@ -1112,18 +1119,18 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         .map(SongType.class::cast)
                         .forEach(musicPopulator::populateSong);
                 
-                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, listType, canRepeatTrack, canRepeatWeight);
+                yield new WeightEntryImpl(weightInt, weightUnit, dynamicProvider, listType, canRepeatTrack, canRepeatWeight);
             }
-            case SongType songType -> new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, songType, canRepeatTrack, canRepeatWeight);
+            case SongType songType -> new WeightEntryImpl(weightInt, weightUnit, dynamicProvider, songType, canRepeatTrack, canRepeatWeight);
             case WeightsType weightsType -> {
                 var totalPercent = WeightUtils.validateWeights(weightsType);
                 if (totalPercent != 100) {
                     throw new InvalidWeightException("Nested weights must have percentage values adding up to 100%");
                 }
                 
-                yield new WeightEntryImpl(weightInt, WeightUnit.fromSymbol(weightAmount.WEIGHT_UNIT().getText()), dynamicProvider, weightsType, canRepeatTrack, canRepeatWeight);
+                yield new WeightEntryImpl(weightInt, weightUnit, dynamicProvider, weightsType, canRepeatTrack, canRepeatWeight);
             }
-            default -> throw new TypeMismatchException("Expected a song, collection, or list for weight value");
+            default -> throw new TypeMismatchException("Expected a song, collection, or list for weight value, got " + weightValue.getTypeClass());
         };
     }
 

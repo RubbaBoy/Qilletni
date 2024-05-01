@@ -11,6 +11,7 @@ import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.Track;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -21,12 +22,24 @@ public class WeightEntryImpl implements WeightEntry {
     private boolean canRepeatWeight;
 
     private final WeightTrackType weightTrackType;
-    private SongType song;
+    SongType song;
     private ListType songList;
     private CollectionType collection;
     private WeightsType weights;
     private Playlist playlist;
-    private DynamicProvider dynamicProvider;
+    private final DynamicProvider dynamicProvider;
+
+    /**
+     * Constructor for a single song, initialized later
+     */
+    WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, boolean canRepeatTrack, boolean canRepeatWeight) {
+        this.weightAmount = weightAmount;
+        this.weightUnit = weightUnit;
+        this.dynamicProvider = dynamicProvider;
+        this.canRepeatTrack = canRepeatTrack;
+        this.canRepeatWeight = canRepeatWeight;
+        this.weightTrackType = WeightTrackType.SINGLE_TRACK;
+    }
 
     public WeightEntryImpl(int weightAmount, WeightUnit weightUnit, DynamicProvider dynamicProvider, SongType song, boolean canRepeatTrack, boolean canRepeatWeight) {
         this.weightAmount = weightAmount;
@@ -145,6 +158,7 @@ public class WeightEntryImpl implements WeightEntry {
                 var tracks = musicCache.getPlaylistTracks(playlist);
                 yield tracks.get(ThreadLocalRandom.current().nextInt(0, tracks.size()));
             }
+            case FUNCTION -> throw new UnsupportedOperationException("Function weight entry should use LazyWeightEntry");
         };
     }
 
@@ -158,7 +172,13 @@ public class WeightEntryImpl implements WeightEntry {
             case COLLECTION -> musicCache.getPlaylistTracks(collection.getPlaylist());
             case WEIGHTS -> weights.getWeightEntries().stream().flatMap(weightEntry -> weightEntry.getAllTracks().stream()).toList();
             case PLAYLIST -> musicCache.getPlaylistTracks(playlist);
+            case FUNCTION -> Collections.emptyList();
         };
+    }
+
+    @Override
+    public boolean isInconsistent() {
+        return false;
     }
 
     @Override
@@ -169,6 +189,7 @@ public class WeightEntryImpl implements WeightEntry {
             case COLLECTION -> collection.stringValue();
             case WEIGHTS -> weights.stringValue();
             case PLAYLIST -> String.format("[Raw playlist of ID %s]", playlist.getId());
+            case FUNCTION -> "function-call";
         };
     }
 
