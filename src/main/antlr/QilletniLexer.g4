@@ -11,7 +11,8 @@ tokens {
 IMPORT: 'import';
 AS: 'as';
 
-LINE_COMMENT: '//' .*? NEWLINE -> skip; 
+LINE_COMMENT: '//' .*? NEWLINE -> skip;
+DOC_COMMENT: '/**' .*? '*/';
 BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 
 // var name

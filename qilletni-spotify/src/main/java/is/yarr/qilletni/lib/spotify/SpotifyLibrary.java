@@ -13,23 +13,8 @@ import java.util.function.Supplier;
 public class SpotifyLibrary implements Library {
     
     @Override
-    public String getName() {
-        return "Spotify";
-    }
-
-    @Override
-    public String getVersion() {
-        return "1.0.0";
-    }
-
-    @Override
     public List<Class<?>> getNativeClasses() {
         return List.of(PlayRedirect.class, PlaylistToolsFunctions.class);
-    }
-
-    @Override
-    public String getImportName() {
-        return "spotify";
     }
 
     @Override

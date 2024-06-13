@@ -2,6 +2,7 @@ plugins {
     id 'antlr'
     id 'idea'
     id 'maven-publish'
+    id 'application'
 }
 
 group = 'is.yarr.qilletni'
@@ -10,6 +11,10 @@ version = '1.0.0-SNAPSHOT'
 repositories {
     mavenCentral()
     mavenLocal()
+}
+
+application {
+    mainClass = 'is.yarr.qilletni.lang.docs.DocParser'
 }
 
 dependencies {
@@ -23,6 +28,8 @@ dependencies {
 
     implementation 'org.antlr:antlr4-runtime:4.13.1'
     antlr 'org.antlr:antlr4:4.13.1'
+
+    implementation 'com.google.code.gson:gson:2.10.1'
     
     implementation 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }

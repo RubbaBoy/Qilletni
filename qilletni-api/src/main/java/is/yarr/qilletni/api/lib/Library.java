@@ -10,21 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface Library {
-
-    /**
-     * Gets the name of the library.
-     * 
-     * @return The library's name
-     */
-    String getName();
-
-    /**
-     * Gets the version of the library.
-     * 
-     * @return The library's version
-     */
-    String getVersion();
-
+    
     /**
      * Any files that should be imported without an explicit import statement. This may be dangerous, and is only
      * recommended for core libraries.
@@ -41,8 +27,6 @@ public interface Library {
      * @return The list of classes to register
      */
     List<Class<?>> getNativeClasses();
-    
-    String getImportName();
 
     Optional<InputStream> readPath(String path);
 

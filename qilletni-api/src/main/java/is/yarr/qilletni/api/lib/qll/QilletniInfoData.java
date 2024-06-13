@@ -1,0 +1,17 @@
+package is.yarr.qilletni.api.lib.qll;
+
+import java.util.List;
+
+/**
+ * A representation of the qilletni_info.yml file in an unbuilt project/application
+ * 
+ * @param name
+ * @param version
+ * @param author
+ * @param dependencies
+ */
+public record QilletniInfoData(String name, Version version, String author, List<Dependency> dependencies) {
+    
+    public record Dependency(String name, ComparableVersion version) {}
+    
+}

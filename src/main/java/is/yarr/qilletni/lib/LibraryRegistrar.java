@@ -35,18 +35,19 @@ public class LibraryRegistrar {
 
     public void registerLibraries(ClassLoader libraryClassLoader) {
         for (var library : ServiceLoader.load(Library.class, libraryClassLoader)) {
-            LOGGER.debug("Loading library {} v{}", library.getName(), library.getVersion());
+            var qllInfo = QilletniInfoReader.getQllInfo(library);
+            LOGGER.debug("Loading library {} v{}", qllInfo.name(), qllInfo.version().getVersionString());
 
-            if (libraries.containsKey(library.getImportName())) {
-                LOGGER.error("Attempted to import library {} with duplicate import name of {}", library.getName(), library.getImportName());
+            if (libraries.containsKey(qllInfo.name())) {
+                LOGGER.error("Attempted to import library of duplicate name: {}", qllInfo.name());
             } else {
-                libraries.put(library.getImportName(), library);
+                libraries.put(qllInfo.name(), library);
                 nativeFunctionHandler.registerClasses(library.getNativeClasses().toArray(Class<?>[]::new));
                 library.supplyNativeFunctionBindings(nativeFunctionHandler);
 
                 autoImportFiles.addAll(library.autoImportFiles()
                         .stream()
-                        .map(file -> new AutoImportFile(file, library.getImportName())).toList());
+                        .map(file -> new AutoImportFile(file, qllInfo.name())).toList());
             }
         }
     }

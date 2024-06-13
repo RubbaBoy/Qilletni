@@ -14,4 +14,5 @@ module is.yarr.qilletni.Qilletni.main {
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
     requires org.apache.logging.log4j.slf4j.impl;
+    requires com.google.gson;
 }

@@ -195,8 +195,8 @@ provider_stmt
     ;
 
 function_def
-    : FUNCTION_DEF ID '(' function_def_params ')' function_on_type? '{' body '}'
-    | NATIVE FUNCTION_DEF ID '(' function_def_params ')' function_on_type?
+    : DOC_COMMENT? FUNCTION_DEF ID '(' function_def_params ')' function_on_type? '{' body '}'
+    | DOC_COMMENT? NATIVE FUNCTION_DEF ID '(' function_def_params ')' function_on_type?
     ;
 
 function_on_type
@@ -241,7 +241,7 @@ foreach_range
     ;
 
 entity_def
-    : ENTITY ID '{' entity_body '}'
+    : DOC_COMMENT? ENTITY ID '{' entity_body '}'
     ;
 
 entity_body
@@ -249,19 +249,19 @@ entity_body
     ;
 
 entity_property_declaration
-    : type=INT_TYPE ID (ASSIGN int_expr)?
-    | type=STRING_TYPE ID (ASSIGN str_expr)?
-    | type=BOOLEAN_TYPE ID (ASSIGN bool_expr)?
-    | type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
-    | type=SONG_TYPE ID (ASSIGN song_expr)?
-    | type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?
-    | type=ALBUM_TYPE ID (ASSIGN album_expr)?
-    | type=JAVA_TYPE ID (ASSIGN java_expr)?
-    | type=ID ID (ASSIGN entity_initialize)?
+    : DOC_COMMENT? type=INT_TYPE ID (ASSIGN int_expr)?
+    | DOC_COMMENT? type=STRING_TYPE ID (ASSIGN str_expr)?
+    | DOC_COMMENT? type=BOOLEAN_TYPE ID (ASSIGN bool_expr)?
+    | DOC_COMMENT? type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
+    | DOC_COMMENT? type=SONG_TYPE ID (ASSIGN song_expr)?
+    | DOC_COMMENT? type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?
+    | DOC_COMMENT? type=ALBUM_TYPE ID (ASSIGN album_expr)?
+    | DOC_COMMENT? type=JAVA_TYPE ID (ASSIGN java_expr)?
+    | DOC_COMMENT? type=ID ID (ASSIGN entity_initialize)?
     ;
 
 entity_constructor
-    : ID '(' function_def_params ')'
+    : DOC_COMMENT? ID '(' function_def_params ')'
     ;
 
 entity_initialize

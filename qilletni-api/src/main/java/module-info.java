@@ -18,4 +18,5 @@ module Qilletni.qilletni.api.main {
     exports is.yarr.qilletni.api.music.supplier;
     exports is.yarr.qilletni.api.exceptions;
     exports is.yarr.qilletni.api.music.orchestration;
+    exports is.yarr.qilletni.api.lib.qll;
 }

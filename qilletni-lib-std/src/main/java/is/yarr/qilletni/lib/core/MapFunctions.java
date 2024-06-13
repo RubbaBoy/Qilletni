@@ -40,11 +40,11 @@ public class MapFunctions {
     }
     
     @NativeOn("Map")
-    public static boolean containsValue(EntityType entity, QilletniType key) {
+    public static boolean containsValue(EntityType entity, QilletniType value) {
         JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
         
-        return hashMap.containsValue(key);
+        return hashMap.containsValue(value);
     }
     
     @NativeOn("Map")

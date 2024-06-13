@@ -1,26 +1,66 @@
-// Creates an empty java HashMap instance
+/**
+ * Creates an empty [@java java.util.HashMap] instance.
+ *
+ * @returns An instance of a [@java hava.util.HashMap]
+ */
 native fun _emptyJavaMap()
 
-// A HashMap. Keys and values may be of any type
+/**
+ * A [@java java.util.HashMap] wrapper that may store keys and values of any type.
+ */
 entity Map {
+
+    /**
+     * The Internal [@java java.util.HashMap] object, storing the map's state.
+     * @type @java java.util.HashMap
+     */
     java _map = _emptyJavaMap()
     
-    // Puts a ky and a value into the map
+    /**
+     * Puts a [@param key] and [@param value] into the map, overriding any previous value associated with the key.
+     *
+     * @param[@type string]                  key   The key to add into the map
+     * @param[@type @java java.util.HashMap] value The value to be associated with the key
+     * @errors If the [@param key] is not found
+     */
     native fun put(key, value)
     
-    // Gets a value from the map by its key
-    // This will throw an error if the key is not found
+    /**
+     * Gets a value from the map by its [@param key].
+     *
+     * @param key  The key to look for
+     * @returns The value associated with the given key
+     * @errors If the [@param key] is not found
+     */
     native fun get(key)
     
-    // Checks if the key is in the map
+    /**
+     * Checks if the map contains the key [@param key].
+     *
+     * @param key  The key to look for
+     * @returns[@type boolean] true if the map contains the key, false if otherwise  
+     */
     native fun containsKey(key)
     
-    // Checks if the value is anywhere in the map
-    native fun containsValue(key)
+    /**
+     * Checks if the map contains any entry with the value [@param value].
+     *
+     * @param value  The value to look for
+     * @returns[@type boolean] true if the map contains the value, false if otherwise  
+     */
+    native fun containsValue(value)
     
-    // Gets a list of all keys in the map
+    /**
+     * Gets a list of all keys in the map.
+     *
+     * @returns[@type list] A list of all keys in the map  
+     */
     native fun keys()
     
-    // Gets a list of all values in the map
+    /**
+     * Gets a list of all values in the map.
+     *
+     * @returns[@type list] A list of all values in the map  
+     */
     native fun values()
 }
