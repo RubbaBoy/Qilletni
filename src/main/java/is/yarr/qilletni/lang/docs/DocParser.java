@@ -35,7 +35,9 @@ public class DocParser {
         var parser = new QilletniParser(tokens);
         
         var qilletniDocVisitor = new QilletniDocVisitor();
-        qilletniDocVisitor.visitProg(parser.prog());
+        var foundShit = qilletniDocVisitor.visitProg(parser.prog());
+
+        System.out.println("foundShit = " + foundShit.size());
         
 //        System.out.println("Extracted Text:");
 //        System.out.println(docText);

@@ -29,9 +29,7 @@ public class DocumentedItemFactory {
 
             return new DocumentedItem(documentedType, innerDoc);
         } catch (Exception e) {
-            System.err.println("ok");
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -43,9 +41,7 @@ public class DocumentedItemFactory {
 
             return new DocumentedItem(documentedTypeEntity, innerDoc);
         } catch (Exception e) {
-            System.err.println("ok");
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
@@ -58,9 +54,7 @@ public class DocumentedItemFactory {
 
             return new DocumentedItem(documentedTypeEntity, innerDoc);
         } catch (Exception e) {
-            System.err.println("ok");
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 
