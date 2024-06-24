@@ -1,4 +1,4 @@
-package is.yarr.qilletni.lang.docs.structure.item;
+package is.yarr.qilletni.api.lang.docs.structure.item;
 
 import java.util.List;
 import java.util.Optional;

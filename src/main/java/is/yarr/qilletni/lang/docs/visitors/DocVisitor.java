@@ -1,18 +1,18 @@
-package is.yarr.qilletni.lang.docs;
+package is.yarr.qilletni.lang.docs.visitors;
 
 import is.yarr.qilletni.antlr.DocsParser;
 import is.yarr.qilletni.antlr.DocsParserBaseVisitor;
+import is.yarr.qilletni.api.lang.docs.structure.DocFieldType;
+import is.yarr.qilletni.api.lang.docs.structure.text.DocDescription;
+import is.yarr.qilletni.api.lang.docs.structure.text.DocErrors;
+import is.yarr.qilletni.api.lang.docs.structure.text.DocOnLine;
+import is.yarr.qilletni.api.lang.docs.structure.text.ParamDoc;
+import is.yarr.qilletni.api.lang.docs.structure.text.ReturnDoc;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.EntityDoc;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.FieldDoc;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.FunctionDoc;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.InnerDoc;
 import is.yarr.qilletni.lang.docs.exceptions.DocFormatException;
-import is.yarr.qilletni.lang.docs.structure.DocFieldType;
-import is.yarr.qilletni.lang.docs.structure.text.DocDescription;
-import is.yarr.qilletni.lang.docs.structure.text.DocErrors;
-import is.yarr.qilletni.lang.docs.structure.text.DocOnLine;
-import is.yarr.qilletni.lang.docs.structure.text.ParamDoc;
-import is.yarr.qilletni.lang.docs.structure.text.ReturnDoc;
-import is.yarr.qilletni.lang.docs.structure.text.inner.EntityDoc;
-import is.yarr.qilletni.lang.docs.structure.text.inner.FieldDoc;
-import is.yarr.qilletni.lang.docs.structure.text.inner.FunctionDoc;
-import is.yarr.qilletni.lang.docs.structure.text.inner.InnerDoc;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
@@ -151,7 +151,7 @@ public class DocVisitor extends DocsParserBaseVisitor<Void> {
      * Creates an object representing referencing a parameter inline in a description.
      * 
      * @param ctx The inline bracket context
-     * @return The created {@link is.yarr.qilletni.lang.docs.structure.text.DocDescription.ParamRef}
+     * @return The created {@link is.yarr.qilletni.api.lang.docs.structure.text.DocDescription.ParamRef}
      */
     private DocDescription.DescriptionItem createInlineRef(DocsParser.Inline_bracketsContext ctx) {
         var text = ctx.BRACKETS_TEXT().getText();
@@ -162,6 +162,10 @@ public class DocVisitor extends DocsParserBaseVisitor<Void> {
 
         if (ctx.JAVA() != null) {
             return new DocDescription.JavaRef(text);
+        }
+
+        if (ctx.TYPE() != null) {
+            return new DocDescription.TypeRef(text);
         }
 
         throw new DocFormatException("Expected parameter or java type within inline description brackets");

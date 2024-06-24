@@ -1,15 +1,15 @@
-package is.yarr.qilletni.lang.docs;
+package is.yarr.qilletni.lang.docs.visitors;
 
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
-import is.yarr.qilletni.lang.docs.parser.DocumentedItemFactory;
-import is.yarr.qilletni.lang.docs.structure.DocumentedItem;
-import is.yarr.qilletni.lang.docs.structure.text.inner.EntityDoc;
+import is.yarr.qilletni.api.lang.docs.structure.DocumentedItem;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.EntityDoc;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * A visitor for the main Qilletni grammar, only overriding areas that may have docs.
@@ -38,13 +38,22 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
         
         var entityDoc = ((EntityDoc) docItem.innerDoc());
 
-        body.entity_property_declaration().forEach(propertyDef -> entityDoc.addDocItem(visit(propertyDef).get(0)));
+        body.entity_property_declaration().stream()
+                .map(this::visit)
+                .filter(Predicate.not(List::isEmpty))
+                .forEach(propertyDocs -> entityDoc.addDocItem(propertyDocs.get(0)));
 
         if (body.entity_constructor() != null) {
-            entityDoc.addDocItem(visit(body.entity_constructor()).get(0));
+            var foundDocs = visit(body.entity_constructor());
+            if (!foundDocs.isEmpty()) {
+                entityDoc.addDocItem(foundDocs.get(0));
+            }
         }
                 
-        body.function_def().forEach(functionDef -> entityDoc.addDocItem(visit(functionDef).get(0)));
+        body.function_def().stream()
+                .map(this::visit)
+                .filter(Predicate.not(List::isEmpty))
+                .forEach(functionDocs -> entityDoc.addDocItem(functionDocs.get(0)));
 
         return Collections.singletonList(docItem);
     }
@@ -56,6 +65,12 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
         var docComment = optionallyFormatDoc(ctx.DOC_COMMENT());
 
         return Collections.singletonList(DocumentedItemFactory.createDocs(ctx, docComment));
+    }
+
+    @Override
+    public List<DocumentedItem> visitEntity_constructor(QilletniParser.Entity_constructorContext ctx) {
+        return Collections.emptyList();
+//        return super.visitEntity_constructor(ctx);
     }
 
     @Override

@@ -1,15 +1,13 @@
-package is.yarr.qilletni.lang.docs.parser;
+package is.yarr.qilletni.lang.docs.visitors;
 
 import is.yarr.qilletni.antlr.DocsLexer;
 import is.yarr.qilletni.antlr.DocsParser;
 import is.yarr.qilletni.antlr.QilletniParser;
-import is.yarr.qilletni.lang.docs.DocVisitor;
 import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
-import is.yarr.qilletni.lang.docs.structure.DocumentedItem;
-import is.yarr.qilletni.lang.docs.structure.item.DocumentedTypeEntity;
-import is.yarr.qilletni.lang.docs.structure.item.DocumentedTypeField;
-import is.yarr.qilletni.lang.docs.structure.item.DocumentedTypeFunction;
-import is.yarr.qilletni.lang.docs.structure.text.inner.InnerDoc;
+import is.yarr.qilletni.api.lang.docs.structure.DocumentedItem;
+import is.yarr.qilletni.api.lang.docs.structure.item.DocumentedTypeEntity;
+import is.yarr.qilletni.api.lang.docs.structure.item.DocumentedTypeField;
+import is.yarr.qilletni.api.lang.docs.structure.item.DocumentedTypeFunction;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -25,7 +23,7 @@ public class DocumentedItemFactory {
             var documentedType = new DocumentedTypeFunction(ctx.ID().getText(),
                     ctx.function_def_params().ID().stream().map(ParseTree::getText).toList(),
                     ctx.NATIVE() != null,
-                    Optional.ofNullable(ctx.function_on_type()).map(on -> on.ID().getText()));
+                    Optional.ofNullable(ctx.function_on_type()).map(on -> on.type.getText()));
 
             return new DocumentedItem(documentedType, innerDoc);
         } catch (Exception e) {

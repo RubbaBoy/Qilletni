@@ -1,7 +1,7 @@
-package is.yarr.qilletni.lang.docs.structure;
+package is.yarr.qilletni.api.lang.docs.structure;
 
-import is.yarr.qilletni.lang.docs.structure.item.DocumentedType;
-import is.yarr.qilletni.lang.docs.structure.text.inner.InnerDoc;
+import is.yarr.qilletni.api.lang.docs.structure.item.DocumentedType;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.InnerDoc;
 
 /**
  * @param itemBeingDocumented The item actually being documented

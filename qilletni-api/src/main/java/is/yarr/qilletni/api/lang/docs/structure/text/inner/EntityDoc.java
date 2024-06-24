@@ -1,7 +1,7 @@
-package is.yarr.qilletni.lang.docs.structure.text.inner;
+package is.yarr.qilletni.api.lang.docs.structure.text.inner;
 
-import is.yarr.qilletni.lang.docs.structure.DocumentedItem;
-import is.yarr.qilletni.lang.docs.structure.text.DocDescription;
+import is.yarr.qilletni.api.lang.docs.structure.DocumentedItem;
+import is.yarr.qilletni.api.lang.docs.structure.text.DocDescription;
 
 import java.util.ArrayList;
 import java.util.List;

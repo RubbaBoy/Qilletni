@@ -1,7 +1,7 @@
 /**
  * Creates an empty [@java java.util.HashMap] instance.
  *
- * @returns An instance of a [@java hava.util.HashMap]
+ * @returns[@type @java java.util.HashMap] An instance of a [@java java.util.HashMap]
  */
 native fun _emptyJavaMap()
 
@@ -11,7 +11,7 @@ native fun _emptyJavaMap()
 entity Map {
 
     /**
-     * The Internal [@java java.util.HashMap] object, storing the map's state.
+     * The internal [@java java.util.HashMap] object, storing the map's state.
      * @type @java java.util.HashMap
      */
     java _map = _emptyJavaMap()

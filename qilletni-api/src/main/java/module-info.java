@@ -13,6 +13,11 @@ module Qilletni.qilletni.api.main {
     exports is.yarr.qilletni.api.lang.types.collection;
     exports is.yarr.qilletni.api.lang.types.song;
     exports is.yarr.qilletni.api.lang.types.weights;
+    exports is.yarr.qilletni.api.lang.docs;
+    exports is.yarr.qilletni.api.lang.docs.structure;
+    exports is.yarr.qilletni.api.lang.docs.structure.item;
+    exports is.yarr.qilletni.api.lang.docs.structure.text;
+    exports is.yarr.qilletni.api.lang.docs.structure.text.inner;
     exports is.yarr.qilletni.api.lib;
     exports is.yarr.qilletni.api.lang.internal;
     exports is.yarr.qilletni.api.music.supplier;

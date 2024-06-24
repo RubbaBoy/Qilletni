@@ -1,4 +1,4 @@
-package is.yarr.qilletni.lang.docs.structure;
+package is.yarr.qilletni.api.lang.docs.structure;
 
 /**
  * Documentation recording the type of a field, return value, etc.

@@ -18,6 +18,7 @@ import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.QilletniVisitor;
+import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
@@ -184,6 +185,10 @@ public class QilletniProgramRunner {
         var tokenStream = new CommonTokenStream(lexer);
         var qilletniParser = new QilletniParser(tokenStream);
 
+        // TODO: Temporary, make actual listeners for code!
+        lexer.addErrorListener(new DocErrorListener());
+        qilletniParser.addErrorListener(new DocErrorListener());
+
         var globalOverride = globalScope == null ? this.globalScope : globalScope;
 
         var symbolTable = new SymbolTableImpl(pathState.path().toString());
@@ -192,6 +197,7 @@ public class QilletniProgramRunner {
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
         var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalOverride, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, qilletniStackTrace, (importedFile, importAs) -> importFileFromStream(pathState.importFrom(importedFile), importAs, globalOverride));
+        
         symbolTables.put(symbolTable, qilletniVisitor);
 
         qilletniVisitor.visit(programContext);
