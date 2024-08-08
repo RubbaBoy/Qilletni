@@ -76,6 +76,8 @@ public class FunctionInvokerImpl implements FunctionInvoker {
             swappedLookupScope = true;
             symbolTable.swapScope(importAliasType.getScope());
             
+            LOGGER.debug("New scope is: {}", symbolTable);
+            
             // It's not actually invoked on
             invokedOn = null;
         }
@@ -99,6 +101,7 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         // This isn't needed if it's implemented, as it has no additional type param
         if (swappedLookupScope) {
             if (functionType.isNative() || functionType.isExternallyDefined()) {
+                LOGGER.debug("unswap scope!!!");
                 // Return to normal scope if either native (wouldn't really make a difference but might as well) or
                 // if it is externally defined, so it is invoked normally.
                 symbolTable.unswapScope();
@@ -129,7 +132,10 @@ public class FunctionInvokerImpl implements FunctionInvoker {
             }
         }
         
+        LOGGER.debug("AAA symbol table rn: {}", symbolTable);
         var functionScope = symbolTable.functionCall();
+        LOGGER.debug("AAA func scope rn: {}", functionScope);
+        LOGGER.debug("AAA new symbol table rn: {}", symbolTable);
 
 //        LOGGER.debug("here!!! {}", functionScope.hashCode());
 //        LOGGER.debug("here!!! {}", symbolTable.currentScope().hashCode());

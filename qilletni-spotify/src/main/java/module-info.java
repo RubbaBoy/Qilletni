@@ -27,7 +27,4 @@ module Qilletni.qilletni.spotify.main {
 
     provides is.yarr.qilletni.api.auth.ServiceProvider
             with is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
-
-    provides is.yarr.qilletni.api.lib.Library
-            with is.yarr.qilletni.lib.spotify.SpotifyLibrary;
 }

@@ -1,6 +1,4 @@
 module is.yarr.qilletni.Qilletni.main {
-    uses is.yarr.qilletni.api.auth.ServiceProvider;
-    uses is.yarr.qilletni.api.lib.Library;
 
     exports is.yarr.qilletni;
     exports is.yarr.qilletni.lib;

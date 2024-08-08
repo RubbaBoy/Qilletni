@@ -13,23 +13,23 @@ native fun getUrl() on song
 native fun getId() on song
 
 /**
- * Gets the [@type core.Artist] entity of the primary artist on the song
+ * Gets the [@type std.Artist] entity of the primary artist on the song
  *
- * @returns[@type list] A list of artists on the song
+ * @returns[@type std.Artist] The first artist of a song
  */
 native fun getArtist() on song
 
 /**
- * Gets all [@type core.Artist] entities on the song.
+ * Gets all [@type std.Artist] entities on the song.
  *
  * @returns[@type list] A list of artists on the song
  */
 native fun getAllArtists() on song
 
 /**
- * Gets the [@type core.Album] the song is on.
+ * Gets the [@type std.Album] the song is on.
  *
- * @returns[@type core.Album] The album of the song
+ * @returns[@type std.Album] The album of the song
  */
 native fun getAlbum() on song
 

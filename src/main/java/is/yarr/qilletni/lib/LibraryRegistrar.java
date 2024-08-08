@@ -1,23 +1,20 @@
 package is.yarr.qilletni.lib;
 
-import is.yarr.qilletni.api.lib.Library;
+import is.yarr.qilletni.api.lib.NativeFunctionBindingFactory;
+import is.yarr.qilletni.api.lib.qll.QllInfo;
 import is.yarr.qilletni.lang.exceptions.lib.LibraryNotFoundException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
-import is.yarr.qilletni.lang.runner.ImportPathState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.ServiceLoader;
 
 public class LibraryRegistrar {
     
@@ -25,7 +22,7 @@ public class LibraryRegistrar {
     
     private final NativeFunctionHandler nativeFunctionHandler;
     private final LibrarySourceFileResolver librarySourceFileResolver; 
-    private final Map<String, Library> libraries = new HashMap<>();
+    private final Map<String, QllInfo> libraries = new HashMap<>();
     private final List<AutoImportFile> autoImportFiles = new ArrayList<>();
 
     public LibraryRegistrar(NativeFunctionHandler nativeFunctionHandler, LibrarySourceFileResolver librarySourceFileResolver) {
@@ -33,22 +30,47 @@ public class LibraryRegistrar {
         this.librarySourceFileResolver = librarySourceFileResolver;
     }
 
-    public void registerLibraries(ClassLoader libraryClassLoader) {
-        for (var library : ServiceLoader.load(Library.class, libraryClassLoader)) {
-            var qllInfo = QilletniInfoReader.getQllInfo(library);
+    public void registerLibraries(List<QllInfo> loadedQllInfos) {
+        for (var qllInfo : loadedQllInfos) {
             LOGGER.debug("Loading library {} v{}", qllInfo.name(), qllInfo.version().getVersionString());
 
             if (libraries.containsKey(qllInfo.name())) {
                 LOGGER.error("Attempted to import library of duplicate name: {}", qllInfo.name());
             } else {
-                libraries.put(qllInfo.name(), library);
-                nativeFunctionHandler.registerClasses(library.getNativeClasses().toArray(Class<?>[]::new));
-                library.supplyNativeFunctionBindings(nativeFunctionHandler);
+                libraries.put(qllInfo.name(), qllInfo);
+                nativeFunctionHandler.registerClasses(loadNativeClasses(qllInfo.nativeClasses()));
+                
+                instantiateNativeFunctionBindingFactory(qllInfo.nativeBindFactoryClass())
+                        .ifPresent(factory -> factory.applyNativeFunctionBindings(nativeFunctionHandler));
 
-                autoImportFiles.addAll(library.autoImportFiles()
+                autoImportFiles.addAll(qllInfo.autoImportFiles()
                         .stream()
                         .map(file -> new AutoImportFile(file, qllInfo.name())).toList());
             }
+        }
+    }
+    
+    private Class<?>[] loadNativeClasses(List<String> nativeClasses) {
+        return nativeClasses.stream().map(className -> {
+            try {
+                return Thread.currentThread().getContextClassLoader().loadClass(className);
+            } catch (ClassNotFoundException e) {
+                LOGGER.error("Failed to load native class: {}", className, e);
+                return (Class<?>) null;
+            }
+        }).filter(Objects::nonNull).toArray(Class<?>[]::new);
+    }
+    
+    private Optional<NativeFunctionBindingFactory> instantiateNativeFunctionBindingFactory(String className) {
+        if (className == null) {
+            return Optional.empty();
+        }
+        
+        try {
+            return Optional.of((NativeFunctionBindingFactory) Thread.currentThread().getContextClassLoader().loadClass(className).getConstructor().newInstance());
+        } catch (ReflectiveOperationException e) {
+            LOGGER.error("Failed to instantiate NativeFunctionBindingFactory: {}", className, e);
+            return Optional.empty();
         }
     }
 
@@ -76,14 +98,14 @@ public class LibraryRegistrar {
         
         var library = libraries.get(libraryName);
         
-        return librarySourceFileResolver.resolveSourcePath(libraryName, path.toString().replace("\\", "/"))
-                .or(() -> library.readPath(path.toString().replace("\\", "/")).map(stream -> {
-                    try {
-                        return new String(stream.readAllBytes());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                }));
+        return librarySourceFileResolver.resolveSourcePath(libraryName, path.toString().replace("\\", "/"));
+//                .or(() -> library.readPath(path.toString().replace("\\", "/")).map(stream -> {
+//                    try {
+//                        return new String(stream.readAllBytes());
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }));
     }
 
     public LibrarySourceFileResolver getLibrarySourceFileResolver() {

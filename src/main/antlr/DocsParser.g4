@@ -21,7 +21,7 @@ returnsLine: RETURNS inline_brackets? description;
 typeLine: TYPE JAVA? TEXT;
 
 // If the function is "on" a type, describe it
-onLine: ON description;
+onLine: ON inline_brackets? description;
 
 // On functions, if it can error
 errorsLine: ERRORS description;

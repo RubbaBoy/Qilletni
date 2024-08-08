@@ -2,14 +2,14 @@
  * Gets a new date from a DD/MM/YYYY formatted string.
  *
  * @param[@type string] str The string to parse
- * @returns[@type core.Date] The date
+ * @returns[@type std.Date] The date
  */
 native fun newDateFrom(str)
 
 /**
  * Gets a new date from the current time.
  *
- * @returns[@type core.Date] The date
+ * @returns[@type std.Date] The date
  */
 native fun newDateNow()
 

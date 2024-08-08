@@ -1,3 +1,16 @@
 name: std
 version: 1.0.0
-author: Adam Yarris 
+author: Adam Yarris
+native_classes:
+  - is.yarr.qilletni.lib.core.AlbumFunctions
+  - is.yarr.qilletni.lib.core.ArtistFunctions
+  - is.yarr.qilletni.lib.core.CollectionFunctions
+  - is.yarr.qilletni.lib.core.CoreFunctions
+  - is.yarr.qilletni.lib.core.ListFunctions
+  - is.yarr.qilletni.lib.core.MapFunctions
+  - is.yarr.qilletni.lib.core.MathFunctions
+  - is.yarr.qilletni.lib.core.SongFunctions
+  - is.yarr.qilletni.lib.core.StringFunctions
+  - is.yarr.qilletni.lib.core.DateFunctions
+auto_import:
+  - core.ql

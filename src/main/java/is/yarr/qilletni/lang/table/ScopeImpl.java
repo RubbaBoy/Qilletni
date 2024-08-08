@@ -214,7 +214,16 @@ public class ScopeImpl implements Scope {
         if (isDirectlyDefined(symbol.getName())) {
             throw new AlreadyDefinedException("Symbol " + symbol.getName() + " has already been defined!");
         }
+        
+        LOGGER.debug("Defining {} in ({}, {})", symbol.getName(), scopeType, parent);
+        
+        if (parent != null && (scopeType != ScopeType.ALIASED_GLOBAL && parent.getScopeType() == ScopeType.GLOBAL) && !symbol.getName().startsWith("_")) {
+            LOGGER.debug("Defining in parent!");
+            parent.define(symbol);
+            return;
+        }
 
+        LOGGER.debug("Defining here!!");
         symbolTable.put(symbol.getName(), symbol);
     }
 

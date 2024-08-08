@@ -1,4 +1,6 @@
 package is.yarr.qilletni.api.lang.docs.structure.text;
 
-public record DocErrors(DocDescription description) {
+import org.jetbrains.annotations.Nullable;
+
+public record DocErrors(@Nullable DocDescription description) {
 }

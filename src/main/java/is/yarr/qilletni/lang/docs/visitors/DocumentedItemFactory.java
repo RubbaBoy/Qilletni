@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.docs.visitors;
 import is.yarr.qilletni.antlr.DocsLexer;
 import is.yarr.qilletni.antlr.DocsParser;
 import is.yarr.qilletni.antlr.QilletniParser;
+import is.yarr.qilletni.api.lang.docs.structure.item.DocumentedTypeEntityConstructor;
 import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
 import is.yarr.qilletni.api.lang.docs.structure.DocumentedItem;
 import is.yarr.qilletni.api.lang.docs.structure.item.DocumentedTypeEntity;
@@ -16,11 +17,11 @@ import java.util.Optional;
 
 public class DocumentedItemFactory {
 
-    public static DocumentedItem createDocs(QilletniParser.Function_defContext ctx, String docString) {
+    public static DocumentedItem createDocs(String libraryName, String fileName, QilletniParser.Function_defContext ctx, String docString) {
         try {
             var innerDoc = DocVisitor.parseDoc(getDocsParser(docString), DocVisitor.DocumentingType.FUNCTION);
 
-            var documentedType = new DocumentedTypeFunction(ctx.ID().getText(),
+            var documentedType = new DocumentedTypeFunction(libraryName, fileName, ctx.ID().getText(),
                     ctx.function_def_params().ID().stream().map(ParseTree::getText).toList(),
                     ctx.NATIVE() != null,
                     Optional.ofNullable(ctx.function_on_type()).map(on -> on.type.getText()));
@@ -31,11 +32,11 @@ public class DocumentedItemFactory {
         }
     }
 
-    public static DocumentedItem createDocs(QilletniParser.Entity_defContext ctx, String docString) {
+    public static DocumentedItem createDocs(String libraryName, String fileName, QilletniParser.Entity_defContext ctx, String docString) {
         try {
             var innerDoc = DocVisitor.parseDoc(getDocsParser(docString), DocVisitor.DocumentingType.ENTITY);
 
-            var documentedTypeEntity = new DocumentedTypeEntity(ctx.ID().getText());
+            var documentedTypeEntity = new DocumentedTypeEntity(libraryName, fileName, ctx.ID().getText());
 
             return new DocumentedItem(documentedTypeEntity, innerDoc);
         } catch (Exception e) {
@@ -43,12 +44,25 @@ public class DocumentedItemFactory {
         }
     }
 
-    public static DocumentedItem createDocs(QilletniParser.Entity_property_declarationContext ctx, String docString) {
+    public static DocumentedItem createDocs(String libraryName, String fileName, QilletniParser.Entity_constructorContext ctx, String docString) {
+        try {
+            var innerDoc = DocVisitor.parseDoc(getDocsParser(docString), DocVisitor.DocumentingType.CONSTRUCTOR);
+
+            var documentedTypeEntity = new DocumentedTypeEntityConstructor(libraryName, fileName, ctx.ID().getText(),
+                    ctx.function_def_params().ID().stream().map(ParseTree::getText).toList());
+
+            return new DocumentedItem(documentedTypeEntity, innerDoc);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static DocumentedItem createDocs(String libraryName, String fileName, QilletniParser.Entity_property_declarationContext ctx, String docString) {
         try {
             var innerDoc = DocVisitor.parseDoc(getDocsParser(docString), DocVisitor.DocumentingType.FIELD);
 
             var fieldName = ctx.ID(ctx.ID().size() - 1).getText();
-            var documentedTypeEntity = new DocumentedTypeField(ctx.type.getText(), fieldName);
+            var documentedTypeEntity = new DocumentedTypeField(libraryName, fileName, ctx.type.getText(), fieldName);
 
             return new DocumentedItem(documentedTypeEntity, innerDoc);
         } catch (Exception e) {
@@ -64,7 +78,7 @@ public class DocumentedItemFactory {
 
         lexer.addErrorListener(new DocErrorListener());
         parser.addErrorListener(new DocErrorListener());
-        
+
         return parser;
     }
 }

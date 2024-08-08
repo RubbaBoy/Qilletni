@@ -17,13 +17,21 @@ import java.util.function.Predicate;
  */
 public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<DocumentedItem>> {
 
+    private final String libraryName;
+    private final String fileName;
+
+    public QilletniDocVisitor(String libraryName, String fileName) {
+        this.libraryName = libraryName;
+        this.fileName = fileName;
+    }
+
     @Override
     public List<DocumentedItem> visitFunction_def(QilletniParser.Function_defContext ctx) {
         System.out.printf("fun %s%s(%s):%n", ctx.NATIVE() != null ? "native " : "", ctx.ID(), ctx.function_def_params().getText());
 
         var docComment = optionallyFormatDoc(ctx.DOC_COMMENT());
 
-        return Collections.singletonList(DocumentedItemFactory.createDocs(ctx, docComment));
+        return Collections.singletonList(DocumentedItemFactory.createDocs(libraryName, fileName, ctx, docComment));
     }
 
     @Override
@@ -32,7 +40,7 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
 
         var docComment = optionallyFormatDoc(ctx.DOC_COMMENT());
         
-        var docItem = DocumentedItemFactory.createDocs(ctx, docComment);
+        var docItem = DocumentedItemFactory.createDocs(libraryName, fileName, ctx, docComment);
         
         var body = ctx.entity_body();
         
@@ -43,8 +51,10 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
                 .filter(Predicate.not(List::isEmpty))
                 .forEach(propertyDocs -> entityDoc.addDocItem(propertyDocs.get(0)));
 
+        System.out.println("body.entity_constructor() = " + body.entity_constructor());
         if (body.entity_constructor() != null) {
             var foundDocs = visit(body.entity_constructor());
+            System.out.println("foundDocs = " + foundDocs);
             if (!foundDocs.isEmpty()) {
                 entityDoc.addDocItem(foundDocs.get(0));
             }
@@ -64,13 +74,14 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
 
         var docComment = optionallyFormatDoc(ctx.DOC_COMMENT());
 
-        return Collections.singletonList(DocumentedItemFactory.createDocs(ctx, docComment));
+        return Collections.singletonList(DocumentedItemFactory.createDocs(libraryName, fileName, ctx, docComment));
     }
 
     @Override
     public List<DocumentedItem> visitEntity_constructor(QilletniParser.Entity_constructorContext ctx) {
-        return Collections.emptyList();
-//        return super.visitEntity_constructor(ctx);
+        var docComment = optionallyFormatDoc(ctx.DOC_COMMENT());
+
+        return Collections.singletonList(DocumentedItemFactory.createDocs(libraryName, fileName, ctx, docComment));
     }
 
     @Override

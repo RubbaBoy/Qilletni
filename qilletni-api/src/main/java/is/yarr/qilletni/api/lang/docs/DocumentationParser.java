@@ -7,7 +7,7 @@ import java.nio.file.Path;
 
 public interface DocumentationParser {
     
-    DocumentedFile parseDocsFromPath(Path filePath) throws IOException;
+    DocumentedFile parseDocsFromPath(Path filePath, String importPath) throws IOException;
     
     DocumentedFile parseDocsFromString(String fileContents);
     

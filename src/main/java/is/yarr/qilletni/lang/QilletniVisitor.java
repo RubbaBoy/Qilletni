@@ -134,7 +134,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             onType = visitNode(ctx.function_on_type());
         }
 
-        scopedDefineFunction(scope, ctx, onType, onType, true);
+        scopedDefineFunction(scope, ctx, onType, onType, onType != null); // only externally defined if has an on type
     }
 
     private void scopedVisitEntityFunctionDef(Scope scope, QilletniParser.Function_defContext ctx, QilletniTypeClass<?> onType) {

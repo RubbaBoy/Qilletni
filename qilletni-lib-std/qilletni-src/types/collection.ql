@@ -22,7 +22,7 @@ native fun getName() on collection
 /**
  * Gets the creator of the collection.
  *
- * @returns[@type core.Artist] The creator of the collection
+ * @returns[@type std.Artist] The creator of the collection
  */
 native fun getCreator() on collection
 

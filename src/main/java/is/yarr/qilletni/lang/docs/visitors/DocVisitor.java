@@ -8,18 +8,23 @@ import is.yarr.qilletni.api.lang.docs.structure.text.DocErrors;
 import is.yarr.qilletni.api.lang.docs.structure.text.DocOnLine;
 import is.yarr.qilletni.api.lang.docs.structure.text.ParamDoc;
 import is.yarr.qilletni.api.lang.docs.structure.text.ReturnDoc;
+import is.yarr.qilletni.api.lang.docs.structure.text.inner.ConstructorDoc;
 import is.yarr.qilletni.api.lang.docs.structure.text.inner.EntityDoc;
 import is.yarr.qilletni.api.lang.docs.structure.text.inner.FieldDoc;
 import is.yarr.qilletni.api.lang.docs.structure.text.inner.FunctionDoc;
 import is.yarr.qilletni.api.lang.docs.structure.text.inner.InnerDoc;
 import is.yarr.qilletni.lang.docs.exceptions.DocFormatException;
 import org.antlr.v4.runtime.tree.TerminalNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class DocVisitor extends DocsParserBaseVisitor<Void> {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(DocVisitor.class);
     
     private DocDescription docDescription;
     private final List<ParamDoc> paramDocs;
@@ -115,7 +120,9 @@ public class DocVisitor extends DocsParserBaseVisitor<Void> {
             throw new DocFormatException("Documenting 'on' is not supported on this type");
         }
         
-        docOnLine = new DocOnLine(createDocDescription(ctx.description()));
+        LOGGER.debug("Parsing on line doc with desc: {}", ctx.description() != null ? ctx.description().getText() : "null");
+        
+        docOnLine = new DocOnLine(createDocFieldType(ctx.inline_brackets()), createDocDescription(ctx.description()));
         return null;
     }
 
@@ -160,7 +167,7 @@ public class DocVisitor extends DocsParserBaseVisitor<Void> {
             return new DocDescription.ParamRef(text);
         }
 
-        if (ctx.JAVA() != null) {
+        if (!ctx.JAVA().isEmpty()) {
             return new DocDescription.JavaRef(text);
         }
 
@@ -204,6 +211,12 @@ public class DocVisitor extends DocsParserBaseVisitor<Void> {
             @Override
             InnerDoc constructInnerDoc(DocVisitor docVisitor) {
                 return new EntityDoc(docVisitor.docDescription);
+            }
+        },
+        CONSTRUCTOR(SUPPORTS_DOC_DESCRIPTION | SUPPORTS_PARAM_DOCS) {
+            @Override
+            InnerDoc constructInnerDoc(DocVisitor docVisitor) {
+                return new ConstructorDoc(docVisitor.docDescription, docVisitor.paramDocs);
             }
         },
         FIELD(SUPPORTS_DOC_DESCRIPTION | SUPPORTS_FIELD_TYPE_DOC) {

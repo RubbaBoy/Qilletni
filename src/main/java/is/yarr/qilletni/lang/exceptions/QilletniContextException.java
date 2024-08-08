@@ -1,8 +1,10 @@
 package is.yarr.qilletni.lang.exceptions;
 
+import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
@@ -75,7 +77,7 @@ public class QilletniContextException extends QilletniException {
     }
 
     private static String createMessage(ParserRuleContext ctx) {
-        var startToken = ctx.getStart();
+        var startToken = getStartToken(ctx);
         int lineNum = startToken.getLine();
         int charPositionInLine = startToken.getCharPositionInLine();
 
@@ -90,6 +92,15 @@ public class QilletniContextException extends QilletniException {
         return String.format("In %s at %d:%d\n%s\n%s^", inputStream.getSourceName(), lineNum, charPositionInLine,
                 errorLine,
                 " ".repeat(Math.max(0, charPositionInLine)));
+    }
+    
+    private static Token getStartToken(ParserRuleContext ctx) {
+        if (ctx instanceof QilletniParser.Import_fileContext importFileContext) {
+            // Can't find file
+            return importFileContext.STRING().getSymbol();
+        }
+        
+        return ctx.getStart();
     }
     
 }

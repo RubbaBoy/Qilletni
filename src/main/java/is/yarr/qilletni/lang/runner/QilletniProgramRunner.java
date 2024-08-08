@@ -15,6 +15,7 @@ import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
+import is.yarr.qilletni.api.lib.qll.QllInfo;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.QilletniVisitor;
@@ -79,7 +80,7 @@ public class QilletniProgramRunner {
     private final LibraryRegistrar libraryRegistrar;
     private final QilletniStackTrace qilletniStackTrace;
 
-    public QilletniProgramRunner(DynamicProvider dynamicProvider, LibrarySourceFileResolver librarySourceFileResolver, ClassLoader libraryClassLoader) {
+    public QilletniProgramRunner(DynamicProvider dynamicProvider, LibrarySourceFileResolver librarySourceFileResolver, List<QllInfo> loadedQllInfos) {
         this.dynamicProvider = dynamicProvider;
         this.symbolTables = new HashMap<>();
         this.globalScope = new ScopeImpl("global");
@@ -101,7 +102,7 @@ public class QilletniProgramRunner {
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
         this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler, librarySourceFileResolver);
 
-        libraryRegistrar.registerLibraries(libraryClassLoader);
+        libraryRegistrar.registerLibraries(loadedQllInfos);
 
         nativeFunctionHandler.addInjectableInstance(musicPopulator);
         nativeFunctionHandler.addInjectableInstance(entityDefinitionManager);
@@ -212,7 +213,8 @@ public class QilletniProgramRunner {
     private Optional<ImportAliasType> importFileFromStream(ImportPathState pathState, String importAs, Scope global) {
         try {
             if (importAs != null) {
-                global = new ScopeImpl(globalScope, Scope.ScopeType.ALIASED_GLOBAL, "fake global");
+                LOGGER.debug("global override parent for ({}) = {}", pathState.path(), globalScope);
+                global = new ScopeImpl(globalScope, Scope.ScopeType.ALIASED_GLOBAL, "FG " + pathState.path());
             }
 
             var symbolTable = runProgram(libraryRegistrar.findLibraryByPath(pathState.libraryName(), pathState.path()).orElseThrow(FileNotFoundException::new), pathState, global);
@@ -221,9 +223,13 @@ public class QilletniProgramRunner {
                 LOGGER.debug("Creating import alias '{}' for: {}", importAs, symbolTable.currentScope());
                 return Optional.of(new ImportAliasTypeImpl(importAs, symbolTable.currentScope()));
             }
+        } catch (QilletniNativeInvocationException e) {
+            throw e;
         } catch (IOException e) {
-            LOGGER.error("Unable to import file " + pathState, e);
-
+            var qce = new QilletniNativeInvocationException(e);
+            qce.setQilletniStackTrace(qilletniStackTrace);
+            qce.setMessage("Unable to import file '%s' in library %s".formatted(pathState.path(), pathState.libraryName()));
+            throw qce;
         } catch (Exception e) {
             var qce = new QilletniNativeInvocationException(e);
             qce.setQilletniStackTrace(qilletniStackTrace);

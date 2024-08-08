@@ -20,14 +20,14 @@ native fun getUrl() on album
 native fun getName() on album
 
 /**
- * Gets the primary [@type core.Artist] of the album.
+ * Gets the primary [@type std.Artist] of the album.
  *
- * @returns[@type core.Artist] The artist of the album
+ * @returns[@type std.Artist] The artist of the album
  */
 native fun getArtist() on album
 
 /**
- * Gets all [@type core.Artist]s of the album.
+ * Gets all [@type std.Artist]s of the album.
  *
  * @returns[@type list] A list of all artists of the album
  */
