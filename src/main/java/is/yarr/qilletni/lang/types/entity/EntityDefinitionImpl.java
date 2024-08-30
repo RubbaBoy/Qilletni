@@ -74,12 +74,16 @@ public class EntityDefinitionImpl implements EntityDefinition {
             throw new InvalidParameterException("Invalid constructor invocation");
         }
 
-        for (Entry(var name, var qilletniType) : CollectionUtility.getRecordEntries(properties)) {
+        for (var entry : CollectionUtility.getRecordEntries(properties)) {
+            var name = entry.k();
+            var qilletniType = entry.v();
             scope.define(SymbolImpl.createGenericSymbol(name, qilletniType.getTypeClass(), qilletniType));
         }
 
         int index = 0;
-        for (Entry(var name, var uninitializedType) : CollectionUtility.getRecordEntries(uninitializedParams)) {
+        for (var entry : CollectionUtility.getRecordEntries(uninitializedParams)) {
+            var name = entry.k();
+            var uninitializedType = entry.v();
             var currentParam = constructorParams.get(index);
 
             if (uninitializedType.isEntity()) {

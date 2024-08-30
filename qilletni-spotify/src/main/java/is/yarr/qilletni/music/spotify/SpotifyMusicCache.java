@@ -134,7 +134,9 @@ public class SpotifyMusicCache implements MusicCache {
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
         var fetched = storeTracks(spotifyMusicFetcher.fetchTracks(lookupTracks.values().stream().toList())).fetchedTracks();
-        for (Entry(var index, var trackNameArtist) : CollectionUtility.getRecordEntries(lookupTracks)) {
+        for (var entry : CollectionUtility.getRecordEntries(lookupTracks)) {
+            var index = entry.k();
+            var trackNameArtist = entry.v();
             fetched.stream().filter(trackNameArtist::matchesTrack)
                     .findFirst()
                     .ifPresent(track -> foundTracks.set(index, track));
@@ -188,7 +190,9 @@ public class SpotifyMusicCache implements MusicCache {
         LOGGER.debug("lookupTracks = {}", lookupTracks);
 
         var fetched = storeTracks(spotifyMusicFetcher.fetchTracksById(lookupTracks.values().stream().toList())).fetchedTracks();
-        for (Entry(var index, var id) : CollectionUtility.getRecordEntries(lookupTracks)) {
+        for (var entry : CollectionUtility.getRecordEntries(lookupTracks)) {
+            var index = entry.k();
+            var id = entry.v();
             fetched.stream().filter(track -> track.getId().equals(id))
                     .findFirst()
                     .ifPresent(track -> foundTracks.set(index, track));
