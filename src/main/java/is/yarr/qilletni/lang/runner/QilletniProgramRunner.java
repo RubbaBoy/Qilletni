@@ -239,6 +239,10 @@ public class QilletniProgramRunner {
 
         return Optional.empty();
     }
+    
+    public void shutdown() {
+        dynamicProvider.shutdownProviders();
+    }
 
     public Map<SymbolTable, QilletniVisitor> getSymbolTables() {
         return symbolTables;

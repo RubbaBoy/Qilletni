@@ -16,6 +16,7 @@ import is.yarr.qilletni.music.spotify.auth.SpotifyApiSingleton;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
 import is.yarr.qilletni.music.spotify.auth.pkce.SpotifyPKCEAuthorizer;
 import is.yarr.qilletni.music.spotify.play.ReroutablePlayActor;
+import se.michaelthelin.spotify.SpotifyApiThreading;
 
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -27,10 +28,11 @@ public class SpotifyServiceProvider implements ServiceProvider {
     private MusicFetcher musicFetcher;
     private TrackOrchestrator trackOrchestrator;
     private StringIdentifier stringIdentifier;
+    private SpotifyAuthorizer authorizer;
     
     @Override
     public CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction) {
-        SpotifyAuthorizer authorizer = SpotifyPKCEAuthorizer.createWithCodes();
+        authorizer = SpotifyPKCEAuthorizer.createWithCodes();
         
         return authorizer.authorizeSpotify().thenRun(() -> {
             var spotifyMusicFetcher = new SpotifyMusicFetcher(authorizer);
@@ -39,6 +41,11 @@ public class SpotifyServiceProvider implements ServiceProvider {
             musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
             trackOrchestrator = defaultTrackOrchestratorFunction.apply(new ReroutablePlayActor(), musicCache);
         });
+    }
+
+    @Override
+    public void shutdown() {
+        authorizer.shutdown();
     }
 
     @Override

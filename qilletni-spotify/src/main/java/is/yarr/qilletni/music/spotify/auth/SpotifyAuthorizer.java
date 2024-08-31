@@ -16,6 +16,11 @@ public interface SpotifyAuthorizer {
     CompletableFuture<SpotifyApi> authorizeSpotify();
 
     /**
+     * Shuts down the authorizer. This should clean up any async tasks currently running.
+     */
+    void shutdown();
+
+    /**
      * Gets the current {@link SpotifyApi} after authorization.
      * 
      * @return The current {@link SpotifyApi}
@@ -29,5 +34,4 @@ public interface SpotifyAuthorizer {
      * @return The current user
      */
     Optional<User> getCurrentUser();
-    
 }

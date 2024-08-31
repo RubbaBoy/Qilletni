@@ -27,6 +27,11 @@ public interface ServiceProvider {
     CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction);
 
     /**
+     * Shuts down the service provider. This should clean up any async tasks currently running.
+     */
+    void shutdown();
+
+    /**
      * Gets the name of the provider.
      *
      * @return The provider's name

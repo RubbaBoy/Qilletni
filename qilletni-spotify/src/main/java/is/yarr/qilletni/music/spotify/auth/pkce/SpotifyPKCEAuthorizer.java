@@ -13,6 +13,7 @@ import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.SpotifyApiThreading;
 import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
@@ -23,8 +24,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
 
@@ -41,6 +48,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
     private final String codeChallenge;
     private final String codeVerifier;
     private final PKCECredentialCache credentialCache;
+    private final ExecutorService executorService;
     
     private se.michaelthelin.spotify.model_objects.specification.User currentUser;
 
@@ -48,6 +56,8 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
         this.codeChallenge = codeChallenge;
         this.codeVerifier = codeVerifier;
         this.credentialCache = new PKCECredentialCache();
+        this.executorService = Executors.newCachedThreadPool();
+        
     }
 
     /**
@@ -100,6 +110,25 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
         }
 
         return completableFuture;
+    }
+
+    @Override
+    public void shutdown() {
+        shutdownExecutorService(executorService);
+        shutdownExecutorService(SpotifyApiThreading.THREAD_POOL);
+    }
+    
+    private void shutdownExecutorService(ExecutorService executorService) {
+        executorService.shutdownNow();
+
+        try {
+            if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                LOGGER.debug("ExecutorService did not terminate in the specified time.");
+            }
+        } catch (InterruptedException e) {
+            LOGGER.debug("Interrupted while waiting for termination.");
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**
@@ -194,7 +223,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
             try {
                 Thread.sleep(calculateExpirySleepTime(initialExpiresIn));
 
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     try {
                         var authCodeCredentials = performImmediateRefresh();
 
@@ -206,9 +235,9 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
                     }
                 }
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
             }
-        });
+        }, executorService);
     }
 
     /**

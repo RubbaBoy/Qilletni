@@ -20,6 +20,8 @@ public interface DynamicProvider {
     ServiceProvider getCurrentProvider();
 
     void initFactories(SongTypeFactory songTypeFactory, CollectionTypeFactory collectionTypeFactory, AlbumTypeFactory albumTypeFactory);
+    
+    void shutdownProviders();
 
     MusicCache getMusicCache();
 

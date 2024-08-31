@@ -61,6 +61,11 @@ public class DynamicProviderImpl implements DynamicProvider {
     }
 
     @Override
+    public void shutdownProviders() {
+        providers.values().forEach(ServiceProvider::shutdown);
+    }
+
+    @Override
     public MusicCache getMusicCache() {
         return currentProvider.getMusicCache();
     }
