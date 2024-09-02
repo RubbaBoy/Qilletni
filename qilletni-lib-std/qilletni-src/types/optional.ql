@@ -21,19 +21,40 @@ entity Optional {
 
     /**
      * The value of the optional.
+     *
      * @type @java java.util.Optional
      */
     java _value
+    
+    /**
+      * If the optional has a value.
+      *
+      * @type boolean
+      */
     boolean _hasValue
     
+    /**
+     * Creates a new optional with the given value and if it has a value.
+     * It is strongly recommended to just use `fromValue()` or `fromEmpty()`
+     */
     Optional(_value, _hasValue)
     
+    /**
+     * Creates an optional from a value.
+     *
+     * @param value The value to create the optional from. This may be any type
+     * @returns[@type std.Optional] The optional created from the value
+     */
     static fun fromValue(value) {
         return new Optional(_optionalFrom(value), true)
     }
     
+    /**
+     * Creates an empty optional.
+     *
+     * @returns[@type std.Optional] An empty optional
+     */
     static fun fromEmpty() {
-        print("fromEmpty() invoked!")
         return new Optional(_emptyOptional(), false)
     }
     

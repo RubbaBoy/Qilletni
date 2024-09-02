@@ -24,6 +24,7 @@ public class DocumentedItemFactory {
             var documentedType = new DocumentedTypeFunction(libraryName, fileName, ctx.ID().getText(),
                     ctx.function_def_params().ID().stream().map(ParseTree::getText).toList(),
                     ctx.NATIVE() != null,
+                    ctx.STATIC() != null,
                     Optional.ofNullable(ctx.function_on_type()).map(on -> on.type.getText()));
 
             return new DocumentedItem(documentedType, innerDoc);
