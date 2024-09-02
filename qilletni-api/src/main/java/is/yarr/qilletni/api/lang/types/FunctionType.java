@@ -30,6 +30,8 @@ public non-sealed interface FunctionType extends QilletniType {
     int getInvokingParamCount();
 
     boolean isNative();
+    
+    boolean isStatic();
 
     QilletniTypeClass<?> getOnType();
 

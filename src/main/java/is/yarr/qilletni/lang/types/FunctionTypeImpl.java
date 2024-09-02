@@ -16,11 +16,12 @@ public final class FunctionTypeImpl implements FunctionType {
     private final boolean isNative;
     private final QilletniTypeClass<?> onType;
     private final boolean isExternallyDefined;
+    private final boolean isStatic;
     
     // Only set if isNative is false
     private final ParserRuleContext body;
 
-    private FunctionTypeImpl(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isNative, boolean isExternallyDefined, QilletniTypeClass<?> onType, ParserRuleContext body) {
+    private FunctionTypeImpl(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isNative, boolean isExternallyDefined, QilletniTypeClass<?> onType, boolean isStatic, ParserRuleContext body) {
         this.invokingParamCount = invokingParamCount;
         this.isNative = isNative;
         this.name = name;
@@ -28,15 +29,16 @@ public final class FunctionTypeImpl implements FunctionType {
         this.definedParamCount = definedParamCount;
         this.onType = onType;
         this.isExternallyDefined = isExternallyDefined;
+        this.isStatic = isStatic;
         this.body = body;
     }
     
-    public static FunctionType createImplementedFunction(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isExternallyDefined, QilletniTypeClass<?> onType, ParserRuleContext body) {
-        return new FunctionTypeImpl(name, params, invokingParamCount, definedParamCount, false, isExternallyDefined, onType, body);
+    public static FunctionType createImplementedFunction(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isExternallyDefined, QilletniTypeClass<?> onType, boolean isStatic, ParserRuleContext body) {
+        return new FunctionTypeImpl(name, params, invokingParamCount, definedParamCount, false, isExternallyDefined, onType, isStatic, body);
     }
     
-    public static FunctionType createNativeFunction(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isExternallyDefined, QilletniTypeClass<?> onType) {
-        return new FunctionTypeImpl(name, params, invokingParamCount, definedParamCount, true, isExternallyDefined, onType, null);
+    public static FunctionType createNativeFunction(String name, String[] params, int invokingParamCount, int definedParamCount, boolean isExternallyDefined, QilletniTypeClass<?> onType, boolean isStatic) {
+        return new FunctionTypeImpl(name, params, invokingParamCount, definedParamCount, true, isExternallyDefined, onType, isStatic, null);
     }
 
     @Override
@@ -62,6 +64,11 @@ public final class FunctionTypeImpl implements FunctionType {
     @Override
     public boolean isNative() {
         return isNative;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return isStatic;
     }
 
     @Override

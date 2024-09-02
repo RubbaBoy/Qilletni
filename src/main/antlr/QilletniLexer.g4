@@ -58,6 +58,7 @@ COLON: ':';
 PLAY : 'play';
 PROVIDER : 'provider';
 FUNCTION_DEF : 'fun';
+STATIC : 'static';
 NATIVE : 'native';
 ON: 'on';
 DOT: '.';

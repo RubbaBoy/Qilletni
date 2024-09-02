@@ -5,6 +5,7 @@ import is.yarr.qilletni.api.CollectionUtility.Entry;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinition;
 import is.yarr.qilletni.api.lang.types.entity.UninitializedType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
@@ -12,6 +13,7 @@ import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolImpl;
 import is.yarr.qilletni.lang.types.EntityTypeImpl;
+import is.yarr.qilletni.lang.types.StaticEntityTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +45,12 @@ public class EntityDefinitionImpl implements EntityDefinition {
     /**
      * Consumes the entity's scope and populates it with a function each, that belong to the entity instance.
      */
-    private final List<Consumer<Scope>> entityFunctionPopulators;
+    private final List<EntityDefinition.FunctionPopulator> entityFunctionPopulators;
     private final Scope parentScope;
     
     private final QilletniTypeClass<EntityType> qilletniTypeClass;
 
-    public EntityDefinitionImpl(String typeName, Map<String, QilletniType> properties, Map<String, UninitializedType> uninitializedParams, List<Consumer<Scope>> entityFunctionPopulators, Scope parentScope) {
+    public EntityDefinitionImpl(String typeName, Map<String, QilletniType> properties, Map<String, UninitializedType> uninitializedParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
         this.typeName = typeName;
         this.qilletniTypeClass = new QilletniTypeClass<>(this, typeName);
         this.properties = properties;
@@ -65,6 +67,17 @@ public class EntityDefinitionImpl implements EntityDefinition {
     @Override
     public EntityType createInstance(QilletniType... constructorParams) {
         return createInstance(List.of(constructorParams));
+    }
+
+    @Override
+    public StaticEntityType createStaticInstance() {
+        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "static entity");
+        
+        entityFunctionPopulators.stream()
+                .filter(FunctionPopulator::isStaticFunction)
+                .forEach(populator -> populator.functionPopulator().accept(scope));
+        
+        return new StaticEntityTypeImpl(scope, this);
     }
 
     protected Scope createScope(List<QilletniType> constructorParams) {
@@ -116,7 +129,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
             index++;
         }
 
-        entityFunctionPopulators.forEach(consumer -> consumer.accept(scope));
+        entityFunctionPopulators.forEach(populator -> populator.functionPopulator().accept(scope));
 
         return scope;
     }

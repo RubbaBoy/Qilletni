@@ -195,8 +195,8 @@ provider_stmt
     ;
 
 function_def
-    : DOC_COMMENT? FUNCTION_DEF ID '(' function_def_params ')' function_on_type? '{' body '}'
-    | DOC_COMMENT? NATIVE FUNCTION_DEF ID '(' function_def_params ')' function_on_type?
+    : DOC_COMMENT? STATIC? FUNCTION_DEF ID '(' function_def_params ')' function_on_type? '{' body '}'
+    | DOC_COMMENT? NATIVE STATIC? FUNCTION_DEF ID '(' function_def_params ')' function_on_type?
     ;
 
 function_on_type

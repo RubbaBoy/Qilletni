@@ -1,5 +1,7 @@
 package is.yarr.qilletni.lang.internal.adapter;
 
+import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import org.slf4j.Logger;
@@ -37,7 +39,17 @@ public class TypeAdapterInvoker {
                 LOGGER.debug("Adapting param from {} to {}", javaParam.getSimpleName(), qilletniParam.getClass().getSimpleName());
                 
                 var typeAdapter = typeAdapterRegistrar.findTypeAdapter(javaParam, qilletniParam.getClass())
-                        .orElseThrow(() -> new NoTypeAdapterException(javaParam, qilletniParam.getClass()));
+                        .orElseThrow(() -> {
+                            if (StaticEntityType.class.isAssignableFrom(javaParam) && EntityType.class.isAssignableFrom(qilletniParam.getClass())) {
+                                return new NoTypeAdapterException(javaParam, qilletniParam.getClass(), "Native function defined as a static function, but was invoked as an instance function");
+                            }
+                            
+                            if (EntityType.class.isAssignableFrom(javaParam) && StaticEntityType.class.isAssignableFrom(qilletniParam.getClass())) {
+                                return new NoTypeAdapterException(javaParam, qilletniParam.getClass(), "Native function defined as an instance function, but was invoked as a static function");
+                            }
+                            
+                            return new NoTypeAdapterException(javaParam, qilletniParam.getClass());
+                        });
                 
                 invokingParams[i] = typeAdapter.convertCastedType(qilletniParam);
             }

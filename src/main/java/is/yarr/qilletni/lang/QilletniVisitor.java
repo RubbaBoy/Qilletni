@@ -38,6 +38,7 @@ import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
+import is.yarr.qilletni.lang.exceptions.InvalidStaticException;
 import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
@@ -124,6 +125,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public Object visitFunction_def(QilletniParser.Function_defContext ctx) {
         var currScope = symbolTable.currentScope();
+        
+        if (ctx.STATIC() != null) {
+            throw new InvalidStaticException(ctx, "Cannot define static function outside of an entity");
+        }
+        
         scopedVisitFunctionDef(currScope, ctx);
         return null;
     }
@@ -150,6 +156,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var params = new ArrayList<String>(visitNode(ctx.function_def_params()));
 
         int definedParamCount = params.size();
+        
+        var isStatic = ctx.STATIC() != null;
 
         if (ctx.NATIVE() != null) {
             int invokingParamCount = params.size();
@@ -159,7 +167,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             
             // If it is native, force it to have the on type of the entity
-            scope.defineFunction(SymbolImpl.createFunctionSymbol(id, FunctionTypeImpl.createNativeFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, nativeOnType)));
+            scope.defineFunction(SymbolImpl.createFunctionSymbol(id, FunctionTypeImpl.createNativeFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, nativeOnType, isStatic)));
         } else {
             int invokingParamCount = params.size();
             if (implOnType != null && isExternallyDefined) {
@@ -167,7 +175,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             
             LOGGER.debug("{} params = {} (defined: {}) on type = {}", id, params, definedParamCount, implOnType);
-            scope.defineFunction(SymbolImpl.createFunctionSymbol(id, FunctionTypeImpl.createImplementedFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, implOnType, ctx.body())));
+            scope.defineFunction(SymbolImpl.createFunctionSymbol(id, FunctionTypeImpl.createImplementedFunction(id, params.toArray(String[]::new), invokingParamCount, definedParamCount, isExternallyDefined, implOnType, isStatic, ctx.body())));
         }
     }
 
@@ -375,6 +383,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 LOGGER.debug("Visiting expr! ID: {}", ctx.ID());
                 LOGGER.debug("with current scope: {}", symbolTable);
                 
+                // For static method access
+                if (entityDefinitionManager.isDefined(idText)) {
+                    return entityDefinitionManager.lookup(idText).createStaticInstance();
+                }
+                
                 var variableSymbol = currentScope.lookup(idText);
                 var variable = variableSymbol.getValue();
                 
@@ -496,6 +509,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             
             var leftExpr = visitQilletniTypedNode(ctx.expr(0));
+            LOGGER.debug("leftExpr = {}", leftExpr);
             return functionInvoker.invokeFunction(ctx.function_call(), leftExpr).orElseThrow(FunctionDidntReturnException::new);
         }
 
@@ -1241,10 +1255,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
         // We don't have the actual QilletniTypeClass for the entity yet, so use a placeholder type
         var onType = QilletniTypeClass.createEntityTypePlaceholder(entityName);
-
-        List<Consumer<Scope>> functionPopulators = ctx.function_def()
+        
+        List<EntityDefinition.FunctionPopulator> functionPopulators = ctx.function_def()
                 .stream()
-                .map(functionDef -> (Consumer<Scope>) (Scope scope) -> scopedVisitEntityFunctionDef(scope, functionDef, onType))
+                .map(functionDef -> new EntityDefinition.FunctionPopulator(functionDef.STATIC() != null,
+                        (Scope scope) -> scopedVisitEntityFunctionDef(scope, functionDef, onType)))
                 .toList();
 
         return new EntityAttributes(initializedProperties, uninitializedProperties, functionPopulators);

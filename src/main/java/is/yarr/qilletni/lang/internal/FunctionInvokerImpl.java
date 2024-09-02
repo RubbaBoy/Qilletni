@@ -10,6 +10,7 @@ import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.FunctionType;
 import is.yarr.qilletni.api.lang.types.ImportAliasType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
@@ -80,6 +81,10 @@ public class FunctionInvokerImpl implements FunctionInvoker {
             
             // It's not actually invoked on
             invokedOn = null;
+        } else if (invokedOn instanceof StaticEntityType staticEntityType) {
+            LOGGER.debug("SWAP scope! to {}", staticEntityType.typeName());
+            swappedLookupScope = true;
+            symbolTable.swapScope(staticEntityType.getEntityScope());
         }
 
         var scope = symbolTable.currentScope();
