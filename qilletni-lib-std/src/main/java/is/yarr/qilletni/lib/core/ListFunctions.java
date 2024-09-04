@@ -2,7 +2,7 @@ package is.yarr.qilletni.lib.core;
 
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
-import is.yarr.qilletni.api.lib.NativeOn;
+import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
 import java.util.ArrayList;
 import java.util.Collections;

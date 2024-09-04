@@ -3,7 +3,7 @@ package is.yarr.qilletni.lib.core;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
-import is.yarr.qilletni.api.lib.NativeOn;
+import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

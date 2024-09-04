@@ -7,11 +7,15 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityInitializerImpl implements EntityInitializer {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(EntityInitializerImpl.class);
 
     private final TypeAdapterRegistrar typeAdapterRegistrar;
     private final EntityDefinitionManager entityDefinitionManager;

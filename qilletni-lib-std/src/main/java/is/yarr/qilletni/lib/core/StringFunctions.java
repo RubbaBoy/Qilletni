@@ -1,6 +1,7 @@
 package is.yarr.qilletni.lib.core;
 
-import is.yarr.qilletni.api.lib.NativeOn;
+
+import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
 @NativeOn("string")
 public class StringFunctions {

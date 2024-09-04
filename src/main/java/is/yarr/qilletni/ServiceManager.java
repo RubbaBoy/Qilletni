@@ -48,7 +48,7 @@ public class ServiceManager {
     
     private static Optional<ServiceProvider> loadServiceProviderClass(String className) {
         try {
-            LOGGER.info("Loading service provider: {}", className);
+            LOGGER.debug("Loading service provider: {}", className);
             return Optional.of((ServiceProvider) Thread.currentThread().getContextClassLoader().loadClass(className).getConstructor().newInstance());
         } catch (Exception e) {
             LOGGER.error("An exception occurred while loading service provider: " + className, e);

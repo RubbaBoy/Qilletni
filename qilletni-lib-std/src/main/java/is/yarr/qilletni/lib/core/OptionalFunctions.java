@@ -3,8 +3,7 @@ package is.yarr.qilletni.lib.core;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
-import is.yarr.qilletni.api.lang.types.StaticEntityType;
-import is.yarr.qilletni.api.lib.NativeOn;
+import is.yarr.qilletni.api.lib.annotations.NativeOn;
 import is.yarr.qilletni.lib.core.exceptions.OptionalEmptyValueException;
 
 import java.util.Optional;

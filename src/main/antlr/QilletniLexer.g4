@@ -89,7 +89,15 @@ LQUOTE : '"' -> more, mode(STR);
 
 mode STR;
 STRING : '"' -> mode(DEFAULT_MODE);
-TEXT   : . -> more;
+ESCAPED_QUOTE
+    : '\\"' -> more             // Handle escaped double quotes inside the string
+    ;
+TEXT 
+    : ~["\\] -> more             // Match any character except unescaped double quote and backslash
+    ;
+ESCAPE_SEQUENCE 
+    : '\\' . -> more             // Handle any escape sequences (e.g., \n, \t, etc.)
+    ;
 
 mode DEFAULT_MODE;
 

@@ -3,7 +3,10 @@ package is.yarr.qilletni.lib.core;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
-import is.yarr.qilletni.api.lib.NativeOn;
+import is.yarr.qilletni.api.lib.annotations.NativeOn;
+import is.yarr.qilletni.api.lib.annotations.SkipReturnTypeAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +14,9 @@ import java.util.List;
 
 public class MapFunctions {
     
+    private static final Logger LOGGER = LoggerFactory.getLogger(MapFunctions.class);
+    
+    @SkipReturnTypeAdapter
     public static Object _emptyJavaMap() {
         return new HashMap<>();
     }
@@ -24,10 +30,9 @@ public class MapFunctions {
     }
 
     @NativeOn("Map")
-    public static QilletniType get(EntityType entity, QilletniType key) {
+    public static Object get(EntityType entity, QilletniType key) {
         JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
-        
         return hashMap.get(key);
     }
     

@@ -2,13 +2,16 @@ package is.yarr.qilletni.lang.internal.adapter;
 
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.StaticEntityType;
+import is.yarr.qilletni.api.lib.annotations.SkipReturnTypeAdapter;
 import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.lang.types.JavaTypeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 public class TypeAdapterInvoker {
@@ -55,8 +58,14 @@ public class TypeAdapterInvoker {
             }
         }
 
-        var invokedResult = method.invoke(instance, invokingParams);
+        LOGGER.debug("Invoking method {} on {} with params {}", method.getName(), instance, invokingParams);
+        if (method.getName().equals("get")) {
+            instance = null;
+        }
         
+        var invokedResult = method.invoke(instance, invokingParams);
+
+        LOGGER.debug("Invoked result {}", invokedResult);
         if (invokedResult == null) {
             return null;
         }
@@ -65,6 +74,11 @@ public class TypeAdapterInvoker {
         if (invokedResult instanceof QilletniType qilletniResult) {
             LOGGER.debug("Not adapting result {}", qilletniResult);
             return qilletniResult;
+        }
+        
+        if (Arrays.stream(method.getDeclaredAnnotations()).anyMatch(annotation -> annotation.annotationType().equals(SkipReturnTypeAdapter.class))) {
+            LOGGER.debug("Not adapting result explicitly {}", invokedResult);
+            return new JavaTypeImpl(invokedResult);
         }
 
         var typeAdapter = typeAdapterRegistrar.findAnyTypeAdapter(invokedResult.getClass())
@@ -75,5 +89,7 @@ public class TypeAdapterInvoker {
         
         return adapted;
     }
+    
+    // TODO: for next time: make a type adapter so a library can make any object into a QilletniType!
     
 }

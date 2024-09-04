@@ -4,8 +4,8 @@ import is.yarr.qilletni.api.lang.types.AlbumType;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
-import is.yarr.qilletni.api.lib.BeforeAnyInvocation;
-import is.yarr.qilletni.api.lib.NativeOn;
+import is.yarr.qilletni.api.lib.annotations.BeforeAnyInvocation;
+import is.yarr.qilletni.api.lib.annotations.NativeOn;
 import is.yarr.qilletni.api.music.MusicPopulator;
 
 import java.util.Objects;

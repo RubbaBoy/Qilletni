@@ -50,9 +50,8 @@ public final class StringTypeImpl implements StringType {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        StringTypeImpl that = (StringTypeImpl) o;
-        return Objects.equals(value, that.value);
+        if (!(o instanceof StringType comparing)) return false;
+        return Objects.equals(value, comparing.getValue());
     }
 
     @Override
