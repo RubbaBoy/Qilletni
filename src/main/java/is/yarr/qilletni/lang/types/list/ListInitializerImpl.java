@@ -7,7 +7,6 @@ import is.yarr.qilletni.api.lang.types.list.ListInitializer;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.types.ListTypeImpl;
-import is.yarr.qilletni.lang.types.TypelessListType;
 
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class ListInitializerImpl implements ListInitializer {
     @Override
     public ListType createList(List<QilletniType> items) {
         if (items.isEmpty()) {
-            return new TypelessListType();
+            return ListTypeImpl.emptyList();
         }
 
         var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
@@ -38,7 +37,7 @@ public class ListInitializerImpl implements ListInitializer {
     @Override
     public ListType createList(List<QilletniType> items, QilletniTypeClass<?> typeClass) {
         if (items.isEmpty()) {
-            return new TypelessListType();
+            return ListTypeImpl.emptyList();
         }
         
         var transformedItems = items.stream().map(listItem -> {
@@ -55,7 +54,7 @@ public class ListInitializerImpl implements ListInitializer {
     @Override
     public ListType createListFromJava(List<Object> items) {
         if (items.isEmpty()) {
-            return new TypelessListType();
+            return ListTypeImpl.emptyList();
         }
 
         var qilletniItems = items.stream().map(listItem -> {
@@ -77,7 +76,7 @@ public class ListInitializerImpl implements ListInitializer {
     @Override
     public <T extends QilletniType> ListType createListFromJava(List<Object> items, QilletniTypeClass<T> typeClass) {
         if (items.isEmpty()) {
-            return new TypelessListType();
+            return ListTypeImpl.emptyList();
         }
 
         var qilletniItems = items.stream().map(listItem -> {

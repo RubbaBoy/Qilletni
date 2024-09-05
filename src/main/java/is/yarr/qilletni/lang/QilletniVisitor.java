@@ -63,7 +63,6 @@ import is.yarr.qilletni.lang.types.ListTypeImpl;
 import is.yarr.qilletni.lang.types.SongTypeImpl;
 import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.TypeUtils;
-import is.yarr.qilletni.lang.types.TypelessListType;
 import is.yarr.qilletni.lang.types.WeightsTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityAttributes;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionImpl;
@@ -737,7 +736,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public BooleanType visitIs_expr(QilletniParser.Is_exprContext ctx) {
         var checkingVariable = symbolTable.currentScope().lookup(ctx.ID().getFirst().getText()).getValue();
         
-        var type = TypeUtils.getTypeFromStringOrEntity(ctx.type.getText());
+        // If checking a bracket, type is LIST. Otherwise, `type` is defined and get type class from there
+        var type = ctx.LEFT_SBRACKET() != null ? QilletniTypeClass.LIST :
+                TypeUtils.getTypeFromStringOrEntity(ctx.type.getText());
         
         if (type.equals(QilletniTypeClass.ANY)) {
             throw new CannotTypeCheckAnyException(ctx, "Cannot type check against 'any'");
@@ -777,7 +778,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         if (ctx.expr_list() == null) {
-            return Optional.of(new TypelessListType());
+            return Optional.of(ListTypeImpl.emptyList());
         }
         
         return Optional.empty();
@@ -832,14 +833,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx == null) {
             throw new TypeMismatchException(exprCtx, "Expected list expression");
         }
-        
-        var list = createListOfType(ctx, listType);
 
-        if (list instanceof TypelessListType) {
-            return new ListTypeImpl(listType, Collections.emptyList());
-        }
-
-        return list;
+        return createListOfType(ctx, listType);
     }
 
     @Override

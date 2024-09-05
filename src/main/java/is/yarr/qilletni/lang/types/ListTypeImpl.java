@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public sealed class ListTypeImpl implements ListType permits TypelessListType {
+public final class ListTypeImpl implements ListType {
     
     private List<QilletniType> items;
     private final QilletniTypeClass<ListType> listType;
@@ -17,6 +17,10 @@ public sealed class ListTypeImpl implements ListType permits TypelessListType {
     public ListTypeImpl(QilletniTypeClass<?> innerType, List<QilletniType> items) {
         this.items = items;
         this.listType = QilletniTypeClass.createListOfType(innerType);
+    }
+    
+    public static ListType emptyList() {
+        return new ListTypeImpl(QilletniTypeClass.ANY, Collections.emptyList());
     }
     
     @Override
