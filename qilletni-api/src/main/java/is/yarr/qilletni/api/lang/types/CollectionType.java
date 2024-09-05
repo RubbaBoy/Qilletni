@@ -5,7 +5,7 @@ import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.music.Playlist;
 
-public non-sealed interface CollectionType extends QilletniType {
+public non-sealed interface CollectionType extends AnyType {
     CollectionDefinition getCollectionDefinition();
 
     void setCollectionDefinition(CollectionDefinition collectionDefinition);

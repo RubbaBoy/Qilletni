@@ -4,7 +4,7 @@ import is.yarr.qilletni.api.lang.types.album.AlbumDefinition;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.music.Album;
 
-public non-sealed interface AlbumType extends QilletniType {
+public non-sealed interface AlbumType extends AnyType {
     
     AlbumDefinition getAlbumDefinition();
 

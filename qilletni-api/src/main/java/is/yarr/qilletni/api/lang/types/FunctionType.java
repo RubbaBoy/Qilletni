@@ -5,7 +5,7 @@ import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public non-sealed interface FunctionType extends QilletniType {
+public non-sealed interface FunctionType extends AnyType {
     String getName();
 
     /**

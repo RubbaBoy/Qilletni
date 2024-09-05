@@ -5,7 +5,7 @@ import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 /**
  * Internal types for Qilletni programs.
  */
-public sealed interface QilletniType permits StaticEntityType, AlbumType, BooleanType, CollectionType, DoubleType, EntityType, FunctionType, ImportAliasType, IntType, JavaType, ListType, SongType, StringType, WeightsType {
+public sealed interface QilletniType permits AnyType, ImportAliasType, StaticEntityType {
     String stringValue();
     
     default boolean qilletniEquals(QilletniType qilletniType) {

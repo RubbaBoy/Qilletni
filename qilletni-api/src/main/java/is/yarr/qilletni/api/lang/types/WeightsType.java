@@ -4,6 +4,6 @@ import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
 
 import java.util.List;
 
-public non-sealed interface WeightsType extends QilletniType {
+public non-sealed interface WeightsType extends AnyType {
     List<WeightEntry> getWeightEntries();
 }

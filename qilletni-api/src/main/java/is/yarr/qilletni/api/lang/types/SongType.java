@@ -4,7 +4,7 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.song.SongDefinition;
 import is.yarr.qilletni.api.music.Track;
 
-public non-sealed interface SongType extends QilletniType {
+public non-sealed interface SongType extends AnyType {
     SongDefinition getSongDefinition();
 
     void setSongDefinition(SongDefinition songDefinition);

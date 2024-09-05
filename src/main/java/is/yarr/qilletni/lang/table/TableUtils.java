@@ -21,7 +21,7 @@ public class TableUtils {
         var type1 = symbol.getType();
         var type2 = qilletniType.getTypeClass();
         LOGGER.debug("{} == {}", type1, type2);
-        if (!type1.equals(type2)) {
+        if (!type1.isAssignableFrom(type2)) {
             throw new TypeMismatchException("Mismatching types: " + type1.getTypeName() + " and " + type2.getTypeName());
         }
     }

@@ -42,7 +42,7 @@ public class ListInitializerImpl implements ListInitializer {
         }
         
         var transformedItems = items.stream().map(listItem -> {
-            if (listItem.getTypeClass().equals(typeClass)) {
+            if (typeClass.isAssignableFrom(listItem.getTypeClass())) {
                 return listItem;
             }
 
@@ -88,7 +88,7 @@ public class ListInitializerImpl implements ListInitializer {
             // Convert to Qilletni type (e.g. a String to a StringType)
             var directQilletniType = typeConverter.convertToQilletniType(listItem);
             
-            if (directQilletniType.getTypeClass().equals(typeClass)) {
+            if (typeClass.isAssignableFrom(directQilletniType.getTypeClass())) {
                 return directQilletniType;
             }
             

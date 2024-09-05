@@ -131,7 +131,7 @@ single_weight
     ;
 
 list_expression
-    : type=(INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? LEFT_SBRACKET expr_list? RIGHT_SBRACKET
+    : type=(ANY_TYPE | INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? LEFT_SBRACKET expr_list? RIGHT_SBRACKET
     | ID
     ;
 
@@ -167,7 +167,8 @@ body
     ;
 
 asmt
-    : type=INT_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    : type=ANY_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
+    | type=INT_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=DOUBLE_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=STRING_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
     | type=BOOLEAN_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID ASSIGN expr
@@ -248,8 +249,9 @@ entity_body
     : entity_property_declaration* entity_constructor? function_def*
     ;
 
-entity_property_declaration
-    : DOC_COMMENT? type=INT_TYPE ID (ASSIGN int_expr)?
+entity_property_declaration // TODO: lists
+    : DOC_COMMENT? type=ANY_TYPE ID (ASSIGN expr)?
+    | DOC_COMMENT? type=INT_TYPE ID (ASSIGN int_expr)?
     | DOC_COMMENT? type=STRING_TYPE ID (ASSIGN str_expr)?
     | DOC_COMMENT? type=BOOLEAN_TYPE ID (ASSIGN bool_expr)?
     | DOC_COMMENT? type=COLLECTION_TYPE ID (ASSIGN collection_expr)?

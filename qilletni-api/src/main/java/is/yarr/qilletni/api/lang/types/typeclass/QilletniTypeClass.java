@@ -1,6 +1,7 @@
 package is.yarr.qilletni.api.lang.types.typeclass;
 
 import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.api.lang.types.AnyType;
 import is.yarr.qilletni.api.lang.types.BooleanType;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.DoubleType;
@@ -21,6 +22,8 @@ import java.util.Objects;
 
 public class QilletniTypeClass<T extends QilletniType> {
     
+    // ANY is only used for list types?   TODO: still true?
+    public static final QilletniTypeClass<AnyType> ANY = new QilletniTypeClass<>(AnyType.class, "any");
     public static final QilletniTypeClass<IntType> INT = new QilletniTypeClass<>(IntType.class, "int");
     public static final QilletniTypeClass<DoubleType> DOUBLE = new QilletniTypeClass<>(DoubleType.class, "double");
     public static final QilletniTypeClass<BooleanType> BOOLEAN = new QilletniTypeClass<>(BooleanType.class, "boolean");
@@ -34,7 +37,7 @@ public class QilletniTypeClass<T extends QilletniType> {
     public static final QilletniTypeClass<JavaType> JAVA = new QilletniTypeClass<>(JavaType.class, "java");
     public static final QilletniTypeClass<ImportAliasType> IMPORT_ALIAS = new QilletniTypeClass<>(ImportAliasType.class, "");
     
-    private static final List<QilletniTypeClass<?>> types = List.of(INT, DOUBLE, BOOLEAN, STRING, COLLECTION, SONG, ALBUM, WEIGHTS, FUNCTION, LIST, JAVA);
+    private static final List<QilletniTypeClass<?>> types = List.of(ANY, INT, DOUBLE, BOOLEAN, STRING, COLLECTION, SONG, ALBUM, WEIGHTS, FUNCTION, LIST, JAVA);
 
     /**
      * The internal QilletniType class of the type
@@ -91,6 +94,10 @@ public class QilletniTypeClass<T extends QilletniType> {
 
     public Class<?> getInternalType() {
         return internalType;
+    }
+    
+    public boolean isAssignableFrom(QilletniTypeClass<?> type) {
+        return internalType.isAssignableFrom(type.getInternalType());
     }
 
     public EntityDefinition getEntityDefinition() {

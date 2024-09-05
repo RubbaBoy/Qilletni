@@ -30,6 +30,7 @@ DIV_DOUBLE_OP : '/';
 WEIGHTS_KEYWORD : 'weights';
 
 // keywords
+ANY_TYPE : 'any';
 INT_TYPE : 'int';
 DOUBLE_TYPE : 'double';
 STRING_TYPE : 'string';

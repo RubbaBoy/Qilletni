@@ -11,6 +11,7 @@ import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.AlbumType;
+import is.yarr.qilletni.api.lang.types.AnyType;
 import is.yarr.qilletni.api.lang.types.BooleanType;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.DoubleType;
@@ -198,6 +199,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.type != null && ctx.LEFT_SBRACKET() != null) { // defining a new list
             var expr = ctx.expr(0);
             ListType assignmentValue = switch (ctx.type.getType()) {
+                case QilletniLexer.ANY_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.ANY); // TODO: implement ANY
                 case QilletniLexer.INT_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.INT);
                 case QilletniLexer.DOUBLE_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.DOUBLE);
                 case QilletniLexer.BOOLEAN_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.BOOLEAN);
@@ -248,7 +250,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             listSymbol.setValue(list); // Not really needed
         } else if (ctx.type != null) { // defining a new var
             var expr = ctx.expr(0);
+            QilletniTypeClass<?> variableType = null;
             QilletniType assignmentValue = switch (ctx.type.getType()) {
+                case QilletniLexer.ANY_TYPE -> {
+                    variableType = QilletniTypeClass.ANY;
+                    yield visitQilletniTypedNode(expr, AnyType.class); // TODO: Should this set AnyType.class?
+                }
                 case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(expr, IntType.class);
                 case QilletniLexer.DOUBLE_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
@@ -302,9 +309,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
+            
+            if (variableType == null) { // It's only set before this if it's ANY
+                variableType = assignmentValue.getTypeClass();
+            }
 
             LOGGER.debug("(new) {} = {}", id, assignmentValue);
-            currentScope.define(SymbolImpl.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
+            currentScope.define(SymbolImpl.createGenericSymbol(id, variableType, assignmentValue));
         } else if (ctx.expr_assign != null) { // foo.bar = baz
 
             if (id.startsWith("_")) {
@@ -764,7 +775,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
 
             var transformedItems = items.stream().map(listItem -> {
-                if (listItem.getTypeClass().equals(listType)) {
+                if (listType.isAssignableFrom(listItem.getTypeClass())) { // This means if listType is ANY, no transformations happen
                     return listItem;
                 }
 
@@ -1294,6 +1305,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         // is a defined property
 
         var value = switch (ctx.type.getType()) {
+            case QilletniLexer.ANY_TYPE -> visitQilletniTypedNode(ctx.int_expr(), AnyType.class); // TODO: Should this set AnyType.class?
             case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class);
             case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(ctx.bool_expr(), BooleanTypeImpl.class);
             case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(ctx.str_expr(), StringTypeImpl.class);
