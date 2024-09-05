@@ -14,6 +14,7 @@ module Qilletni.qilletni.api.main {
     exports is.yarr.qilletni.api.lang.types.entity;
     exports is.yarr.qilletni.api.lang.types.collection;
     exports is.yarr.qilletni.api.lang.types.song;
+    exports is.yarr.qilletni.api.lang.types.list;
     exports is.yarr.qilletni.api.lang.types.weights;
     exports is.yarr.qilletni.api.lang.docs;
     exports is.yarr.qilletni.api.lang.docs.structure;

@@ -526,6 +526,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 var rightValue = rightInt.getValue();
                 
                 return new IntTypeImpl(leftValue + rightValue);
+            } else if ((leftExpr instanceof IntType && rightExpr instanceof DoubleType) || (leftExpr instanceof DoubleType && rightExpr instanceof IntType) || (leftExpr instanceof DoubleType && rightExpr instanceof DoubleType)) {
+                double leftValue = leftExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) leftExpr).getValue();
+                double rightValue = rightExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) rightExpr).getValue();
+                
+                return new DoubleTypeImpl(leftValue + rightValue);
             }
 
             return new StringTypeImpl(leftExpr.stringValue() + rightExpr.stringValue());
@@ -750,7 +755,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 throw new TypeMismatchException(ctx, "Multiple types found in list");
             }
 
-            return new ListTypeImpl(typeList.get(0), items);
+            return new ListTypeImpl(typeList.getFirst(), items);
         });
     }
     
@@ -984,6 +989,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         var currentItem = list.getItems().get(index);
+        LOGGER.debug("currentItem = {}", currentItem);
 
         if (!scope.isDefined(variableName)) { // first iteration, let it pass
             scope.define(SymbolImpl.createGenericSymbol(variableName, list.getSubType(), currentItem));

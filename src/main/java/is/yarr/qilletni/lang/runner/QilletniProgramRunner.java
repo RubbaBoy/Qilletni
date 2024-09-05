@@ -7,6 +7,7 @@ import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.BooleanType;
+import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.ImportAliasType;
 import is.yarr.qilletni.api.lang.types.IntType;
@@ -16,6 +17,7 @@ import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
+import is.yarr.qilletni.api.lang.types.list.ListInitializer;
 import is.yarr.qilletni.api.lib.qll.QllInfo;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
@@ -32,6 +34,7 @@ import is.yarr.qilletni.lang.stack.QilletniStackTraceImpl;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolTableImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
+import is.yarr.qilletni.lang.types.DoubleTypeImpl;
 import is.yarr.qilletni.lang.types.EntityTypeImpl;
 import is.yarr.qilletni.lang.types.ImportAliasTypeImpl;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
@@ -41,6 +44,7 @@ import is.yarr.qilletni.lang.types.StringTypeImpl;
 import is.yarr.qilletni.lang.types.conversion.TypeConverterImpl;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.lang.types.entity.EntityInitializerImpl;
+import is.yarr.qilletni.lang.types.list.ListInitializerImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformerFactory;
 import is.yarr.qilletni.lib.LibraryRegistrar;
@@ -80,6 +84,7 @@ public class QilletniProgramRunner {
     private final DynamicProvider dynamicProvider;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
+    private final ListInitializer listInitializer;
     private final LibraryRegistrar libraryRegistrar;
     private final QilletniStackTrace qilletniStackTrace;
 
@@ -95,6 +100,8 @@ public class QilletniProgramRunner {
         this.qilletniStackTrace = new QilletniStackTraceImpl();
 
         initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer);
+        
+        var typeConverter = new TypeConverterImpl(typeAdapterRegistrar);
 
         var songTypeFactory = new SongTypeFactoryImpl();
         var collectionTypeFactory = new CollectionTypeFactoryImpl();
@@ -104,6 +111,7 @@ public class QilletniProgramRunner {
 
         var listGeneratorFactory = new ListTypeTransformerFactory();
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
+        this.listInitializer = new ListInitializerImpl(listTypeTransformer, typeConverter);
         this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler, librarySourceFileResolver);
 
         libraryRegistrar.registerLibraries(loadedQllInfos);
@@ -111,11 +119,12 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(musicPopulator);
         nativeFunctionHandler.addInjectableInstance(entityDefinitionManager);
         nativeFunctionHandler.addInjectableInstance(entityInitializer);
+        nativeFunctionHandler.addInjectableInstance(listInitializer);
         nativeFunctionHandler.addInjectableInstance(songTypeFactory);
         nativeFunctionHandler.addInjectableInstance(collectionTypeFactory);
         nativeFunctionHandler.addInjectableInstance(albumTypeFactory);
         nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker());
-        nativeFunctionHandler.addInjectableInstance(new TypeConverterImpl(typeAdapterRegistrar));
+        nativeFunctionHandler.addInjectableInstance(typeConverter);
     }
 
     private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer) {
@@ -127,6 +136,9 @@ public class QilletniProgramRunner {
 
         typeAdapterRegistrar.registerExactTypeAdapter(IntTypeImpl.class, Integer.class, i -> new IntTypeImpl((long) i));
         typeAdapterRegistrar.registerExactTypeAdapter(int.class, IntTypeImpl.class, intType -> (int) intType.getValue());
+
+        typeAdapterRegistrar.registerExactTypeAdapter(DoubleTypeImpl.class, Double.class, DoubleTypeImpl::new);
+        typeAdapterRegistrar.registerExactTypeAdapter(double.class, DoubleTypeImpl.class, DoubleType::getValue);
 
         typeAdapterRegistrar.registerExactTypeAdapter(StringTypeImpl.class, String.class, StringTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
