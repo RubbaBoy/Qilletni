@@ -43,6 +43,7 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | weights_expr
     | java_expr
     | list_expression
+    | is_expr
     ;
 
 bool_expr
@@ -133,6 +134,10 @@ single_weight
 list_expression
     : type=(ANY_TYPE | INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? LEFT_SBRACKET expr_list? RIGHT_SBRACKET
     | ID
+    ;
+
+is_expr
+    : ID IS_KEYWORD type=(ANY_TYPE | INT_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)
     ;
 
 java_expr

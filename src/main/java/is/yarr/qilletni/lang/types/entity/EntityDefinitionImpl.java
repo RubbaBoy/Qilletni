@@ -116,7 +116,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
                     throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
                 }
                 
-                if (!uninitializedType.getNativeTypeClass().equals(currentParam.getTypeClass())) {
+                if (!uninitializedType.getNativeTypeClass().isAssignableFrom(currentParam.getTypeClass())) {
                     throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
                 }
                 

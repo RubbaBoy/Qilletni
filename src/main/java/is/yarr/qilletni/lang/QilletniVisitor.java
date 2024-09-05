@@ -36,6 +36,7 @@ import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
+import is.yarr.qilletni.lang.exceptions.CannotTypeCheckAnyException;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
@@ -730,6 +731,36 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public ListType visitList_expression(QilletniParser.List_expressionContext ctx) {
         return createListOfAnyType(ctx);
+    }
+
+    @Override
+    public BooleanType visitIs_expr(QilletniParser.Is_exprContext ctx) {
+        var checkingVariable = symbolTable.currentScope().lookup(ctx.ID().getFirst().getText()).getValue();
+        
+        var type = TypeUtils.getTypeFromStringOrEntity(ctx.type.getText());
+        
+        if (type.equals(QilletniTypeClass.ANY)) {
+            throw new CannotTypeCheckAnyException(ctx, "Cannot type check against 'any'");
+        }
+        
+        if (ctx.ID().size() == 2) { // Entity name
+            if (!(checkingVariable instanceof EntityType entityType)) {
+                return BooleanTypeImpl.FALSE;
+            }
+            
+            var expectedEntity = entityDefinitionManager.lookup(ctx.ID(1).getText());
+
+            var gotTypeName = entityType.getEntityDefinition();
+            if (!entityType.getEntityDefinition().equals(expectedEntity)) {
+                LOGGER.debug("Expected entity {}, got {}", expectedEntity.getTypeName(), gotTypeName.getTypeName());
+                return BooleanTypeImpl.FALSE;
+            }
+            
+            LOGGER.debug("they equal!");
+            return BooleanTypeImpl.TRUE;
+        }
+        
+        return new BooleanTypeImpl(type.isAssignableFrom(checkingVariable.getTypeClass()));
     }
 
     /**

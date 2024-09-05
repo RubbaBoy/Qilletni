@@ -1,19 +1,3 @@
-
-/**
- * Creates an empty [@type @java java.util.Optional].
- *
- * @returns[@type @java java.util.Optional] An empty Optional
- */
-native fun _emptyOptional()
-
-/**
- * Creates an empty [@type @java java.util.Optional] holding a Qilletni type as its value.
- *
- * @param value The value to hold, of any type
- * @returns[@type @java java.util.Optional] An empty Optional
- */
-native fun _optionalFrom(value)
-
 /**
  * An entity that may either hold a value or be empty. The value being held may be anything.
  */
@@ -21,10 +5,8 @@ entity Optional {
 
     /**
      * The value of the optional.
-     *
-     * @type @java java.util.Optional
      */
-    java _value
+    any _value
     
     /**
       * If the optional has a value.
@@ -46,7 +28,7 @@ entity Optional {
      * @returns[@type std.Optional] The optional created from the value
      */
     static fun fromValue(value) {
-        return new Optional(_optionalFrom(value), true)
+        return new Optional(value, true)
     }
     
     /**
@@ -55,7 +37,8 @@ entity Optional {
      * @returns[@type std.Optional] An empty optional
      */
     static fun fromEmpty() {
-        return new Optional(_emptyOptional(), false)
+        // Using empty is a little abusive, however an empty java pointer is acceptable for this
+        return new Optional(empty, false)
     }
     
     /**
@@ -68,18 +51,23 @@ entity Optional {
     }
     
     /**
-     * Gets the value of the optional.
+     * Gets the value of the optional. This will stop the program if the optional is empty, so check first via
+     `hasValue()`.
      *
      * @returns The value of the optional, any type
      */
-    native fun getValue()
+    fun getValue() {
+        if (_hasValue) {
+            return _value
+        }
+    }
     
     /**
      * Clears the value of the optional.
      */
     fun clearValue() {
         _hasValue = false
-        _value = _emptyOptional()
+        _value = empty
     }
     
     /**
@@ -89,6 +77,6 @@ entity Optional {
      */
     fun setValue(value) {
         _hasValue = true
-        _value = _optionalFrom(value)
+        _value = value
     }
 }

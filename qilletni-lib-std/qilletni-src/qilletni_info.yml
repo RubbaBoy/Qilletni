@@ -12,6 +12,5 @@ native_classes:
   - is.yarr.qilletni.lib.core.SongFunctions
   - is.yarr.qilletni.lib.core.StringFunctions
   - is.yarr.qilletni.lib.core.DateFunctions
-  - is.yarr.qilletni.lib.core.OptionalFunctions
 auto_import:
   - core.ql
