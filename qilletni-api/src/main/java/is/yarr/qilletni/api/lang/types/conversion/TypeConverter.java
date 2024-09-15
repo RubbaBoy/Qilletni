@@ -15,7 +15,7 @@ public interface TypeConverter {
     <T> T convertToJavaType(QilletniType qilletniType, Class<T> clazz);
     
     /**
-     * Convert a QilletniType object to a Java object.
+     * Convert a QilletniType object to a Java object. If it's already a QilletniType object, it will be returned as is.
      * 
      * @param object The object to convert
      * @return The converted object

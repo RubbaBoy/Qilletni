@@ -57,13 +57,7 @@ public class ListInitializerImpl implements ListInitializer {
             return ListTypeImpl.emptyList();
         }
 
-        var qilletniItems = items.stream().map(listItem -> {
-            if (listItem instanceof QilletniType qilletniType) {
-                return qilletniType;
-            }
-
-            return typeConverter.convertToQilletniType(listItem);
-        }).toList();
+        var qilletniItems = items.stream().map(typeConverter::convertToQilletniType).toList();
 
         var typeList = qilletniItems.stream().map(QilletniType::getTypeClass).distinct().toList();
         if (typeList.size() > 1) {
@@ -80,10 +74,6 @@ public class ListInitializerImpl implements ListInitializer {
         }
 
         var qilletniItems = items.stream().map(listItem -> {
-            if (listItem instanceof QilletniType qilletniType) {
-                return qilletniType;
-            }
-
             // Convert to Qilletni type (e.g. a String to a StringType)
             var directQilletniType = typeConverter.convertToQilletniType(listItem);
             

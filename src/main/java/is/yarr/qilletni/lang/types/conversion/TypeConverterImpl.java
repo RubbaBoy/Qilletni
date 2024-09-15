@@ -24,6 +24,10 @@ public class TypeConverterImpl implements TypeConverter {
 
     @Override
     public QilletniType convertToQilletniType(Object object) {
+        if (object instanceof QilletniType qilletniType) {
+            return qilletniType;
+        }
+        
         TypeAdapter<QilletniType, ?> qilletniTypeTypeAdapter = typeAdapterRegistrar.findAnyTypeAdapter(object.getClass())
                 .orElseThrow(() -> new NoTypeAdapterException(object.getClass()));
 

@@ -22,18 +22,18 @@ running
 // Expressions
 expr: LEFT_PAREN expr RIGHT_PAREN
     | function_call
-    | pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET int_expr RIGHT_SBRACKET post_crement=(INCREMENT | DECREMENT)?
+    | pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement=(INCREMENT | DECREMENT)?
     | pre_crement=(INCREMENT | DECREMENT)? ID post_crement=(INCREMENT | DECREMENT)?
     | ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
-    | expr REL_OP expr
     | expr PLUS expr
     | expr DOT function_call
     | expr DOT ID post_crement=(INCREMENT | DECREMENT)?
     | expr DOT ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | entity_initialize
     | ID
-    | bool_expr
+    | expr REL_OP expr
+    | BOOL
     | int_expr
     | double_expr
     | str_expr
@@ -46,10 +46,11 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | is_expr
     ;
 
-bool_expr
-    : function_call
-    | BOOL
-    ;
+//bool_expr
+//    : function_call
+//    | expr REL_OP (int_expr | double_expr)
+//    | BOOL
+//    ;
 
 int_expr
     : int_expr op=(OP | PLUS) int_expr
@@ -233,7 +234,7 @@ for_stmt
     ;
 
 for_expr
-    : bool_expr
+    : expr
     | range
     | foreach_range
     ;
@@ -258,7 +259,7 @@ entity_property_declaration // TODO: lists
     : DOC_COMMENT? type=ANY_TYPE ID (ASSIGN expr)?
     | DOC_COMMENT? type=INT_TYPE ID (ASSIGN int_expr)?
     | DOC_COMMENT? type=STRING_TYPE ID (ASSIGN str_expr)?
-    | DOC_COMMENT? type=BOOLEAN_TYPE ID (ASSIGN bool_expr)?
+    | DOC_COMMENT? type=BOOLEAN_TYPE ID (ASSIGN expr)?
     | DOC_COMMENT? type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
     | DOC_COMMENT? type=SONG_TYPE ID (ASSIGN song_expr)?
     | DOC_COMMENT? type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?

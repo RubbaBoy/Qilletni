@@ -33,6 +33,9 @@ public class MapFunctions {
     public static Object get(EntityType entity, QilletniType key) {
         JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
+        
+        LOGGER.debug("Getting key {} ({}) from map {}", key, key.getClass().getCanonicalName(), hashMap);
+        
         return hashMap.get(key);
     }
     
@@ -40,6 +43,8 @@ public class MapFunctions {
     public static boolean containsKey(EntityType entity, QilletniType key) {
         JavaType javaType = entity.getEntityScope().<JavaType>lookup("_map").getValue();
         HashMap<QilletniType, QilletniType> hashMap = javaType.getReference(HashMap.class);
+
+        LOGGER.debug("Contains key {} ({}) from map {} ({})", key, key.getClass().getCanonicalName(), hashMap, hashMap.values().stream().map(Object::getClass).map(Class::getCanonicalName).toList());
         
         return hashMap.containsKey(key);
     }

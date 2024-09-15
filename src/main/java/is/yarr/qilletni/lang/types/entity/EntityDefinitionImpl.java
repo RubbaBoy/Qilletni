@@ -21,6 +21,7 @@ import java.security.InvalidParameterException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Effectively the "Type" of a {@link EntityType}.
@@ -33,9 +34,9 @@ public class EntityDefinitionImpl implements EntityDefinition {
 
     // properties NOT in constructor MUST be constant ( <-- not yet implemented)
     /**
-     * Initial defined properties
+     * Initial defined properties. A supplier is used to allow for lazy initialization, and individual values per entity.
      */
-    private final Map<String, QilletniType> properties;
+    private final Map<String, Supplier<QilletniType>> properties;
 
     /**
      * Initial undefined properties, which MUST appear in constructor
@@ -50,7 +51,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
     
     private final QilletniTypeClass<EntityType> qilletniTypeClass;
 
-    public EntityDefinitionImpl(String typeName, Map<String, QilletniType> properties, Map<String, UninitializedType> uninitializedParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
+    public EntityDefinitionImpl(String typeName, Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> uninitializedParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
         this.typeName = typeName;
         this.qilletniTypeClass = new QilletniTypeClass<>(this, typeName);
         this.properties = properties;
@@ -89,7 +90,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
 
         for (var entry : CollectionUtility.getRecordEntries(properties)) {
             var name = entry.k();
-            var qilletniType = entry.v();
+            var qilletniType = entry.v().get();
             scope.define(SymbolImpl.createGenericSymbol(name, qilletniType.getTypeClass(), qilletniType));
         }
 

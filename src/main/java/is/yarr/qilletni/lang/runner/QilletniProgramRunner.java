@@ -2,7 +2,6 @@ package is.yarr.qilletni.lang.runner;
 
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
-import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
@@ -15,6 +14,7 @@ import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.conversion.TypeConverter;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.api.lang.types.list.ListInitializer;
@@ -23,7 +23,7 @@ import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
-import is.yarr.qilletni.lang.exceptions.QilletniContextException;
+import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
@@ -35,7 +35,6 @@ import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolTableImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
 import is.yarr.qilletni.lang.types.DoubleTypeImpl;
-import is.yarr.qilletni.lang.types.EntityTypeImpl;
 import is.yarr.qilletni.lang.types.ImportAliasTypeImpl;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
 import is.yarr.qilletni.lang.types.JavaTypeImpl;
@@ -99,9 +98,8 @@ public class QilletniProgramRunner {
         this.musicPopulator = new MusicPopulatorImpl(dynamicProvider);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
 
-        initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer);
-        
         var typeConverter = new TypeConverterImpl(typeAdapterRegistrar);
+        initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer, typeConverter);
 
         var songTypeFactory = new SongTypeFactoryImpl();
         var collectionTypeFactory = new CollectionTypeFactoryImpl();
@@ -127,7 +125,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(typeConverter);
     }
 
-    private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer) {
+    private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, TypeConverter typeConverter) {
         typeAdapterRegistrar.registerExactTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
 
@@ -156,7 +154,12 @@ public class QilletniProgramRunner {
         
         typeAdapterRegistrar.registerExactTypeAdapter(EntityType.class, HashMap.class, map -> {
             var mapEntity = entityInitializer.initializeEntity("Map");
-            mapEntity.getEntityScope().<JavaType>lookup("_map").getValue().setReference(map);
+            
+            // Convert the map to Qilletni types
+            var qilletniTypeMap = new HashMap<QilletniType, QilletniType>();
+            map.forEach((key, value) -> qilletniTypeMap.put(typeConverter.convertToQilletniType(key), typeConverter.convertToQilletniType(value)));
+            
+            mapEntity.getEntityScope().<JavaType>lookup("_map").getValue().setReference(qilletniTypeMap);
             return mapEntity;
         });
 

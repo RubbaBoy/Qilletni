@@ -17,6 +17,22 @@ entity Map {
     java _map = _emptyJavaMap()
     
     /**
+     * Creates a new map from a list of key-value pairs.
+     *
+     * @param[@type list] list A list of key-value pairs
+     * @returns[@type core.Map] A new map with the given key-value pairs
+     */
+    static fun fromList(list) {
+        Map map = new Map()
+        int i = 0
+        for (i < list.size()) {
+            map.put(list[i++], list[i++])
+        }
+        
+        return map
+    }
+    
+    /**
      * Puts a [@param key] and [@param value] into the map, overriding any previous value associated with the key.
      *
      * @param[@type string]                  key   The key to add into the map

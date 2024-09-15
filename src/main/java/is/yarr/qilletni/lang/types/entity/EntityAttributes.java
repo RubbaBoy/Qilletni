@@ -8,6 +8,7 @@ import is.yarr.qilletni.api.lang.types.entity.UninitializedType;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public record EntityAttributes(Map<String, QilletniType> properties, Map<String, UninitializedType> constructorParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators) {
+public record EntityAttributes(Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> constructorParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators) {
 }
