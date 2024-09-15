@@ -187,6 +187,8 @@ asmt
     | ID LEFT_SBRACKET int_expr RIGHT_SBRACKET ASSIGN expr
     | ID ASSIGN expr
     | expr_assign=expr DOT ID ASSIGN expr
+    | expr DOUBLE_DOT ID ASSIGN expr
+    | asmt DOUBLE_DOT ID ASSIGN expr
     ;
 
 collection_limit
@@ -240,7 +242,7 @@ for_expr
     ;
 
 range
-    : ID RANGE_OP (INT | RANGE_INFINITY)
+    : ID DOUBLE_DOT (INT | RANGE_INFINITY)
     ;
 
 foreach_range

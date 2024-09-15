@@ -37,6 +37,7 @@ import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.CannotTypeCheckAnyException;
+import is.yarr.qilletni.lang.exceptions.CascadeFailedException;
 import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
@@ -193,7 +194,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     @Override
-    public Object visitAsmt(QilletniParser.AsmtContext ctx) {
+    public QilletniType visitAsmt(QilletniParser.AsmtContext ctx) {
         var id = ctx.ID(ctx.ID().size() - 1).getText();
 
         var currentScope = symbolTable.currentScope();
@@ -318,8 +319,27 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
             LOGGER.debug("(new) {} = {}", id, assignmentValue);
             currentScope.define(SymbolImpl.createGenericSymbol(id, variableType, assignmentValue));
-        } else if (ctx.expr_assign != null) { // foo.bar = baz
+        } else if (ctx.DOUBLE_DOT() != null) {
+            // cascade, either with expr or asmt to the left. If asmt is to the left,
+            // that asmt SHOULD return the Entity to change the value of
+            
+            if (id.startsWith("_")) {
+                throw new VariableNotFoundException(ctx.expr_assign, "Cannot access private variable");
+            }
+            
+            var entityNode = ctx.asmt() != null ? ctx.asmt() : ctx.expr(0);
+            
+            var visitedEntity = visitNode(entityNode);
+            if (!(visitedEntity instanceof EntityType entity)) {
+                throw new CascadeFailedException(entityNode);
+            }
+            
+            var propertyValue = visitQilletniTypedNode(ctx.expr(ctx.expr().size() - 1));
+            var entityScope = entity.getEntityScope();
+            entityScope.lookup(id).setValue(propertyValue);
 
+            return entity;
+        } else if (ctx.expr_assign != null) { // foo.bar = baz
             if (id.startsWith("_")) {
                 throw new VariableNotFoundException(ctx.expr_assign, "Cannot access private variable");
             }

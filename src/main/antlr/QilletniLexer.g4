@@ -53,7 +53,6 @@ IF_KEYWORD: 'if';
 ELSE_KEYWORD: 'else';
 FOR_KEYWORD: 'for';
 RANGE_INFINITY: 'infinity';
-RANGE_OP: '..';
 COLON: ':';
 
 
@@ -64,6 +63,7 @@ STATIC : 'static';
 NATIVE : 'native';
 ON: 'on';
 DOT: '.';
+DOUBLE_DOT: '..';
 
 NEWLINE           : [\r\n]+ -> skip;
 WS                : [ \t\n\r]+ -> skip;

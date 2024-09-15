@@ -1,5 +1,3 @@
-// 
-
 /**
  * Play a song via the default "play" keyword invoked as a function, which will call the default "play" action as if no
  * redirection happened.
