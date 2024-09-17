@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class NativeFunctionHandler implements NativeFunctionClassInjector {
@@ -102,7 +103,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         
         return Optional.empty();
     }
-    
+
     public QilletniType invokeNativeMethod(SymbolTable symbolTable, QilletniStackTrace qilletniStackTrace, String name, List<QilletniType> params, int definedParamCount, QilletniTypeClass<?> invokedUponType) {
         LOGGER.debug("invokeNativeMethod({}, {}, {})", name, definedParamCount, invokedUponType);
         var invocableMethod = nativeMethods.get(new MethodSignature(name, definedParamCount, invokedUponType));
@@ -110,13 +111,23 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
             throw new NativeMethodNotBoundException("Native method not bound to anything!");
         }
 
+        Object instance;
+
         try {
-            var instance = createInstanceForMethod(symbolTable, qilletniStackTrace, invocableMethod);
-            
+            instance = createInstanceForMethod(symbolTable, qilletniStackTrace, invocableMethod);
+        } catch (Throwable e) {
+            throw getQilletniNativeInvocationException(qilletniStackTrace, e);
+        }
+
+        try {
             if (invocableMethod.beforeAny() != null) {
-                typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), params);
+                typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), List.of(params.getFirst()));
             }
-            
+        } catch (Throwable e) {
+            throw getQilletniNativeInvocationException(qilletniStackTrace, e, "beforeAny ");
+        }
+
+        try {
             return typeAdapterInvoker.invokeMethod(instance, invocableMethod.method(), params);
         } catch (Throwable e) {
             throw getQilletniNativeInvocationException(qilletniStackTrace, e);
@@ -124,6 +135,10 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     }
 
     private static QilletniNativeInvocationException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e) {
+        return getQilletniNativeInvocationException(qilletniStackTrace, e, null);
+    }
+
+    private static QilletniNativeInvocationException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e, String methodSpecifier) {
         Throwable throwable = e;
         if (throwable instanceof InvocationTargetException ite) {
             throwable = ite.getCause();
@@ -132,9 +147,9 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         var theirMessage = throwable.getMessage();
 
         if (theirMessage == null) {
-            theirMessage = "An exception of " + throwable.getClass().getSimpleName() + " occurred in a native method";
+            theirMessage = "An exception of %s occurred in a %snative method".formatted(throwable.getClass().getSimpleName(), Objects.requireNonNullElse(methodSpecifier, ""));
         } else {
-            theirMessage = "An exception of " + throwable.getClass().getSimpleName() + " occurred in a native method: " + theirMessage;
+            theirMessage = "An exception of %s occurred in a %snative method: %s".formatted(throwable.getClass().getSimpleName(), Objects.requireNonNullElse(methodSpecifier, ""), theirMessage);
         }
 
         var qce = new QilletniNativeInvocationException(throwable);

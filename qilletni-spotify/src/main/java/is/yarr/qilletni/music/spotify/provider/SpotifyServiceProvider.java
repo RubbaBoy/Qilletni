@@ -9,12 +9,15 @@ import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
 import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
 import is.yarr.qilletni.api.music.factories.SongTypeFactory;
+import is.yarr.qilletni.async.ExecutorServiceUtility;
+import is.yarr.qilletni.lib.spotify.PlaylistToolsFunctions;
 import is.yarr.qilletni.music.spotify.SpotifyMusicCache;
 import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
 import is.yarr.qilletni.music.spotify.SpotifyStringIdentifier;
 import is.yarr.qilletni.music.spotify.auth.SpotifyApiSingleton;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
 import is.yarr.qilletni.music.spotify.auth.pkce.SpotifyPKCEAuthorizer;
+import is.yarr.qilletni.music.spotify.creator.PlaylistCreator;
 import is.yarr.qilletni.music.spotify.play.ReroutablePlayActor;
 import se.michaelthelin.spotify.SpotifyApiThreading;
 
@@ -46,6 +49,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
     @Override
     public void shutdown() {
         authorizer.shutdown();
+        ExecutorServiceUtility.shutdown(PlaylistCreator.EXECUTOR_SERVICE);
     }
 
     @Override

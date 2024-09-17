@@ -2,6 +2,7 @@ package is.yarr.qilletni.lib.core;
 
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.JavaType;
+import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
@@ -20,13 +21,15 @@ public class DateFunctions {
         this.entityInitializer = entityInitializer;
     }
 
-    public EntityType newDateFrom(String dateString) {
+    @NativeOn("Date")
+    public EntityType parse(StaticEntityType staticDate, String dateString) {
         var parsedDate = LocalDate.parse(dateString, formatter);
         
         return entityInitializer.initializeEntity("Date", parsedDate);
     }
 
-    public EntityType newDateNow() {
+    @NativeOn("Date")
+    public EntityType now(StaticEntityType staticDate) {
         var parsedDate = LocalDate.now();
         
         return entityInitializer.initializeEntity("Date", parsedDate);

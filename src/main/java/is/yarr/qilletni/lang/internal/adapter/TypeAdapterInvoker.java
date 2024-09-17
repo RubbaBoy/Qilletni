@@ -27,9 +27,13 @@ public class TypeAdapterInvoker {
     public QilletniType invokeMethod(Object instance, Method method, List<QilletniType> params) throws IllegalAccessException, InvocationTargetException {
         // params defined in the class
         var javaParams = method.getParameterTypes();
-        
+
         // params being sent to the java method, must match up with javaParams types
         var invokingParams = new Object[params.size()];
+
+        LOGGER.debug("java method: {}", method);
+        LOGGER.debug("java method name: {}", method.getName());
+        LOGGER.debug("  In java: {}   received: {}", Arrays.toString(javaParams), params);
 
         for (int i = 0; i < javaParams.length; i++) {
             var javaParam = javaParams[i];

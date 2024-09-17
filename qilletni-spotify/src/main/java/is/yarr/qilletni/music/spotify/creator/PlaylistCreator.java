@@ -14,12 +14,16 @@ import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class PlaylistCreator {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistCreator.class);
 
+    public static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
+    
     private final SpotifyAuthorizer authorizer;
 
     public PlaylistCreator(SpotifyAuthorizer authorizer) {
@@ -60,7 +64,7 @@ public class PlaylistCreator {
             } catch (IOException | ParseException | SpotifyWebApiException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }, EXECUTOR_SERVICE);
     }
     
 }

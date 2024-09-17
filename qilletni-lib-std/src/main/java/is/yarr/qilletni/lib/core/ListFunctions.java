@@ -32,12 +32,20 @@ public class ListFunctions {
 
     public static void addAll(ListType list, ListType otherList) {
         if (!list.getSubType().equals(otherList.getSubType())) {
-            throw new RuntimeException("Cannot add lists of items of mismatched types (" + otherList.getSubType().getTypeName() + " to " + list.getSubType().getTypeName() + ")");
+            throw new RuntimeException("Cannot add lists of items of mismatched types (%s to %s)".formatted(otherList.getSubType().getTypeName(), list.getSubType().getTypeName()));
         }
         
         var mutableItems = new ArrayList<>(list.getItems());
         mutableItems.addAll(otherList.getItems());
         list.setItems(mutableItems);
+    }
+
+    public static QilletniType remove(ListType list, int index) {
+        var mutableItems = new ArrayList<>(list.getItems());
+        var removedItem = mutableItems.remove(index);
+        list.setItems(mutableItems);
+        
+        return removedItem;
     }
 
     public static boolean contains(ListType list, QilletniType object) {
@@ -49,6 +57,10 @@ public class ListFunctions {
         var listCopy = list.copy();
         listCopy.setItems(subList);
         return listCopy;
+    }
+
+    public static int indexOf(ListType list, QilletniType object) {
+        return list.getItems().indexOf(object);
     }
     
 }

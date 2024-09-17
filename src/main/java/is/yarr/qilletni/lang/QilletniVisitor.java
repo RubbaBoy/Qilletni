@@ -4,9 +4,7 @@ import is.yarr.qilletni.StringUtility;
 import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
-import is.yarr.qilletni.api.CollectionUtility;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
-import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
@@ -49,7 +47,6 @@ import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.internal.FunctionInvokerImpl;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
-import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolImpl;
 import is.yarr.qilletni.lang.table.TableUtils;
 import is.yarr.qilletni.lang.types.AlbumTypeImpl;
@@ -76,7 +73,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,9 +81,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -228,7 +223,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
 
-            LOGGER.debug("(new) {}[] = {}", id, assignmentValue);
+            LOGGER.info("(new) {}[{}] = {}", id, assignmentValue.getTypeClass(), assignmentValue);
             currentScope.define(SymbolImpl.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
 
             // visitQilletniList
@@ -238,12 +233,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var index = visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class).getValue();
 
             if (index < 0 || index > list.getItems().size()) {
-                throw new ListOutOfBoundsException(ctx, "Attempted to access index " + index + " on a list with a size of " + list.getItems().size());
+                throw new ListOutOfBoundsException(ctx, "Attempted to access index %d on a list with a size of %d".formatted(index, list.getItems().size()));
             }
 
             var expressionValue = visitQilletniTypedNode(ctx.expr(0));
             if (!expressionValue.getTypeClass().equals(list.getSubType())) {
-                throw new TypeMismatchException(ctx, "Attempted to assign a " + expressionValue.typeName() + " in a " + list.typeName() + " list");
+                throw new TypeMismatchException(ctx, "Attempted to assign a %s in a %s list".formatted(expressionValue.typeName(), list.typeName()));
             }
 
             var mutableItems = new ArrayList<>(list.getItems());
@@ -319,6 +314,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
             LOGGER.debug("(new) {} = {}", id, assignmentValue);
             currentScope.define(SymbolImpl.createGenericSymbol(id, variableType, assignmentValue));
+
+            if (assignmentValue instanceof EntityType entityType) {
+                return entityType;
+            }
         } else if (ctx.DOUBLE_DOT() != null) {
             // cascade, either with expr or asmt to the left. If asmt is to the left,
             // that asmt SHOULD return the Entity to change the value of
@@ -377,6 +376,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         
         if (ctx.BOOL() != null) {
             return new BooleanTypeImpl(ctx.BOOL().getText().equals("true"));
+        }
+        
+        if (ctx.NOT() != null) {
+            return new BooleanTypeImpl(!visitQilletniTypedNode(ctx.expr(0), BooleanType.class).getValue());
         }
         
         if (ctx.ID() != null) {
@@ -556,23 +559,46 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return visitQilletniTypedNode(ctx.getChild(1));
         }
 
-        if (ctx.PLUS() != null) { // id + id
+        if (ctx.op != null) { // id + id
             var leftExpr = visitQilletniTypedNode(ctx.expr(0));
             var rightExpr = visitQilletniTypedNode(ctx.expr(1));
+            
+            var biOperation = ctx.op.getText();
+            
+            // Handle + different, as multiple types can be added together
+            if (biOperation.equals("+")) {
+                if (leftExpr instanceof IntType leftInt && rightExpr instanceof IntType rightInt) {
+                    var leftValue = leftInt.getValue();
+                    var rightValue = rightInt.getValue();
 
-            if (leftExpr instanceof IntType leftInt && rightExpr instanceof IntType rightInt) {
-                var leftValue = leftInt.getValue();
-                var rightValue = rightInt.getValue();
-                
-                return new IntTypeImpl(leftValue + rightValue);
-            } else if ((leftExpr instanceof IntType && rightExpr instanceof DoubleType) || (leftExpr instanceof DoubleType && rightExpr instanceof IntType) || (leftExpr instanceof DoubleType && rightExpr instanceof DoubleType)) {
-                double leftValue = leftExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) leftExpr).getValue();
-                double rightValue = rightExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) rightExpr).getValue();
-                
-                return new DoubleTypeImpl(leftValue + rightValue);
+                    return new IntTypeImpl(leftValue + rightValue);
+                } else if ((leftExpr instanceof IntType && rightExpr instanceof DoubleType) || (leftExpr instanceof DoubleType && rightExpr instanceof IntType) || (leftExpr instanceof DoubleType && rightExpr instanceof DoubleType)) {
+                    double leftValue = leftExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) leftExpr).getValue();
+                    double rightValue = rightExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) rightExpr).getValue();
+
+                    return new DoubleTypeImpl(leftValue + rightValue);
+                }
+
+                return new StringTypeImpl(leftExpr.stringValue() + rightExpr.stringValue());
             }
 
-            return new StringTypeImpl(leftExpr.stringValue() + rightExpr.stringValue());
+            BiFunction<Number, Number, Number> calculate = switch (biOperation) {
+                case "*" -> (a, b) -> (a instanceof Double || b instanceof Double) ? a.doubleValue() * b.doubleValue() : a.longValue() * b.longValue();
+                case "/~" -> (a, b) -> (a instanceof Double || b instanceof Double) ? (long) (a.doubleValue() / b.doubleValue()) : a.longValue() / b.longValue();  // Integer division
+                case "/" -> (a, b) -> a.doubleValue() / b.doubleValue();  // Normal division
+                case "%" -> (a, b) -> (a instanceof Double || b instanceof Double) ? a.doubleValue() % b.doubleValue() : a.longValue() % b.longValue();
+                case "-" -> (a, b) -> (a instanceof Double || b instanceof Double) ? a.doubleValue() - b.doubleValue() : a.longValue() - b.longValue();
+                default -> throw new IllegalStateException("Unexpected value: %s".formatted(ctx.OP().getText()));
+            };
+
+            Number leftVal = leftExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) leftExpr).getValue();
+            Number rightVal = rightExpr instanceof IntType intType ? intType.getValue() : ((DoubleType) rightExpr).getValue();
+
+            if (!biOperation.equals("/~") && (leftVal instanceof Double || rightVal instanceof Double)) {
+                return new DoubleTypeImpl(calculate.apply(leftVal, rightVal).doubleValue());
+            } else {
+                return new IntTypeImpl(calculate.apply(leftVal, rightVal).longValue());
+            }
         }
 
         if (ctx.function_call() != null) {
@@ -788,7 +814,15 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         if (ctx.expr_list() == null) {
             return Optional.of(ListTypeImpl.emptyList());
         }
-        
+
+        return Optional.empty();
+    }
+    
+    private Optional<ListType> checkEmptyTypedList(QilletniParser.List_expressionContext ctx, QilletniTypeClass<?> listType) {
+        if (ctx.expr_list() == null) {
+            return Optional.of(new ListTypeImpl(listType, Collections.emptyList()));
+        }
+
         return Optional.empty();
     }
     
@@ -802,16 +836,17 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
 
             var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
-            if (typeList.size() > 1) {
-                throw new TypeMismatchException(ctx, "Multiple types found in list");
+            QilletniTypeClass<?> listType = QilletniTypeClass.ANY;
+            if (!typeList.isEmpty()) {
+                listType = typeList.getFirst();
             }
 
-            return new ListTypeImpl(typeList.getFirst(), items);
+            return new ListTypeImpl(listType, items);
         });
     }
     
     private <T extends QilletniType> ListType createListOfType(QilletniParser.List_expressionContext ctx, QilletniTypeClass<T> listType) {
-        return checkAlreadyComputedList(ctx).orElseGet(() -> {
+        return checkEmptyTypedList(ctx, listType).or(() -> checkAlreadyComputedList(ctx)).orElseGet(() -> {
             var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
 
             var transformedItems = items.stream().map(listItem -> {
@@ -836,7 +871,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
      * @param <T> The type of the list items should be converted to
      */
     private <T extends QilletniType> ListType createListOfTypeFromExpression(ParserRuleContext exprCtx, QilletniTypeClass<T> listType) {
-        LOGGER.info("ctx = {}", exprCtx.getText());
         var ctx = exprCtx.getChild(QilletniParser.List_expressionContext.class, 0);
         
         if (ctx == null) {
@@ -971,8 +1005,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public Optional<QilletniType> visitFor_stmt(QilletniParser.For_stmtContext ctx) {
         symbolTable.pushScope(); // The scope for only holding the incrementing var
+        var iteratingListState = new AtomicReference<ListType>(null);
 
-        for (int i = 0; visitForExpression(ctx.for_expr(), i).getValue(); i++) {
+        for (int i = 0; visitForExpression(ctx.for_expr(), i, iteratingListState).getValue(); i++) {
             symbolTable.pushScope(); // The actual inner for loop scope that gets reset every iteration
             Optional<QilletniType> bodyReturn = visitNode(ctx.body());
 
@@ -988,19 +1023,19 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     /**
-     * 
      * @param ctx
      * @param index
+     * @param iteratingListState
      * @return If the for loop should iterate
      */
-    public BooleanType visitForExpression(QilletniParser.For_exprContext ctx, int index) {
+    public BooleanType visitForExpression(QilletniParser.For_exprContext ctx, int index, AtomicReference<ListType> iteratingListState) {
         if (ctx.expr() != null) {
             return visitQilletniTypedNode(ctx.expr(), BooleanType.class);
         } else if (ctx.range() != null) {
             LOGGER.debug("range = {}", ctx.range().getText());
             return visitQilletniTypedNode(ctx.range(), BooleanType.class);
         } else if (ctx.foreach_range() != null) {
-            return visitForeachRange(ctx.foreach_range(), index);
+            return visitForeachRange(ctx.foreach_range(), index, iteratingListState);
         }
 
         // Should never happen
@@ -1035,10 +1070,15 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         return BooleanTypeImpl.FALSE;
     }
 
-    public BooleanType visitForeachRange(QilletniParser.Foreach_rangeContext ctx, int index) {
+    public BooleanType visitForeachRange(QilletniParser.Foreach_rangeContext ctx, int index, AtomicReference<ListType> iteratingListState) {
         var scope = symbolTable.currentScope();
         var variableName = ctx.ID().getText();
-        var list = visitQilletniTypedNode(ctx.expr(), ListTypeImpl.class);
+        
+        if (iteratingListState.get() == null) {
+            iteratingListState.set(visitQilletniTypedNode(ctx.expr(), ListTypeImpl.class));
+        }
+        
+        var list = iteratingListState.get();
         
         if (index >= list.getItems().size()) {
             return BooleanTypeImpl.FALSE;
@@ -1299,7 +1339,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var unorderedUninitializedProperties = new HashMap<String, UninitializedType>();
 
         for (var entityProp : ctx.entity_property_declaration()) {
-            if (isEntityPropertyUninitialized(entityProp)) {
+            if (entityProp.expr() == null) {
                 if (visitNode(entityProp) instanceof EntityProperty<?>(var name, UninitializedType type)) {
                     unorderedUninitializedProperties.put(name, type);
                 } // else should never happen
@@ -1334,10 +1374,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         throw new RuntimeException("This should never be invoked directly");
     }
     
-    private boolean isEntityPropertyUninitialized(QilletniParser.Entity_property_declarationContext ctx) {
-        return ctx.int_expr() == null && ctx.str_expr() == null && ctx.expr() == null && ctx.collection_expr() == null && ctx.song_expr() == null && ctx.weights_expr() == null && ctx.entity_initialize() == null && ctx.java_expr() == null;
-    }
-    
     private String getEntityPropertyName(QilletniParser.Entity_property_declarationContext ctx) {
         return ctx.ID(ctx.ID().size() - 1).getText();
     }
@@ -1346,8 +1382,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public EntityProperty<?> visitEntity_property_declaration(QilletniParser.Entity_property_declarationContext ctx) {
         var text = getEntityPropertyName(ctx);
         var type = ctx.type;
+        var expr = ctx.expr();
 
-        if (isEntityPropertyUninitialized(ctx)) {
+        if (expr == null) {
             // undefined property
             if (ctx.ID().size() == 2) { // is an Entity
                 return new EntityProperty<>(text, new UninitializedTypeImpl(entityDefinitionManager.lookup(ctx.ID(0).getText()))); // pass the entity name? TODO
@@ -1357,22 +1394,55 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         // is a defined property
+        
+        if (ctx.LEFT_SBRACKET() != null) { // list property
+            // TODO: remove duplicate code in visitAsmt
+            var value = switch (ctx.type.getType()) {
+                case QilletniLexer.ANY_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.ANY); // TODO: implement ANY
+                case QilletniLexer.INT_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.INT);
+                case QilletniLexer.DOUBLE_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.DOUBLE);
+                case QilletniLexer.BOOLEAN_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.BOOLEAN);
+                case QilletniLexer.STRING_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.STRING);
+                case QilletniLexer.COLLECTION_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.COLLECTION);
+                case QilletniLexer.SONG_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.SONG);
+                case QilletniLexer.ALBUM_TYPE -> createListOfTypeFromExpression(expr, QilletniTypeClass.ALBUM);
+                case QilletniLexer.WEIGHTS_KEYWORD -> createListOfTypeFromExpression(expr, QilletniTypeClass.WEIGHTS);
+                case QilletniLexer.ID -> {
+                    var entityName = ctx.type.getText();
 
-        var value = switch (ctx.type.getType()) {
-            case QilletniLexer.ANY_TYPE -> visitQilletniTypedNode(ctx.int_expr(), AnyType.class); // TODO: Should this set AnyType.class?
-            case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(ctx.int_expr(), IntTypeImpl.class);
-            case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(ctx.expr(), BooleanTypeImpl.class);
-            case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(ctx.str_expr(), StringTypeImpl.class);
-            case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(ctx.collection_expr(), CollectionTypeImpl.class);
-            case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(ctx.song_expr(), SongTypeImpl.class);
-            case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(ctx.weights_expr(), WeightsTypeImpl.class);
-            case QilletniLexer.ALBUM_TYPE -> visitQilletniTypedNode(ctx.album_expr(), AlbumTypeImpl.class);
-            case QilletniLexer.JAVA_TYPE -> visitQilletniTypedNode(ctx.java_expr(), JavaTypeImpl.class);
-            case QilletniLexer.ID -> visitQilletniTypedNode(ctx.entity_initialize(), EntityTypeImpl.class);
-            default -> throw new RuntimeException("This should not be possible, unknown type");
-        };
+                    var expectedEntity = entityDefinitionManager.lookup(entityName).getQilletniTypeClass();
+                    var entityNode = createListOfTypeFromExpression(expr, QilletniTypeClass.createEntityTypePlaceholder(entityName));
 
-        return new EntityProperty<>(text, value);
+                    var listSubtypeClass = entityNode.getSubType();
+                    if (!listSubtypeClass.isAssignableFrom(expectedEntity)) {
+                        var gotTypeName = listSubtypeClass.getTypeName();
+                        throw new TypeMismatchException(ctx.expr(), "Expected entity %s, got %s".formatted(entityName, gotTypeName));
+                    }
+
+                    yield entityNode;
+                }
+                default -> throw new RuntimeException("This should not be possible, unknown type");
+            };
+
+            return new EntityProperty<>(text, value);
+        } else {
+            var value = switch (ctx.type.getType()) {
+                case QilletniLexer.ANY_TYPE -> visitQilletniTypedNode(ctx.expr(), AnyType.class); // TODO: Should this set AnyType.class?
+                case QilletniLexer.INT_TYPE -> visitQilletniTypedNode(ctx.expr(), IntTypeImpl.class);
+                case QilletniLexer.DOUBLE_TYPE -> visitQilletniTypedNode(ctx.expr(), DoubleTypeImpl.class);
+                case QilletniLexer.BOOLEAN_TYPE -> visitQilletniTypedNode(ctx.expr(), BooleanTypeImpl.class);
+                case QilletniLexer.STRING_TYPE -> visitQilletniTypedNode(ctx.expr(), StringTypeImpl.class);
+                case QilletniLexer.COLLECTION_TYPE -> visitQilletniTypedNode(ctx.expr(), CollectionTypeImpl.class);
+                case QilletniLexer.SONG_TYPE -> visitQilletniTypedNode(ctx.expr(), SongTypeImpl.class);
+                case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(ctx.expr(), WeightsTypeImpl.class);
+                case QilletniLexer.ALBUM_TYPE -> visitQilletniTypedNode(ctx.expr(), AlbumTypeImpl.class);
+                case QilletniLexer.JAVA_TYPE -> visitQilletniTypedNode(ctx.expr(), JavaTypeImpl.class);
+                case QilletniLexer.ID -> visitQilletniTypedNode(ctx.expr(), EntityTypeImpl.class);
+                default -> throw new RuntimeException("This should not be possible, unknown type");
+            };
+            
+            return new EntityProperty<>(text, value);
+        }
     }
 
     @Override

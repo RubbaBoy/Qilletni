@@ -123,6 +123,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(albumTypeFactory);
         nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker());
         nativeFunctionHandler.addInjectableInstance(typeConverter);
+        nativeFunctionHandler.addInjectableInstance(dynamicProvider);
     }
 
     private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, TypeConverter typeConverter) {
@@ -142,6 +143,7 @@ public class QilletniProgramRunner {
         typeAdapterRegistrar.registerExactTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
 
         typeAdapterRegistrar.registerTypeAdapter(ListType.class, List.class, list -> {
+            System.out.println("222222222 " + list);
             var qilletniList = (List<QilletniType>) list;
 
             var typeList = qilletniList.stream().map(QilletniType::getTypeClass).distinct().toList();
@@ -150,6 +152,12 @@ public class QilletniProgramRunner {
             }
 
             return new ListTypeImpl(qilletniList.get(0).getTypeClass(), qilletniList);
+        });
+
+        // TODO: Make this transform list items to Java?
+        typeAdapterRegistrar.registerTypeAdapter(List.class, ListTypeImpl.class, listType -> {
+            System.out.println("111111111 " + listType);
+            return listType.getItems();
         });
         
         typeAdapterRegistrar.registerExactTypeAdapter(EntityType.class, HashMap.class, map -> {

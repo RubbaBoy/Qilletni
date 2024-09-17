@@ -1,19 +1,4 @@
 /**
- * Gets a new date from a DD/MM/YYYY formatted string.
- *
- * @param[@type string] str The string to parse
- * @returns[@type std.Date] The date
- */
-native fun newDateFrom(str)
-
-/**
- * Gets a new date from the current time.
- *
- * @returns[@type std.Date] The date
- */
-native fun newDateNow()
-
-/**
  * An entity that may store a date (not time).
  */
 entity Date {
@@ -28,6 +13,21 @@ entity Date {
      * Creates a new date with the given [@param date].
      */
     Date(_date)
+    
+    /**
+     * Creates a new date from a DD/MM/YYYY formatted string.
+     *
+     * @param[@type string] str The string to parse
+     * @returns[@type std.Date] The date
+     */
+    native static fun parse(str)
+    
+    /**
+     * Gets a new date from the current time.
+     *
+     * @returns[@type std.Date] The date
+     */
+    native static fun now()
     
     /**
      * Gives the day of the month, as a number starting at 1.

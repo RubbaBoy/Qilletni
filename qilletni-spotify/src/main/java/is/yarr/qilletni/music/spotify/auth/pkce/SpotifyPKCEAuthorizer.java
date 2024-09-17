@@ -1,5 +1,6 @@
 package is.yarr.qilletni.music.spotify.auth.pkce;
 
+import is.yarr.qilletni.async.ExecutorServiceUtility;
 import is.yarr.qilletni.async.ThrowableVoid;
 import is.yarr.qilletni.music.spotify.SpotifyAuthUtility;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
@@ -114,21 +115,8 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
 
     @Override
     public void shutdown() {
-        shutdownExecutorService(executorService);
-        shutdownExecutorService(SpotifyApiThreading.THREAD_POOL);
-    }
-    
-    private void shutdownExecutorService(ExecutorService executorService) {
-        executorService.shutdownNow();
-
-        try {
-            if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
-                LOGGER.debug("ExecutorService did not terminate in the specified time.");
-            }
-        } catch (InterruptedException e) {
-            LOGGER.debug("Interrupted while waiting for termination.");
-            Thread.currentThread().interrupt();
-        }
+        ExecutorServiceUtility.shutdown(executorService);
+        ExecutorServiceUtility.shutdown(SpotifyApiThreading.THREAD_POOL);
     }
 
     /**

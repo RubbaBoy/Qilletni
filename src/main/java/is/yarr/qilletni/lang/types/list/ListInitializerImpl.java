@@ -27,11 +27,12 @@ public class ListInitializerImpl implements ListInitializer {
         }
 
         var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
-        if (typeList.size() > 1) {
-            throw new TypeMismatchException("Multiple types found in list");
+        QilletniTypeClass<?> listType = QilletniTypeClass.ANY;
+        if (!typeList.isEmpty()) {
+            listType = typeList.getFirst();
         }
 
-        return new ListTypeImpl(typeList.getFirst(), items);
+        return new ListTypeImpl(listType, items);
     }
 
     @Override
@@ -60,11 +61,12 @@ public class ListInitializerImpl implements ListInitializer {
         var qilletniItems = items.stream().map(typeConverter::convertToQilletniType).toList();
 
         var typeList = qilletniItems.stream().map(QilletniType::getTypeClass).distinct().toList();
-        if (typeList.size() > 1) {
-            throw new TypeMismatchException("Multiple types found in list");
+        QilletniTypeClass<?> listType = QilletniTypeClass.ANY;
+        if (!typeList.isEmpty()) {
+            listType = typeList.getFirst();
         }
 
-        return new ListTypeImpl(typeList.getFirst(), qilletniItems);
+        return new ListTypeImpl(listType, qilletniItems);
     }
 
     @Override

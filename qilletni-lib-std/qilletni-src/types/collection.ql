@@ -32,3 +32,19 @@ native fun getCreator() on collection
  * @returns[@type int] The number of tracks
  */
 native fun getTrackCount() on collection
+
+/**
+ * Loops through all songs of the collection and checks if the condition is matched.
+ *
+ * @param fn The function to check if the condition is matched. A single parameter `song` is passed into the function.
+ * @returns[@type boolean] If the condition is matched
+ */
+native fun anySongMatches(fn) on collection
+
+/**
+ * Checks if the collection contains any song with the given artist as the song's first artist.
+ *
+ * @param artist The artist to check
+ * @returns[@type boolean] If the collection contains the artist
+ */
+native fun containsArtist(artist) on collection

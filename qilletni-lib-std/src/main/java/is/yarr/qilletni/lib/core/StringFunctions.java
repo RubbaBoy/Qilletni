@@ -1,7 +1,13 @@
 package is.yarr.qilletni.lib.core;
 
 
+import is.yarr.qilletni.api.lang.types.DoubleType;
+import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lib.annotations.NativeOn;
+
+import java.util.List;
 
 @NativeOn("string")
 public class StringFunctions {
@@ -28,6 +34,17 @@ public class StringFunctions {
 
     public static String toLower(String string) {
         return string.toLowerCase();
+    }
+    
+    public static String format(String string, List<QilletniType> formatList) {
+        var formatArray = formatList.stream().map(type -> switch (type) {
+                case StringType stringType -> stringType.getValue();
+                case IntType intType -> intType.getValue();
+                case DoubleType doubleType -> doubleType.getValue();
+                default -> type.stringValue();
+            }).toArray();
+        
+        return String.format(string, formatArray);
     }
 
 }

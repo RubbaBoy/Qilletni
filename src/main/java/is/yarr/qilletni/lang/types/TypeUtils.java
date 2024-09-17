@@ -10,7 +10,7 @@ public class TypeUtils {
 
     public static <T extends QilletniType> T safelyCast(Object object, Class<T> expectedType) {
         if (!expectedType.isInstance(object)) {
-            throw new TypeMismatchException("Expected type " + expectedType.getSimpleName() + " but received " + object.getClass().getSimpleName());
+            throw new TypeMismatchException("Expected type %s but received %s".formatted(expectedType.getSimpleName(), object == null ? "null" : object.getClass().getSimpleName()));
         }
 
         return expectedType.cast(object);

@@ -43,3 +43,11 @@ native fun toUpper() on string
  * @returns[@type string] The string in all lowercase
  */
 native fun toLower() on string
+
+/**
+ * Performs typical C-style string formatting. Only strings, doubles, and integers are supported.
+ * 
+ * @param formatList The list of items to format with
+ * @returns[@type string] The formatted string
+ */
+native fun format(formatList) on string

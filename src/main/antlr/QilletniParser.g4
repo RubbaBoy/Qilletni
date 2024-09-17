@@ -26,12 +26,13 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | pre_crement=(INCREMENT | DECREMENT)? ID post_crement=(INCREMENT | DECREMENT)?
     | ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
-    | expr PLUS expr
     | expr DOT function_call
+    | expr op=(OP | PLUS | DIV_DOUBLE_OP) expr
     | expr DOT ID post_crement=(INCREMENT | DECREMENT)?
     | expr DOT ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
     | entity_initialize
     | ID
+    | NOT expr
     | expr REL_OP expr
     | BOOL
     | int_expr
@@ -258,16 +259,17 @@ entity_body
     ;
 
 entity_property_declaration // TODO: lists
-    : DOC_COMMENT? type=ANY_TYPE ID (ASSIGN expr)?
-    | DOC_COMMENT? type=INT_TYPE ID (ASSIGN int_expr)?
-    | DOC_COMMENT? type=STRING_TYPE ID (ASSIGN str_expr)?
-    | DOC_COMMENT? type=BOOLEAN_TYPE ID (ASSIGN expr)?
-    | DOC_COMMENT? type=COLLECTION_TYPE ID (ASSIGN collection_expr)?
-    | DOC_COMMENT? type=SONG_TYPE ID (ASSIGN song_expr)?
-    | DOC_COMMENT? type=WEIGHTS_KEYWORD ID (ASSIGN weights_expr)?
-    | DOC_COMMENT? type=ALBUM_TYPE ID (ASSIGN album_expr)?
-    | DOC_COMMENT? type=JAVA_TYPE ID (ASSIGN java_expr)?
-    | DOC_COMMENT? type=ID ID (ASSIGN entity_initialize)?
+    : DOC_COMMENT? type=ANY_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=INT_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=DOUBLE_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=STRING_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=BOOLEAN_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=COLLECTION_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=SONG_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=WEIGHTS_KEYWORD (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=ALBUM_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=JAVA_TYPE (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
+    | DOC_COMMENT? type=ID (LEFT_SBRACKET RIGHT_SBRACKET)? ID (ASSIGN expr)?
     ;
 
 entity_constructor

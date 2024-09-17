@@ -51,7 +51,7 @@ public class SpotifyTrack implements Track {
 
     @Override
     public Artist getArtist() {
-        return artists.get(0);
+        return artists.getFirst();
     }
 
     @Override

@@ -6,3 +6,4 @@ native_bind_factory: is.yarr.qilletni.lib.spotify.SpotifyNativeFunctionBindingFa
 native_classes:
   - is.yarr.qilletni.lib.spotify.PlayRedirect
   - is.yarr.qilletni.lib.spotify.PlaylistToolsFunctions
+  - is.yarr.qilletni.lib.spotify.RecommendationsFunctions

@@ -1,5 +1,6 @@
 import "types/types.ql"
 import "util/util.ql"
+import "string.ql"
 
 /**
  * Prints a string representation of the given object to the console

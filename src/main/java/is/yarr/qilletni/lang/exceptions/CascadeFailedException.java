@@ -12,7 +12,7 @@ public class CascadeFailedException extends QilletniContextException {
     }
 
     public CascadeFailedException(ParserRuleContext ctx) {
-        super(ctx, "For some reason, the cascade didn't return an entity.");
+        super(ctx, "Invalid cascade operation");
     }
 
     public CascadeFailedException(ParserRuleContext ctx, String message) {
