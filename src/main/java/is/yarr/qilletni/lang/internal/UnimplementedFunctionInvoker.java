@@ -13,4 +13,19 @@ public class UnimplementedFunctionInvoker implements FunctionInvoker {
     public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params, QilletniType invokedOn) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends QilletniType> T invokeFunctionWithResult(FunctionType alreadyFoundFunction, List<QilletniType> params) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public <T extends QilletniType> T invokeFunctionWithResult(FunctionType alreadyFoundFunction, List<QilletniType> params, QilletniType invokedOn) {
+        throw new UnsupportedOperationException();
+    }
 }

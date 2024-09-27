@@ -1327,7 +1327,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var scope = symbolTable.currentScope();
         
         EntityAttributes attributes = createEntityBody(ctx.entity_body(), entityName);
-        var entityDefinition = new EntityDefinitionImpl(entityName, attributes.properties(), attributes.constructorParams(), attributes.entityFunctionPopulators(), scope);
+        var entityDefinition = new EntityDefinitionImpl(functionInvoker, entityName, attributes.properties(), attributes.constructorParams(), attributes.entityFunctionPopulators(), scope);
         LOGGER.debug("Define entity: {}", entityName);
         entityDefinitionManager.defineEntity(entityDefinition);
 

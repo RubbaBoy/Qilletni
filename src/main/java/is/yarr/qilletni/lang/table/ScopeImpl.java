@@ -33,19 +33,15 @@ public class ScopeImpl implements Scope {
     private final ScopeType scopeType;
     private final Scope parent;
     private final int scopeId;
-    private String debugDesc = "";
+    private final QilletniTypeClass<?> entityType;
+    private String debugDesc;
 
     public ScopeImpl() {
-        this.scopeType = ScopeType.GLOBAL;
-        this.parent = null;
-        this.scopeId = scopeCount++;
+        this("");
     }
 
     public ScopeImpl(String debugDesc) {
-        this.scopeType = ScopeType.GLOBAL;
-        this.parent = null;
-        this.scopeId = scopeCount++;
-        this.debugDesc = debugDesc;
+        this(null, ScopeType.GLOBAL, debugDesc);
     }
 
     public ScopeImpl(Scope parent) {
@@ -53,10 +49,15 @@ public class ScopeImpl implements Scope {
     }
 
     public ScopeImpl(Scope parent, ScopeType scopeType, String debugDesc) {
+        this(parent, scopeType, debugDesc, null);
+    }
+
+    public ScopeImpl(Scope parent, ScopeType scopeType, String debugDesc, QilletniTypeClass<?> entityType) {
         this.scopeType = scopeType;
         this.parent = parent;
         this.scopeId = scopeCount++;
         this.debugDesc = debugDesc;
+        this.entityType = entityType;
     }
 
     @Override
@@ -122,6 +123,15 @@ public class ScopeImpl implements Scope {
 
     @Override
     public Optional<Symbol<FunctionType>> lookupFunctionOptionally(String name, int params, QilletniTypeClass<?> onType) {
+        if (onType == null && scopeType == ScopeType.ENTITY) { // If this scope is in an entity, first check functions that have the parent of the entity (its ON type), if not found, then check normal ones
+            Objects.requireNonNull(entityType, "This is a bug in Qilletni, the entity type should always be set on an ENTITY scope!");
+            
+            var entityFunction = lookupFunctionOptionally(name, params, entityType);
+            if (entityFunction.isPresent()) {
+                return entityFunction;
+            }
+        }
+        
         LOGGER.debug("Looking up {}({}) on {}", name, params, onType);
         if (parent != null && parent.isFunctionDefined(name)) {
             LOGGER.debug("Checking in parent");

@@ -13,6 +13,7 @@ import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.lang.QilletniVisitor;
+import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.FunctionInvocationException;
 import is.yarr.qilletni.lang.exceptions.InvalidParameterException;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
@@ -52,8 +53,23 @@ public class FunctionInvokerImpl implements FunctionInvoker {
 
     @Override
     public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params) {
+        return invokeFunction(alreadyFoundFunction, params, null);
+    }
+
+    @Override
+    public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params, QilletniType invokedOn) {
         var stackTraceElement = findCallingMethod();
-        return invokeFunction(alreadyFoundFunction.getName(), params, null, alreadyFoundFunction, () -> currentStackTrace.pushStackTraceElement(stackTraceElement));
+        return invokeFunction(alreadyFoundFunction.getName(), params, invokedOn, alreadyFoundFunction, () -> currentStackTrace.pushStackTraceElement(stackTraceElement));
+    }
+
+    @Override
+    public <T extends QilletniType> T invokeFunctionWithResult(FunctionType alreadyFoundFunction, List<QilletniType> params) {
+        return this.invokeFunctionWithResult(alreadyFoundFunction, params, null);
+    }
+
+    @Override
+    public <T extends QilletniType> T invokeFunctionWithResult(FunctionType alreadyFoundFunction, List<QilletniType> params, QilletniType invokedOn) {
+        return this.<T>invokeFunction(alreadyFoundFunction, params, invokedOn).orElseThrow(FunctionDidntReturnException::new);
     }
 
     private <T extends QilletniType> Optional<T> invokeFunction(String functionName, List<QilletniType> params, QilletniType invokedOn, Runnable pushStackTrace) {
@@ -61,13 +77,13 @@ public class FunctionInvokerImpl implements FunctionInvoker {
     }
 
     private <T extends QilletniType> Optional<T> invokeFunction(String functionName, List<QilletniType> params, QilletniType invokedOn, FunctionType alreadyFoundFunction, Runnable pushStackTrace) {
-        LOGGER.debug("invokedOn = {}", invokedOn);
+        LOGGER.debug("invokedOn = {}", invokedOn == null ? "-" : invokedOn.getTypeClass());
         var hasOnType = invokedOn != null;
 
         var swappedLookupScope = false;
         
         // swap lookup scope
-        LOGGER.debug("({}) invokedOn = {}, and {}", functionName, invokedOn, invokedOn instanceof EntityType);
+        LOGGER.debug("({}) invokedOn = {}, and {}", functionName, invokedOn == null ? "-" : invokedOn.getTypeClass(), invokedOn instanceof EntityType);
         if (invokedOn instanceof EntityType entityType) {
             LOGGER.debug("SWAP scope! to {}", entityType.getEntityScope().getAllSymbols().keySet());
             swappedLookupScope = true;
@@ -230,7 +246,7 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
         // Index 0 is getStackTrace, index 1 is findCallingMethod, index 2 is the caller
         if (stackTraceElements.length > 2) {
-            var elem = stackTraceElements[2];
+            var elem = stackTraceElements[2]; // 4 is stringValue? TODO: investigate how to get the best result
             return new QilletniStackTraceElementImpl("native", elem.getFileName(), elem.getMethodName(), elem.getLineNumber(), -1);
         }
         

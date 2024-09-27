@@ -79,4 +79,12 @@ entity Optional {
         _hasValue = true
         _value = value
     }
+    
+    fun toString() {
+        if (_hasValue) {
+            return "Optional(value = %s)".format([_value])
+        } else {
+            return "Optional(empty)"
+        }
+    }
 }

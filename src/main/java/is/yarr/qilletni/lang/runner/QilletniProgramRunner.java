@@ -155,10 +155,7 @@ public class QilletniProgramRunner {
         });
 
         // TODO: Make this transform list items to Java?
-        typeAdapterRegistrar.registerTypeAdapter(List.class, ListTypeImpl.class, listType -> {
-            System.out.println("111111111 " + listType);
-            return listType.getItems();
-        });
+        typeAdapterRegistrar.registerTypeAdapter(List.class, ListTypeImpl.class, ListTypeImpl::getItems);
         
         typeAdapterRegistrar.registerExactTypeAdapter(EntityType.class, HashMap.class, map -> {
             var mapEntity = entityInitializer.initializeEntity("Map");

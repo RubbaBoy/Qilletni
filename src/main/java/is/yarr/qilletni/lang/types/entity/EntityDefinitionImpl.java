@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.types.entity;
 
 import is.yarr.qilletni.api.CollectionUtility;
 import is.yarr.qilletni.api.CollectionUtility.Entry;
+import is.yarr.qilletni.api.lang.internal.FunctionInvoker;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
@@ -30,6 +31,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityDefinitionImpl.class);
 
+    private final FunctionInvoker functionInvoker;
     private final String typeName;
 
     // properties NOT in constructor MUST be constant ( <-- not yet implemented)
@@ -51,7 +53,8 @@ public class EntityDefinitionImpl implements EntityDefinition {
     
     private final QilletniTypeClass<EntityType> qilletniTypeClass;
 
-    public EntityDefinitionImpl(String typeName, Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> uninitializedParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
+    public EntityDefinitionImpl(FunctionInvoker functionInvoker, String typeName, Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> uninitializedParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
+        this.functionInvoker = functionInvoker;
         this.typeName = typeName;
         this.qilletniTypeClass = new QilletniTypeClass<>(this, typeName);
         this.properties = properties;
@@ -62,7 +65,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
 
     @Override
     public EntityType createInstance(List<QilletniType> constructorParams) {
-        return new EntityTypeImpl(createScope(constructorParams), this);
+        return new EntityTypeImpl(createScope(constructorParams), this, functionInvoker);
     }
 
     @Override
@@ -72,7 +75,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
 
     @Override
     public StaticEntityType createStaticInstance() {
-        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "static entity");
+        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "static entity", qilletniTypeClass);
         
         entityFunctionPopulators.stream()
                 .filter(FunctionPopulator::isStaticFunction)
@@ -82,7 +85,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
     }
 
     protected Scope createScope(List<QilletniType> constructorParams) {
-        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "entity");
+        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "entity", qilletniTypeClass);
 
         if (uninitializedParams.size() != constructorParams.size()) {
             throw new InvalidParameterException("Invalid constructor invocation");
