@@ -24,7 +24,7 @@ public class TypeUtils {
      */
     public static QilletniTypeClass<?> getTypeFromStringOrThrow(String stringType) {
         return getTypeFromString(stringType)
-                .orElseThrow(() -> new IllegalStateException("Invalid type: " + stringType));
+                .orElseThrow(() -> new IllegalStateException("Invalid type: %s".formatted(stringType)));
     }
     
     public static Optional<QilletniTypeClass<?>> getTypeFromString(String stringType) {

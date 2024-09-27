@@ -1389,8 +1389,14 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             if (ctx.ID().size() == 2) { // is an Entity
                 return new EntityProperty<>(text, new UninitializedTypeImpl(entityDefinitionManager.lookup(ctx.ID(0).getText()))); // pass the entity name? TODO
             }
+            
+            QilletniTypeClass<?> propertyType = TypeUtils.getTypeFromStringOrThrow(type.getText());
+            
+            if (ctx.LEFT_SBRACKET() != null) { // list property
+                propertyType = QilletniTypeClass.createListOfType(propertyType);
+            }
 
-            return new EntityProperty<>(text, new UninitializedTypeImpl(TypeUtils.getTypeFromStringOrThrow(type.getText())));
+            return new EntityProperty<>(text, new UninitializedTypeImpl(propertyType));
         }
 
         // is a defined property
@@ -1424,6 +1430,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
 
+            System.out.println("LIST text = %s  value = %s".formatted(text, value));
             return new EntityProperty<>(text, value);
         } else {
             var value = switch (ctx.type.getType()) {
@@ -1440,7 +1447,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 case QilletniLexer.ID -> visitQilletniTypedNode(ctx.expr(), EntityTypeImpl.class);
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
-            
+
+            System.out.println("NOLIST text = %s  value = %s".formatted(text, value));
             return new EntityProperty<>(text, value);
         }
     }

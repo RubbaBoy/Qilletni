@@ -102,29 +102,33 @@ public class EntityDefinitionImpl implements EntityDefinition {
             var name = entry.k();
             var uninitializedType = entry.v();
             var currentParam = constructorParams.get(index);
+            
+            
+            if (!QilletniTypeClass.ANY.equals(uninitializedType.getNativeTypeClass())) {
+                if (uninitializedType.isEntity()) {
+                    if (!(currentParam instanceof EntityType entityType)) {
+                        throw new TypeMismatchException("Expected a %s but received a %s in parameter %d of %s constructor".formatted(uninitializedType.getTypeName(), currentParam.typeName(), index + 1, typeName));
+                    }
 
-            if (uninitializedType.isEntity()) {
-                if (!(currentParam instanceof EntityType entityType)) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
-                }
-                
-                if (!entityType.getEntityDefinition().equals(uninitializedType.getEntityDefinition())) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
-                }
-                
-                // valid entity to set
-            }
+                    if (!entityType.getEntityDefinition().equals(uninitializedType.getEntityDefinition())) {
+                        throw new TypeMismatchException("Expected a %s but received a %s in parameter %d of %s constructor".formatted(uninitializedType.getTypeName(), currentParam.typeName(), index + 1, typeName));
+                    }
 
-            if (!uninitializedType.isEntity()) {
-                if (currentParam instanceof EntityType) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
+                    // valid entity to set
                 }
-                
-                if (!uninitializedType.getNativeTypeClass().isAssignableFrom(currentParam.getTypeClass())) {
-                    throw new TypeMismatchException("Expected a " + uninitializedType.getTypeName() + " but received a " + currentParam.typeName() + " in parameter " + (index + 1));
+
+                if (!uninitializedType.isEntity()) {
+                    if (currentParam instanceof EntityType) {
+                        throw new TypeMismatchException("Expected a %s but received a %s in parameter %d of %s constructor".formatted(uninitializedType.getTypeName(), currentParam.typeName(), index + 1, typeName));
+                    }
+
+                    System.out.printf("uninitializedType = %s%n", uninitializedType);
+                    if (!uninitializedType.getNativeTypeClass().isAssignableFrom(currentParam.getTypeClass())) {
+                        throw new TypeMismatchException("Expected a %s but received a %s in parameter %d of %s constructor".formatted(uninitializedType.getTypeName(), currentParam.typeName(), index + 1, typeName));
+                    }
+
+                    // valid QilletniType
                 }
-                
-                // valid QilletniType
             }
             
             LOGGER.debug("Setting constructor param {} = {}", name, currentParam);

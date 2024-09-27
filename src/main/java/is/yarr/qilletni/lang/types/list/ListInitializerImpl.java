@@ -53,7 +53,7 @@ public class ListInitializerImpl implements ListInitializer {
     }
 
     @Override
-    public ListType createListFromJava(List<Object> items) {
+    public ListType createListFromJava(List<?> items) {
         if (items.isEmpty()) {
             return ListTypeImpl.emptyList();
         }
@@ -70,7 +70,7 @@ public class ListInitializerImpl implements ListInitializer {
     }
 
     @Override
-    public <T extends QilletniType> ListType createListFromJava(List<Object> items, QilletniTypeClass<T> typeClass) {
+    public <T extends QilletniType> ListType createListFromJava(List<?> items, QilletniTypeClass<T> typeClass) {
         if (items.isEmpty()) {
             return ListTypeImpl.emptyList();
         }

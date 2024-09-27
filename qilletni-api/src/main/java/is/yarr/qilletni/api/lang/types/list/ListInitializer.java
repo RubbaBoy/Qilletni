@@ -31,7 +31,7 @@ public interface ListInitializer {
      * @param items The items in the list, transformed via a {@link is.yarr.qilletni.api.lang.types.conversion.TypeConverter}.
      * @return The created ListType
      */
-    ListType createListFromJava(List<Object> items);
+    ListType createListFromJava(List<?> items);
 
     /**
      * Creates a {@link ListType} from a Java list, with a forced list type, doing conversions as necessary.
@@ -40,6 +40,6 @@ public interface ListInitializer {
      * @param typeClass The type class to force the list to
      * @return The created ListType
      */
-    <T extends QilletniType> ListType createListFromJava(List<Object> items, QilletniTypeClass<T> typeClass);
+    <T extends QilletniType> ListType createListFromJava(List<?> items, QilletniTypeClass<T> typeClass);
     
 }
