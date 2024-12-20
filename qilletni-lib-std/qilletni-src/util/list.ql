@@ -72,3 +72,11 @@ native fun subList(item) on list
  * @returns[@type int] The index of the item, or -1 if it is not in the list
  */
 native fun indexOf(item) on list
+
+/**
+ * Joins the items of the list into a single string.
+ *
+ * @param delimiter The string to join the items with
+ * @returns[@type string] The joined string
+ */
+native fun join(delimiter) on list

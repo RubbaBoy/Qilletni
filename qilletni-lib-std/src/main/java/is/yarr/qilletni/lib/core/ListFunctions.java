@@ -6,6 +6,7 @@ import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 @NativeOn("list")
 public class ListFunctions {
@@ -62,5 +63,8 @@ public class ListFunctions {
     public static int indexOf(ListType list, QilletniType object) {
         return list.getItems().indexOf(object);
     }
-    
+
+    public static String join(ListType list, String delimiter) {
+        return list.getItems().stream().map(QilletniType::stringValue).collect(Collectors.joining(delimiter));
+    }
 }

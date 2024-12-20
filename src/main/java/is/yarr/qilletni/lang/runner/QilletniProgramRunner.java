@@ -143,7 +143,6 @@ public class QilletniProgramRunner {
         typeAdapterRegistrar.registerExactTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
 
         typeAdapterRegistrar.registerTypeAdapter(ListType.class, List.class, list -> {
-            System.out.println("222222222 " + list);
             var qilletniList = (List<QilletniType>) list;
 
             var typeList = qilletniList.stream().map(QilletniType::getTypeClass).distinct().toList();

@@ -122,7 +122,6 @@ public class EntityDefinitionImpl implements EntityDefinition {
                         throw new TypeMismatchException("Expected a %s but received a %s in parameter %d of %s constructor".formatted(uninitializedType.getTypeName(), currentParam.typeName(), index + 1, typeName));
                     }
 
-                    System.out.printf("uninitializedType = %s%n", uninitializedType);
                     if (!uninitializedType.getNativeTypeClass().isAssignableFrom(currentParam.getTypeClass())) {
                         throw new TypeMismatchException("Expected a %s but received a %s in parameter %d of %s constructor".formatted(uninitializedType.getTypeName(), currentParam.typeName(), index + 1, typeName));
                     }

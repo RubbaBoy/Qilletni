@@ -2,6 +2,7 @@ package is.yarr.qilletni.lang.docs.exceptions;
 
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -11,8 +12,18 @@ public class DocErrorListener extends BaseErrorListener {
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
         // Get the input stream and current context
-        var input = ((CommonTokenStream) recognizer.getInputStream()).getTokenSource().getInputStream().toString();
-
+        String input = "";
+        
+        var inputStream = recognizer.getInputStream();
+        
+        if (inputStream instanceof CommonTokenStream commonTokenStream) {
+            input = commonTokenStream.getTokenSource().getInputStream().toString();
+        } else if (inputStream instanceof CodePointCharStream codePointCharStream) {
+            input = codePointCharStream.toString();
+        } else {
+            System.err.printf("Unknown input stream type: %s%n", inputStream.getClass());
+        }
+        
         // Print the error message
         System.err.println("Error at line " + line + ", position " + charPositionInLine + ": " + msg);
 

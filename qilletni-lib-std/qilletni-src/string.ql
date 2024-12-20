@@ -51,3 +51,10 @@ native fun toLower() on string
  * @returns[@type string] The formatted string
  */
 native fun format(formatList) on string
+
+/**
+ * Converts the string to an integer.
+ *
+ * @returns[@type int] The integer value of the string
+ */
+native fun toInt() on string

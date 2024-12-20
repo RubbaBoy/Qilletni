@@ -46,5 +46,9 @@ public class StringFunctions {
         
         return String.format(string, formatArray);
     }
+    
+    public static int toInt(String string) {
+        return Integer.parseInt(string);
+    }
 
 }

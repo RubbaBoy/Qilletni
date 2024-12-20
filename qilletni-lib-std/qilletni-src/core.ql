@@ -19,6 +19,21 @@ native fun print(obj)
 native fun getEnv(name)
 
 /**
+ * Gets the environment variable of a given name. If the value is not found, a default value is returned.
+ *
+ * @param[@type string] name The name of the environment variable to get
+ * @param[@type string] defaultValue The default value to return if the environment variable is not found
+ * @returns The value of the environment variable
+ */
+fun getEnv(name, default) {
+    if (hasEnv(name)) {
+        return getEnv(name)
+    } else {
+        return default
+    }
+}
+
+/**
  * Checks if an environment variable is set.
  *
  * @param[@type string] name The name of the environment variable to check for

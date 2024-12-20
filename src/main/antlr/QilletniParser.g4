@@ -243,7 +243,7 @@ for_expr
     ;
 
 range
-    : ID DOUBLE_DOT (INT | RANGE_INFINITY)
+    : ID DOUBLE_DOT (expr | RANGE_INFINITY)
     ;
 
 foreach_range

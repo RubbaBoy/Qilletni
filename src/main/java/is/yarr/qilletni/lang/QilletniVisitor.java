@@ -223,7 +223,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
 
-            LOGGER.info("(new) {}[{}] = {}", id, assignmentValue.getTypeClass(), assignmentValue);
+            LOGGER.debug("(new) {}[{}] = {}", id, assignmentValue.getTypeClass(), assignmentValue);
             currentScope.define(SymbolImpl.createGenericSymbol(id, assignmentValue.getTypeClass(), assignmentValue));
 
             // visitQilletniList
@@ -874,10 +874,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var ctx = exprCtx.getChild(QilletniParser.List_expressionContext.class, 0);
         
         if (ctx == null) {
-            var exp = exprCtx.getChild(QilletniParser.ExprContext.class, 0);
-            if (exp == null) {
-                throw new TypeMismatchException(exprCtx, "Expected list expression.");
-            }
+            // Just assume it's a list
+//            var exp = exprCtx.getChild(QilletniParser.ExprContext.class, 0);
+//            if (exp == null) {
+//                throw new TypeMismatchException(exprCtx, "Expected list expression.");
+//            }
             
             var list = visitQilletniTypedNode(exprCtx, ListType.class);
             if (!listType.isAssignableFrom(list.getSubType())) {
@@ -1005,9 +1006,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     @Override
     public Optional<QilletniType> visitFor_stmt(QilletniParser.For_stmtContext ctx) {
         symbolTable.pushScope(); // The scope for only holding the incrementing var
-        var iteratingListState = new AtomicReference<ListType>(null);
+        var iteratingListState = new AtomicReference<ListType>(null); // A state that holds the list that is being iterated (if in a foreach)
+        var iteratingIntState = new AtomicReference<IntType>(null); // A state that holds the "to" value of a range
 
-        for (int i = 0; visitForExpression(ctx.for_expr(), i, iteratingListState).getValue(); i++) {
+        for (int i = 0; visitForExpression(ctx.for_expr(), i, iteratingListState, iteratingIntState).getValue(); i++) {
             symbolTable.pushScope(); // The actual inner for loop scope that gets reset every iteration
             Optional<QilletniType> bodyReturn = visitNode(ctx.body());
 
@@ -1028,12 +1030,12 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
      * @param iteratingListState
      * @return If the for loop should iterate
      */
-    public BooleanType visitForExpression(QilletniParser.For_exprContext ctx, int index, AtomicReference<ListType> iteratingListState) {
+    public BooleanType visitForExpression(QilletniParser.For_exprContext ctx, int index, AtomicReference<ListType> iteratingListState, AtomicReference<IntType> iteratingIntState) {
         if (ctx.expr() != null) {
             return visitQilletniTypedNode(ctx.expr(), BooleanType.class);
         } else if (ctx.range() != null) {
             LOGGER.debug("range = {}", ctx.range().getText());
-            return visitQilletniTypedNode(ctx.range(), BooleanType.class);
+            return visitRange(ctx.range(), iteratingIntState);
         } else if (ctx.foreach_range() != null) {
             return visitForeachRange(ctx.foreach_range(), index, iteratingListState);
         }
@@ -1047,12 +1049,15 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         throw new RuntimeException();
     }
 
-    @Override
-    public BooleanType visitRange(QilletniParser.RangeContext ctx) {
+    public BooleanType visitRange(QilletniParser.RangeContext ctx, AtomicReference<IntType> iteratingIntState) {
         var scope = symbolTable.currentScope();
         var id = ctx.ID().getText();
 
-        var rangeTo = ctx.RANGE_INFINITY() != null ? Integer.MAX_VALUE : Integer.parseInt(ctx.getChild(2).getText());
+        IntType rangeTo = iteratingIntState.get();
+        if (rangeTo == null) {
+            rangeTo = ctx.RANGE_INFINITY() != null ? new IntTypeImpl(Integer.MAX_VALUE) : visitQilletniTypedNode(ctx.expr(), IntType.class);
+            iteratingIntState.set(rangeTo);
+        }
 
         if (!scope.isDirectlyDefined(id)) { // first iteration, let it pass
             scope.define(new SymbolImpl<>(id, QilletniTypeClass.INT, new IntTypeImpl(0)));
@@ -1063,11 +1068,16 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var newValue = idIntType.getValue().getValue() + 1;
         idIntType.setValue(new IntTypeImpl(newValue));
 
-        if (rangeTo > newValue) {
+        if (rangeTo.getValue() > newValue) {
             return BooleanTypeImpl.TRUE;
         }
 
         return BooleanTypeImpl.FALSE;
+    }
+
+    @Override
+    public BooleanType visitRange(QilletniParser.RangeContext ctx) {
+        throw new RuntimeException();
     }
 
     public BooleanType visitForeachRange(QilletniParser.Foreach_rangeContext ctx, int index, AtomicReference<ListType> iteratingListState) {
