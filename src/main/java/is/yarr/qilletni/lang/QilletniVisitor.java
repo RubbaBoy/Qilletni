@@ -642,6 +642,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             } else if (middle instanceof QilletniParser.Str_exprContext stringExprContext) {
                 value = visitQilletniTypedNode(stringExprContext);
             }
+        } else if (ctx.getChildCount() == 4 && ctx.STRING() != null && ctx.LEFT_PAREN() != null) { // string(expr)  cast
+            var expr = visitQilletniTypedNode(ctx.expr());
+            value = new StringTypeImpl(expr.stringValue());
         }
 
         return value;

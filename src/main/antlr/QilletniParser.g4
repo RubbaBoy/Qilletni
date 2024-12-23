@@ -75,9 +75,10 @@ double_expr
     ;
 
 str_expr
-    : LEFT_PAREN str_expr RIGHT_PAREN
+    : wrap=LEFT_PAREN str_expr RIGHT_PAREN
     | STRING
     | str_expr PLUS expr
+    | STRING LEFT_PAREN expr RIGHT_PAREN
     | function_call
     | ID
     ;
