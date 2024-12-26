@@ -11,21 +11,28 @@ tokens {
 IMPORT: 'import';
 AS: 'as';
 
-LINE_COMMENT: '//' .*? NEWLINE -> skip;
+LINE_COMMENT
+    : '//' ~[\r\n]* -> skip
+    ;
+
 DOC_COMMENT: '/**' .*? '*/';
-BLOCK_COMMENT: '/*' .*? '*/' -> skip;
 
-// var name
+// Block comment. Everything between /* and */ is skipped.
+BLOCK_COMMENT
+    : '/*' .*? '*/' -> skip
+    ;
 
 
-PLUS : '+';
 INCREMENT : '++';
 DECREMENT : '--';
 PLUS_EQUALS : '+=';
 MINUS_EQUALS : '-=';
-// ~/ is int division
-OP            : '*' | '/~' | '%' | '-';
-DIV_DOUBLE_OP : '/';
+MINUS : '-';
+PLUS  : '+';
+STAR  : '*';
+FLOOR_DIV : '/~';   // integer/floor division
+DIV   : '/';        // normal (double) division
+MOD   : '%';
 
 WEIGHTS_KEYWORD : 'weights';
 

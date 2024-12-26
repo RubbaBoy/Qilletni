@@ -20,24 +20,49 @@ running
     ;
 
 // Expressions
-expr: LEFT_PAREN expr RIGHT_PAREN
+// TODO: Add support for foo.bar[12]
+expr
+    // 1) Parenthesized expression
+    : LEFT_PAREN expr RIGHT_PAREN
+
+    // 2) A function call with no preceding expr
     | function_call
-    | pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement=(INCREMENT | DECREMENT)?
-    | pre_crement=(INCREMENT | DECREMENT)? ID post_crement=(INCREMENT | DECREMENT)?
-    | ID LEFT_SBRACKET expr RIGHT_SBRACKET post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
-    | ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
+
+    // 3) Pre/post increment on an ID with optional indexing: ++x, x++, x[expr]++, etc.
+    | id_pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET expr RIGHT_SBRACKET id_post_crement=(INCREMENT | DECREMENT)?
+    | id_pre_crement=(INCREMENT | DECREMENT)? ID id_post_crement=(INCREMENT | DECREMENT)?
+
+    // 4) Postfix increment with += or -= on an ID or an ID with indexing
+    | ID LEFT_SBRACKET expr RIGHT_SBRACKET id_post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
+    | ID id_post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
+
+    // 5) Dot notation: expr DOT function_call, or expr DOT ID (with optional increments)
     | expr DOT function_call
-    | expr op=(OP | PLUS | DIV_DOUBLE_OP) expr
     | expr DOT ID post_crement=(INCREMENT | DECREMENT)?
     | expr DOT ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
+
+    // 6) Entity initialize
     | entity_initialize
+
+    // 7) Standalone ID
     | ID
+
+    // 8) Logical NOT
     | NOT expr
+
+    // 9) Relational compare: expr REL_OP expr (>, <, >=, <=, ==, !=)
     | expr REL_OP expr
+
+    // 10) Boolean literal
     | BOOL
+
+    // 11) The new entry point for arithmetic: an additive expression
+    | addSubExpr
+
+    // 12) Additional expressions from original grammar
+    | str_expr
     | int_expr
     | double_expr
-    | str_expr
     | collection_expr
     | song_expr
     | album_expr
@@ -47,6 +72,47 @@ expr: LEFT_PAREN expr RIGHT_PAREN
     | is_expr
     ;
 
+/**
+ *  For standard arithmetic precedence:
+ *   - addSubExpr handles +, -
+ *   - mulDivExpr handles *, /, /~, %
+ *   - unaryArithmetic handles any prefix ops if you choose to place them there
+ *
+ *  This ensures multiplication/division have higher precedence than addition/subtraction.
+ */
+addSubExpr
+    : mulDivExpr ( (PLUS | MINUS) mulDivExpr )*
+    ;
+
+mulDivExpr
+    : unaryArithmetic ( (STAR | FLOOR_DIV | DIV | MOD) unaryArithmetic )*
+    ;
+
+/**
+ *  If you want prefix increments or other unary operators here, you can add them:
+ *    unaryArithmetic
+ *      : (INCREMENT | DECREMENT) unaryArithmetic
+ *      | primaryArithmetic
+ *      ;
+ *  For now, we'll keep it simple and just reference the primary rule:
+ */
+unaryArithmetic
+    : primaryArithmetic
+    ;
+
+/**
+ *  The 'primaryArithmetic' rule can handle numeric literals, or parenthesized
+ *  sub-expressions if you want purely numeric context. 
+ *  You can also reference `int_expr` / `double_expr` etc. if needed.
+ */
+primaryArithmetic
+    : LEFT_PAREN addSubExpr RIGHT_PAREN
+    | int_expr
+    | double_expr
+    | str_expr
+    | ID
+    ;
+
 //bool_expr
 //    : function_call
 //    | expr REL_OP (int_expr | double_expr)
@@ -54,41 +120,52 @@ expr: LEFT_PAREN expr RIGHT_PAREN
 //    ;
 
 int_expr
-    : int_expr op=(OP | PLUS) int_expr
-    | wrap=LEFT_PAREN int_expr RIGHT_PAREN
-    | INT_TYPE LEFT_PAREN double_expr RIGHT_PAREN
-    | function_call
+    : 
+//    int_expr op=(OP | PLUS) int_expr
+//    | wrap=LEFT_PAREN int_expr RIGHT_PAREN
+
+    // Cast to int
+    INT_TYPE LEFT_PAREN double_expr RIGHT_PAREN
+//    | function_call
     | INT
-    | ID
+//    | ID
     ;
 
 double_expr
-    : int_expr ii_op=DIV_DOUBLE_OP int_expr
-    | double_expr dd_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
-    | double_expr di_op=(OP | PLUS | DIV_DOUBLE_OP) int_expr
-    | int_expr id_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
-    | wrap=LEFT_PAREN double_expr RIGHT_PAREN
-    | DOUBLE_TYPE LEFT_PAREN int_expr RIGHT_PAREN
-    | function_call
+    : 
+//    int_expr ii_op=DIV_DOUBLE_OP int_expr
+//    | double_expr dd_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
+//    | double_expr di_op=(OP | PLUS | DIV_DOUBLE_OP) int_expr
+//    | int_expr id_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
+//    | wrap=LEFT_PAREN double_expr RIGHT_PAREN
+//    |
+ 
+    // Cast to int
+    DOUBLE_TYPE LEFT_PAREN int_expr RIGHT_PAREN
+//    | function_call
     | DOUBLE
-    | ID
+//    | ID
     ;
 
 str_expr
-    : wrap=LEFT_PAREN str_expr RIGHT_PAREN
-    | STRING
-    | str_expr PLUS expr
+    : 
+//    wrap=LEFT_PAREN str_expr RIGHT_PAREN
+    STRING
+//    | str_expr PLUS expr
+
+     // Cast to string
     | STRING LEFT_PAREN expr RIGHT_PAREN
-    | function_call
-    | ID
+//    | function_call
+//    | ID
     ;
 
 collection_expr
-    : function_call
-    | collection_url_or_name_pair order_define? weights_define?
+    : 
+//    function_call
+    collection_url_or_name_pair order_define? weights_define?
     | COLLECTION_TYPE LEFT_PAREN list_expression RIGHT_PAREN order_define? weights_define?
     | STRING
-    | ID
+//    | ID
     ;
 
 order_define
@@ -100,17 +177,19 @@ weights_define
     ;
 
 song_expr
-    : function_call
-    | song_url_or_name_pair
+    : 
+//    function_call
+    song_url_or_name_pair
     | STRING
-    | ID
+//    | ID
     ;
 
 album_expr
-    : function_call
-    | album_url_or_name_pair
+    : 
+//    function_call
+    album_url_or_name_pair
     | STRING
-    | ID
+//    | ID
     ;
 
 song_url_or_name_pair
@@ -136,7 +215,7 @@ single_weight
 
 list_expression
     : type=(ANY_TYPE | INT_TYPE | DOUBLE_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? LEFT_SBRACKET expr_list? RIGHT_SBRACKET
-    | ID
+//    | ID
     ;
 
 is_expr
@@ -144,9 +223,10 @@ is_expr
     ;
 
 java_expr
-    : function_call
-    | EMPTY
-    | ID
+    : 
+//    function_call
+    EMPTY
+//    | ID
     ;
 
 function_call
