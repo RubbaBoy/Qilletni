@@ -89,83 +89,48 @@ mulDivExpr
     ;
 
 /**
- *  If you want prefix increments or other unary operators here, you can add them:
+ *  Other unary operators could be added, such as::
  *    unaryArithmetic
  *      : (INCREMENT | DECREMENT) unaryArithmetic
  *      | primaryArithmetic
  *      ;
- *  For now, we'll keep it simple and just reference the primary rule:
  */
 unaryArithmetic
     : primaryArithmetic
     ;
 
-/**
- *  The 'primaryArithmetic' rule can handle numeric literals, or parenthesized
- *  sub-expressions if you want purely numeric context. 
- *  You can also reference `int_expr` / `double_expr` etc. if needed.
- */
 primaryArithmetic
-    : LEFT_PAREN addSubExpr RIGHT_PAREN
+    : LEFT_PAREN expr RIGHT_PAREN
+    | function_call
     | int_expr
     | double_expr
     | str_expr
     | ID
     ;
 
-//bool_expr
-//    : function_call
-//    | expr REL_OP (int_expr | double_expr)
-//    | BOOL
-//    ;
-
 int_expr
-    : 
-//    int_expr op=(OP | PLUS) int_expr
-//    | wrap=LEFT_PAREN int_expr RIGHT_PAREN
-
+    : INT
     // Cast to int
-    INT_TYPE LEFT_PAREN double_expr RIGHT_PAREN
-//    | function_call
-    | INT
-//    | ID
+    | INT_TYPE LEFT_PAREN double_expr RIGHT_PAREN
     ;
 
 double_expr
-    : 
-//    int_expr ii_op=DIV_DOUBLE_OP int_expr
-//    | double_expr dd_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
-//    | double_expr di_op=(OP | PLUS | DIV_DOUBLE_OP) int_expr
-//    | int_expr id_op=(OP | PLUS | DIV_DOUBLE_OP) double_expr
-//    | wrap=LEFT_PAREN double_expr RIGHT_PAREN
-//    |
- 
+    : DOUBLE
     // Cast to int
     DOUBLE_TYPE LEFT_PAREN int_expr RIGHT_PAREN
-//    | function_call
-    | DOUBLE
-//    | ID
     ;
 
 str_expr
-    : 
-//    wrap=LEFT_PAREN str_expr RIGHT_PAREN
-    STRING
-//    | str_expr PLUS expr
-
+    : STRING
      // Cast to string
-    | STRING LEFT_PAREN expr RIGHT_PAREN
-//    | function_call
-//    | ID
+    | STRING_TYPE LEFT_PAREN expr RIGHT_PAREN
     ;
 
 collection_expr
     : 
-//    function_call
     collection_url_or_name_pair order_define? weights_define?
     | COLLECTION_TYPE LEFT_PAREN list_expression RIGHT_PAREN order_define? weights_define?
     | STRING
-//    | ID
     ;
 
 order_define
@@ -177,19 +142,13 @@ weights_define
     ;
 
 song_expr
-    : 
-//    function_call
-    song_url_or_name_pair
+    : song_url_or_name_pair
     | STRING
-//    | ID
     ;
 
 album_expr
-    : 
-//    function_call
-    album_url_or_name_pair
+    : album_url_or_name_pair
     | STRING
-//    | ID
     ;
 
 song_url_or_name_pair
@@ -206,7 +165,6 @@ album_url_or_name_pair
 
 weights_expr
     : single_weight single_weight*
-    | ID
     ;
 
 single_weight
@@ -215,7 +173,6 @@ single_weight
 
 list_expression
     : type=(ANY_TYPE | INT_TYPE | DOUBLE_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? LEFT_SBRACKET expr_list? RIGHT_SBRACKET
-//    | ID
     ;
 
 is_expr
@@ -223,10 +180,7 @@ is_expr
     ;
 
 java_expr
-    : 
-//    function_call
-    EMPTY
-//    | ID
+    : EMPTY
     ;
 
 function_call
@@ -296,7 +250,7 @@ function_on_type
 
 function_def_params
     : ID (',' ID)*
-    |
+    | // epsilon
     ;
 
 if_stmt
