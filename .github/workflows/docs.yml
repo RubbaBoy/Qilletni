@@ -16,12 +16,10 @@ jobs:
           distribution: 'adopt'
 
       - name: Build with Gradle
-        working-directory: qilletni-api/
-        run: ./gradlew clean build
+        run: ./gradlew :qilletni-api:clean :qilletni-api:build
 
       - name: Generate Javadocs
-        working-directory: qilletni-api/
-        run: ./gradlew javadoc
+        run: ./gradlew :qilletni-api:javadoc
 
       - name: Deploy to gh-pages  
         uses: peaceiris/actions-gh-pages@v3
