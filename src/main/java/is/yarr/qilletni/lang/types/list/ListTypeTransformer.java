@@ -11,7 +11,8 @@ import java.util.function.Function;
 
 /**
  * A class used to convert a {@link QilletniType} from one to another. For example, a type adapter may convert a string
- * of an ID or URL to a {@link SongTypeImpl}. 
+ * of an ID or URL to a {@link SongTypeImpl}. They are typically used in lists, to ensure uniform types by converting
+ * from the given type into the required type.
  */
 public class ListTypeTransformer {
     

@@ -4,6 +4,7 @@ import is.yarr.qilletni.api.lib.NativeFunctionBindingFactory;
 import is.yarr.qilletni.api.lib.qll.QllInfo;
 import is.yarr.qilletni.lang.exceptions.lib.LibraryNotFoundException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
+import is.yarr.qilletni.lib.persistence.PackageConfigImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,11 @@ public class LibraryRegistrar {
                 LOGGER.error("Attempted to import library of duplicate name: {}", qllInfo.name());
             } else {
                 libraries.put(qllInfo.name(), qllInfo);
-                nativeFunctionHandler.registerClasses(loadNativeClasses(qllInfo.nativeClasses()));
+                var classes = loadNativeClasses(qllInfo.nativeClasses());
+                nativeFunctionHandler.registerClasses(classes);
+
+                var packageConfig = PackageConfigImpl.createPackageConfig(qllInfo.name());
+                nativeFunctionHandler.addScopedInjectableInstance(packageConfig, List.of(classes));
                 
                 instantiateNativeFunctionBindingFactory(qllInfo.nativeBindFactoryClass())
                         .ifPresent(factory -> factory.applyNativeFunctionBindings(nativeFunctionHandler));

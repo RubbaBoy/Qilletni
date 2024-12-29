@@ -3,6 +3,7 @@ package is.yarr.qilletni;
 import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.lib.qll.QllInfo;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
+import is.yarr.qilletni.lib.persistence.PackageConfigImpl;
 import is.yarr.qilletni.music.orchestration.DefaultTrackOrchestrator;
 import is.yarr.qilletni.music.supplier.DynamicProviderImpl;
 import org.slf4j.Logger;
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.ServiceLoader;
 
 public class ServiceManager {
     
@@ -31,12 +31,14 @@ public class ServiceManager {
         var dynamicProvider = new DynamicProviderImpl();
         
         for (var provider : providers) {
-            provider.initialize(DefaultTrackOrchestrator::new).join();
+            // Pass in unloaded PackageConfig to the provider. They don't have to load it (or create one) if they don't need to.
+            var packageConfig = PackageConfigImpl.createPackageConfig(provider.getName());
+            provider.initialize(DefaultTrackOrchestrator::new, packageConfig).join();
             
             dynamicProvider.addServiceProvider(provider);
         }
 
-        var defaultProvider = providers.get(0).getName();
+        var defaultProvider = providers.getFirst().getName();
         if (providers.size() != 1) {
             LOGGER.info("Choosing {} as a default provider", defaultProvider);
         }

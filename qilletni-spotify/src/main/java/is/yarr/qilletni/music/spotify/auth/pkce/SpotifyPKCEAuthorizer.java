@@ -34,13 +34,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyPKCEAuthorizer.class);
 
-    private static final String CLIENT_ID = System.getenv("CLIENT_ID");
-    private static final URI REDIRECT_URI = SpotifyHttpManager.makeUri(System.getenv("REDIRECT_URI"));
-
-    private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
-            .setClientId(CLIENT_ID)
-            .setRedirectUri(REDIRECT_URI)
-            .build();
+    private final SpotifyApi spotifyApi;
 
     private final String codeChallenge;
     private final String codeVerifier;
@@ -49,12 +43,16 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
     
     private se.michaelthelin.spotify.model_objects.specification.User currentUser;
 
-    public SpotifyPKCEAuthorizer(String codeChallenge, String codeVerifier) {
+    public SpotifyPKCEAuthorizer(String codeChallenge, String codeVerifier, String clientId, String redirectUri) {
         this.codeChallenge = codeChallenge;
         this.codeVerifier = codeVerifier;
         this.credentialCache = new PKCECredentialCache();
         this.executorService = Executors.newCachedThreadPool();
-        
+
+        spotifyApi = new SpotifyApi.Builder()
+                .setClientId(clientId)
+                .setRedirectUri(SpotifyHttpManager.makeUri(redirectUri))
+                .build();
     }
 
     /**
@@ -62,11 +60,11 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
      *
      * @return The created authorizer
      */
-    public static SpotifyPKCEAuthorizer createWithCodes() {
+    public static SpotifyPKCEAuthorizer createWithCodes(String clientId, String redirectUri) {
         var codeVerifier = SpotifyAuthUtility.generateCodeVerifier(43, 128);
         var codeChallenge = SpotifyAuthUtility.generateCodeChallenge(codeVerifier);
 
-        return new SpotifyPKCEAuthorizer(codeChallenge, codeVerifier);
+        return new SpotifyPKCEAuthorizer(codeChallenge, codeVerifier, clientId, redirectUri);
     }
 
     /**
@@ -191,7 +189,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
             
             credentialCache.writeCache(authorizationCodeCredentials.getRefreshToken());
 
-            LOGGER.info("Expires in {}s", authorizationCodeCredentials.getExpiresIn());
+            LOGGER.debug("Expires in {}s", authorizationCodeCredentials.getExpiresIn());
 
             return authorizationCodeCredentials.getExpiresIn();
         }).exceptionally(new ThrowableVoid<>("Exception while getting access and refresh tokens", 0));
@@ -211,7 +209,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
                     try {
                         var authCodeCredentials = performImmediateRefresh();
 
-                        LOGGER.info("Expires in {}s", authCodeCredentials.expiresIn());
+                        LOGGER.debug("Expires in {}s", authCodeCredentials.expiresIn());
 
                         Thread.sleep(calculateExpirySleepTime(authCodeCredentials.expiresIn()));
                     } catch (IOException | SpotifyWebApiException | ParseException e) {

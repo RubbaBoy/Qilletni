@@ -1,5 +1,6 @@
 package is.yarr.qilletni.api.auth;
 
+import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
 import is.yarr.qilletni.api.music.PlayActor;
@@ -22,9 +23,11 @@ public interface ServiceProvider {
      * @param defaultTrackOrchestratorFunction If the service provider doesn't implement a custom,
      *                                         {@link TrackOrchestrator}, it should run this function to create the
      *                                         default implementation of one and use it.
+     * @param packageConfig The {@link PackageConfig} for the service provider. This provides persistent storage for
+     *                      the package. Use {@link PackageConfig#loadConfig()} to load the configuration.
      * @return The created future of the initialization
      */
-    CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction);
+    CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction, PackageConfig packageConfig);
 
     /**
      * Shuts down the service provider. This should clean up any async tasks currently running.

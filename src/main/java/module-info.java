@@ -2,6 +2,7 @@ module is.yarr.qilletni.Qilletni.main {
 
     exports is.yarr.qilletni;
     exports is.yarr.qilletni.lib;
+    exports is.yarr.qilletni.lib.persistence;
     exports is.yarr.qilletni.lang.docs;
     exports is.yarr.qilletni.lang.runner;
 

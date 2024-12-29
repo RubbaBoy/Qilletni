@@ -4,8 +4,7 @@ import "spotify:playlist_tools.ql"
 import "std:types/collections/stack.ql"
 
 weights powerRotation =
-    | 85% ["Monarch" by "Glasswaves",
-            "Wants I Need" by "156/Silence",
+    | 85% ["Wants I Need" by "156/Silence", "Monarch" by "Glasswaves",
             "Anti-Saviour" by "Voluntary Victim",
             "Millstone" by "ROSARY",
             "Hell (I let the Devil In)" by "Breakwaters",
@@ -28,11 +27,11 @@ Stack recommendations = new Stack()
 
 fun generateUniqueRecommendations() {
     Recommender recommender = new Recommender()
-            ..seedTracks = ["Monarch" by "Glasswaves",
-                            "Wants I Need" by "156/Silence",
+            ..seedTracks = ["Truth Serum" by "Gutter King", 
+                            "Paradise" by "Dark Island",
                             "Anti-Saviour" by "Voluntary Victim",
                             "Spiral" by "Feyn Entity",
-                            "Hell (I let the Devil In)" by "Breakwaters"]
+                            "Dark Tunnel" by "Beholder"]
             ..targetEnergy = 1.0
             ..targetPopularity = 10
 
@@ -44,23 +43,35 @@ fun generateUniqueRecommendations() {
         }
     }
     
-    print("Generated " + recommendations.size() + " unique recommendations")
+    print("Generated %d unique recommendations".format([recommendations.size()]))
 }
 
 generateUniqueRecommendations()
 
 // Play 2 shuffled songs from metal playlist, then 3 recommendations
-for (recommendations.size() >= 3) {
-    play metalSongs limit[2]
-
-    for (i..3) {
-        play recommendations.pop()
-    }
+for (recommendations.size() > 0) {
+    play recommendations.pop()
 }
+
+recommendations = new Stack()
+
+generateUniqueRecommendations()
+
+for (recommendations.size() > 0) {
+    play recommendations.pop()
+}
+
+//for (recommendations.size() >= 3) {
+//    play metalSongs limit[2]
+//
+//    for (i..3) {
+//        play recommendations.pop()
+//    }
+//}
 
 // Add all played songs to a new playlist
 Date date = Date.now()
-collection myPlaylist = createPlaylist("Playlist w/ recs %d/%d".format([date.getMonth(), date.getDay()]))
+collection myPlaylist = createPlaylist("Recs only %d/%d".format([date.getMonth(), date.getDay()]))
 
 addToPlaylist(myPlaylist, songList)
 print("Created a playlist with %s songs".format([songList.size()]))

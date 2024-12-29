@@ -18,6 +18,7 @@ import is.yarr.qilletni.api.lang.types.conversion.TypeConverter;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.api.lang.types.list.ListInitializer;
+import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.lib.qll.QllInfo;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
@@ -48,6 +49,7 @@ import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformerFactory;
 import is.yarr.qilletni.lib.LibraryRegistrar;
 import is.yarr.qilletni.lib.LibrarySourceFileResolver;
+import is.yarr.qilletni.lib.persistence.PackageConfigImpl;
 import is.yarr.qilletni.music.MusicPopulatorImpl;
 import is.yarr.qilletni.music.factories.AlbumTypeFactoryImpl;
 import is.yarr.qilletni.music.factories.CollectionTypeFactoryImpl;
@@ -76,6 +78,7 @@ public class QilletniProgramRunner {
 
     private final Map<SymbolTable, QilletniVisitor> symbolTables;
     private final ScopeImpl globalScope;
+    private final PackageConfig internalPackageConfig = PackageConfigImpl.createInternalConfig();
     private final EntityDefinitionManager entityDefinitionManager;
     private final TypeAdapterRegistrar typeAdapterRegistrar;
     private final NativeFunctionHandler nativeFunctionHandler;
@@ -88,6 +91,8 @@ public class QilletniProgramRunner {
     private final QilletniStackTrace qilletniStackTrace;
 
     public QilletniProgramRunner(DynamicProvider dynamicProvider, LibrarySourceFileResolver librarySourceFileResolver, List<QllInfo> loadedQllInfos) {
+        internalPackageConfig.loadConfig();
+        
         this.dynamicProvider = dynamicProvider;
         this.symbolTables = new HashMap<>();
         this.globalScope = new ScopeImpl("global");
@@ -95,7 +100,7 @@ public class QilletniProgramRunner {
         this.typeAdapterRegistrar = new TypeAdapterRegistrar();
         this.nativeFunctionHandler = createNativeFunctionHandler(typeAdapterRegistrar, symbolTables);
         this.entityInitializer = new EntityInitializerImpl(typeAdapterRegistrar, entityDefinitionManager);
-        this.musicPopulator = new MusicPopulatorImpl(dynamicProvider);
+        this.musicPopulator = new MusicPopulatorImpl(dynamicProvider, internalPackageConfig);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
 
         var typeConverter = new TypeConverterImpl(typeAdapterRegistrar);

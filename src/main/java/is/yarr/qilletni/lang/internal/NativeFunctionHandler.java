@@ -37,7 +37,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     private final Map<MethodSignature, InvocableMethod> nativeMethods = new HashMap<>();
     
     private final TypeAdapterInvoker typeAdapterInvoker;
-    private final List<Object> injectableInstances;
+    private final List<ScopedInjectableInstance> injectableInstances;
     private final Map<SymbolTable, QilletniVisitor> symbolTables;
     
     private final static Constructor<?> functionInvokerConstructor = FunctionInvokerImpl.class.getConstructors()[0];
@@ -46,7 +46,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         this(typeAdapterInvoker, new ArrayList<>(), symbolTables);
     }
 
-    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<Object> injectableInstances, Map<SymbolTable, QilletniVisitor> symbolTables) {
+    private NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<ScopedInjectableInstance> injectableInstances, Map<SymbolTable, QilletniVisitor> symbolTables) {
         this.typeAdapterInvoker = typeAdapterInvoker;
         this.injectableInstances = injectableInstances;
         this.symbolTables = symbolTables;
@@ -54,7 +54,12 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     
     @Override
     public void addInjectableInstance(Object object) {
-        injectableInstances.add(object);
+        injectableInstances.add(new ScopedInjectableInstance(object));
+    }
+
+    @Override
+    public void addScopedInjectableInstance(Object object, List<Class<?>> permittedClasses) {
+        injectableInstances.add(new ScopedInjectableInstance(object, permittedClasses));
     }
 
     public void registerClasses(Class<?>... nativeMethodClass) {
@@ -167,38 +172,42 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
             if (constructors.length == 0) {
                 throw new NoNativeLibraryConstructorFoundContextException();
             }
-            
+
             var constructor = constructors[0];
 
             Arrays.stream(constructor.getParameterTypes()).filter(paramType ->
-                    injectableInstances.stream().noneMatch(paramType::isInstance))
+                            injectableInstances.stream()
+                                    .filter(injectableInstance -> injectableInstance.permitsClass(declaringClass))
+                                    .noneMatch(injectableInstance -> paramType.isInstance(injectableInstance.instance())))
                     .findFirst().ifPresent(invalidParam -> {
-                        throw new UninjectableConstructorTypeContextException(String.format("Attempted to inject uninjectable class %s", invalidParam.getCanonicalName()));        
+                        throw new UninjectableConstructorTypeContextException(String.format("Attempted to inject uninjectable class %s", invalidParam.getCanonicalName()));
                     });
 
             var params = Arrays.stream(constructor.getParameterTypes()).map(paramType ->
-                    injectableInstances.stream().filter(paramType::isInstance).map(obj -> {
-                        if (obj instanceof UnimplementedFunctionInvoker) {
-                            try {
-                                LOGGER.debug("New instance of stuff {}", functionInvokerConstructor.getDeclaringClass().getCanonicalName());
-                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this, qilletniStackTrace.cloneStackTrace());
-                            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                                throw new RuntimeException(e);
-                            }
-                        }
-                        
-                        return obj;
-                    }).findFirst().orElse(null))
+                            injectableInstances.stream()
+                                    .filter(injectableInstance -> injectableInstance.permitsClass(declaringClass))
+                                    .filter(injectableInstance -> paramType.isInstance(injectableInstance.instance())).map(injectableInstance -> {
+                                        var obj = injectableInstance.instance();
+                                        if (obj instanceof UnimplementedFunctionInvoker) {
+                                            try {
+                                                LOGGER.debug("New instance of stuff {}", functionInvokerConstructor.getDeclaringClass().getCanonicalName());
+                                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this, qilletniStackTrace.cloneStackTrace());
+                                            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                                                throw new RuntimeException(e);
+                                            }
+                                        }
+
+                                        return obj;
+                                    }).findFirst().orElse(null))
                     .toArray(Object[]::new);
-            
+
             return constructor.newInstance(params);
         }
-        
+
         return null;
     }
     
-    record MethodSignature(String name, int params, QilletniTypeClass<?> nativeOn) {
-    }
+    record MethodSignature(String name, int params, QilletniTypeClass<?> nativeOn) {}
 
     /**
      * A set of native methods that may be invoked in Qilletni.
@@ -209,4 +218,33 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
      *                  populating music-related types.  
      */
     record InvocableMethod(Method method, Method beforeAny) {}
+
+    /**
+     * A record that holds an instance that may be injected into a native method's class' constructor. If the scope is
+     * restricted, only the permitted classes may be injected.
+     * 
+     * @param instance The instance of something that may be passed into a native method's class' constructor
+     * @param restrictedScope If there is a restricted scope. `false` indicates that the instance may be injected into
+     *                        anything
+     * @param permittedClasses If there is a restricted scope, these are the classes that may be injected into
+     */
+    record ScopedInjectableInstance(Object instance, boolean restrictedScope, List<Class<?>> permittedClasses) {
+        public ScopedInjectableInstance(Object instance) {
+            this(instance, false, List.of());
+        }
+        
+        public ScopedInjectableInstance(Object instance, List<Class<?>> permittedClasses) {
+            this(instance, true, permittedClasses);
+        }
+
+        /**
+         * If the class is permitted to be injected into the constructor of a native method's class.
+         * 
+         * @param clazz The class to check
+         * @return If the class is permitted to be injected
+         */
+        public boolean permitsClass(Class<?> clazz) {
+            return !restrictedScope || permittedClasses.contains(clazz);
+        }
+    }
 }

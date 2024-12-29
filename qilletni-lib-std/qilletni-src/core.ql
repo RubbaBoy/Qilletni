@@ -3,12 +3,21 @@ import "util/util.ql"
 import "string.ql"
 
 /**
- * Prints a string representation of the given object to the console
- * obj may be of any type
+ * Prints a string representation of the given object to the console, followed by a newline character.
  *
  * @param obj The object to print, of any type.
  */
 native fun print(obj)
+
+/**
+ * Prints a given string to the console, followed by a newline character. The string is formatted with `string.format`
+ * using the parameters provided.
+ *
+ * @param obj The object to print, of any type.
+ */
+fun printf(obj, formatParams) {
+    print(obj.format(formatParams))
+}
 
 /**
  * Gets the environment variable of a given name. This will return a string, or throw an error if it can't be found.

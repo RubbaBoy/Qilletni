@@ -41,6 +41,7 @@ import is.yarr.qilletni.lang.exceptions.FunctionDidntReturnException;
 import is.yarr.qilletni.lang.exceptions.InternalLanguageException;
 import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
 import is.yarr.qilletni.lang.exceptions.InvalidStaticException;
+import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
@@ -447,51 +448,60 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var variableSymbol = currentScope.lookup(idText);
         var variable = variableSymbol.getValue();
 
-        if (!variable.getTypeClass().equals(QilletniTypeClass.INT) && !variable.getTypeClass().equals(QilletniTypeClass.DOUBLE)) {
+        if (!variable.getTypeClass().equals(QilletniTypeClass.INT) && !variable.getTypeClass().equals(QilletniTypeClass.DOUBLE) && !variable.getTypeClass().equals(QilletniTypeClass.LIST)) {
             throw new TypeMismatchException("Cannot increment/decrement from a %s".formatted(variable.getTypeClass().getTypeName()));
         }
-        
-        if (variable instanceof IntType intVar) {
-            if (ctx.id_post_crement != null || ctx.id_post_crement_equals != null) {
-                var incrementBy = 1L;
-                if (ctx.id_post_crement_equals != null) {
-                    incrementBy = visitQilletniTypedNode(ctx.expr(0), IntType.class).getValue();
+
+        switch (variable) {
+            case IntType intVar -> {
+                if (ctx.id_post_crement != null || ctx.id_post_crement_equals != null) {
+                    var incrementBy = 1L;
+                    if (ctx.id_post_crement_equals != null) {
+                        incrementBy = visitQilletniTypedNode(ctx.expr(0), IntType.class).getValue();
+                    }
+
+                    var oldVal = intVar.getValue();
+                    variableSymbol.setValue(new IntTypeImpl(intOperation.apply(oldVal, incrementBy)));
+                    return new IntTypeImpl(oldVal);
                 }
 
-                var oldVal = intVar.getValue();
-                variableSymbol.setValue(new IntTypeImpl(intOperation.apply(oldVal, incrementBy)));
-                return new IntTypeImpl(oldVal);
+//              ctx.id_pre_crement != null
+                var newVal = new IntTypeImpl(intOperation.apply(intVar.getValue(), 1L));
+                variableSymbol.setValue(newVal);
+                return newVal;
             }
+            case DoubleType doubleVar -> {
 
-//          ctx.id_pre_crement != null
-            var newVal = new IntTypeImpl(intOperation.apply(intVar.getValue(), 1L));
-            variableSymbol.setValue(newVal);
-            return newVal;
-        } else if (variable instanceof DoubleType doubleVar) {
+                if (ctx.id_post_crement != null || ctx.id_post_crement_equals != null) {
+                    var incrementBy = 1D;
+                    if (ctx.id_post_crement_equals != null) {
+                        // TODO: Convert to double if int?
+                        incrementBy = visitQilletniTypedNode(ctx.expr(0), DoubleType.class).getValue();
+                    }
 
-            if (ctx.id_post_crement != null || ctx.id_post_crement_equals != null) {
-                var incrementBy = 1D;
-                if (ctx.id_post_crement_equals != null) {
-                    // TODO: Convert to double if int?
-                    incrementBy = visitQilletniTypedNode(ctx.expr(0), DoubleType.class).getValue();
+                    var oldVal = doubleVar.getValue();
+                    variableSymbol.setValue(new DoubleTypeImpl(doubleOperation.apply(oldVal, incrementBy)));
+                    return new DoubleTypeImpl(oldVal);
                 }
 
-                var oldVal = doubleVar.getValue();
-                variableSymbol.setValue(new DoubleTypeImpl(doubleOperation.apply(oldVal, incrementBy)));
-                return new DoubleTypeImpl(oldVal);
+//              ctx.id_pre_crement != null
+                var newVal = new DoubleTypeImpl(doubleOperation.apply(doubleVar.getValue(), 1D));
+                variableSymbol.setValue(newVal);
+                return newVal;
             }
-
-//          ctx.id_pre_crement != null
-            var newVal = new DoubleTypeImpl(doubleOperation.apply(doubleVar.getValue(), 1D));
-            variableSymbol.setValue(newVal);
-            return newVal;
-        } else {
-            throw new InternalLanguageException(ctx, "Increment/decrement only supported for int and double types.");
+            case ListType listVar when ctx.PLUS_EQUALS() != null -> {
+                var rightVar = visitQilletniTypedNode(ctx.expr(0), ListType.class);
+                var newList = addListsToNewList(listVar, rightVar, ctx);
+                variableSymbol.setValue(newList);
+                return newList;
+            }
+            default ->
+                    throw new InternalLanguageException(ctx, "Increment/decrement only supported for int and double types.");
         }
     }
 
     private QilletniType handleIncrementDecrementOnList(QilletniParser.ExprContext ctx) {
-        // post/pre increment/decrement on a list
+        // post/pre increment/decrement on a list accessor ( eg.  ID[expr]++ )
         
         var currentScope = symbolTable.currentScope();
         var idText = LangParserUtils.requireNonNull(ctx.ID(), ctx, "Expected an ID for increment/decrement.").getText();
@@ -632,31 +642,54 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 throw new TypeMismatchException("Cannot increment/decrement from a %s".formatted(property.getTypeClass().getTypeName()));
             }
 
-            if (property instanceof IntType intVar) {
-                var incrementBy = 1L;
-                if (ctx.id_post_crement_equals != null) {
-                    incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
-                }
+            switch (property) {
+                case IntType intVar -> {
+                    var incrementBy = 1L;
+                    if (ctx.id_post_crement_equals != null) {
+                        incrementBy = visitQilletniTypedNode(ctx.expr(1), IntType.class).getValue();
+                    }
 
-                var oldVal = intVar.getValue();
-                propertySymbol.setValue(new IntTypeImpl(intOperation.apply(oldVal, incrementBy)));
-                return new IntTypeImpl(oldVal);
-            } else if (property instanceof DoubleType doubleVar) {
-                var incrementBy = 1D;
-                if (ctx.id_post_crement_equals != null) {
-                    // TODO: Convert to double if int?
-                    incrementBy = visitQilletniTypedNode(ctx.expr(1), DoubleType.class).getValue();
+                    var oldVal = intVar.getValue();
+                    propertySymbol.setValue(new IntTypeImpl(intOperation.apply(oldVal, incrementBy)));
+                    return new IntTypeImpl(oldVal);
                 }
+                case DoubleType doubleVar -> {
+                    var incrementBy = 1D;
+                    if (ctx.id_post_crement_equals != null) {
+                        // TODO: Convert to double if int?
+                        incrementBy = visitQilletniTypedNode(ctx.expr(1), DoubleType.class).getValue();
+                    }
 
-                var oldVal = doubleVar.getValue();
-                propertySymbol.setValue(new DoubleTypeImpl(doubleOperation.apply(oldVal, incrementBy)));
-                return new DoubleTypeImpl(oldVal);
-            } else {
-                throw new InternalLanguageException(ctx, "Increment/decrement only supported for int and double types.");
+                    var oldVal = doubleVar.getValue();
+                    propertySymbol.setValue(new DoubleTypeImpl(doubleOperation.apply(oldVal, incrementBy)));
+                    return new DoubleTypeImpl(oldVal);
+                }
+                case ListType listVar when ctx.PLUS_EQUALS() != null -> {
+                    var rightVar = visitQilletniTypedNode(ctx.expr(1), ListType.class);
+                    var newList = addListsToNewList(listVar, rightVar, ctx);
+                    propertySymbol.setValue(newList);
+                    return newList;
+                }
+                default -> 
+                        throw new InternalLanguageException(ctx, "Increment/decrement only supported for int and double types. %s".formatted(ctx.PLUS_EQUALS() != null ? "true" : "false"));
             }
         }
 
         return property;
+    }
+    
+    private ListType addListsToNewList(ListType left, ListType right, ParserRuleContext ctx) {
+        if (!left.getSubType().equals(right.getSubType())) {
+            throw new TypeMismatchException(ctx, "Cannot add lists of mismatched types: %s and %s".formatted(left.getSubType().getTypeName(), right.getSubType().getTypeName()));
+        }
+
+        var leftItems = left.getItems();
+        var rightItems = right.getItems();
+
+        var newItems = new ArrayList<>(leftItems);
+        newItems.addAll(rightItems);
+
+        return new ListTypeImpl(left.getSubType(), newItems);
     }
 
     @Override
@@ -688,8 +721,11 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             case MixedExpression(DoubleType left, DoubleType right) -> new DoubleTypeImpl(left.getValue() + right.getValue());
             case MixedExpression(DoubleType left, IntType right) -> new DoubleTypeImpl(left.getValue() + right.getValue());
             case MixedExpression(IntType left, DoubleType right) -> new DoubleTypeImpl(left.getValue() + right.getValue());
+            
+            // Concatenate lists together
+            case MixedExpression(ListType left, ListType right) -> addListsToNewList(left, right, ctx);
 
-            // TODO: List OR custom addition? Maybe other operators?
+            // TODO: Custom addition? Maybe other operators too?
             // Concatenate anything with a string
             case MixedExpression(StringType left, QilletniType right) -> new StringTypeImpl(left.stringValue() + right.stringValue());
             case MixedExpression(QilletniType left, StringType right) -> new StringTypeImpl(left.stringValue() + right.stringValue());
@@ -797,6 +833,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return visitStr_expr(ctx.str_expr());
         }
         
+        if (ctx.list_expression() != null) {
+            return visitList_expression(ctx.list_expression());
+        }
+        
         if (ctx.ID() != null) {
             return handleIDReference(ctx.ID().getText());
         }
@@ -834,9 +874,16 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public IntType visitInt_expr(QilletniParser.Int_exprContext ctx) {
         // Int cast:  int( expr )
         if (ctx.INT_TYPE() != null) {
-            var exprValue = visitQilletniTypedNode(ctx.double_expr(), DoubleType.class);
-            // Floor doubles to ints
-            return new IntTypeImpl((long) Math.floor(exprValue.getValue()));
+            var exprValue = visitQilletniTypedNode(ctx.expr());
+            
+            // If it's already an int, return it
+            if (exprValue instanceof IntType intType) {
+                return intType;
+            } else if (exprValue instanceof DoubleType doubleType) {
+                return new IntTypeImpl((long) Math.floor(doubleType.getValue()));
+            }
+
+            throw new TypeMismatchException(ctx, "Expected a number to cast to int, got %s".formatted(exprValue.typeName()));
         }
 
         // Int literal:  123...
@@ -847,12 +894,20 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public DoubleType visitDouble_expr(QilletniParser.Double_exprContext ctx) {
         // String cast:  string( expr )
         if (ctx.DOUBLE_TYPE() != null) {
-            var exprValue = visitQilletniTypedNode(ctx.int_expr(), IntType.class);
-            return new DoubleTypeImpl((double) exprValue.getValue());
+            var exprValue = visitQilletniTypedNode(ctx.expr());
+            
+            // If it's already a double, return it
+            if (exprValue instanceof DoubleType doubleType) {
+                return doubleType;
+            } else if (exprValue instanceof IntType intType) {
+                return new DoubleTypeImpl((double) intType.getValue());
+            }
+            
+            throw new TypeMismatchException(ctx, "Expected a number to cast to double, got %s".formatted(exprValue.typeName()));
         }
 
         // Double literal:  "12.34..."
-        return new DoubleTypeImpl(Integer.parseInt(ctx.DOUBLE().getText()));
+        return new DoubleTypeImpl(Double.parseDouble(ctx.DOUBLE().getText()));
     }
 
     @Override
@@ -887,6 +942,22 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             
             LOGGER.debug("they equal!");
             return BooleanTypeImpl.TRUE;
+        }
+        
+        // Not an entity
+        if (type.equals(QilletniTypeClass.LIST)) {
+            if (ctx.type == null) {
+                throw new InvalidSyntaxException(ctx, "Required type for list type check");
+            }
+            
+            var subType = TypeUtils.getTypeFromStringOrEntity(ctx.type.getText());
+
+            if (!(checkingVariable instanceof ListType listType)) {
+                return BooleanTypeImpl.FALSE;
+            }
+            
+            var eq = listType.getSubType().equals(subType);
+            return new BooleanTypeImpl(eq);
         }
         
         return new BooleanTypeImpl(type.isAssignableFrom(checkingVariable.getTypeClass()));
@@ -931,7 +1002,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
             var typeList = items.stream().map(QilletniType::getTypeClass).distinct().toList();
             QilletniTypeClass<?> listType = QilletniTypeClass.ANY;
-            if (!typeList.isEmpty()) {
+            if (typeList.size() == 1) {
                 listType = typeList.getFirst();
             }
 
@@ -1277,12 +1348,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public WeightsType visitWeights_expr(QilletniParser.Weights_exprContext ctx) {
-//        var scope = symbolTable.currentScope();
-
-//        if (ctx.ID() != null) {
-//            return scope.<WeightsTypeImpl>lookup(ctx.ID().getText()).getValue();
-//        }
-
         var weights = ctx.single_weight().stream().map(this::<WeightEntry>visitNode).toList();
         return new WeightsTypeImpl(weights);
     }
@@ -1391,15 +1456,8 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public JavaType visitJava_expr(QilletniParser.Java_exprContext ctx) {
-//        if (ctx.ID() != null) {
-//            var scope = symbolTable.currentScope();
-//            return scope.<JavaTypeImpl>lookup(ctx.ID().getText()).getValue();
-//        }
-//
-//        if (ctx.function_call() != null) {
-//            return this.functionInvoker.<JavaType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
-//        }
-        
+        // TODO: Maybe add a way to execute Java code via JShell?
+
         // Has to be empty
         return new JavaTypeImpl(null);
     }
@@ -1552,16 +1610,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public CollectionType visitCollection_expr(QilletniParser.Collection_exprContext ctx) {
-        var scope = symbolTable.currentScope();
-
-//        if (ctx.ID() != null) {
-//            return scope.<CollectionTypeImpl>lookup(ctx.ID().getText()).getValue();
-//        }
-//
-//        if (ctx.function_call() != null) {
-//            return this.functionInvoker.<CollectionType>invokeFunction(ctx.function_call()).orElseThrow(FunctionDidntReturnException::new);
-//        }
-
         CollectionType collectionType;
         
         if (ctx.COLLECTION_TYPE() != null) {

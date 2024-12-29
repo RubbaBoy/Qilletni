@@ -44,9 +44,6 @@ expr
     // 6) Entity initialize
     | entity_initialize
 
-    // 7) Standalone ID
-    | ID
-
     // 8) Logical NOT
     | NOT expr
 
@@ -68,8 +65,12 @@ expr
     | album_expr
     | weights_expr
     | java_expr
-    | list_expression
     | is_expr
+    | list_expression
+    
+    // 7) Standalone ID
+    | ID
+
     ;
 
 /**
@@ -105,19 +106,20 @@ primaryArithmetic
     | int_expr
     | double_expr
     | str_expr
+    | list_expression
     | ID
     ;
 
 int_expr
     : INT
     // Cast to int
-    | INT_TYPE LEFT_PAREN double_expr RIGHT_PAREN
+    | INT_TYPE LEFT_PAREN expr RIGHT_PAREN
     ;
 
 double_expr
     : DOUBLE
     // Cast to int
-    DOUBLE_TYPE LEFT_PAREN int_expr RIGHT_PAREN
+    | DOUBLE_TYPE LEFT_PAREN expr RIGHT_PAREN
     ;
 
 str_expr
@@ -176,7 +178,7 @@ list_expression
     ;
 
 is_expr
-    : ID IS_KEYWORD (type=(ANY_TYPE | INT_TYPE | DOUBLE_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? | (LEFT_SBRACKET RIGHT_SBRACKET)?)
+    : ID IS_KEYWORD (type=(ANY_TYPE | INT_TYPE | DOUBLE_TYPE | STRING_TYPE | BOOLEAN_TYPE | COLLECTION_TYPE | SONG_TYPE | WEIGHTS_KEYWORD | ALBUM_TYPE | JAVA_TYPE | ID)? (LEFT_SBRACKET RIGHT_SBRACKET)?)
     ;
 
 java_expr

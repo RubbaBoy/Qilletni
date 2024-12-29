@@ -3,6 +3,7 @@ package is.yarr.qilletni.music;
 import is.yarr.qilletni.api.lang.types.AlbumType;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.SongType;
+import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.music.AlbumNotFoundException;
@@ -13,17 +14,18 @@ import org.slf4j.LoggerFactory;
 public class MusicPopulatorImpl implements MusicPopulator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MusicPopulatorImpl.class);
-    private static final boolean EAGER_MUSIC_LOAD = "true".equals(System.getenv("EAGER_MUSIC_LOAD"));
-    
-    private final DynamicProvider dynamicProvider;
 
-    public MusicPopulatorImpl(DynamicProvider dynamicProvider) {
+    private final DynamicProvider dynamicProvider;
+    private final boolean eagerMusicLoad;
+
+    public MusicPopulatorImpl(DynamicProvider dynamicProvider, PackageConfig packageConfig) {
         this.dynamicProvider = dynamicProvider;
+        this.eagerMusicLoad = packageConfig.get("eagerMusicLoad").orElse("false").equals("true");
     }
 
     @Override
     public SongType initiallyPopulateSong(SongType songType) {
-        if (EAGER_MUSIC_LOAD) {
+        if (eagerMusicLoad) {
             populateSong(songType);
         }
         
@@ -53,7 +55,7 @@ public class MusicPopulatorImpl implements MusicPopulator {
 
     @Override
     public AlbumType initiallyPopulateAlbum(AlbumType albumType) {
-        if (EAGER_MUSIC_LOAD) {
+        if (eagerMusicLoad) {
             populateAlbum(albumType);
         }
         
@@ -82,7 +84,7 @@ public class MusicPopulatorImpl implements MusicPopulator {
 
     @Override
     public CollectionType initiallyPopulateCollection(CollectionType collectionType) {
-        if (EAGER_MUSIC_LOAD) {
+        if (eagerMusicLoad) {
             populateCollection(collectionType);
         }
         
