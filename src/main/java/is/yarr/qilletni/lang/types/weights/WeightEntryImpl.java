@@ -9,7 +9,9 @@ import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import is.yarr.qilletni.api.lang.types.SongType;
 import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.api.music.orchestration.CollectionState;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
+import is.yarr.qilletni.music.orchestration.CollectionStateImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +26,7 @@ public class WeightEntryImpl implements WeightEntry {
     private final WeightTrackType weightTrackType;
     SongType song;
     private ListType songList;
-    private CollectionType collection;
+    private CollectionState collectionState;
     private WeightsType weights;
     private Playlist playlist;
     private final DynamicProvider dynamicProvider;
@@ -70,7 +72,7 @@ public class WeightEntryImpl implements WeightEntry {
         this.canRepeatTrack = canRepeatTrack;
         this.canRepeatWeight = canRepeatWeight;
 
-        this.collection = collection;
+        this.collectionState = new CollectionStateImpl(collection, dynamicProvider);
         this.weightTrackType = WeightTrackType.COLLECTION;
     }
 
@@ -152,7 +154,7 @@ public class WeightEntryImpl implements WeightEntry {
                 var songs = songList.getItems();
                 yield ((SongType) songs.get(ThreadLocalRandom.current().nextInt(0, songs.size()))).getTrack();
             }
-            case COLLECTION -> trackOrchestrator.getTrackFromCollection(collection);
+            case COLLECTION -> trackOrchestrator.getTrackFromCollection(collectionState);
             case WEIGHTS -> trackOrchestrator.getTrackFromWeight(weights);
             case PLAYLIST -> {
                 var tracks = musicCache.getPlaylistTracks(playlist);
@@ -169,7 +171,7 @@ public class WeightEntryImpl implements WeightEntry {
         return switch (weightTrackType) {
             case SINGLE_TRACK -> List.of(song.getTrack());
             case LIST -> songList.getItems().stream().map(SongType.class::cast).map(SongType::getTrack).toList();
-            case COLLECTION -> musicCache.getPlaylistTracks(collection.getPlaylist());
+            case COLLECTION -> musicCache.getPlaylistTracks(collectionState.getCollection().getPlaylist());
             case WEIGHTS -> weights.getWeightEntries().stream().flatMap(weightEntry -> weightEntry.getAllTracks().stream()).toList();
             case PLAYLIST -> musicCache.getPlaylistTracks(playlist);
             case FUNCTION -> Collections.emptyList();
@@ -186,7 +188,7 @@ public class WeightEntryImpl implements WeightEntry {
         return switch (weightTrackType) {
             case SINGLE_TRACK -> song.stringValue();
             case LIST -> songList.stringValue();
-            case COLLECTION -> collection.stringValue();
+            case COLLECTION -> collectionState.stringValue();
             case WEIGHTS -> weights.stringValue();
             case PLAYLIST -> String.format("[Raw playlist of ID %s]", playlist.getId());
             case FUNCTION -> "function-call";

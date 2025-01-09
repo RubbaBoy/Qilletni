@@ -7,6 +7,7 @@ import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.album.AlbumDefinition;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
+import is.yarr.qilletni.api.lang.types.song.SongDefinition;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Album;
 
@@ -33,7 +34,7 @@ public final class AlbumTypeImpl implements AlbumType {
     }
     
     public AlbumTypeImpl(Album album) {
-        this.albumDefinition = AlbumDefinition.TITLE_ARTIST;
+        this.albumDefinition = AlbumDefinition.PREPOPULATED;
         
         populateSpotifyData(album);
     }
@@ -110,11 +111,17 @@ public final class AlbumTypeImpl implements AlbumType {
 
     @Override
     public String stringValue() {
-        if (albumDefinition == AlbumDefinition.URL) {
-            return String.format("album(%s)", url);
+        if (!isSpotifyDataPopulated()) {
+            if (albumDefinition == AlbumDefinition.URL) {
+                return String.format("album(%s)", url);
+            }
+
+            if (albumDefinition == AlbumDefinition.TITLE_ARTIST) {
+                return String.format("album(\"%s\" by \"%s\")", title, artist);
+            }
         }
 
-        return String.format("album(\"%s\" by \"%s\")", title, artist);
+        return String.format("album(\"%s\" by \"%s\")", album.getName(), album.getArtist().getName());
     }
 
     @Override

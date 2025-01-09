@@ -112,7 +112,7 @@ public class QilletniProgramRunner {
 
         dynamicProvider.initFactories(songTypeFactory, collectionTypeFactory, albumTypeFactory);
 
-        var listGeneratorFactory = new ListTypeTransformerFactory();
+        var listGeneratorFactory = new ListTypeTransformerFactory(musicPopulator);
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
         this.listInitializer = new ListInitializerImpl(listTypeTransformer, typeConverter);
         this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler, librarySourceFileResolver);

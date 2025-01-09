@@ -20,7 +20,6 @@ import is.yarr.qilletni.api.lang.types.JavaType;
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.SongType;
-import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.collection.CollectionLimit;
@@ -43,6 +42,7 @@ import is.yarr.qilletni.lang.exceptions.InvalidConstructor;
 import is.yarr.qilletni.lang.exceptions.InvalidStaticException;
 import is.yarr.qilletni.lang.exceptions.InvalidSyntaxException;
 import is.yarr.qilletni.lang.exceptions.ListOutOfBoundsException;
+import is.yarr.qilletni.lang.exceptions.ListTransformerNotFoundException;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
@@ -72,7 +72,6 @@ import is.yarr.qilletni.lang.types.weights.LazyWeightEntry;
 import is.yarr.qilletni.lang.types.weights.WeightEntryImpl;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +81,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
@@ -1013,12 +1011,21 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private <T extends QilletniType> ListType createListOfType(QilletniParser.List_expressionContext ctx, QilletniTypeClass<T> listType) {
         return checkEmptyTypedList(ctx, listType).or(() -> checkAlreadyComputedList(ctx)).orElseGet(() -> {
             var items = this.<List<QilletniType>>visitNode(ctx.expr_list());
+            
+            // Check if all items in the list are either of the list type, or may be transformed
+            // This is to reduce load and waiting for an exception to occur during transformation
+            for (var listItem : items) {
+                if (!listType.isAssignableFrom(listItem.getTypeClass()) && !listTypeTransformer.doesTransformerExist(listType, listItem.getTypeClass())) {
+                    throw new ListTransformerNotFoundException(String.format("No list transformer found from %s to %s", listItem.getTypeClass().getTypeName(), listType.getTypeName()));
+                }
+            }
 
             var transformedItems = items.stream().map(listItem -> {
                 if (listType.isAssignableFrom(listItem.getTypeClass())) { // This means if listType is ANY, no transformations happen
                     return listItem;
                 }
 
+                // This should never error out due to the above loop/check
                 return listTypeTransformer.transformType(listType, listItem);
             }).toList();
 
@@ -1046,6 +1053,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 //            }
             
             var list = visitQilletniTypedNode(exprCtx, ListType.class);
+            
+            // If a list is empty and has no type assigned to it, treat it as a list of the type specified
+            // NOTE: This lets  `song[] s = any[]` work?
+            if (list.getItems().isEmpty() && list.getSubType().equals(QilletniTypeClass.ANY)) {
+                return new ListTypeImpl(listType, Collections.emptyList());
+            }
+            
             if (!listType.isAssignableFrom(list.getSubType())) {
                 throw new TypeMismatchException("Expected list of type %s, got %s".formatted(listType.getTypeName(), list.getSubType().getTypeName()));
             }
@@ -1574,7 +1588,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
 
-            System.out.println("LIST text = %s  value = %s".formatted(text, value));
             return new EntityProperty<>(text, value);
         } else {
             var value = switch (ctx.type.getType()) {
@@ -1592,7 +1605,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 default -> throw new RuntimeException("This should not be possible, unknown type");
             };
 
-            System.out.println("NOLIST text = %s  value = %s".formatted(text, value));
             return new EntityProperty<>(text, value);
         }
     }

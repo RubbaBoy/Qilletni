@@ -86,4 +86,8 @@ public class WeightDispersion {
     
     record DispersedWeightEntry(WeightEntry weightEntry, int cumulativeWeight) {}
 
+    @Override
+    public String toString() {
+        return "WeightDispersion{scaledWeights=%s, scalingFactor=%d}".formatted(scaledWeights, scalingFactor);
+    }
 }

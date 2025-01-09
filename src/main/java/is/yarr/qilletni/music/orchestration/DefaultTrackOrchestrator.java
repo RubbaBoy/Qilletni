@@ -10,6 +10,7 @@ import is.yarr.qilletni.api.lang.types.weights.WeightUtils;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.api.music.orchestration.CollectionState;
 import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
 import org.slf4j.Logger;
@@ -73,10 +74,17 @@ public class DefaultTrackOrchestrator implements TrackOrchestrator {
     }
 
     @Override
-    public Track getTrackFromCollection(CollectionType collectionType) {
+    public Track getTrackFromCollection(CollectionState collectionState) {
+        
+        // if sequential, just get the next track from the cached track/index
+        if (collectionState.getCollection().getOrder() == CollectionOrder.SEQUENTIAL) {
+            int trackIndex = collectionState.getAndIncrementSequentialIndex();
+            return collectionState.getTracks().get(trackIndex);
+        }
+        
         var atomicTrack = new AtomicReference<Track>();
         
-        conditionallyPlayCollection(collectionType, true, atomicTrack::set, () -> atomicTrack.get() == null);
+        conditionallyPlayCollection(collectionState.getCollection(), true, atomicTrack::set, () -> atomicTrack.get() == null);
 
         return atomicTrack.get();
     }
@@ -144,13 +152,15 @@ public class DefaultTrackOrchestrator implements TrackOrchestrator {
 
         while ((initiallyEmpty || !trackQueue.isEmpty()) && (isRetry || shouldPlayTrack.get())) {
             isRetry = false;
-            
+
+            // Select a song from the weight. This may run this same method again if coming from another weight
             var weightedTrackContextOptional = weightDispersion.selectWeight();
 
             if (weightedTrackContextOptional.isPresent()) {
                 var weightEntry = weightedTrackContextOptional.get();
                 var weightedTrack = weightEntry.getTrack();
 
+                // If the track or weight can't be repeated (and it was played last), don't play it
                 if (weightedTrack.equals(dontPlayNextTrack) || weightEntry.equals(dontPlayWeight)) {
                     isRetry = true;
                     continue;
@@ -158,11 +168,14 @@ public class DefaultTrackOrchestrator implements TrackOrchestrator {
                 
                 playCallback.accept(weightedTrack);
 
-                if (!weightEntry.getCanRepeatTrack() || !weightEntry.getCanRepeatWeight()) {
+                // If only the current track can't be repeated, don't play the next track
+                if (!weightEntry.getCanRepeatTrack()) {
                     dontPlayNextTrack = weightedTrack;
                 }
                 
+                // If the weight can't be repeated, don't play the next track OR weight
                 if (!weightEntry.getCanRepeatWeight()) {
+                    dontPlayNextTrack = weightedTrack;
                     dontPlayWeight = weightEntry;
                 }
 

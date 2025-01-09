@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.types.list;
 import is.yarr.qilletni.api.lang.types.AlbumType;
 import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.IntType;
+import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.lang.types.AlbumTypeImpl;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.lang.types.CollectionTypeImpl;
@@ -17,6 +18,12 @@ import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
  * Creates instances of {@link ListTypeTransformer}.
  */
 public class ListTypeTransformerFactory {
+
+    private final MusicPopulator musicPopulator;
+
+    public ListTypeTransformerFactory(MusicPopulator musicPopulator) {
+        this.musicPopulator = musicPopulator;
+    }
 
     /**
      * Creates the default {@link ListTypeTransformer}.
@@ -36,15 +43,21 @@ public class ListTypeTransformerFactory {
     }
 
     private SongType transformStringToSong(StringType stringType) {
-        return new SongTypeImpl(stringType.stringValue());
+        var songType = new SongTypeImpl(stringType.stringValue());
+        musicPopulator.initiallyPopulateSong(songType);
+        return songType;
     }
 
     private AlbumType transformStringToAlbum(StringType stringType) {
-        return new AlbumTypeImpl(stringType.stringValue());
+        var albumType = new AlbumTypeImpl(stringType.stringValue());
+        musicPopulator.initiallyPopulateAlbum(albumType);
+        return albumType;
     }
 
     private CollectionType transformStringToCollection(StringType stringType) {
-        return new CollectionTypeImpl(stringType.stringValue());
+        var collectionType = new CollectionTypeImpl(stringType.stringValue());
+        musicPopulator.initiallyPopulateCollection(collectionType);
+        return collectionType;
     }
 
     private DoubleType transformIntToDouble(IntType intType) {

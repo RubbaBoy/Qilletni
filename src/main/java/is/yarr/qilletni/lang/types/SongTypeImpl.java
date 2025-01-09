@@ -122,12 +122,14 @@ public final class SongTypeImpl implements SongType {
 
     @Override
     public String stringValue() {
-        if (songDefinition == SongDefinition.URL) {
-            return String.format("song(%s)", url);
-        }
-        
-        if (songDefinition == SongDefinition.TITLE_ARTIST) {
-            return String.format("song(\"%s\" by \"%s\")", title, artist);
+        if (!isSpotifyDataPopulated()) {
+            if (songDefinition == SongDefinition.URL) {
+                return String.format("song(%s)", url);
+            }
+            
+            if (songDefinition == SongDefinition.TITLE_ARTIST) {
+                return String.format("song(\"%s\" by \"%s\")", title, artist);
+            }
         }
 
         return String.format("song(\"%s\" by \"%s\")", track.getName(), track.getArtist().getName());

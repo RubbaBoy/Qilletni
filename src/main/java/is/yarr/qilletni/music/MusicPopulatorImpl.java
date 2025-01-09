@@ -77,6 +77,7 @@ public class MusicPopulatorImpl implements MusicPopulator {
                     .orElseThrow(() -> new AlbumNotFoundException(String.format("Album \"%s\" by \"%s\" not found", albumType.getSuppliedTitle(), albumType.getSuppliedArtist())));
             case URL -> musicCache.getAlbumById(musicCache.getIdFromString(albumType.getSuppliedUrl()))
                     .orElseThrow(() -> new AlbumNotFoundException(String.format("Album with ID \"%s\" not found", albumType.getSuppliedUrl())));
+            case PREPOPULATED -> albumType.getAlbum();
         };
         
         albumType.populateSpotifyData(foundAlbum);

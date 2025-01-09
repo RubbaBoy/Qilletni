@@ -58,3 +58,10 @@ native fun format(formatList) on string
  * @returns[@type int] The integer value of the string
  */
 native fun toInt() on string
+
+///**
+// * Repeats the current string a given number of times.
+// *
+// * @returns[@type int] The number of times to repeat the string
+// */
+//native fun repeat(count) on string

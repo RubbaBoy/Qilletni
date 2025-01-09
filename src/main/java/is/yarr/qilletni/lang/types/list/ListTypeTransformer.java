@@ -38,7 +38,7 @@ public class ListTypeTransformer {
      * @param to   The ending type
      * @return If the transformer exists
      */
-    public boolean doesTransformerExist(QilletniTypeClass<?> from, QilletniTypeClass<?> to) {
+    public boolean doesTransformerExist(QilletniTypeClass<?> to, QilletniTypeClass<?> from) {
         return transformers.stream().anyMatch(transformer -> transformer.matchesTypes(from, to));
     }
 
