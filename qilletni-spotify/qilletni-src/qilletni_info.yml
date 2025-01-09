@@ -7,3 +7,5 @@ native_classes:
   - is.yarr.qilletni.lib.spotify.PlayRedirect
   - is.yarr.qilletni.lib.spotify.PlaylistToolsFunctions
   - is.yarr.qilletni.lib.spotify.RecommendationsFunctions
+dependencies:
+  - postgres:1.0.0

@@ -16,8 +16,9 @@ dependencies {
     compileOnly 'org.apache.logging.log4j:log4j-core:2.22.1'
     compileOnly 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
 
-    implementation 'org.hibernate:hibernate-core:5.5.7.Final'
-    implementation 'org.postgresql:postgresql:42.3.8'
+    // Provided by the `postgres` library
+    compileOnly 'org.hibernate:hibernate-core:5.5.7.Final'
+    compileOnly 'org.postgresql:postgresql:42.3.8'
     
     implementation ('org.eclipse.jetty:jetty-server:12.0.4') {
         exclude group: 'org.slf4j', module: 'slf4j-api'
