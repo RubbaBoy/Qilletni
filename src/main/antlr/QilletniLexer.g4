@@ -33,6 +33,8 @@ STAR  : '*';
 FLOOR_DIV : '/~';   // integer/floor division
 DIV   : '/';        // normal (double) division
 MOD   : '%';
+ANDAND : '&&';
+OROR   : '||';
 
 WEIGHTS_KEYWORD : 'weights';
 

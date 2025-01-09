@@ -49,6 +49,8 @@ expr
 
     // 9) Relational compare: expr REL_OP expr (>, <, >=, <=, ==, !=)
     | expr REL_OP expr
+    | expr ANDAND expr
+    | expr OROR expr
 
     // 10) Boolean literal
     | BOOL

@@ -399,6 +399,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             return handleRelational(ctx);
         }
 
+        if (ctx.ANDAND() != null || ctx.OROR() != null) {
+            return handleLogicalAndOr(ctx);
+        }
+
         // 5) Function call on nothing:  function_call()
         if (ctx.function_call() != null && ctx.expr().isEmpty()) {
             return functionInvoker
@@ -674,6 +678,30 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         }
 
         return property;
+    }
+    
+    private BooleanType handleLogicalAndOr(QilletniParser.ExprContext ctx) {
+        var operator = ctx.ANDAND() != null ? "&&" : "||";
+        
+        var leftVal = visitQilletniTypedNode(ctx.expr(0));
+        if (!(leftVal instanceof BooleanType leftBool)) {
+            throw new InternalLanguageException(ctx, "Expected boolean on left side for %s, got %s".formatted(operator, leftVal.typeName()));
+        }
+        
+        if (operator.equals("&&") && !leftBool.getValue()) {
+            return BooleanTypeImpl.FALSE;
+        }
+        
+        if (operator.equals("||") && leftBool.getValue()) {
+            return BooleanTypeImpl.TRUE;
+        }
+        
+        var rightVal = visitQilletniTypedNode(ctx.expr(1));
+        if (!(rightVal instanceof BooleanType rightBool)) {
+            throw new InternalLanguageException(ctx, "Expected boolean on right side for %s, got %s".formatted(operator, leftVal.typeName()));
+        }
+        
+        return new BooleanTypeImpl(rightBool.getValue());
     }
     
     private ListType addListsToNewList(ListType left, ListType right, ParserRuleContext ctx) {
