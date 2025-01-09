@@ -2,7 +2,9 @@ package is.yarr.qilletni.lang.types;
 
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.types.ImportAliasType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 public class ImportAliasTypeImpl implements ImportAliasType {
     
@@ -22,6 +24,16 @@ public class ImportAliasTypeImpl implements ImportAliasType {
     @Override
     public String stringValue() {
         return String.format("alias(%s)", aliasName);
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

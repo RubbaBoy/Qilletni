@@ -5,6 +5,7 @@ import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StaticEntityType;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinition;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 /**
  * A static entity reference that generally can only have static methods invoked.
@@ -41,6 +42,16 @@ public class StaticEntityTypeImpl implements StaticEntityType {
         }
 
         return false;
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

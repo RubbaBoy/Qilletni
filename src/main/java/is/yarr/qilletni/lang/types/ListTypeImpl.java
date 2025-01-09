@@ -3,7 +3,11 @@ package is.yarr.qilletni.lang.types;
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
+import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -49,6 +53,20 @@ public final class ListTypeImpl implements ListType {
     }
 
     @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        if (qilletniType instanceof ListType comparing) {
+            return addListsToNewList(this, comparing, null);
+        }
+        
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
+    }
+
+    @Override
     public QilletniTypeClass<ListType> getTypeClass() {
         return listType;
     }
@@ -68,9 +86,20 @@ public final class ListTypeImpl implements ListType {
 
     @Override
     public String toString() {
-        return "ListType{" +
-                "items=" + items +
-                ", listType=" + listType +
-                '}';
+        return "ListType{items=%s, listType=%s}".formatted(items, listType);
+    }
+
+    public static ListType addListsToNewList(ListType left, ListType right, ParserRuleContext ctx) {
+        if (!left.getSubType().equals(right.getSubType())) {
+            throw new TypeMismatchException(ctx, "Cannot add lists of mismatched types: %s and %s".formatted(left.getSubType().getTypeName(), right.getSubType().getTypeName()));
+        }
+
+        var leftItems = left.getItems();
+        var rightItems = right.getItems();
+
+        var newItems = new ArrayList<>(leftItems);
+        newItems.addAll(rightItems);
+
+        return new ListTypeImpl(left.getSubType(), newItems);
     }
 }

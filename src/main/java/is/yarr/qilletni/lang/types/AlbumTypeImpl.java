@@ -10,6 +10,8 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.song.SongDefinition;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Album;
+import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 public final class AlbumTypeImpl implements AlbumType {
 
@@ -122,6 +124,16 @@ public final class AlbumTypeImpl implements AlbumType {
         }
 
         return String.format("album(\"%s\" by \"%s\")", album.getName(), album.getArtist().getName());
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

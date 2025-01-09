@@ -4,6 +4,7 @@ import is.yarr.qilletni.api.lang.types.DoubleType;
 import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 import java.util.Objects;
 
@@ -39,6 +40,28 @@ public final class IntTypeImpl implements IntType {
         }
         
         return false;
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        if (qilletniType instanceof IntType intType) {
+            return new IntTypeImpl(value + intType.getValue());
+        } else if (qilletniType instanceof DoubleType doubleType) {
+            return new DoubleTypeImpl(value + doubleType.getValue());
+        }
+        
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        if (qilletniType instanceof IntType intType) {
+            return new IntTypeImpl(value - intType.getValue());
+        } else if (qilletniType instanceof DoubleType doubleType) {
+            return new DoubleTypeImpl(value - doubleType.getValue());
+        }
+        
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

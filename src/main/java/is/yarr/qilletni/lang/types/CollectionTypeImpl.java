@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.types;
 import is.yarr.qilletni.SpotifyDataUtility;
 import is.yarr.qilletni.api.lang.types.CollectionType;
 import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.collection.CollectionDefinition;
 import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
@@ -10,6 +11,7 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 import is.yarr.qilletni.music.DummyPlaylist;
 
 import java.util.List;
@@ -130,6 +132,16 @@ public final class CollectionTypeImpl implements CollectionType {
         }
 
         return String.format("collection(\"%s\" by \"%s\")", name, creator);
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

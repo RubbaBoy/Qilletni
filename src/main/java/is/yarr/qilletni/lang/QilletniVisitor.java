@@ -5,6 +5,7 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
+import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
@@ -493,7 +494,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
             }
             case ListType listVar when ctx.PLUS_EQUALS() != null -> {
                 var rightVar = visitQilletniTypedNode(ctx.expr(0), ListType.class);
-                var newList = addListsToNewList(listVar, rightVar, ctx);
+                var newList = ListTypeImpl.addListsToNewList(listVar, rightVar, ctx);
                 variableSymbol.setValue(newList);
                 return newList;
             }
@@ -668,7 +669,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                 }
                 case ListType listVar when ctx.PLUS_EQUALS() != null -> {
                     var rightVar = visitQilletniTypedNode(ctx.expr(1), ListType.class);
-                    var newList = addListsToNewList(listVar, rightVar, ctx);
+                    var newList = ListTypeImpl.addListsToNewList(listVar, rightVar, ctx);
                     propertySymbol.setValue(newList);
                     return newList;
                 }
@@ -703,20 +704,6 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         
         return new BooleanTypeImpl(rightBool.getValue());
     }
-    
-    private ListType addListsToNewList(ListType left, ListType right, ParserRuleContext ctx) {
-        if (!left.getSubType().equals(right.getSubType())) {
-            throw new TypeMismatchException(ctx, "Cannot add lists of mismatched types: %s and %s".formatted(left.getSubType().getTypeName(), right.getSubType().getTypeName()));
-        }
-
-        var leftItems = left.getItems();
-        var rightItems = right.getItems();
-
-        var newItems = new ArrayList<>(leftItems);
-        newItems.addAll(rightItems);
-
-        return new ListTypeImpl(left.getSubType(), newItems);
-    }
 
     @Override
     public QilletniType visitAddSubExpr(QilletniParser.AddSubExprContext ctx) {
@@ -742,31 +729,19 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     }
 
     private QilletniType handleAddition(QilletniType leftType, QilletniType rightType, QilletniParser.AddSubExprContext ctx) {
-        return switch (new MixedExpression<>(leftType, rightType)) {
-            case MixedExpression(IntType left, IntType right) -> new IntTypeImpl(left.getValue() + right.getValue());
-            case MixedExpression(DoubleType left, DoubleType right) -> new DoubleTypeImpl(left.getValue() + right.getValue());
-            case MixedExpression(DoubleType left, IntType right) -> new DoubleTypeImpl(left.getValue() + right.getValue());
-            case MixedExpression(IntType left, DoubleType right) -> new DoubleTypeImpl(left.getValue() + right.getValue());
-            
-            // Concatenate lists together
-            case MixedExpression(ListType left, ListType right) -> addListsToNewList(left, right, ctx);
-
-            // TODO: Custom addition? Maybe other operators too?
-            // Concatenate anything with a string
-            case MixedExpression(StringType left, QilletniType right) -> new StringTypeImpl(left.stringValue() + right.stringValue());
-            case MixedExpression(QilletniType left, StringType right) -> new StringTypeImpl(left.stringValue() + right.stringValue());
-            default -> throw new TypeMismatchException(ctx, "Can only add numbers, strings, or things to strings. Got (%s + %s)".formatted(leftType.typeName(), rightType.typeName()));
-        };
+        try {
+            return leftType.plusOperator(rightType);
+        } catch (QilletniException e) {
+            throw new QilletniContextException(ctx, e);
+        }
     }
 
     private QilletniType handleSubtraction(QilletniType leftType, QilletniType rightType, QilletniParser.AddSubExprContext ctx) {
-        return switch (new MixedExpression<>(leftType, rightType)) {
-            case MixedExpression(IntType left, IntType right) -> new IntTypeImpl(left.getValue() - right.getValue());
-            case MixedExpression(DoubleType left, DoubleType right) -> new DoubleTypeImpl(left.getValue() - right.getValue());
-            case MixedExpression(DoubleType left, IntType right) -> new DoubleTypeImpl(left.getValue() - right.getValue());
-            case MixedExpression(IntType left, DoubleType right) -> new DoubleTypeImpl(left.getValue() - right.getValue());
-            default -> throw new InternalLanguageException(ctx, "Expected numbers for subtraction, got (%s - %s)".formatted(leftType.typeName(), rightType.typeName()));
-        };
+        try {
+            return leftType.minusOperator(rightType);
+        } catch (QilletniException e) {
+            throw new QilletniContextException(ctx, e);
+        }
     }
 
     @Override

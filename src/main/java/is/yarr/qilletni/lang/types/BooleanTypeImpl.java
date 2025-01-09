@@ -3,6 +3,8 @@ package is.yarr.qilletni.lang.types;
 import is.yarr.qilletni.api.lang.types.BooleanType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 public final class BooleanTypeImpl implements BooleanType {
     
@@ -37,6 +39,16 @@ public final class BooleanTypeImpl implements BooleanType {
         }
         
         return this.value == comparing.value;
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

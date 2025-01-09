@@ -1,8 +1,10 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.WeightsType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.lang.types.weights.WeightEntry;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 import java.util.List;
 
@@ -27,6 +29,16 @@ public final class WeightsTypeImpl implements WeightsType {
                         entry.getWeightUnit().getStringUnit(),
                         entry.getTrackStringValue()))
                 .toList()));
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override

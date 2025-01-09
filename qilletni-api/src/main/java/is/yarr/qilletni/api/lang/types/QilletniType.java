@@ -11,6 +11,10 @@ public sealed interface QilletniType permits AnyType, ImportAliasType, StaticEnt
     default boolean qilletniEquals(QilletniType qilletniType) {
         return false;
     }
+    
+    QilletniType plusOperator(QilletniType qilletniType);
+    
+    QilletniType minusOperator(QilletniType qilletniType);
 
     default String typeName() {
         return getTypeClass().getTypeName();

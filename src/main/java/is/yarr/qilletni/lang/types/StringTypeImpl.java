@@ -3,6 +3,7 @@ package is.yarr.qilletni.lang.types;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 import java.util.Objects;
 
@@ -40,6 +41,16 @@ public final class StringTypeImpl implements StringType {
         }
 
         return this.value.equals(comparing.value);
+    }
+
+    @Override
+    public QilletniType plusOperator(QilletniType qilletniType) {
+        return new StringTypeImpl(value + qilletniType.stringValue());
+    }
+
+    @Override
+    public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 
     @Override
