@@ -45,7 +45,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
         this.packageConfig = packageConfig;
         initConfig();
         
-        authorizer = SpotifyPKCEAuthorizer.createWithCodes(packageConfig.getOrThrow("clientId"), packageConfig.getOrThrow("redirectUri"));
+        authorizer = SpotifyPKCEAuthorizer.createWithCodes(packageConfig, packageConfig.getOrThrow("clientId"), packageConfig.getOrThrow("redirectUri"));
         
         return authorizer.authorizeSpotify().thenRun(() -> {
             var spotifyMusicFetcher = new SpotifyMusicFetcher(authorizer);

@@ -1,5 +1,6 @@
 package is.yarr.qilletni.music.spotify.auth.pkce;
 
+import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.async.ExecutorServiceUtility;
 import is.yarr.qilletni.async.ThrowableVoid;
 import is.yarr.qilletni.music.spotify.SpotifyAuthUtility;
@@ -22,7 +23,6 @@ import se.michaelthelin.spotify.model_objects.specification.User;
 
 import java.awt.Desktop;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -34,19 +34,21 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SpotifyPKCEAuthorizer.class);
 
+    private static final String CACHED_CREDS_NAME = "cached-creds";
+    
     private final SpotifyApi spotifyApi;
 
+    private final PackageConfig packageConfig;
     private final String codeChallenge;
     private final String codeVerifier;
-    private final PKCECredentialCache credentialCache;
     private final ExecutorService executorService;
     
     private se.michaelthelin.spotify.model_objects.specification.User currentUser;
 
-    public SpotifyPKCEAuthorizer(String codeChallenge, String codeVerifier, String clientId, String redirectUri) {
+    public SpotifyPKCEAuthorizer(PackageConfig packageConfig, String codeChallenge, String codeVerifier, String clientId, String redirectUri) {
+        this.packageConfig = packageConfig;
         this.codeChallenge = codeChallenge;
         this.codeVerifier = codeVerifier;
-        this.credentialCache = new PKCECredentialCache();
         this.executorService = Executors.newCachedThreadPool();
 
         spotifyApi = new SpotifyApi.Builder()
@@ -60,11 +62,11 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
      *
      * @return The created authorizer
      */
-    public static SpotifyPKCEAuthorizer createWithCodes(String clientId, String redirectUri) {
+    public static SpotifyPKCEAuthorizer createWithCodes(PackageConfig packageConfig, String clientId, String redirectUri) {
         var codeVerifier = SpotifyAuthUtility.generateCodeVerifier(43, 128);
         var codeChallenge = SpotifyAuthUtility.generateCodeChallenge(codeVerifier);
 
-        return new SpotifyPKCEAuthorizer(codeChallenge, codeVerifier, clientId, redirectUri);
+        return new SpotifyPKCEAuthorizer(packageConfig, codeChallenge, codeVerifier, clientId, redirectUri);
     }
 
     /**
@@ -76,33 +78,29 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
     public CompletableFuture<SpotifyApi> authorizeSpotify() {
         var completableFuture = new CompletableFuture<SpotifyApi>();
 
-        try {
+        packageConfig.get(CACHED_CREDS_NAME).ifPresentOrElse(cachedCreds -> {
+            refreshTokens(AuthCodeCredentials.fromRefreshToken(cachedCreds));
+
             try {
-                if (credentialCache.hasCachedCredentials()) {
-                    LOGGER.debug("Using cached credentials!");
-
-                    refreshTokens(credentialCache.getCachedCredentials());
-                    var credentials = performImmediateRefresh();
-                    beginRefreshLoop(credentials.expiresIn());
-                    updateCurrentUser().thenRun(() -> completableFuture.complete(spotifyApi));
-
-                    return completableFuture;
-                }
+                var credentials = performImmediateRefresh();
+                beginRefreshLoop(credentials.expiresIn());
+                updateCurrentUser().thenRun(() -> completableFuture.complete(spotifyApi));
             } catch (IOException | ParseException | SpotifyWebApiException e) {
                 LOGGER.debug("Exception occurred while using cached creds, resetting and trying again");
-                credentialCache.resetCache();
+                packageConfig.remove(CACHED_CREDS_NAME);
             }
-            
+        }, () -> {
             LOGGER.debug("Manual creds!");
 
-            getCodeFromUser().thenCompose(this::setupSpotifyApi)
-                    .thenAccept(this::beginRefreshLoop)
-                    .thenCompose($ -> updateCurrentUser())
-                    .thenRun(() -> completableFuture.complete(spotifyApi));
-
-        } catch (Exception e) {
-            completableFuture.completeExceptionally(e);
-        }
+            try {
+                getCodeFromUser().thenCompose(this::setupSpotifyApi)
+                        .thenAccept(this::beginRefreshLoop)
+                        .thenCompose(_ -> updateCurrentUser())
+                        .thenRun(() -> completableFuture.complete(spotifyApi));
+            } catch (Exception e) {
+                completableFuture.completeExceptionally(e);
+            }
+        });
 
         return completableFuture;
     }
@@ -186,8 +184,9 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
         return authorizationCodePKCERequest.executeAsync().thenApply(authorizationCodeCredentials -> {
             spotifyApi.setAccessToken(authorizationCodeCredentials.getAccessToken());
             spotifyApi.setRefreshToken(authorizationCodeCredentials.getRefreshToken());
-            
-            credentialCache.writeCache(authorizationCodeCredentials.getRefreshToken());
+
+            packageConfig.set(CACHED_CREDS_NAME, authorizationCodeCredentials.getRefreshToken());
+            packageConfig.saveConfig();
 
             LOGGER.debug("Expires in {}s", authorizationCodeCredentials.getExpiresIn());
 
@@ -247,7 +246,8 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
         var authCodeCredentials = AuthCodeCredentials.from(authorizationCodeCredentials);
         refreshTokens(authCodeCredentials);
 
-        credentialCache.writeCache(authCodeCredentials.refreshToken());
+        packageConfig.set(CACHED_CREDS_NAME, authCodeCredentials.refreshToken());
+        packageConfig.saveConfig();
 
         return authCodeCredentials;
     }
