@@ -87,6 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">TrackOrchestrator</span></div>
+<div class="block">A class to handle the way tracks are selected. This should ideally take in a <a href="../PlayActor.html" title="interface in is.yarr.qilletni.api.music"><code>PlayActor</code></a> to handle playing.</div>
 </div>
 </section>
 <section class="summary">
@@ -103,22 +104,32 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackFromCollection(is.yarr.qilletni.api.lang.types.CollectionType)" class="member-name-link">getTrackFromCollection</a><wbr>(<a href="../../lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackFromCollection(is.yarr.qilletni.api.music.orchestration.CollectionState)" class="member-name-link">getTrackFromCollection</a><wbr>(<a href="CollectionState.html" title="interface in is.yarr.qilletni.api.music.orchestration">CollectionState</a>&nbsp;collectionState)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a single track from a collection state.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackFromWeight(is.yarr.qilletni.api.lang.types.WeightsType)" class="member-name-link">getTrackFromWeight</a><wbr>(<a href="../../lang/types/WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types">WeightsType</a>&nbsp;weightsType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Selects a single track from a weight.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#playCollection(is.yarr.qilletni.api.lang.types.CollectionType,boolean)" class="member-name-link">playCollection</a><wbr>(<a href="../../lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType,
  boolean&nbsp;loop)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Plays a collection of tracks.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#playCollection(is.yarr.qilletni.api.lang.types.CollectionType,is.yarr.qilletni.api.lang.types.collection.CollectionLimit)" class="member-name-link">playCollection</a><wbr>(<a href="../../lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType,
  <a href="../../lang/types/collection/CollectionLimit.html" title="class in is.yarr.qilletni.api.lang.types.collection">CollectionLimit</a>&nbsp;collectionLimit)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Plays a collection of tracks, with a limit on the number of tracks to play.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#playTrack(is.yarr.qilletni.api.music.Track)" class="member-name-link">playTrack</a><wbr>(<a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a>&nbsp;track)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Plays a single track.</div>
+</div>
 </div>
 </div>
 </div>
@@ -138,6 +149,11 @@ loadScripts(document, 'script');</script>
 <h3>playTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">playTrack</span><wbr><span class="parameters">(<a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a>&nbsp;track)</span></div>
+<div class="block">Plays a single track.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>track</code> - The track to play</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -147,6 +163,12 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">playCollection</span><wbr><span class="parameters">(<a href="../../lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType,
  boolean&nbsp;loop)</span></div>
+<div class="block">Plays a collection of tracks. If looping, it will continue until the program exits.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collectionType</code> - The type of collection to play</dd>
+<dd><code>loop</code> - Whether to loop the collection. If `false`, the collection will play each song once</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -156,14 +178,28 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">playCollection</span><wbr><span class="parameters">(<a href="../../lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType,
  <a href="../../lang/types/collection/CollectionLimit.html" title="class in is.yarr.qilletni.api.lang.types.collection">CollectionLimit</a>&nbsp;collectionLimit)</span></div>
+<div class="block">Plays a collection of tracks, with a limit on the number of tracks to play.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collectionType</code> - The type of collection to play</dd>
+<dd><code>collectionLimit</code> - The limit of tracks to play</dd>
+</dl>
 </div>
 </section>
 </li>
 <li>
-<section class="detail" id="getTrackFromCollection(is.yarr.qilletni.api.lang.types.CollectionType)">
+<section class="detail" id="getTrackFromCollection(is.yarr.qilletni.api.music.orchestration.CollectionState)">
 <h3>getTrackFromCollection</h3>
 <div class="horizontal-scroll">
-<div class="member-signature"><span class="return-type"><a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a></span>&nbsp;<span class="element-name">getTrackFromCollection</span><wbr><span class="parameters">(<a href="../../lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType)</span></div>
+<div class="member-signature"><span class="return-type"><a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a></span>&nbsp;<span class="element-name">getTrackFromCollection</span><wbr><span class="parameters">(<a href="CollectionState.html" title="interface in is.yarr.qilletni.api.music.orchestration">CollectionState</a>&nbsp;collectionState)</span></div>
+<div class="block">Gets a single track from a collection state. If the collection is sequential, it will return the next unplayed
+ track in the collection.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collectionState</code> - The collection state to get the track from</dd>
+<dt>Returns:</dt>
+<dd>The track to play</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -172,6 +208,13 @@ loadScripts(document, 'script');</script>
 <h3>getTrackFromWeight</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../Track.html" title="interface in is.yarr.qilletni.api.music">Track</a></span>&nbsp;<span class="element-name">getTrackFromWeight</span><wbr><span class="parameters">(<a href="../../lang/types/WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types">WeightsType</a>&nbsp;weightsType)</span></div>
+<div class="block">Selects a single track from a weight.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>weightsType</code> - The type of weight to get the track from</dd>
+<dt>Returns:</dt>
+<dd>The track to play</dd>
+</dl>
 </div>
 </section>
 </li>
