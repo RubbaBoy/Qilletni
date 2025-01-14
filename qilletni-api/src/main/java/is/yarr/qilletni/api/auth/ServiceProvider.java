@@ -3,6 +3,7 @@ package is.yarr.qilletni.api.auth;
 import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
+import is.yarr.qilletni.api.music.MusicTypeConverter;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
@@ -61,6 +62,13 @@ public interface ServiceProvider {
      * @return The created {@link TrackOrchestrator}
      */
     TrackOrchestrator getTrackOrchestrator();
+
+    /**
+     * Gets the {@link MusicTypeConverter} created after initialization.
+     * 
+     * @return The created {@link MusicTypeConverter}
+     */
+    MusicTypeConverter getMusicTypeConverter();
 
     /**
      * Gets the {@link StringIdentifier}.

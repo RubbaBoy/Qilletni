@@ -106,13 +106,13 @@ public class QilletniProgramRunner {
         var typeConverter = new TypeConverterImpl(typeAdapterRegistrar);
         initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer, typeConverter);
 
-        var songTypeFactory = new SongTypeFactoryImpl();
-        var collectionTypeFactory = new CollectionTypeFactoryImpl();
-        var albumTypeFactory = new AlbumTypeFactoryImpl();
+        var songTypeFactory = new SongTypeFactoryImpl(dynamicProvider);
+        var collectionTypeFactory = new CollectionTypeFactoryImpl(dynamicProvider);
+        var albumTypeFactory = new AlbumTypeFactoryImpl(dynamicProvider);
 
         dynamicProvider.initFactories(songTypeFactory, collectionTypeFactory, albumTypeFactory);
 
-        var listGeneratorFactory = new ListTypeTransformerFactory(musicPopulator);
+        var listGeneratorFactory = new ListTypeTransformerFactory(dynamicProvider, musicPopulator);
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
         this.listInitializer = new ListInitializerImpl(listTypeTransformer, typeConverter);
         this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler, librarySourceFileResolver);

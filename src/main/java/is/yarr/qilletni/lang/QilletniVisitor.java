@@ -275,7 +275,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         yield TypeUtils.safelyCast(value, CollectionType.class);
                     }
 
-                    yield musicPopulator.initiallyPopulateCollection(new CollectionTypeImpl(stringType.stringValue()));
+                    yield musicPopulator.initiallyPopulateCollection(new CollectionTypeImpl(dynamicProvider, stringType.stringValue()));
                 }
                 case QilletniLexer.SONG_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
@@ -283,7 +283,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         yield TypeUtils.safelyCast(value, SongType.class);
                     }
 
-                    yield musicPopulator.initiallyPopulateSong(new SongTypeImpl(stringType.stringValue()));
+                    yield musicPopulator.initiallyPopulateSong(new SongTypeImpl(dynamicProvider, stringType.stringValue()));
                 }
                 case QilletniLexer.ALBUM_TYPE -> {
                     var value = visitQilletniTypedNode(expr);
@@ -291,7 +291,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
                         yield TypeUtils.safelyCast(value, AlbumType.class);
                     }
                     
-                    yield musicPopulator.initiallyPopulateAlbum(new AlbumTypeImpl(stringType.stringValue()));
+                    yield musicPopulator.initiallyPopulateAlbum(new AlbumTypeImpl(dynamicProvider, stringType.stringValue()));
                 }
                 case QilletniLexer.WEIGHTS_KEYWORD -> visitQilletniTypedNode(expr, WeightsTypeImpl.class);
                 case QilletniLexer.ID -> {
@@ -1326,9 +1326,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         var urlOrName = ctx.song_url_or_name_pair();
         SongType songType;
         if (ctx.STRING() != null) {
-            songType = new SongTypeImpl(ctx.STRING().getText());
+            songType = new SongTypeImpl(dynamicProvider, ctx.STRING().getText());
         } else {
-            songType = new SongTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            songType = new SongTypeImpl(dynamicProvider, StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
         return musicPopulator.initiallyPopulateSong(songType);
@@ -1340,9 +1340,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         
         AlbumType albumType;
         if (ctx.STRING() != null) {
-            albumType = new AlbumTypeImpl(StringUtility.removeQuotes(ctx.STRING().getText()));
+            albumType = new AlbumTypeImpl(dynamicProvider, StringUtility.removeQuotes(ctx.STRING().getText()));
         } else {
-            albumType = new AlbumTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+            albumType = new AlbumTypeImpl(dynamicProvider, StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
         }
 
         return musicPopulator.initiallyPopulateAlbum(albumType);
@@ -1629,13 +1629,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         
         if (ctx.COLLECTION_TYPE() != null) {
             var songList = createListOfType(ctx.list_expression(), QilletniTypeClass.SONG);
-            collectionType = new CollectionTypeImpl(songList.getItems().stream().map(SongType.class::cast).map(SongType::getTrack).toList());
+            collectionType = new CollectionTypeImpl(dynamicProvider, songList.getItems().stream().map(SongType.class::cast).map(SongType::getTrack).toList());
         } else {
             var urlOrName = ctx.collection_url_or_name_pair();
             if (ctx.STRING() != null) {
-                collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(ctx.STRING().getText()));
+                collectionType = new CollectionTypeImpl(dynamicProvider, StringUtility.removeQuotes(ctx.STRING().getText()));
             } else {
-                collectionType = new CollectionTypeImpl(StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
+                collectionType = new CollectionTypeImpl(dynamicProvider, StringUtility.removeQuotes(urlOrName.STRING(0).getText()), StringUtility.removeQuotes(urlOrName.STRING(1).getText()));
             }
         }
 

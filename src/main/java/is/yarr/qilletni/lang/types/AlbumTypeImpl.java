@@ -10,7 +10,7 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.song.SongDefinition;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Album;
-import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 public final class AlbumTypeImpl implements AlbumType {
@@ -22,23 +22,24 @@ public final class AlbumTypeImpl implements AlbumType {
     
     private EntityType artistType;
     private ListType artistsType;
-    private Album album;
+    private final DynamicMusicType<Album> dynamicAlbum;
 
-    public AlbumTypeImpl(String url) {
+    public AlbumTypeImpl(DynamicProvider dynamicProvider, String url) {
         this.albumDefinition = AlbumDefinition.URL;
         this.url = url;
+        this.dynamicAlbum = new DynamicMusicType<>(Album.class, dynamicProvider);
     }
 
-    public AlbumTypeImpl(String title, String artist) {
+    public AlbumTypeImpl(DynamicProvider dynamicProvider, String title, String artist) {
         this.albumDefinition = AlbumDefinition.TITLE_ARTIST;
         this.title = title;
         this.artist = artist;
+        this.dynamicAlbum = new DynamicMusicType<>(Album.class, dynamicProvider);
     }
     
-    public AlbumTypeImpl(Album album) {
+    public AlbumTypeImpl(DynamicProvider dynamicProvider, Album album) {
         this.albumDefinition = AlbumDefinition.PREPOPULATED;
-        
-        populateSpotifyData(album);
+        this.dynamicAlbum = new DynamicMusicType<>(Album.class, dynamicProvider, album);
     }
 
     @Override
@@ -68,6 +69,7 @@ public final class AlbumTypeImpl implements AlbumType {
 
     @Override
     public EntityType getArtist(EntityDefinitionManager entityDefinitionManager) {
+        var album = dynamicAlbum.get();
         SpotifyDataUtility.requireNonNull(album, "Internal Album is null, #populateSpotifyData must be invoked prior to getting API data");
 
         if (artistType != null) {
@@ -81,6 +83,7 @@ public final class AlbumTypeImpl implements AlbumType {
 
     @Override
     public ListType getArtists(EntityDefinitionManager entityDefinitionManager) {
+        var album = dynamicAlbum.get();
         SpotifyDataUtility.requireNonNull(album, "Internal Album is null, #populateSpotifyData must be invoked prior to getting API data");
 
         if (artistsType != null) {
@@ -98,21 +101,24 @@ public final class AlbumTypeImpl implements AlbumType {
 
     @Override
     public Album getAlbum() {
+        var album = dynamicAlbum.get();
         return SpotifyDataUtility.requireNonNull(album, "Internal Album is null, #populateSpotifyData must be invoked prior to getting API data");
     }
 
     @Override
     public boolean isSpotifyDataPopulated() {
-        return album != null;
+        return dynamicAlbum.isPopulated();
     }
 
     @Override
     public void populateSpotifyData(Album album) {
-        this.album = album;
+        dynamicAlbum.put(album);
     }
 
     @Override
     public String stringValue() {
+        var album = dynamicAlbum.get();
+        
         if (!isSpotifyDataPopulated()) {
             if (albumDefinition == AlbumDefinition.URL) {
                 return String.format("album(%s)", url);
@@ -143,12 +149,16 @@ public final class AlbumTypeImpl implements AlbumType {
 
     @Override
     public String toString() {
-        return "AlbumType{" +
-                "albumDefinition=" + albumDefinition +
-                ", url='" + url + '\'' +
-                ", title='" + title + '\'' +
-                ", artist='" + artist + '\'' +
-                ", album=" + album +
-                '}';
+        var album = dynamicAlbum.get();
+
+        if (albumDefinition == AlbumDefinition.URL) {
+            return "AlbumType{url='%s'}".formatted(url);
+        }
+
+        if (albumDefinition == AlbumDefinition.TITLE_ARTIST) {
+            return "AlbumType{title='%s', artist='%s'}".formatted(title, artist);
+        }
+
+        return "AlbumType{title='%s', artist='%s'}".formatted(album.getName(), album.getArtist().getName());
     }
 }

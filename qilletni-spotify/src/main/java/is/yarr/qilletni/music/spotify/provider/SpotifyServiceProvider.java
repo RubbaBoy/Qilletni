@@ -5,6 +5,7 @@ import is.yarr.qilletni.api.exceptions.config.ConfigInitializeException;
 import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
+import is.yarr.qilletni.api.music.MusicTypeConverter;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.StringIdentifier;
 import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
@@ -15,6 +16,7 @@ import is.yarr.qilletni.async.ExecutorServiceUtility;
 import is.yarr.qilletni.database.HibernateUtil;
 import is.yarr.qilletni.music.spotify.SpotifyMusicCache;
 import is.yarr.qilletni.music.spotify.SpotifyMusicFetcher;
+import is.yarr.qilletni.music.spotify.SpotifyMusicTypeConverter;
 import is.yarr.qilletni.music.spotify.SpotifyStringIdentifier;
 import is.yarr.qilletni.music.spotify.auth.SpotifyApiSingleton;
 import is.yarr.qilletni.music.spotify.auth.SpotifyAuthorizer;
@@ -37,6 +39,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
     private SpotifyMusicCache musicCache;
     private MusicFetcher musicFetcher;
     private TrackOrchestrator trackOrchestrator;
+    private MusicTypeConverter musicTypeConverter;
     private StringIdentifier stringIdentifier;
     private SpotifyAuthorizer authorizer;
     
@@ -55,6 +58,8 @@ public class SpotifyServiceProvider implements ServiceProvider {
             musicFetcher = spotifyMusicFetcher;
             musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
             trackOrchestrator = defaultTrackOrchestratorFunction.apply(new ReroutablePlayActor(), musicCache);
+
+            musicTypeConverter = new SpotifyMusicTypeConverter(musicCache);
             
             serviceProviderInstance = this;
         });
@@ -84,6 +89,11 @@ public class SpotifyServiceProvider implements ServiceProvider {
     @Override
     public TrackOrchestrator getTrackOrchestrator() {
         return Objects.requireNonNull(trackOrchestrator, "ServiceProvider#initialize must be invoked to initialize TrackOrchestrator");
+    }
+
+    @Override
+    public MusicTypeConverter getMusicTypeConverter() {
+        return Objects.requireNonNull(musicTypeConverter, "ServiceProvider#initialize must be invoked to initialize MusicTypeConverter");
     }
 
     @Override

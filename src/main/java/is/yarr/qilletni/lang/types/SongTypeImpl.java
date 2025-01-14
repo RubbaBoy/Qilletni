@@ -10,10 +10,12 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.song.SongDefinition;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 
 public final class SongTypeImpl implements SongType {
-    
+
+    private final DynamicProvider dynamicProvider;
     private SongDefinition songDefinition;
     private String url;
     private String title;
@@ -22,22 +24,27 @@ public final class SongTypeImpl implements SongType {
     private EntityType artistType;
     private ListType artistsType;
     private AlbumType albumType;
-    private Track track;
+    private final DynamicMusicType<Track> dynamicTrack;
     
-    public SongTypeImpl(Track track) {
+    public SongTypeImpl(DynamicProvider dynamicProvider, Track track) {
+        this.dynamicProvider = dynamicProvider;
         this.songDefinition = SongDefinition.PREPOPULATED;
-        this.track = track;
+        this.dynamicTrack = new DynamicMusicType<>(Track.class, dynamicProvider, track);
     }
     
-    public SongTypeImpl(String url) {
+    public SongTypeImpl(DynamicProvider dynamicProvider, String url) {
+        this.dynamicProvider = dynamicProvider;
         this.songDefinition = SongDefinition.URL;
         this.url = url;
+        this.dynamicTrack = new DynamicMusicType<>(Track.class, dynamicProvider);
     }
     
-    public SongTypeImpl(String title, String artist) {
+    public SongTypeImpl(DynamicProvider dynamicProvider, String title, String artist) {
+        this.dynamicProvider = dynamicProvider;
         this.songDefinition = SongDefinition.TITLE_ARTIST;
         this.title = title;
         this.artist = artist;
+        this.dynamicTrack = new DynamicMusicType<>(Track.class, dynamicProvider);
     }
 
     @Override
@@ -67,18 +74,20 @@ public final class SongTypeImpl implements SongType {
 
     @Override
     public AlbumType getAlbum() {
-        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+        var track = dynamicTrack.get();
+        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked for the current provider (%s) prior to getting API data".formatted(dynamicProvider.getCurrentProvider().getName()));
 
         if (albumType != null) {
             return albumType;
         }
         
-        return albumType = new AlbumTypeImpl(track.getAlbum());
+        return albumType = new AlbumTypeImpl(dynamicProvider, track.getAlbum());
     }
     
     @Override
     public EntityType getArtist(EntityDefinitionManager entityDefinitionManager) {
-        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+        var track = dynamicTrack.get();
+        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked for the current provider (%s) prior to getting API data".formatted(dynamicProvider.getCurrentProvider().getName()));
         
         if (artistType != null) {
             return artistType;
@@ -91,7 +100,8 @@ public final class SongTypeImpl implements SongType {
     
     @Override
     public ListType getArtists(EntityDefinitionManager entityDefinitionManager) {
-        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+        var track = dynamicTrack.get();
+        SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked for the current provider (%s) prior to getting API data".formatted(dynamicProvider.getCurrentProvider().getName()));
 
         if (artistsType != null) {
             return artistsType;
@@ -108,21 +118,24 @@ public final class SongTypeImpl implements SongType {
 
     @Override
     public Track getTrack() {
-        return SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked prior to getting API data");
+        var track = dynamicTrack.get();
+        return SpotifyDataUtility.requireNonNull(track, "Internal Track is null, #populateSpotifyData must be invoked for the current provider (%s) prior to getting API data".formatted(dynamicProvider.getCurrentProvider().getName()));
     }
     
     @Override
     public boolean isSpotifyDataPopulated() {
-        return track != null;
+        return dynamicTrack.isPopulated();
     }
 
     @Override
     public void populateSpotifyData(Track track) {
-        this.track = track;
+        dynamicTrack.put(track);
     }
 
     @Override
     public String stringValue() {
+        var track = dynamicTrack.get();
+
         if (!isSpotifyDataPopulated()) {
             if (songDefinition == SongDefinition.URL) {
                 return String.format("song(%s)", url);
@@ -153,14 +166,16 @@ public final class SongTypeImpl implements SongType {
 
     @Override
     public String toString() {
+        var track = dynamicTrack.get();
+
         if (songDefinition == SongDefinition.URL) {
-            return "SongType{url='" + url + "'}";
+            return "SongType{url='%s'}".formatted(url);
         }
 
         if (songDefinition == SongDefinition.TITLE_ARTIST) {
-            return "SongType{title='" + title + "', artist='" + artist + "'}";
+            return "SongType{title='%s', artist='%s'}".formatted(title, artist);
         }
         
-        return "SongType{title='" + track.getName() + "', artist='" + track.getArtist().getName() + "'}";
+        return "SongType{title='%s', artist='%s'}".formatted(track.getName(), track.getArtist().getName());
     }
 }

@@ -11,6 +11,7 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 import is.yarr.qilletni.music.DummyPlaylist;
 
@@ -24,28 +25,30 @@ public final class CollectionTypeImpl implements CollectionType {
     private String creator;
     private CollectionOrder order = CollectionOrder.SHUFFLE;
     private WeightsType weights;
-    private Playlist playlist;
+    private final DynamicMusicType<Playlist> dynamicPlaylist;
     private EntityType creatorType;
     
-    public CollectionTypeImpl(Playlist playlist) {
+    public CollectionTypeImpl(DynamicProvider dynamicProvider, Playlist playlist) {
         this.collectionDefinition = CollectionDefinition.PREPOPULATED;
-        this.playlist = playlist;
+        this.dynamicPlaylist = new DynamicMusicType<>(Playlist.class, dynamicProvider, playlist);
     }
 
-    public CollectionTypeImpl(String url) {
+    public CollectionTypeImpl(DynamicProvider dynamicProvider, String url) {
         this.collectionDefinition = CollectionDefinition.URL;
         this.url = url;
+        this.dynamicPlaylist = new DynamicMusicType<>(Playlist.class, dynamicProvider);
     }
 
-    public CollectionTypeImpl(String name, String creator) {
+    public CollectionTypeImpl(DynamicProvider dynamicProvider, String name, String creator) {
         this.collectionDefinition = CollectionDefinition.NAME_CREATOR;
         this.name = name;
         this.creator = creator;
+        this.dynamicPlaylist = new DynamicMusicType<>(Playlist.class, dynamicProvider);
     }
     
-    public CollectionTypeImpl(List<Track> tracks) {
-        this.playlist = new DummyPlaylist(tracks);
+    public CollectionTypeImpl(DynamicProvider dynamicProvider, List<Track> tracks) {
         this.collectionDefinition = CollectionDefinition.SONG_LIST;
+        this.dynamicPlaylist = new DynamicMusicType<>(Playlist.class, dynamicProvider, new DummyPlaylist(tracks));
     }
 
     @Override
@@ -95,6 +98,7 @@ public final class CollectionTypeImpl implements CollectionType {
     
     @Override
     public EntityType getCreator(EntityDefinitionManager entityDefinitionManager) {
+        var playlist = dynamicPlaylist.get();
         SpotifyDataUtility.requireNonNull(playlist, "Internal Playlist is null, #populateSpotifyData must be invoked prior to getting API data");
 
         if (creatorType != null) {
@@ -108,17 +112,18 @@ public final class CollectionTypeImpl implements CollectionType {
 
     @Override
     public Playlist getPlaylist() {
+        var playlist = dynamicPlaylist.get();
         return SpotifyDataUtility.requireNonNull(playlist, "Internal Playlist is null, #populateSpotifyData must be invoked prior to getting API data");
     }
 
     @Override
     public boolean isSpotifyDataPopulated() {
-        return playlist != null;
+        return dynamicPlaylist.isPopulated();
     }
 
     @Override
     public void populateSpotifyData(Playlist playlist) {
-        this.playlist = playlist;
+        dynamicPlaylist.put(playlist);
     }
 
     @Override
@@ -152,13 +157,13 @@ public final class CollectionTypeImpl implements CollectionType {
     @Override
     public String toString() {
         if (collectionDefinition == CollectionDefinition.URL) {
-            return "CollectionType{url='" + url + "'}";
+            return "CollectionType{url='%s'}".formatted(url);
         }
         
         if (collectionDefinition == CollectionDefinition.SONG_LIST) {
             return "CollectionType{list-expression}";
         }
 
-        return "CollectionType{title='" + name + "', artist='" + creator + "'}";
+        return "CollectionType{title='%s', artist='%s'}".formatted(name, creator);
     }
 }
