@@ -14,6 +14,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OrderColumn;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Entity
 public class SpotifyTrack implements Track {
@@ -72,8 +73,8 @@ public class SpotifyTrack implements Track {
     }
 
     @Override
-    public ServiceProvider getServiceProvider() {
-        return SpotifyServiceProvider.getServiceProviderInstance();
+    public Optional<ServiceProvider> getServiceProvider() {
+        return Optional.ofNullable(SpotifyServiceProvider.getServiceProviderInstance());
     }
 
     @Override

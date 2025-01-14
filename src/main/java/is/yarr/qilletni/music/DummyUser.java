@@ -1,6 +1,9 @@
 package is.yarr.qilletni.music;
 
+import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.User;
+
+import java.util.Optional;
 
 public class DummyUser implements User {
     
@@ -18,5 +21,10 @@ public class DummyUser implements User {
     @Override
     public String getName() {
         return identifier;
+    }
+
+    @Override
+    public Optional<ServiceProvider> getServiceProvider() {
+        return Optional.empty();
     }
 }

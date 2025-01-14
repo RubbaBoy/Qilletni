@@ -3,6 +3,7 @@ package is.yarr.qilletni.api.music;
 import is.yarr.qilletni.api.auth.ServiceProvider;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface Track {
     
@@ -23,6 +24,6 @@ public interface Track {
      */
     int getDuration();
 
-    ServiceProvider getServiceProvider();
+    Optional<ServiceProvider> getServiceProvider();
     
 }

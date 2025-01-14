@@ -6,6 +6,7 @@ import is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Optional;
 
 @Entity
 public class SpotifyUser implements User {
@@ -32,8 +33,8 @@ public class SpotifyUser implements User {
     }
 
     @Override
-    public ServiceProvider getServiceProvider() {
-        return SpotifyServiceProvider.getServiceProviderInstance();
+    public Optional<ServiceProvider> getServiceProvider() {
+        return Optional.ofNullable(SpotifyServiceProvider.getServiceProviderInstance());
     }
 
     @Override

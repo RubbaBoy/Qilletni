@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class SpotifyAlbum implements Album {
@@ -55,8 +56,8 @@ public class SpotifyAlbum implements Album {
     }
 
     @Override
-    public ServiceProvider getServiceProvider() {
-        return SpotifyServiceProvider.getServiceProviderInstance();
+    public Optional<ServiceProvider> getServiceProvider() {
+        return Optional.ofNullable(SpotifyServiceProvider.getServiceProviderInstance());
     }
 
     public List<SpotifyTrack> getTracks() {

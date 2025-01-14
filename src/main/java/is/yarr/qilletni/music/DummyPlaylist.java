@@ -1,5 +1,6 @@
 package is.yarr.qilletni.music;
 
+import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.Track;
 import is.yarr.qilletni.api.music.User;
@@ -42,5 +43,10 @@ public class DummyPlaylist implements Playlist {
     @Override
     public Optional<List<Track>> getTracks() {
         return Optional.of(tracks);
+    }
+
+    @Override
+    public Optional<ServiceProvider> getServiceProvider() {
+        return Optional.empty();
     }
 }

@@ -25,6 +25,6 @@ public interface Playlist {
         return Optional.empty();
     }
 
-    ServiceProvider getServiceProvider();
+    Optional<ServiceProvider> getServiceProvider();
     
 }

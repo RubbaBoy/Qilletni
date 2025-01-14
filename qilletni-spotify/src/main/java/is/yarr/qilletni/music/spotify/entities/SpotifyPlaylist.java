@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.sql.Date;
 import java.util.Collections;
+import java.util.Optional;
 
 @Entity
 public class SpotifyPlaylist implements Playlist {
@@ -58,8 +59,8 @@ public class SpotifyPlaylist implements Playlist {
     }
 
     @Override
-    public ServiceProvider getServiceProvider() {
-        return SpotifyServiceProvider.getServiceProviderInstance();
+    public Optional<ServiceProvider> getServiceProvider() {
+        return Optional.ofNullable(SpotifyServiceProvider.getServiceProviderInstance());
     }
 
     public SpotifyPlaylistIndex getSpotifyPlaylistIndex() {
