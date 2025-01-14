@@ -1,7 +1,9 @@
 package is.yarr.qilletni.music.spotify.entities;
 
+import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.Album;
 import is.yarr.qilletni.api.music.Artist;
+import is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -50,6 +52,11 @@ public class SpotifyAlbum implements Album {
     @Override
     public List<Artist> getArtists() {
         return artists.stream().map(Artist.class::cast).toList();
+    }
+
+    @Override
+    public ServiceProvider getServiceProvider() {
+        return SpotifyServiceProvider.getServiceProviderInstance();
     }
 
     public List<SpotifyTrack> getTracks() {

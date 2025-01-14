@@ -1,8 +1,10 @@
 package is.yarr.qilletni.music.spotify.entities;
 
+import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.Album;
 import is.yarr.qilletni.api.music.Artist;
 import is.yarr.qilletni.api.music.Track;
+import is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -67,6 +69,11 @@ public class SpotifyTrack implements Track {
     @Override
     public int getDuration() {
         return duration;
+    }
+
+    @Override
+    public ServiceProvider getServiceProvider() {
+        return SpotifyServiceProvider.getServiceProviderInstance();
     }
 
     @Override

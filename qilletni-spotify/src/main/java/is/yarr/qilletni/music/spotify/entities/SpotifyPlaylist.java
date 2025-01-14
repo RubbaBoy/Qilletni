@@ -1,7 +1,9 @@
 package is.yarr.qilletni.music.spotify.entities;
 
+import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.Playlist;
 import is.yarr.qilletni.api.music.User;
+import is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -53,6 +55,11 @@ public class SpotifyPlaylist implements Playlist {
     @Override
     public int getTrackCount() {
         return trackCount;
+    }
+
+    @Override
+    public ServiceProvider getServiceProvider() {
+        return SpotifyServiceProvider.getServiceProviderInstance();
     }
 
     public SpotifyPlaylistIndex getSpotifyPlaylistIndex() {

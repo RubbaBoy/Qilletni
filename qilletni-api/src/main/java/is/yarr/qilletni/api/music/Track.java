@@ -1,5 +1,7 @@
 package is.yarr.qilletni.api.music;
 
+import is.yarr.qilletni.api.auth.ServiceProvider;
+
 import java.util.List;
 
 public interface Track {
@@ -20,5 +22,7 @@ public interface Track {
      * @return The millisecond duration of the track
      */
     int getDuration();
+
+    ServiceProvider getServiceProvider();
     
 }

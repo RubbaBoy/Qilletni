@@ -40,7 +40,9 @@ public class SpotifyServiceProvider implements ServiceProvider {
     private StringIdentifier stringIdentifier;
     private SpotifyAuthorizer authorizer;
     
-    @Override
+    private static ServiceProvider serviceProviderInstance;
+    
+@Override
     public CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction, PackageConfig packageConfig) {
         this.packageConfig = packageConfig;
         initConfig();
@@ -53,6 +55,8 @@ public class SpotifyServiceProvider implements ServiceProvider {
             musicFetcher = spotifyMusicFetcher;
             musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
             trackOrchestrator = defaultTrackOrchestratorFunction.apply(new ReroutablePlayActor(), musicCache);
+            
+            serviceProviderInstance = this;
         });
     }
 
@@ -109,5 +113,10 @@ public class SpotifyServiceProvider implements ServiceProvider {
         }
 
         HibernateUtil.initializeSessionFactory(packageConfig.getOrThrow("dbUrl"), packageConfig.getOrThrow("dbUsername"), packageConfig.getOrThrow("dbPassword"));
+    }
+    
+    public static ServiceProvider getServiceProviderInstance() {
+        Objects.requireNonNull(serviceProviderInstance, "ServiceProvider#initialize must be invoked to initialize ServiceProvider");
+        return serviceProviderInstance;
     }
 }
