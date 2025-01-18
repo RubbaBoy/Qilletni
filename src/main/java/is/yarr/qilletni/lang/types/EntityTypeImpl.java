@@ -7,6 +7,7 @@ import is.yarr.qilletni.api.lang.types.FunctionType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.UnsupportedOperatorException;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionImpl;
 import org.slf4j.Logger;
@@ -46,6 +47,13 @@ public final class EntityTypeImpl implements EntityType {
     @Override
     public Scope getEntityScope() {
         return entityScope;
+    }
+
+    @Override
+    public void validateType(String typeName) {
+        if (!entityDefinition.getTypeName().equals(typeName)) {
+            throw new TypeMismatchException(String.format("Expected type %s, got %s", entityDefinition.getTypeName(), typeName));
+        }
     }
 
     @Override

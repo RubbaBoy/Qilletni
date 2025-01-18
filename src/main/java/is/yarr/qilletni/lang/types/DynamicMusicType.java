@@ -68,6 +68,7 @@ public class DynamicMusicType<T> {
      * @param silent Whether to suppress errors if the music type cannot be converted
      * @return The music type for the current service provider
      */
+    // TODO: In things like PlaylistToolFunctions#addToPlaylist(), lots of songs may be queried at once. Find a way to batch convert them all at once
     public T get(boolean silent) {
         var currentProvider = dynamicProvider.getCurrentProvider();
         return musicTypeMap.computeIfAbsent(currentProvider, k -> {
@@ -89,6 +90,8 @@ public class DynamicMusicType<T> {
                 
                 return null;
             }
+            
+//            LOGGER.debug("Converted a {} to service provider {}:  {}", type.getSimpleName(), currentProvider.getName(), optionalType.get());
             
             return (T) optionalType.get();
         });

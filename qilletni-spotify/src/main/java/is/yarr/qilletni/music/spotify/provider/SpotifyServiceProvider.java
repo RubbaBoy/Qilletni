@@ -45,7 +45,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
     
     private static ServiceProvider serviceProviderInstance;
     
-@Override
+    @Override
     public CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction, PackageConfig packageConfig) {
         this.packageConfig = packageConfig;
         initConfig();

@@ -7,4 +7,6 @@ public non-sealed interface EntityType extends AnyType {
     EntityDefinition getEntityDefinition();
 
     Scope getEntityScope();
+    
+    void validateType(String typeName);
 }
