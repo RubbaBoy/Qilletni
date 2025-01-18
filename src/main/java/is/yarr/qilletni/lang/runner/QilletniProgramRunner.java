@@ -103,7 +103,7 @@ public class QilletniProgramRunner {
         this.musicPopulator = new MusicPopulatorImpl(dynamicProvider, internalPackageConfig);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
 
-        var typeConverter = new TypeConverterImpl(typeAdapterRegistrar);
+        var typeConverter = new TypeConverterImpl(typeAdapterRegistrar, entityInitializer);
         initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer, typeConverter);
 
         var songTypeFactory = new SongTypeFactoryImpl(dynamicProvider);
@@ -126,7 +126,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(songTypeFactory);
         nativeFunctionHandler.addInjectableInstance(collectionTypeFactory);
         nativeFunctionHandler.addInjectableInstance(albumTypeFactory);
-        nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker());
+        nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker()); // This is used as a placeholder, and its type is manipulated during injection
         nativeFunctionHandler.addInjectableInstance(typeConverter);
         nativeFunctionHandler.addInjectableInstance(dynamicProvider);
     }

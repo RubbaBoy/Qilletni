@@ -56,3 +56,10 @@ native fun hasEnv(name)
  * @returns[@type int] The current time in milliseconds
  */
 native fun currentTimeMillis()
+
+/**
+ * Exits the program with the given exit code.
+ *
+ * @param[@type int] code The exit code to exit with
+ */
+native fun exit(code)

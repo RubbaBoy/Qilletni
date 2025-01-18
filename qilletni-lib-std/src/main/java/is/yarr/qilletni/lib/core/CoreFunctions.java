@@ -24,4 +24,8 @@ public class CoreFunctions {
     public static long currentTimeMillis() {
         return System.currentTimeMillis();
     }
+    
+    public static void exit(int status) {
+        System.exit(status);
+    }
 }
