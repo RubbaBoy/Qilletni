@@ -103,6 +103,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;T</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#convertFromEntityToRecord(is.yarr.qilletni.api.lang.types.EntityType,java.lang.Class)" class="member-name-link">convertFromEntityToRecord</a><wbr>(<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&nbsp;entity,
+ <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;clazz)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Takes a Qilletni entity and converts it to a Java record.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#convertFromRecordToEntity(java.lang.String,java.lang.Object)" class="member-name-link">convertFromRecordToEntity</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;entityName,
+ <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Takes a Java record and converts it to a Qilletni entity.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;T</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#convertToJavaType(is.yarr.qilletni.api.lang.types.QilletniType,java.lang.Class)" class="member-name-link">convertToJavaType</a><wbr>(<a href="../QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;clazz)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -157,6 +169,44 @@ loadScripts(document, 'script');</script>
 <dd><code>object</code> - The object to convert</dd>
 <dt>Returns:</dt>
 <dd>The converted object</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="convertFromRecordToEntity(java.lang.String,java.lang.Object)">
+<h3>convertFromRecordToEntity</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="return-type"><a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a></span>&nbsp;<span class="element-name">convertFromRecordToEntity</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;entityName,
+ <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object)</span></div>
+<div class="block">Takes a Java record and converts it to a Qilletni entity. The entity's constructor must be in the same order as
+ the record's fields.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityName</code> - The name of the entity to create</dd>
+<dd><code>object</code> - The Java record</dd>
+<dt>Returns:</dt>
+<dd>The created Qilletni entity</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="convertFromEntityToRecord(is.yarr.qilletni.api.lang.types.EntityType,java.lang.Class)">
+<h3>convertFromEntityToRecord</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">convertFromEntityToRecord</span><wbr><span class="parameters">(<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&nbsp;entity,
+ <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;clazz)</span></div>
+<div class="block">Takes a Qilletni entity and converts it to a Java record. The record's fields must be in the same order as the
+ entity's properties are defined.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the record</dd>
+<dt>Parameters:</dt>
+<dd><code>entity</code> - The Qilletni entity to convert</dd>
+<dd><code>clazz</code> - The class of the record to create</dd>
+<dt>Returns:</dt>
+<dd>The created Java record</dd>
 </dl>
 </div>
 </section>
