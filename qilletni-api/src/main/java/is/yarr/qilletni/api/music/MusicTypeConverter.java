@@ -8,7 +8,7 @@ import java.util.Optional;
  * this include a playlist that is only available on Spotify, or an album that is only available on Last.fm. The most
  * important example of this is typically converting a track from one service provider to another, to allow, for
  * instance, playing tracks from Last.Fm on Spotify.
- * </br>
+ * <br><br>
  * Multiple types may be given to each method, one for every service provider that the type is available on currently.
  * There will always be at least one in the list, so {@link List#getFirst()} may be used.
  */

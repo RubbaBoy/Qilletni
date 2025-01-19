@@ -1,11 +1,16 @@
 package is.yarr.qilletni.lib.core;
 
+import is.yarr.qilletni.api.lang.types.IntType;
 import is.yarr.qilletni.api.lang.types.ListType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
+import is.yarr.qilletni.api.lang.types.StringType;
+import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @NativeOn("list")
@@ -66,5 +71,36 @@ public class ListFunctions {
 
     public static String join(ListType list, String delimiter) {
         return list.getItems().stream().map(QilletniType::stringValue).collect(Collectors.joining(delimiter));
+    }
+    
+    public static ListType sort(ListType list) {
+        var contents = sortListContents(list);
+        list.setItems(contents);
+        return list;
+    }
+    
+    public static ListType sortReverse(ListType list) {
+        var contents = sortListContents(list);
+        Collections.reverse(contents);
+        list.setItems(contents);
+        return list;
+    }
+    
+    private static List<QilletniType> sortListContents(ListType list) {
+        if (list.getSubType().equals(QilletniTypeClass.STRING)) {
+            return list.getItems().stream()
+                    .map(StringType.class::cast)
+                    .sorted(Comparator.comparing(StringType::getValue))
+                    .map(QilletniType.class::cast)
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), ArrayList::new));
+        } else if (list.getSubType().equals(QilletniTypeClass.INT)) {
+            return list.getItems().stream()
+                    .map(IntType.class::cast)
+                    .sorted(Comparator.comparing(IntType::getValue))
+                    .map(QilletniType.class::cast)
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), ArrayList::new));
+        }
+
+        throw new RuntimeException("Cannot sort list of type %s".formatted(list.getSubType().getTypeName()));
     }
 }

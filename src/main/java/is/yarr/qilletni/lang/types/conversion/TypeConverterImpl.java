@@ -1,6 +1,5 @@
 package is.yarr.qilletni.lang.types.conversion;
 
-import is.yarr.qilletni.api.lang.table.Symbol;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.conversion.TypeConverter;
@@ -9,15 +8,6 @@ import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.lang.exceptions.java.RecordConversionException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapter;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.RecordComponent;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TypeConverterImpl implements TypeConverter {
     
@@ -74,10 +64,18 @@ public class TypeConverterImpl implements TypeConverter {
 
             for (int i = 0; i < params.length; i++) {
                 var param = params[i];
-                var symbol = symbolMap.get(param.getName()); // Match up the parameter name with the entity property. Unused entity properties will be ignored
+                // Match up the parameter name with the entity property. Unused entity properties will be ignored
+                // Note this won't work well if there are param names such as `x` and `_x` in the entity
+                
+                var symbol = symbolMap.get(param.getName());
+                var privateSymbol = symbolMap.get("_%s".formatted(param.getName())); // check for private property of the same name
+                
+                if (symbol == null && privateSymbol == null) {
+                    throw new RecordConversionException("Missing entity property for parameter: %s".formatted(param.getName()));
+                }
                 
                 if (symbol == null) {
-                    throw new RecordConversionException("Missing entity property for parameter: %s".formatted(param.getName()));
+                    symbol = privateSymbol;
                 }
                 
                 transformedParams[i] = convertToJavaType(symbol.getValue(), param.getType());

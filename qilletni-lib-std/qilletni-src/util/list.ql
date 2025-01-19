@@ -63,7 +63,7 @@ native fun contains(item) on list
  * @param toIndex The exclusive ending index of the list
  * @returns[@type list] The created sublist
  */
-native fun subList(item) on list
+native fun subList(fromIndex, toIndex) on list
 
 /**
  * Checks the index of the given item in the list.
@@ -80,3 +80,17 @@ native fun indexOf(item) on list
  * @returns[@type string] The joined string
  */
 native fun join(delimiter) on list
+
+/**
+ * Sorts a list of numbers or strings in-place.
+ *
+ * @returns[@type list] The sorted list
+ */
+native fun sort() on list
+
+/**
+ * Sorts a list of numbers or strings in-place, in reverse order.
+ *
+ * @returns[@type list] The sorted list
+ */
+native fun sortReverse() on list
