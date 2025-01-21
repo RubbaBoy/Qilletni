@@ -34,8 +34,10 @@ public interface TypeConverter {
     EntityType convertFromRecordToEntity(String entityName, Object object);
     
     /**
-     * Takes a Qilletni entity and converts it to a Java record. The record's fields must be in the same order as the
-     * entity's properties are defined.
+     * Takes a Qilletni entity and converts it to a Java record. The record's field names must be the same as the
+     * entity's properties. A Java record may have a Qilletni private field mapped without the prefixing underscore,
+     * however it should be noted that entities with two properties of the same name but with and without the
+     * underscore (e.g. x and _x) it will not work well.
      * 
      * @param entity The Qilletni entity to convert
      * @param clazz The class of the record to create

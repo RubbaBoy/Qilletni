@@ -24,7 +24,6 @@ import is.yarr.qilletni.api.music.MusicPopulator;
 import is.yarr.qilletni.api.music.supplier.DynamicProvider;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
-import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
@@ -104,7 +103,6 @@ public class QilletniProgramRunner {
         this.qilletniStackTrace = new QilletniStackTraceImpl();
 
         var typeConverter = new TypeConverterImpl(typeAdapterRegistrar, entityInitializer);
-        initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer, typeConverter);
 
         var songTypeFactory = new SongTypeFactoryImpl(dynamicProvider);
         var collectionTypeFactory = new CollectionTypeFactoryImpl(dynamicProvider);
@@ -116,6 +114,8 @@ public class QilletniProgramRunner {
         this.listTypeTransformer = listGeneratorFactory.createListGenerator();
         this.listInitializer = new ListInitializerImpl(listTypeTransformer, typeConverter);
         this.libraryRegistrar = new LibraryRegistrar(nativeFunctionHandler, librarySourceFileResolver);
+
+        initializeTypeAdapterRegistrar(typeAdapterRegistrar, entityInitializer, typeConverter, listInitializer);
 
         libraryRegistrar.registerLibraries(loadedQllInfos);
 
@@ -131,7 +131,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(dynamicProvider);
     }
 
-    private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, TypeConverter typeConverter) {
+    private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, TypeConverter typeConverter, ListInitializer listInitializer) {
         typeAdapterRegistrar.registerExactTypeAdapter(BooleanTypeImpl.class, Boolean.class, BooleanTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(boolean.class, BooleanTypeImpl.class, BooleanType::getValue);
 
@@ -147,16 +147,23 @@ public class QilletniProgramRunner {
         typeAdapterRegistrar.registerExactTypeAdapter(StringTypeImpl.class, String.class, StringTypeImpl::new);
         typeAdapterRegistrar.registerExactTypeAdapter(String.class, StringTypeImpl.class, StringType::getValue);
 
-        typeAdapterRegistrar.registerTypeAdapter(ListType.class, List.class, list -> {
-            var qilletniList = (List<QilletniType>) list;
+        typeAdapterRegistrar.registerTypeAdapter(ListType.class, List.class, (List list) -> {
+            if (list.isEmpty() || list.getFirst() instanceof QilletniType) {
+                var qilletniList = (List<QilletniType>) list;
 
-            var typeList = qilletniList.stream().map(QilletniType::getTypeClass).distinct().toList();
-            if (typeList.size() > 1) {
-                throw new TypeMismatchException("Multiple types found in list");
+                var typeList = qilletniList.stream().map(QilletniType::getTypeClass).distinct().toList();
+                if (typeList.size() > 1) {
+                    throw new TypeMismatchException("Multiple types found in list");
+                }
+
+                return new ListTypeImpl(qilletniList.getFirst().getTypeClass(), qilletniList);
+            } else {
+                return listInitializer.createListFromJava(list);
             }
-
-            return new ListTypeImpl(qilletniList.get(0).getTypeClass(), qilletniList);
         });
+        
+        // List, ListType  -- Qilletni passes in ListItem, and Java gets items
+        // ListType, List  -- Java returns List, Qilletni gets ListType
 
         // TODO: Make this transform list items to Java?
         typeAdapterRegistrar.registerTypeAdapter(List.class, ListTypeImpl.class, ListTypeImpl::getItems);

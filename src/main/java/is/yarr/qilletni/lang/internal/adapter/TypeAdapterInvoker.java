@@ -88,6 +88,8 @@ public class TypeAdapterInvoker {
         var typeAdapter = typeAdapterRegistrar.findAnyTypeAdapter(invokedResult.getClass())
                 .orElseThrow(() -> new NoTypeAdapterException(invokedResult.getClass()));
         
+        LOGGER.debug("Found type adapter: {}", typeAdapter);
+        
         var adapted = typeAdapter.convertCastedType(invokedResult);
         LOGGER.debug("Adapting result from {} to {}", invokedResult.getClass().getSimpleName(), adapted.getClass().getSimpleName());
         

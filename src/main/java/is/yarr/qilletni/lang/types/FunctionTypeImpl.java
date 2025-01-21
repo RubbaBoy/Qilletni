@@ -78,12 +78,6 @@ public final class FunctionTypeImpl implements FunctionType {
         return onType;
     }
 
-    /**
-     * If the function was defined outside of an entity. Used with {@link #getOnType()}, this can tell if the function
-     * has the first instance parameter or not.
-     * 
-     * @return If the function is defined outside of an entity
-     */
     @Override
     public boolean isExternallyDefined() {
         return isExternallyDefined;
