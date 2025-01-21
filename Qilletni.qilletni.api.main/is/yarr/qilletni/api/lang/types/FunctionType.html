@@ -92,6 +92,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">FunctionType</span><span class="extends-implements">
 extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types">AnyType</a></span></div>
+<div class="block">A Qilletni type representing a function (that has yet to be invoked yet).</div>
 </div>
 </section>
 <section class="summary">
@@ -109,7 +110,9 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;T</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getBody()" class="member-name-link">getBody</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the internal representation of the function's body that may be executed.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getDefinedParamCount()" class="member-name-link">getDefinedParamCount</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -122,10 +125,14 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The name of the function.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOnType()" class="member-name-link">getOnType</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">If this is an extension function, this returns the type that it is on.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>[]</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getParams()" class="member-name-link">getParams</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -133,13 +140,19 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isExternallyDefined()" class="member-name-link">isExternallyDefined</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">If the function was defined outside of an entity.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isNative()" class="member-name-link">isNative</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the function is defined natively.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isStatic()" class="member-name-link">isStatic</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the function is static that does not need to be invoked on an instance of something.</div>
+</div>
 </div>
 </div>
 </div>
@@ -162,6 +175,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
+<div class="block">The name of the function.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The name of the function</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -209,6 +227,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>isNative</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isNative</span>()</div>
+<div class="block">Checks if the function is defined natively.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If this is a native function</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -217,6 +240,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>isStatic</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isStatic</span>()</div>
+<div class="block">Checks if the function is static that does not need to be invoked on an instance of something.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If this is a static function</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -225,6 +253,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getOnType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getOnType</span>()</div>
+<div class="block">If this is an extension function, this returns the type that it is on.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The type this function is on, or null if none</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -233,6 +266,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>isExternallyDefined</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isExternallyDefined</span>()</div>
+<div class="block">If the function was defined outside of an entity. Used with <a href="#getOnType()"><code>getOnType()</code></a>, this can tell if the function
+ has the first instance parameter or not.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If the function is defined outside of an entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -241,6 +280,13 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getBody</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">getBody</span>()</div>
+<div class="block">Gets the internal representation of the function's body that may be executed. This should only be used internally.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the body</dd>
+<dt>Returns:</dt>
+<dd>The internal representation of the function</dd>
+</dl>
 </div>
 </section>
 </li>

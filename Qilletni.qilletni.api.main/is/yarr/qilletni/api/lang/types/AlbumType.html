@@ -92,6 +92,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">AlbumType</span><span class="extends-implements">
 extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types">AnyType</a></span></div>
+<div class="block">Represents an <code>album</code> type in Qilletni. This may be created by the <code>"Album Name" album by "Artist Name"</code>
+ expression syntax. The internal service provider's type is dynamic, changing how the data is fetched when the service
+ provider is changed.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,36 +112,54 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music">Album</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAlbum()" class="member-name-link">getAlbum</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the current album instance associated with the implementing object for the current service provider.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="album/AlbumDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.album">AlbumDefinition</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAlbumDefinition()" class="member-name-link">getAlbumDefinition</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the current album definition associated with the implementing object.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getArtist(is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager)" class="member-name-link">getArtist</a><wbr>(<a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a>&nbsp;entityDefinitionManager)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the artist as an Artist <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> for the given entity definition manager.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types">ListType</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getArtists(is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager)" class="member-name-link">getArtists</a><wbr>(<a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a>&nbsp;entityDefinitionManager)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves a list of artists as a <a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>ListType</code></a>, resolved using the given <a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinitionManager</code></a>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSuppliedArtist()" class="member-name-link">getSuppliedArtist</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Returns the user-supplier artist.</div>
+<div class="block">Retrieves the supplied artist name for the album, if the artist was provided.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSuppliedTitle()" class="member-name-link">getSuppliedTitle</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the supplied title for the album, if the title was provided.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSuppliedUrl()" class="member-name-link">getSuppliedUrl</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the supplied URL for the album, if the URL was provided.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSpotifyDataPopulated()" class="member-name-link">isSpotifyDataPopulated</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether service provider data has been successfully populated for the current instance.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#populateSpotifyData(is.yarr.qilletni.api.music.Album)" class="member-name-link">populateSpotifyData</a><wbr>(<a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music">Album</a>&nbsp;album)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Populates the music provider instance of the <a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music"><code>Album</code></a> stored in the AlbumType.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setAlbumDefinition(is.yarr.qilletni.api.lang.types.album.AlbumDefinition)" class="member-name-link">setAlbumDefinition</a><wbr>(<a href="album/AlbumDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.album">AlbumDefinition</a>&nbsp;albumDefinition)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the album definition for the implementing object.</div>
+</div>
 </div>
 </div>
 </div>
@@ -161,6 +182,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getAlbumDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="album/AlbumDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.album">AlbumDefinition</a></span>&nbsp;<span class="element-name">getAlbumDefinition</span>()</div>
+<div class="block">Retrieves the current album definition associated with the implementing object. The album definition determines
+ the method by which album data is classified or resolved, such as by URL, title and artist, or prepopulated data.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="album/AlbumDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.album"><code>AlbumDefinition</code></a> representing the current album classification method</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -169,6 +196,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>setAlbumDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setAlbumDefinition</span><wbr><span class="parameters">(<a href="album/AlbumDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.album">AlbumDefinition</a>&nbsp;albumDefinition)</span></div>
+<div class="block">Sets the album definition for the implementing object. The album definition determines
+ how the album data is classified or resolved, such as by URL, title and artist, or prepopulated data.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>albumDefinition</code> - The <a href="album/AlbumDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.album"><code>AlbumDefinition</code></a> representing the classification method to be set</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -177,6 +210,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSuppliedUrl</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSuppliedUrl</span>()</div>
+<div class="block">Retrieves the supplied URL for the album, if the URL was provided.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A string representing the user-supplied URL</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -185,6 +223,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSuppliedTitle</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSuppliedTitle</span>()</div>
+<div class="block">Retrieves the supplied title for the album, if the title was provided.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A string representing the user-supplied title</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -193,11 +236,10 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSuppliedArtist</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSuppliedArtist</span>()</div>
-<div class="block">Returns the user-supplier artist. This should only be used for populating spotify data via
- <a href="#populateSpotifyData(is.yarr.qilletni.api.music.Album)"><code>populateSpotifyData(Album)</code></a>.</div>
+<div class="block">Retrieves the supplied artist name for the album, if the artist was provided.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>The user-supplier artist name</dd>
+<dd>A string representing the user-supplied artist</dd>
 </dl>
 </div>
 </section>
@@ -207,6 +249,14 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getArtist</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a></span>&nbsp;<span class="element-name">getArtist</span><wbr><span class="parameters">(<a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a>&nbsp;entityDefinitionManager)</span></div>
+<div class="block">Retrieves the artist as an Artist <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> for the given entity definition manager.
+ The artist entity is resolved using the provided <a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinitionManager</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityDefinitionManager</code> - The manager responsible for defining and looking up entity definitions</dd>
+<dt>Returns:</dt>
+<dd>The <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> representing the artist resolved through the entity definition manager</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -215,6 +265,13 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getArtists</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types">ListType</a></span>&nbsp;<span class="element-name">getArtists</span><wbr><span class="parameters">(<a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a>&nbsp;entityDefinitionManager)</span></div>
+<div class="block">Retrieves a list of artists as a <a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>ListType</code></a>, resolved using the given <a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinitionManager</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityDefinitionManager</code> - The manager responsible for defining and resolving entity definitions</dd>
+<dt>Returns:</dt>
+<dd>A <a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>ListType</code></a> representing the artists resolved through the entity definition manager</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -223,6 +280,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getAlbum</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music">Album</a></span>&nbsp;<span class="element-name">getAlbum</span>()</div>
+<div class="block">Retrieves the current album instance associated with the implementing object for the current service provider.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>An instance of the <a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music"><code>Album</code></a> backing the album.</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -231,6 +293,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>isSpotifyDataPopulated</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isSpotifyDataPopulated</span>()</div>
+<div class="block">Checks whether service provider data has been successfully populated for the current instance.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if service provider data is populated, false otherwise</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -239,6 +306,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>populateSpotifyData</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">populateSpotifyData</span><wbr><span class="parameters">(<a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music">Album</a>&nbsp;album)</span></div>
+<div class="block">Populates the music provider instance of the <a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music"><code>Album</code></a> stored in the AlbumType. This must be called before
+ invoking methods that deal with the actual contents of the Album, such as getting artists.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>album</code> - The <a href="../../music/Album.html" title="interface in is.yarr.qilletni.api.music"><code>Album</code></a> instance to populate</dd>
+</dl>
 </div>
 </section>
 </li>

@@ -197,8 +197,10 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">convertFromEntityToRecord</span><wbr><span class="parameters">(<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&nbsp;entity,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;clazz)</span></div>
-<div class="block">Takes a Qilletni entity and converts it to a Java record. The record's fields must be in the same order as the
- entity's properties are defined.</div>
+<div class="block">Takes a Qilletni entity and converts it to a Java record. The record's field names must be the same as the
+ entity's properties. A Java record may have a Qilletni private field mapped without the prefixing underscore,
+ however it should be noted that entities with two properties of the same name but with and without the
+ underscore (e.g. x and _x) it will not work well.</div>
 <dl class="notes">
 <dt>Type Parameters:</dt>
 <dd><code>T</code> - The type of the record</dd>

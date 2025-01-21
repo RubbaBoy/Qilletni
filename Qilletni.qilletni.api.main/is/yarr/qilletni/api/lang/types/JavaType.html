@@ -92,6 +92,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">JavaType</span><span class="extends-implements">
 extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types">AnyType</a></span></div>
+<div class="block">A Qilletni type that references any Java type instance. This is so native methods can access references that
+ Qilletni can deal with.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,13 +111,19 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;T&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOptionalReference(java.lang.Class)" class="member-name-link">getOptionalReference</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;refType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the reference this type holds as an optional, giving an empty optional if not set yet or <code>empty</code>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>&lt;T&gt;&nbsp;T</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getReference(java.lang.Class)" class="member-name-link">getReference</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;refType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the reference held by the type, or null.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setReference(java.lang.Object)" class="member-name-link">setReference</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;reference)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the type's reference to anything, overriding any previous reference.</div>
+</div>
 </div>
 </div>
 </div>
@@ -138,6 +146,15 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getOptionalReference</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;T&gt;</span>&nbsp;<span class="element-name">getOptionalReference</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;refType)</span></div>
+<div class="block">Gets the reference this type holds as an optional, giving an empty optional if not set yet or <code>empty</code>.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the reference</dd>
+<dt>Parameters:</dt>
+<dd><code>refType</code> - The class type the reference is assumed to be</dd>
+<dt>Returns:</dt>
+<dd>The optional of the type's reference</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -146,6 +163,15 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getReference</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type">T</span>&nbsp;<span class="element-name">getReference</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;T&gt;&nbsp;refType)</span></div>
+<div class="block">Gets the reference held by the type, or null.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the reference</dd>
+<dt>Parameters:</dt>
+<dd><code>refType</code> - class type the reference is assumed to be</dd>
+<dt>Returns:</dt>
+<dd>The type's reference, or null</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -154,6 +180,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>setReference</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setReference</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;reference)</span></div>
+<div class="block">Sets the type's reference to anything, overriding any previous reference.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>reference</code> - The reference the type should hold</dd>
+</dl>
 </div>
 </section>
 </li>

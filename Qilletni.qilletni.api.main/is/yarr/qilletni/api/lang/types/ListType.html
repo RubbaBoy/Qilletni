@@ -92,6 +92,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">ListType</span><span class="extends-implements">
 extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types">AnyType</a></span></div>
+<div class="block">A Qilletni type representing a List. This may contain Qilletni value.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,16 +110,24 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types">ListType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#copy()" class="member-name-link">copy</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Shallow copies the list and returns a new one.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getItems()" class="member-name-link">getItems</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets all the items within the list.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSubType()" class="member-name-link">getSubType</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the subtype representing the list.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setItems(java.util.List)" class="member-name-link">setItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&gt;&nbsp;items)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the items in the list.</div>
+</div>
 </div>
 </div>
 </div>
@@ -141,6 +150,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSubType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getSubType</span>()</div>
+<div class="block">Gets the subtype representing the list. The subtype may also be <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>AnyType</code></a>, meaning it does not need to
+ adhere to any type as a value.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The subtype of the list</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -149,6 +164,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getItems</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&gt;</span>&nbsp;<span class="element-name">getItems</span>()</div>
+<div class="block">Gets all the items within the list.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The contents of the list</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -157,6 +177,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>setItems</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&gt;&nbsp;items)</span></div>
+<div class="block">Sets the items in the list.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>items</code> - The new items of the list</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -165,6 +190,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>copy</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="ListType.html" title="interface in is.yarr.qilletni.api.lang.types">ListType</a></span>&nbsp;<span class="element-name">copy</span>()</div>
+<div class="block">Shallow copies the list and returns a new one.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The copied list</dd>
+</dl>
 </div>
 </section>
 </li>

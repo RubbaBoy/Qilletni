@@ -92,6 +92,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">ImportAliasType</span><span class="extends-implements">
 extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></span></div>
+<div class="block">A Qilletni type representing a named import alias, with the following syntax <code>import 'xx.ql' as someAlias</code>.
+ This puts the import behind a scope accessed by a name.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,7 +111,9 @@ extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lan
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getScope()" class="member-name-link">getScope</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> of the imported file.</div>
+</div>
 </div>
 </div>
 </div>
@@ -132,6 +136,11 @@ extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lan
 <h3>getScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">getScope</span>()</div>
+<div class="block">The <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> of the imported file.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The scope of the imported file</dd>
+</dl>
 </div>
 </section>
 </li>

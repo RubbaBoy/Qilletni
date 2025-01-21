@@ -97,6 +97,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">CollectionOrder</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a>&gt;</span></div>
+<div class="block">A backing type for the <code>order</code> type on a collection, e.g. <code>order[shuffle]</code> or
+ <code>order[sequential]</code>. This defines what order a collection should select songs from.</div>
 </div>
 </section>
 <section class="summary">
@@ -119,9 +121,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#SEQUENTIAL" class="member-name-link">SEQUENTIAL</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The collection will play songs in the order that it is defined.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#SHUFFLE" class="member-name-link">SHUFFLE</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The collection will select songs randomly.</div>
+</div>
 </div>
 </section>
 </li>
@@ -138,10 +144,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getFromString(java.lang.String)" class="member-name-link">getFromString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;orderString)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Retrieves the <a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionOrder</code></a> associated with the specified order string.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOrderString()" class="member-name-link">getOrderString</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the user-input string of the order.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -178,6 +188,7 @@ the order they are declared.</div>
 <h3>SHUFFLE</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></span>&nbsp;<span class="element-name">SHUFFLE</span></div>
+<div class="block">The collection will select songs randomly.</div>
 </div>
 </section>
 </li>
@@ -186,6 +197,7 @@ the order they are declared.</div>
 <h3>SEQUENTIAL</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></span>&nbsp;<span class="element-name">SEQUENTIAL</span></div>
+<div class="block">The collection will play songs in the order that it is defined.</div>
 </div>
 </section>
 </li>
@@ -237,6 +249,11 @@ not permitted.)</div>
 <h3>getOrderString</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getOrderString</span>()</div>
+<div class="block">Gets the user-input string of the order.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The string definition of the order</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -245,6 +262,15 @@ not permitted.)</div>
 <h3>getFromString</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></span>&nbsp;<span class="element-name">getFromString</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;orderString)</span></div>
+<div class="block">Retrieves the <a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionOrder</code></a> associated with the specified order string.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>orderString</code> - The string representation of the collection order</dd>
+<dt>Returns:</dt>
+<dd>The <a href="CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionOrder</code></a> matching the specified string</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - If the specified string does not match any defined order</dd>
+</dl>
 </div>
 </section>
 </li>

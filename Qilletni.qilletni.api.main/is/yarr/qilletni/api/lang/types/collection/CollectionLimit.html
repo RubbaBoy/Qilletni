@@ -90,9 +90,16 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <div class="horizontal-scroll">
+<dl class="notes">
+<dt>Record Components:</dt>
+<dd><code><span id="param-limitCount">limitCount</span></code> - The numerical part of the limit</dd>
+<dd><code><span id="param-limitUnit">limitUnit</span></code> - The unit of the limit</dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public record </span><span class="element-name type-name-label">CollectionLimit</span>(int&nbsp;limitCount, <a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a>&nbsp;limitUnit)
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Record.html" title="class or interface in java.lang" class="external-link">Record</a></span></div>
+<div class="block">A backing type for the <code>limit</code> type on a collection, e.g. <code>limit[5]</code> or <code>limit[3h]</code>.
+ This defines how much of a collection should be played.</div>
 </div>
 </section>
 <section class="summary">
@@ -137,12 +144,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#limitCount()" class="member-name-link">limitCount</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <code>limitCount</code> record component.</div>
+<div class="block">Returns the value of the <a href="#param-limitCount"><code>limitCount</code></a> record component.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#limitUnit()" class="member-name-link">limitUnit</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns the value of the <code>limitUnit</code> record component.</div>
+<div class="block">Returns the value of the <a href="#param-limitUnit"><code>limitUnit</code></a> record component.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
@@ -175,8 +182,8 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates an instance of a <code>CollectionLimit</code> record class.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>limitCount</code> - the value for the <code>limitCount</code> record component</dd>
-<dd><code>limitUnit</code> - the value for the <code>limitUnit</code> record component</dd>
+<dd><code>limitCount</code> - the value for the <a href="#param-limitCount"><code>limitCount</code></a> record component</dd>
+<dd><code>limitUnit</code> - the value for the <a href="#param-limitUnit"><code>limitUnit</code></a> record component</dd>
 </dl>
 </div>
 </section>
@@ -241,10 +248,10 @@ loadScripts(document, 'script');</script>
 <h3>limitCount</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">limitCount</span>()</div>
-<div class="block">Returns the value of the <code>limitCount</code> record component.</div>
+<div class="block">Returns the value of the <a href="#param-limitCount"><code>limitCount</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the value of the <code>limitCount</code> record component</dd>
+<dd>the value of the <a href="#param-limitCount"><code>limitCount</code></a> record component</dd>
 </dl>
 </div>
 </section>
@@ -254,10 +261,10 @@ loadScripts(document, 'script');</script>
 <h3>limitUnit</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></span>&nbsp;<span class="element-name">limitUnit</span>()</div>
-<div class="block">Returns the value of the <code>limitUnit</code> record component.</div>
+<div class="block">Returns the value of the <a href="#param-limitUnit"><code>limitUnit</code></a> record component.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>the value of the <code>limitUnit</code> record component</dd>
+<dd>the value of the <a href="#param-limitUnit"><code>limitUnit</code></a> record component</dd>
 </dl>
 </div>
 </section>

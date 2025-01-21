@@ -92,6 +92,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">CollectionType</span><span class="extends-implements">
 extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types">AnyType</a></span></div>
+<div class="block">Represents a <code>collection</code> type in Qilletni. This is essentially an abstracted playlist, or list of songs.
+ This may be created by the <code>"Collection Name" collection by "Creator Name"</code> expression syntax.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,43 +111,70 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="collection/CollectionDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCollectionDefinition()" class="member-name-link">getCollectionDefinition</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the current collection definition associated with the implementing object.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCreator(is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager)" class="member-name-link">getCreator</a><wbr>(<a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a>&nbsp;entityDefinitionManager)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the creator as a User <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> using the given entity definition manager.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="collection/CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getOrder()" class="member-name-link">getOrder</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the current ordering of the collection when it is played.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music">Playlist</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlaylist()" class="member-name-link">getPlaylist</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the current <a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> instance associated with the current collection for the current service
+ provider.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSuppliedCreator()" class="member-name-link">getSuppliedCreator</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the supplied creator for a specific collection, if the creator's name was provided.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSuppliedName()" class="member-name-link">getSuppliedName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the supplied title for a specific collection, if the title was provided.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getSuppliedUrl()" class="member-name-link">getSuppliedUrl</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Retrieves the supplied URL for a specific collection, if the URL was provided.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types">WeightsType</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getWeights()" class="member-name-link">getWeights</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the weights applied to the collection.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isSpotifyDataPopulated()" class="member-name-link">isSpotifyDataPopulated</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks whether service provider data has been successfully populated for the current instance.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#populateSpotifyData(is.yarr.qilletni.api.music.Playlist)" class="member-name-link">populateSpotifyData</a><wbr>(<a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music">Playlist</a>&nbsp;playlist)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Populates the music provider instance of the <a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> stored in the CollectionType.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setCollectionDefinition(is.yarr.qilletni.api.lang.types.collection.CollectionDefinition)" class="member-name-link">setCollectionDefinition</a><wbr>(<a href="collection/CollectionDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionDefinition</a>&nbsp;collectionDefinition)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the collection definition for the implementing object.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setOrder(is.yarr.qilletni.api.lang.types.collection.CollectionOrder)" class="member-name-link">setOrder</a><wbr>(<a href="collection/CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a>&nbsp;order)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the ordering of the collection when it is played.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setWeights(is.yarr.qilletni.api.lang.types.WeightsType)" class="member-name-link">setWeights</a><wbr>(<a href="WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types">WeightsType</a>&nbsp;weights)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the weights for the collection.</div>
+</div>
 </div>
 </div>
 </div>
@@ -168,6 +197,13 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getCollectionDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="collection/CollectionDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionDefinition</a></span>&nbsp;<span class="element-name">getCollectionDefinition</span>()</div>
+<div class="block">Retrieves the current collection definition associated with the implementing object. The collection definition 
+ determines how the collection data is classified or resolved, such as by URL, name and creator, prepopulated data,
+ or a list of specific songs.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="collection/CollectionDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionDefinition</code></a> representing the current method of collection classification or resolution</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -176,6 +212,13 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>setCollectionDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setCollectionDefinition</span><wbr><span class="parameters">(<a href="collection/CollectionDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionDefinition</a>&nbsp;collectionDefinition)</span></div>
+<div class="block">Sets the collection definition for the implementing object. The collection definition determines
+ how the collection data is classified or resolved, such as by URL, name and creator, prepopulated data,
+ or a list of specific songs.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collectionDefinition</code> - The <a href="collection/CollectionDefinition.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionDefinition</code></a> representing the classification method to be set</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -184,6 +227,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSuppliedUrl</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSuppliedUrl</span>()</div>
+<div class="block">Retrieves the supplied URL for a specific collection, if the URL was provided.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A string representing the user-supplied URL</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -192,6 +240,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSuppliedName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSuppliedName</span>()</div>
+<div class="block">Retrieves the supplied title for a specific collection, if the title was provided.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A string representing the user-supplied title</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -200,6 +253,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getSuppliedCreator</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getSuppliedCreator</span>()</div>
+<div class="block">Retrieves the supplied creator for a specific collection, if the creator's name was provided.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A string representing the user-supplied creator's name</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -208,6 +266,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getOrder</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="collection/CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a></span>&nbsp;<span class="element-name">getOrder</span>()</div>
+<div class="block">Retrieves the current ordering of the collection when it is played. The order specifies how the collection items
+ are arranged, such as in a sequential manner or shuffled.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="collection/CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionOrder</code></a> representing the current ordering of the collection</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -216,6 +280,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>setOrder</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setOrder</span><wbr><span class="parameters">(<a href="collection/CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionOrder</a>&nbsp;order)</span></div>
+<div class="block">Sets the ordering of the collection when it is played. The order specifies how the items in the collection
+ are arranged, such as sequentially or shuffled.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>order</code> - The <a href="collection/CollectionOrder.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionOrder</code></a> to set for the collection</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -224,6 +294,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getWeights</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types">WeightsType</a></span>&nbsp;<span class="element-name">getWeights</span>()</div>
+<div class="block">Gets the weights applied to the collection.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The weights applied to the collection</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -232,6 +307,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>setWeights</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setWeights</span><wbr><span class="parameters">(<a href="WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types">WeightsType</a>&nbsp;weights)</span></div>
+<div class="block">Sets the weights for the collection.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>weights</code> - The <a href="WeightsType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>WeightsType</code></a> object to be associated with the collection</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -240,6 +320,14 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getCreator</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a></span>&nbsp;<span class="element-name">getCreator</span><wbr><span class="parameters">(<a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a>&nbsp;entityDefinitionManager)</span></div>
+<div class="block">Retrieves the creator as a User <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> using the given entity definition manager.
+ The creator is resolved using the provided <a href="entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinitionManager</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityDefinitionManager</code> - The manager responsible for defining and resolving entity definitions</dd>
+<dt>Returns:</dt>
+<dd>The <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> representing the creator resolved through the entity definition manager</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -248,6 +336,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getPlaylist</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music">Playlist</a></span>&nbsp;<span class="element-name">getPlaylist</span>()</div>
+<div class="block">Gets the current <a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> instance associated with the current collection for the current service
+ provider.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>An instance of <a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> backing the collection</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -256,6 +350,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>isSpotifyDataPopulated</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isSpotifyDataPopulated</span>()</div>
+<div class="block">Checks whether service provider data has been successfully populated for the current instance.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if service provider data is populated, false otherwise</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -264,6 +363,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>populateSpotifyData</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">populateSpotifyData</span><wbr><span class="parameters">(<a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music">Playlist</a>&nbsp;playlist)</span></div>
+<div class="block">Populates the music provider instance of the <a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> stored in the CollectionType. This must be called
+ before invoking methods that deal with the actual contents of the Album, such as getting artists.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playlist</code> - The <a href="../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> instance to populate</dd>
+</dl>
 </div>
 </section>
 </li>

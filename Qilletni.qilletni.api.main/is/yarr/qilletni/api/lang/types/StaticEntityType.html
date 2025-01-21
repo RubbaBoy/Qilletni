@@ -92,6 +92,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">StaticEntityType</span><span class="extends-implements">
 extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></span></div>
+<div class="block">A Qilletni type representing the expression of an entity's name. This is used so static functions can be accessed in
+ their own scope.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,11 +111,13 @@ extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lan
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEntityDefinition()" class="member-name-link">getEntityDefinition</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> that the user defined that this entity was created from.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEntityScope()" class="member-name-link">getEntityScope</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Holds only the static functions of the entity.</div>
+<div class="block">A <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> that holds only the static functions of the entity.</div>
 </div>
 </div>
 </div>
@@ -137,6 +141,12 @@ extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lan
 <h3>getEntityDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></span>&nbsp;<span class="element-name">getEntityDefinition</span>()</div>
+<div class="block">Gets the <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> that the user defined that this entity was created from. There is only one
+ <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> for each defined entity.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> for the entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -145,7 +155,7 @@ extends <a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lan
 <h3>getEntityScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">getEntityScope</span>()</div>
-<div class="block">Holds only the static functions of the entity.</div>
+<div class="block">A <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> that holds only the static functions of the entity.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>The <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> containing the static functions of the entity</dd>

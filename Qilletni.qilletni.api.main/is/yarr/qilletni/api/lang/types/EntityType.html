@@ -92,6 +92,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public non-sealed interface </span><span class="element-name type-name-label">EntityType</span><span class="extends-implements">
 extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.types">AnyType</a></span></div>
+<div class="block">A user-defined Qilletni type. A new instance of an <a href="EntityType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>EntityType</code></a> is created for each instance of an entity.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,13 +110,19 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEntityDefinition()" class="member-name-link">getEntityDefinition</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> that the user defined that this entity was created from.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEntityScope()" class="member-name-link">getEntityScope</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the isolated <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> for this entity instance.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#validateType(java.lang.String)" class="member-name-link">validateType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;typeName)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the entity's name is the given <code>typeName</code>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -138,6 +145,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getEntityDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></span>&nbsp;<span class="element-name">getEntityDefinition</span>()</div>
+<div class="block">Gets the <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> that the user defined that this entity was created from. There is only one
+ <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> for each defined entity.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity"><code>EntityDefinition</code></a> for the entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -146,6 +159,12 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>getEntityScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">getEntityScope</span>()</div>
+<div class="block">Gets the isolated <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> for this entity instance. All fields in the entity are present in this, along
+ with functions defined.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="../table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> of the entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -154,6 +173,11 @@ extends <a href="AnyType.html" title="interface in is.yarr.qilletni.api.lang.typ
 <h3>validateType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">validateType</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;typeName)</span></div>
+<div class="block">Checks if the entity's name is the given <code>typeName</code>. If not, an error is thrown.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>typeName</code> - The expected name of the entity</dd>
+</dl>
 </div>
 </section>
 </li>

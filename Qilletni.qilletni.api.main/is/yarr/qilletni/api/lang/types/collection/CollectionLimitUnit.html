@@ -97,6 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">CollectionLimitUnit</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a>&gt;</span></div>
+<div class="block">The unit for a collection limit from <a href="CollectionLimit.html" title="class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionLimit</code></a>.</div>
 </div>
 </section>
 <section class="summary">
@@ -119,13 +120,21 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#COUNT" class="member-name-link">COUNT</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">A set number of songs are played from the collection.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#HOUR" class="member-name-link">HOUR</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The collection is played until a set number of hours passes.</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#MINUTE" class="member-name-link">MINUTE</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The collection is played until a set number of minutes passes.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#SECOND" class="member-name-link">SECOND</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The collection is played until a set number of seconds passes.</div>
+</div>
 </div>
 </section>
 </li>
@@ -142,13 +151,20 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromText(java.lang.String)" class="member-name-link">fromText</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Gets the <a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionLimitUnit</code></a> from the given prefix.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/TimeUnit.html" title="class or interface in java.util.concurrent" class="external-link">TimeUnit</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTimeUnit()" class="member-name-link">getTimeUnit</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the Java <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/TimeUnit.html" title="class or interface in java.util.concurrent" class="external-link"><code>TimeUnit</code></a> the limit unit represents, or null if it's not applicable for the unit (is a
+ <a href="#COUNT"><code>COUNT</code></a>).</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUnitText()" class="member-name-link">getUnitText</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the unit text representation of the collection limit unit.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -185,6 +201,7 @@ the order they are declared.</div>
 <h3>COUNT</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></span>&nbsp;<span class="element-name">COUNT</span></div>
+<div class="block">A set number of songs are played from the collection.</div>
 </div>
 </section>
 </li>
@@ -193,6 +210,7 @@ the order they are declared.</div>
 <h3>SECOND</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></span>&nbsp;<span class="element-name">SECOND</span></div>
+<div class="block">The collection is played until a set number of seconds passes.</div>
 </div>
 </section>
 </li>
@@ -201,6 +219,7 @@ the order they are declared.</div>
 <h3>MINUTE</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></span>&nbsp;<span class="element-name">MINUTE</span></div>
+<div class="block">The collection is played until a set number of minutes passes.</div>
 </div>
 </section>
 </li>
@@ -209,6 +228,7 @@ the order they are declared.</div>
 <h3>HOUR</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></span>&nbsp;<span class="element-name">HOUR</span></div>
+<div class="block">The collection is played until a set number of hours passes.</div>
 </div>
 </section>
 </li>
@@ -260,6 +280,12 @@ not permitted.)</div>
 <h3>getUnitText</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getUnitText</span>()</div>
+<div class="block">Returns the unit text representation of the collection limit unit. This value serves as a textual suffix
+ or identifier (e.g., "s" for seconds, "m" for minutes) used in formatting and representations.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the unit text associated with the collection limit unit</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -268,6 +294,12 @@ not permitted.)</div>
 <h3>getTimeUnit</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/TimeUnit.html" title="class or interface in java.util.concurrent" class="external-link">TimeUnit</a></span>&nbsp;<span class="element-name">getTimeUnit</span>()</div>
+<div class="block">Gets the Java <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/TimeUnit.html" title="class or interface in java.util.concurrent" class="external-link"><code>TimeUnit</code></a> the limit unit represents, or null if it's not applicable for the unit (is a
+ <a href="#COUNT"><code>COUNT</code></a>).</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/TimeUnit.html" title="class or interface in java.util.concurrent" class="external-link"><code>TimeUnit</code></a> of the unit, if applicable</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -276,6 +308,15 @@ not permitted.)</div>
 <h3>fromText</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></span>&nbsp;<span class="element-name">fromText</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
+<div class="block">Gets the <a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionLimitUnit</code></a> from the given prefix.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>text</code> - The prefix of the unit</dd>
+<dt>Returns:</dt>
+<dd>The found <a href="CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection"><code>CollectionLimitUnit</code></a></dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/IllegalStateException.html" title="class or interface in java.lang" class="external-link">IllegalStateException</a></code> - If the specified string does not match any defined prefix</dd>
+</dl>
 </div>
 </section>
 </li>
