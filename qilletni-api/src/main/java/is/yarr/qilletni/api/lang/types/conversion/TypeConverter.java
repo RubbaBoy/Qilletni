@@ -3,6 +3,9 @@ package is.yarr.qilletni.api.lang.types.conversion;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 
+/**
+ * Converts Qilletni to Java types and back.
+ */
 public interface TypeConverter {
 
     /**

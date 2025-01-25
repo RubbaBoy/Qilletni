@@ -3,7 +3,6 @@ package is.yarr.qilletni.api.lang.types;
 import is.yarr.qilletni.api.lang.types.collection.CollectionDefinition;
 import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
 import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
-import is.yarr.qilletni.api.music.Album;
 import is.yarr.qilletni.api.music.Playlist;
 
 /**

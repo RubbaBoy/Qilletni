@@ -107,7 +107,7 @@ public class ScopeImpl implements Scope {
             return parent.lookup(name);
         }
 
-        throw new VariableNotFoundException("Symbol " + name + " not found!");
+        throw new VariableNotFoundException("Symbol %s not found!".formatted(name));
     }
 
     @Override
@@ -172,7 +172,7 @@ public class ScopeImpl implements Scope {
 
         allFunctions.addAll(functionSymbolTable.getOrDefault(name, Collections.emptyList()));
         if (allFunctions.isEmpty()) {
-            throw new VariableNotFoundException("Function " + name + " not found!");
+            throw new VariableNotFoundException("Function %s not found!".formatted(name));
         }
 
         return allFunctions;
@@ -222,7 +222,7 @@ public class ScopeImpl implements Scope {
 //        }
         
         if (isDirectlyDefined(symbol.getName())) {
-            throw new AlreadyDefinedException("Symbol " + symbol.getName() + " has already been defined!");
+            throw new AlreadyDefinedException("Symbol %s has already been defined!".formatted(symbol.getName()));
         }
         
         LOGGER.debug("Defining {} in ({}, {})", symbol.getName(), scopeType, parent);
@@ -318,7 +318,7 @@ public class ScopeImpl implements Scope {
 
     @Override
     public String toString() {
-        return "Scope(" + scopeId + ", " + (!debugDesc.isEmpty() ? (debugDesc + ", ") : "") + scopeType.name() + ", " + Arrays.toString(symbolTable.keySet().toArray()) + ", " + Arrays.toString(functionSymbolTable.keySet().toArray()) + ", parent = " + parent + ")";
+        return "Scope(%d, %s%s, %s, %s, parent = %s)".formatted(scopeId, !debugDesc.isEmpty() ? (debugDesc + ", ") : "", scopeType.name(), Arrays.toString(symbolTable.keySet().toArray()), Arrays.toString(functionSymbolTable.keySet().toArray()), parent);
 //        var stringBuilder = new StringBuilder("Scope(" + scopeId + ")[");
 //        var arr = symbolTable.values().toArray(Symbol[]::new);
 //        for (int i = 0; i < arr.length; i++) {

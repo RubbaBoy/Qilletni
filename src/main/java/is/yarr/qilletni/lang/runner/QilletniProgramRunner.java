@@ -97,7 +97,7 @@ public class QilletniProgramRunner {
         this.globalScope = new ScopeImpl("global");
         this.entityDefinitionManager = new EntityDefinitionManagerImpl();
         this.typeAdapterRegistrar = new TypeAdapterRegistrar();
-        this.nativeFunctionHandler = createNativeFunctionHandler(typeAdapterRegistrar, symbolTables);
+        this.nativeFunctionHandler = new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables);
         this.entityInitializer = new EntityInitializerImpl(typeAdapterRegistrar, entityDefinitionManager);
         this.musicPopulator = new MusicPopulatorImpl(dynamicProvider, internalPackageConfig);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
@@ -182,10 +182,6 @@ public class QilletniProgramRunner {
         typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
 
         return typeAdapterRegistrar;
-    }
-
-    private static NativeFunctionHandler createNativeFunctionHandler(TypeAdapterRegistrar typeAdapterRegistrar, Map<SymbolTable, QilletniVisitor> symbolTables) {
-        return new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables);
     }
 
     public void importInitialFiles() {

@@ -30,7 +30,8 @@ ERRORS: '@errors';
 NEWLINE: [\r\n] -> channel(HIDDEN); // Skip newlines globally
 WS: [ \t]+ -> skip; // Skip whitespace globally
 
-TEXT: ~[\r\n@\\[]+; // Match any text except newlines and lines starting with '@'
+TEXT: ~[@\\[]+; // Match any text except lines starting with '@'
+//TEXT: ~[\r\n@\\[]+; // Match any text except newlines and lines starting with '@'
 
 //DESCRIPTION: ~[\r\n]+;
 

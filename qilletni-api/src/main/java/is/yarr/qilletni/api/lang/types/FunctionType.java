@@ -2,9 +2,6 @@ package is.yarr.qilletni.api.lang.types;
 
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 
-import java.util.Optional;
-import java.util.function.Supplier;
-
 /**
  * A Qilletni type representing a function (that has yet to be invoked yet).
  */

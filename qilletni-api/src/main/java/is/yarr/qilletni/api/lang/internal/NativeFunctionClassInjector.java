@@ -4,6 +4,21 @@ import java.util.List;
 
 /**
  * This interface is used to inject classes into the constructors of the parent classes of native methods.
+ * </br></br>
+ * The following classes are automatically injected to be used with any library:</br>
+ * <ul>
+ *     <li>{@link is.yarr.qilletni.api.music.MusicPopulator}</li>
+ *     <li>{@link is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager}</li>
+ *     <li>{@link is.yarr.qilletni.api.lang.types.entity.EntityInitializer}</li>
+ *     <li>{@link is.yarr.qilletni.api.lang.types.list.ListInitializer}</li>
+ *     <li>{@link is.yarr.qilletni.api.music.factories.SongTypeFactory}</li>
+ *     <li>{@link is.yarr.qilletni.api.music.factories.CollectionTypeFactory}</li>
+ *     <li>{@link is.yarr.qilletni.api.music.factories.AlbumTypeFactory}</li>
+ *     <li>{@link FunctionInvoker}</li>
+ *     <li>{@link is.yarr.qilletni.api.lang.types.conversion.TypeConverter}</li>
+ *     <li>{@link is.yarr.qilletni.api.music.supplier.DynamicProvider}</li>
+ *     <li>{@link is.yarr.qilletni.api.lib.persistence.PackageConfig}</li>
+ * </ul>
  */
 public interface NativeFunctionClassInjector {
 

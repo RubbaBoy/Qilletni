@@ -49,21 +49,21 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
         body.entity_property_declaration().stream()
                 .map(this::visit)
                 .filter(Predicate.not(List::isEmpty))
-                .forEach(propertyDocs -> entityDoc.addDocItem(propertyDocs.get(0)));
+                .forEach(propertyDocs -> entityDoc.addDocItem(propertyDocs.getFirst()));
 
         System.out.println("body.entity_constructor() = " + body.entity_constructor());
         if (body.entity_constructor() != null) {
             var foundDocs = visit(body.entity_constructor());
             System.out.println("foundDocs = " + foundDocs);
             if (!foundDocs.isEmpty()) {
-                entityDoc.addDocItem(foundDocs.get(0));
+                entityDoc.addDocItem(foundDocs.getFirst());
             }
         }
                 
         body.function_def().stream()
                 .map(this::visit)
                 .filter(Predicate.not(List::isEmpty))
-                .forEach(functionDocs -> entityDoc.addDocItem(functionDocs.get(0)));
+                .forEach(functionDocs -> entityDoc.addDocItem(functionDocs.getFirst()));
 
         return Collections.singletonList(docItem);
     }
@@ -113,9 +113,13 @@ public class QilletniDocVisitor extends QilletniParserBaseVisitor<List<Documente
         var lines = unformattedDoc.split("\n");
         var formattedDoc = new StringBuilder();
         for (var line : lines) {
-            formattedDoc.append(line.replaceAll("^\\s+\\*\\s*", "")).append("\n");
+            if (line.trim().equals("*")) {
+                formattedDoc.append("\n");
+            } else {
+                formattedDoc.append(line.replaceAll("^\\s+\\*\\s*", "")).append("\n");
+            }
         }
-        
+
         return formattedDoc.toString().strip();
     }
 }

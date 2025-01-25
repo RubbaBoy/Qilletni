@@ -6,15 +6,19 @@ import is.yarr.qilletni.api.music.MusicFetcher;
 import is.yarr.qilletni.api.music.MusicTypeConverter;
 import is.yarr.qilletni.api.music.PlayActor;
 import is.yarr.qilletni.api.music.StringIdentifier;
-import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
 import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
 import is.yarr.qilletni.api.music.factories.SongTypeFactory;
+import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
+/**
+ * A service provider interface that facilitates the management of music-related resources and operations, including
+ * caching, fetching, orchestration, and type conversion. This may be switched by the Qilletni program through the use
+ * of a {@link is.yarr.qilletni.api.music.supplier.DynamicProvider}.
+ */
 public interface ServiceProvider {
 
     /**

@@ -1,8 +1,5 @@
 package is.yarr.qilletni.api.lang.table;
 
-import is.yarr.qilletni.api.lang.table.Scope;
-
-import java.util.List;
 import java.util.Stack;
 
 public interface SymbolTable {

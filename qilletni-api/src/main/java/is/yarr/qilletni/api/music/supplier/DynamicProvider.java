@@ -4,10 +4,10 @@ import is.yarr.qilletni.api.auth.ServiceProvider;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
 import is.yarr.qilletni.api.music.StringIdentifier;
-import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 import is.yarr.qilletni.api.music.factories.AlbumTypeFactory;
 import is.yarr.qilletni.api.music.factories.CollectionTypeFactory;
 import is.yarr.qilletni.api.music.factories.SongTypeFactory;
+import is.yarr.qilletni.api.music.orchestration.TrackOrchestrator;
 
 public interface DynamicProvider {
 
