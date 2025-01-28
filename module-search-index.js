@@ -1,1 +1,1 @@
-moduleSearchIndex = [{"l":"Qilletni.qilletni.api.main"}];updateSearchResults();
+moduleSearchIndex = [{"l":"is.yarr.qilletni.api"}];updateSearchResults();

@@ -1,4 +1,4 @@
-module:Qilletni.qilletni.api.main
+module:is.yarr.qilletni.api
 is.yarr.qilletni.api
 is.yarr.qilletni.api.auth
 is.yarr.qilletni.api.exceptions
