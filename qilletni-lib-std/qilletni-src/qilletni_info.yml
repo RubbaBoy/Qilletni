@@ -1,6 +1,7 @@
 name: std
 version: 1.0.0
 author: Adam Yarris
+description: The standard library for the Qilletni language
 native_classes:
   - is.yarr.qilletni.lib.core.AlbumFunctions
   - is.yarr.qilletni.lib.core.ArtistFunctions

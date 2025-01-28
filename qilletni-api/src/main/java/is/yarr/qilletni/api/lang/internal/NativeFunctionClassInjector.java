@@ -4,8 +4,8 @@ import java.util.List;
 
 /**
  * This interface is used to inject classes into the constructors of the parent classes of native methods.
- * </br></br>
- * The following classes are automatically injected to be used with any library:</br>
+ * <br><br>
+ * The following classes are automatically injected to be used with any library:<br>
  * <ul>
  *     <li>{@link is.yarr.qilletni.api.music.MusicPopulator}</li>
  *     <li>{@link is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager}</li>

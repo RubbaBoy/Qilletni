@@ -1,4 +1,4 @@
-module is.yarr.qilletni.Qilletni.main {
+module is.yarr.qilletni {
 
     exports is.yarr.qilletni;
     exports is.yarr.qilletni.lib;
@@ -6,8 +6,7 @@ module is.yarr.qilletni.Qilletni.main {
     exports is.yarr.qilletni.lang.docs;
     exports is.yarr.qilletni.lang.runner;
 
-    requires Qilletni.qilletni.api.main;
-//    requires Qilletni.qilletni.spotify.main;
+    requires is.yarr.qilletni.api;
     requires org.antlr.antlr4.runtime;
     requires org.slf4j;
     

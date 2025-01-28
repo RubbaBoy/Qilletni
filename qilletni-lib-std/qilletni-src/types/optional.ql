@@ -52,7 +52,7 @@ entity Optional {
     
     /**
      * Gets the value of the optional. This will stop the program if the optional is empty, so check first via
-     `hasValue()`.
+     * `hasValue()`.
      *
      * @returns The value of the optional, any type
      */

@@ -9,17 +9,20 @@ double UNUSED_DOUBLE = -999
  * Various parameters are allowed to fine-tune recommendations. Any unchanged parameters will be ignored.
  * Spotify gives definitions for the "max", "min", and "target" parameters.
  *
- * A minimum parameter:
- *   A hard ceiling on the selected track attribute’s value can be provided. For example, maxInstrumentalness=0.35 would
- *   filter out most tracks that are likely to be instrumental.
+ * **A minimum parameter:**
  *
- * A minimum parameter:
- *   A hard floor on the selected track attribute’s value can be provided. For example, minTempo=140 would restrict
- *   results to only those tracks with a tempo of greater than 140 beats per minute.
+ * A hard ceiling on the selected track attribute's value can be provided. For example, `maxInstrumentalness=0.35` would
+ * filter out most tracks that are likely to be instrumental.
  *
- * A target parameter:
- *   Tracks with the attribute values nearest to the target values will be preferred. For example, you might request
- *   targetEnergy=0.6 and targetDanceability=0.8. All target values will be weighed equally in ranking results.
+ * **A minimum parameter:**
+ *
+ * A hard floor on the selected track attribute's value can be provided. For example, `minTempo=140` would restrict
+ * results to only those tracks with a tempo of greater than 140 beats per minute.
+ *
+ * **A target parameter:**
+ *
+ * Tracks with the attribute values nearest to the target values will be preferred. For example, you might request
+ * `targetEnergy=0.6` and `targetDanceability=0.8`. All target values will be weighed equally in ranking results.
  */
 entity Recommender {
 

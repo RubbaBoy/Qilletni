@@ -1,4 +1,4 @@
-rootProject.name = 'Qilletni'
+rootProject.name = 'qilletni'
 include 'qilletni-api'
 include 'qilletni-spotify'
 include 'qilletni-provider-demo'
