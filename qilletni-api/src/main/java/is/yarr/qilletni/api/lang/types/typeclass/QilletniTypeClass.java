@@ -68,11 +68,11 @@ public class QilletniTypeClass<T extends QilletniType> {
         this.entityDefinition = null;
     }
 
-    QilletniTypeClass(EntityDefinition entityDefinition, String typeName) {
+    public QilletniTypeClass(EntityDefinition entityDefinition, String typeName) {
         this(entityDefinition, typeName, null);
     }
 
-    private QilletniTypeClass(EntityDefinition entityDefinition, String typeName, QilletniTypeClass<?> subType) {
+    public QilletniTypeClass(EntityDefinition entityDefinition, String typeName, QilletniTypeClass<?> subType) {
         this.typeName = typeName;
         this.subType = subType;
         this.internalType = EntityType.class;

@@ -4,4 +4,4 @@ import is.yarr.qilletni.api.lang.table.Scope;
 
 import java.util.function.Consumer;
 
-record FunctionPopulator(boolean isStaticFunction, Consumer<Scope> functionPopulator) {}
+public record FunctionPopulator(boolean isStaticFunction, Consumer<Scope> functionPopulator) {}

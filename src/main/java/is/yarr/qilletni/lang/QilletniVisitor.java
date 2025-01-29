@@ -67,6 +67,7 @@ import is.yarr.qilletni.lang.types.TypeUtils;
 import is.yarr.qilletni.lang.types.WeightsTypeImpl;
 import is.yarr.qilletni.lang.types.entity.EntityAttributes;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionImpl;
+import is.yarr.qilletni.lang.types.entity.FunctionPopulator;
 import is.yarr.qilletni.lang.types.entity.UninitializedTypeImpl;
 import is.yarr.qilletni.lang.types.list.ListTypeTransformer;
 import is.yarr.qilletni.lang.types.weights.LazyWeightEntry;
