@@ -87,6 +87,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">SymbolTable</span></div>
+<div class="block">Represents a symbol table in the Qilletni type system. A symbol table is a collection of scopes, each of which
+ contains a mapping of names to <a href="Symbol.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Symbol</code></a>, allowing the resolution and definition of symbols. The current scope
+ is represented by a stack of scopes, and may be pushed, popped, or swapped with another scope.</div>
 </div>
 </section>
 <section class="summary">
@@ -104,27 +107,40 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#currentScope()" class="member-name-link">currentScope</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the current scope.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#endFunctionCall()" class="member-name-link">endFunctionCall</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Ends a function call's scope as created via <a href="#functionCall()"><code>functionCall()</code></a>, bringing it back to the original.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#functionCall()" class="member-name-link">functionCall</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Resets the current scope to one that is only parents with the global one.</div>
+<div class="block">Resets the current scope to one that is only parents with the global one, or the function definitions' parent
+ entity.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Stack.html" title="class or interface in java.util" class="external-link">Stack</a><wbr>&lt;<a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAllScopes()" class="member-name-link">getAllScopes</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets all available scopes, both used and unused.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>int</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getId()" class="member-name-link">getId</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the unique ID of the <a href="SymbolTable.html" title="interface in is.yarr.qilletni.api.lang.table"><code>SymbolTable</code></a>, generally for debugging purposes.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#initScope(is.yarr.qilletni.api.lang.table.Scope)" class="member-name-link">initScope</a><wbr>(<a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a>&nbsp;globalScope)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Initializes the symbol table with a given global scope as the parent.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#popScope()" class="member-name-link">popScope</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Pops the current scope off the stack, and sets the parent scope as the current one.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#pushScope()" class="member-name-link">pushScope</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -132,10 +148,14 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#swapScope(is.yarr.qilletni.api.lang.table.Scope)" class="member-name-link">swapScope</a><wbr>(<a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a>&nbsp;newScope)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Swaps the current scope with a new one, and returns the new scope.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#unswapScope()" class="member-name-link">unswapScope</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Restores a previous scope that was swapped out via <a href="#swapScope(is.yarr.qilletni.api.lang.table.Scope)"><code>swapScope(Scope)</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -155,6 +175,14 @@ loadScripts(document, 'script');</script>
 <h3>initScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">initScope</span><wbr><span class="parameters">(<a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a>&nbsp;globalScope)</span></div>
+<div class="block">Initializes the symbol table with a given global scope as the parent. This method is invoked when each file is
+ parsed. The global scope is the parent of all other scopes.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>globalScope</code> - The scope to set as the parent, shared by all other scopes</dd>
+<dt>Returns:</dt>
+<dd>The created <a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a></dd>
+</dl>
 </div>
 </section>
 </li>
@@ -176,6 +204,14 @@ loadScripts(document, 'script');</script>
 <h3>swapScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">swapScope</span><wbr><span class="parameters">(<a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a>&nbsp;newScope)</span></div>
+<div class="block">Swaps the current scope with a new one, and returns the new scope. The previous scope is added to a stack, and
+ can be restored via <a href="#unswapScope()"><code>unswapScope()</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>newScope</code> - The new scope to swap to</dd>
+<dt>Returns:</dt>
+<dd>The new scope</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -184,6 +220,11 @@ loadScripts(document, 'script');</script>
 <h3>unswapScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">unswapScope</span>()</div>
+<div class="block">Restores a previous scope that was swapped out via <a href="#swapScope(is.yarr.qilletni.api.lang.table.Scope)"><code>swapScope(Scope)</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The new current scope</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -192,6 +233,7 @@ loadScripts(document, 'script');</script>
 <h3>popScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">popScope</span>()</div>
+<div class="block">Pops the current scope off the stack, and sets the parent scope as the current one.</div>
 </div>
 </section>
 </li>
@@ -200,6 +242,11 @@ loadScripts(document, 'script');</script>
 <h3>currentScope</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">currentScope</span>()</div>
+<div class="block">Gets the current scope.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current scope</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -208,9 +255,11 @@ loadScripts(document, 'script');</script>
 <h3>functionCall</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">functionCall</span>()</div>
-<div class="block">Resets the current scope to one that is only parents with the global one.</div>
+<div class="block">Resets the current scope to one that is only parents with the global one, or the function definitions' parent
+ entity.</div>
 <dl class="notes">
 <dt>Returns:</dt>
+<dd>The new current scope</dd>
 </dl>
 </div>
 </section>
@@ -220,6 +269,11 @@ loadScripts(document, 'script');</script>
 <h3>endFunctionCall</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></span>&nbsp;<span class="element-name">endFunctionCall</span>()</div>
+<div class="block">Ends a function call's scope as created via <a href="#functionCall()"><code>functionCall()</code></a>, bringing it back to the original.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The new current scope</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -228,6 +282,11 @@ loadScripts(document, 'script');</script>
 <h3>getAllScopes</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Stack.html" title="class or interface in java.util" class="external-link">Stack</a>&lt;<a href="Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a>&gt;</span>&nbsp;<span class="element-name">getAllScopes</span>()</div>
+<div class="block">Gets all available scopes, both used and unused.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>All scopes</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -236,6 +295,11 @@ loadScripts(document, 'script');</script>
 <h3>getId</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">int</span>&nbsp;<span class="element-name">getId</span>()</div>
+<div class="block">Gets the unique ID of the <a href="SymbolTable.html" title="interface in is.yarr.qilletni.api.lang.table"><code>SymbolTable</code></a>, generally for debugging purposes.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The ID of the symbol table</dd>
+</dl>
 </div>
 </section>
 </li>

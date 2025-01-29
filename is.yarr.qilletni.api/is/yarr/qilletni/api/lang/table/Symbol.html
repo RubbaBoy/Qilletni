@@ -85,8 +85,13 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <div class="horizontal-scroll">
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the symbol</dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Symbol&lt;T extends <a href="../types/QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&gt;</span></div>
+<div class="block">A defined type that can be stored in a scope. This is a <a href="../types/QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types"><code>QilletniType</code></a> that can be looked up by name and type.</div>
 </div>
 </section>
 <section class="summary">
@@ -104,16 +109,24 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The name of the symbol.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a><wbr>&lt;<a href="Symbol.html" title="type parameter in Symbol">T</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getType()" class="member-name-link">getType</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">gets the <a href="../types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass"><code>QilletniTypeClass</code></a> of the value.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="Symbol.html" title="type parameter in Symbol">T</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getValue()" class="member-name-link">getValue</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The value of the symbol.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setValue(T)" class="member-name-link">setValue</a><wbr>(<a href="Symbol.html" title="type parameter in Symbol">T</a>&nbsp;value)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the value of the symbol.</div>
+</div>
 </div>
 </div>
 </div>
@@ -133,6 +146,11 @@ loadScripts(document, 'script');</script>
 <h3>getName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
+<div class="block">The name of the symbol.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The name of the symbol</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -141,6 +159,11 @@ loadScripts(document, 'script');</script>
 <h3>getType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="Symbol.html" title="type parameter in Symbol">T</a>&gt;</span>&nbsp;<span class="element-name">getType</span>()</div>
+<div class="block">gets the <a href="../types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass"><code>QilletniTypeClass</code></a> of the value.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The type class of the value</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -149,6 +172,11 @@ loadScripts(document, 'script');</script>
 <h3>getValue</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="Symbol.html" title="type parameter in Symbol">T</a></span>&nbsp;<span class="element-name">getValue</span>()</div>
+<div class="block">The value of the symbol. This will never be null.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The value of the symbol</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -157,6 +185,11 @@ loadScripts(document, 'script');</script>
 <h3 id="setValue(is.yarr.qilletni.api.lang.types.QilletniType)">setValue</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setValue</span><wbr><span class="parameters">(<a href="Symbol.html" title="type parameter in Symbol">T</a>&nbsp;value)</span></div>
+<div class="block">Sets the value of the symbol.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>value</code> - The value of the symbol</dd>
+</dl>
 </div>
 </section>
 </li>

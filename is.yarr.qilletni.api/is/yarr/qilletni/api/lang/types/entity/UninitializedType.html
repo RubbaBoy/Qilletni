@@ -87,6 +87,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">UninitializedType</span></div>
+<div class="block">Represents a field/variable in an entity that has not been initialized yet. This simply holds the type of the field,
+ and is not accessible by the user. This is special because Qilletni doesn't allow for uninitialized fields in
+ entities, so this is essentially a placeholder.</div>
 </div>
 </section>
 <section class="summary">
@@ -104,16 +107,24 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getEntityDefinition()" class="member-name-link">getEntityDefinition</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">If the variable is an entity, gets the definition of the entity.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getNativeTypeClass()" class="member-name-link">getNativeTypeClass</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the <a href="../typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass"><code>QilletniTypeClass</code></a> of the variable.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTypeName()" class="member-name-link">getTypeName</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the string name of the variable.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isEntity()" class="member-name-link">isEntity</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if the variable is an entity (and not a native type).</div>
+</div>
 </div>
 </div>
 </div>
@@ -133,6 +144,11 @@ loadScripts(document, 'script');</script>
 <h3>isEntity</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isEntity</span>()</div>
+<div class="block">Checks if the variable is an entity (and not a native type).</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If the variable is an entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -141,6 +157,11 @@ loadScripts(document, 'script');</script>
 <h3>getNativeTypeClass</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getNativeTypeClass</span>()</div>
+<div class="block">Gets the <a href="../typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass"><code>QilletniTypeClass</code></a> of the variable.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The type class of the variable</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -149,6 +170,12 @@ loadScripts(document, 'script');</script>
 <h3>getEntityDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></span>&nbsp;<span class="element-name">getEntityDefinition</span>()</div>
+<div class="block">If the variable is an entity, gets the definition of the entity. This will return null if <a href="#isEntity()"><code>isEntity()</code></a>
+ returns false.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The entity definition</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -157,6 +184,11 @@ loadScripts(document, 'script');</script>
 <h3>getTypeName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getTypeName</span>()</div>
+<div class="block">Gets the string name of the variable.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The type name</dd>
+</dl>
 </div>
 </section>
 </li>

@@ -93,6 +93,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EntityPlaceholderTypeClass</span>
 <span class="extends-implements">extends <a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</span></div>
+<div class="block">A placeholder <a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass"><code>QilletniTypeClass</code></a> for entities that need a type class but are not initialized yet. This is used
+ primarily as the subtype for lists of entities if an entity has not been put in yet.</div>
 </div>
 </section>
 <section class="summary">
@@ -115,7 +117,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(java.lang.String)" class="member-name-link">EntityPlaceholderTypeClass</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;typeName)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Creates a new placeholder type class with the given entity name.</div>
+</div>
 </div>
 </section>
 </li>
@@ -132,19 +136,29 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEntityDefinition()" class="member-name-link">getEntityDefinition</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Unsupported operation.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInternalType()" class="member-name-link">getInternalType</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns <code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a><wbr>&lt;?&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getSubType()" class="member-name-link">getSubType</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Unsupported operation.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTypeName()" class="member-name-link">getTypeName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns the given type name of this entity placeholder.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isNativeType()" class="member-name-link">isNativeType</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Returns <code>false</code>, as this is always not a native type.</div>
+</div>
 </div>
 </div>
 </div>
@@ -170,6 +184,12 @@ loadScripts(document, 'script');</script>
 <h3>EntityPlaceholderTypeClass</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">EntityPlaceholderTypeClass</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;typeName)</span></div>
+<div class="block">Creates a new placeholder type class with the given entity name. This should represent an entity that already
+ exists.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>typeName</code> - The name of the entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -186,9 +206,12 @@ loadScripts(document, 'script');</script>
 <h3>isNativeType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isNativeType</span>()</div>
+<div class="block">Returns <code>false</code>, as this is always not a native type.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="QilletniTypeClass.html#isNativeType()">isNativeType</a></code>&nbsp;in class&nbsp;<code><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd><code>false</code></dd>
 </dl>
 </div>
 </section>
@@ -198,9 +221,12 @@ loadScripts(document, 'script');</script>
 <h3>getInternalType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getInternalType</span>()</div>
+<div class="block">Returns <code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code>.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="QilletniTypeClass.html#getInternalType()">getInternalType</a></code>&nbsp;in class&nbsp;<code><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Class.html" title="class or interface in java.lang" class="external-link">Class</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code></dd>
 </dl>
 </div>
 </section>
@@ -210,9 +236,14 @@ loadScripts(document, 'script');</script>
 <h3>getEntityDefinition</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../entity/EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></span>&nbsp;<span class="element-name">getEntityDefinition</span>()</div>
+<div class="block">Unsupported operation.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="QilletniTypeClass.html#getEntityDefinition()">getEntityDefinition</a></code>&nbsp;in class&nbsp;<code><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>Nothing</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - Always</dd>
 </dl>
 </div>
 </section>
@@ -222,9 +253,12 @@ loadScripts(document, 'script');</script>
 <h3>getTypeName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getTypeName</span>()</div>
+<div class="block">Returns the given type name of this entity placeholder.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="QilletniTypeClass.html#getTypeName()">getTypeName</a></code>&nbsp;in class&nbsp;<code><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>The given type name</dd>
 </dl>
 </div>
 </section>
@@ -234,9 +268,14 @@ loadScripts(document, 'script');</script>
 <h3>getSubType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;?&gt;</span>&nbsp;<span class="element-name">getSubType</span>()</div>
+<div class="block">Unsupported operation.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="QilletniTypeClass.html#getSubType()">getSubType</a></code>&nbsp;in class&nbsp;<code><a href="QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;<a href="../EntityType.html" title="interface in is.yarr.qilletni.api.lang.types">EntityType</a>&gt;</code></dd>
+<dt>Returns:</dt>
+<dd>Nothing</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/UnsupportedOperationException.html" title="class or interface in java.lang" class="external-link">UnsupportedOperationException</a></code> - Always</dd>
 </dl>
 </div>
 </section>

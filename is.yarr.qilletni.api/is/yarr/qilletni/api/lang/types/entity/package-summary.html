@@ -84,21 +84,26 @@ loadScripts(document, 'script');</script>
 </li>
 <li>
 <div id="class-summary">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="class-summary-tab0" role="tab" aria-selected="true" aria-controls="class-summary.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary', 2)" class="active-table-tab">All Classes and Interfaces</button><button id="class-summary-tab1" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab1', 2)" class="table-tab">Interfaces</button><button id="class-summary-tab4" role="tab" aria-selected="false" aria-controls="class-summary.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('class-summary', 'class-summary-tab4', 2)" class="table-tab">Record Classes</button></div>
-<div id="class-summary.tabpanel" role="tabpanel">
-<div class="summary-table two-column-summary" aria-labelledby="class-summary-tab0">
+<div class="caption"><span>Interfaces</span></div>
+<div class="summary-table two-column-summary">
 <div class="table-header col-first">Class</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab1"><a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab4"><a href="EntityDefinition.FunctionPopulator.html" title="class in is.yarr.qilletni.api.lang.types.entity">EntityDefinition.FunctionPopulator</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab4">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="EntityInitializer.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityInitializer</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab1">&nbsp;</div>
-<div class="col-first even-row-color class-summary class-summary-tab1"><a href="UninitializedType.html" title="interface in is.yarr.qilletni.api.lang.types.entity">UninitializedType</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab1">&nbsp;</div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">Defines an entity and its properties, functions, etc.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">A global manager for the definitions of entities, checking if they exist, and dynamically creating them.</div>
+</div>
+<div class="col-first even-row-color class-summary class-summary-tab1"><a href="EntityInitializer.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityInitializer</a></div>
+<div class="col-last even-row-color class-summary class-summary-tab1">
+<div class="block">A global class to initialize entities, similar to <a href="EntityDefinition.html#createInstance(is.yarr.qilletni.api.lang.types.QilletniType...)"><code>EntityDefinition.createInstance(QilletniType...)</code></a>, but with
+ more options such as auto conversion and lookup.</div>
+</div>
+<div class="col-first odd-row-color class-summary class-summary-tab1"><a href="UninitializedType.html" title="interface in is.yarr.qilletni.api.lang.types.entity">UninitializedType</a></div>
+<div class="col-last odd-row-color class-summary class-summary-tab1">
+<div class="block">Represents a field/variable in an entity that has not been initialized yet.</div>
 </div>
 </div>
 </div>

@@ -97,6 +97,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">WeightTrackType</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a>&gt;</span></div>
+<div class="block">The source of a <a href="WeightEntry.html" title="interface in is.yarr.qilletni.api.lang.types.weights"><code>WeightEntry</code></a>.</div>
 </div>
 </section>
 <section class="summary">
@@ -119,17 +120,32 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#COLLECTION" class="member-name-link">COLLECTION</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The weight entry is a collection, and when the weight is chosen, it will follow the ordering rules of the
+ collection.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#FUNCTION" class="member-name-link">FUNCTION</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The weight entry is a function, and will be evaluated when the weight entry is picked.</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#LIST" class="member-name-link">LIST</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The weight entry is a list of tracks, and will choose a random track from the list when the weight entry is
+ picked.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#PLAYLIST" class="member-name-link">PLAYLIST</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The weight entry is a <a href="../../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a>, and will choose a random track from the
+ playlist when the weight entry is picked.</div>
+</div>
 <div class="col-first even-row-color"><code><a href="#SINGLE_TRACK" class="member-name-link">SINGLE_TRACK</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The weight entry is a single track.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#WEIGHTS" class="member-name-link">WEIGHTS</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The weight entry is another set of weights, allowing for nested weights.</div>
+</div>
 </div>
 </section>
 </li>
@@ -180,6 +196,7 @@ the order they are declared.</div>
 <h3>SINGLE_TRACK</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">SINGLE_TRACK</span></div>
+<div class="block">The weight entry is a single track.</div>
 </div>
 </section>
 </li>
@@ -188,6 +205,8 @@ the order they are declared.</div>
 <h3>LIST</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">LIST</span></div>
+<div class="block">The weight entry is a list of tracks, and will choose a random track from the list when the weight entry is
+ picked.</div>
 </div>
 </section>
 </li>
@@ -196,6 +215,8 @@ the order they are declared.</div>
 <h3>COLLECTION</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">COLLECTION</span></div>
+<div class="block">The weight entry is a collection, and when the weight is chosen, it will follow the ordering rules of the
+ collection. See the <a href="https://qilletni.yarr.is/language/types/built_in_types/#collection-weights">Collection Weights</a> docs for more info.</div>
 </div>
 </section>
 </li>
@@ -204,6 +225,7 @@ the order they are declared.</div>
 <h3>WEIGHTS</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">WEIGHTS</span></div>
+<div class="block">The weight entry is another set of weights, allowing for nested weights. See the <a href="https://qilletni.yarr.is/language/types/built_in_types/#nested-weights">Nested Weights</a> docs for more info.</div>
 </div>
 </section>
 </li>
@@ -212,6 +234,8 @@ the order they are declared.</div>
 <h3>PLAYLIST</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">PLAYLIST</span></div>
+<div class="block">The weight entry is a <a href="../../../music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a>, and will choose a random track from the
+ playlist when the weight entry is picked.</div>
 </div>
 </section>
 </li>
@@ -220,6 +244,8 @@ the order they are declared.</div>
 <h3>FUNCTION</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">FUNCTION</span></div>
+<div class="block">The weight entry is a function, and will be evaluated when the weight entry is picked. The function should
+ always supply a track. See the <a href="https://qilletni.yarr.is/language/types/built_in_types/#function-call-weights">Function Call Weights</a> docs for more info.</div>
 </div>
 </section>
 </li>

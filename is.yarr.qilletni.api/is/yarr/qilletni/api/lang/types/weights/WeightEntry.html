@@ -92,6 +92,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">WeightEntry</span><span class="extends-implements">
 extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in is.yarr.qilletni.api.music.supplier">TrackSupplier</a></span></div>
+<div class="block">Represents a line in a <code>weights</code> expression. Each entry is something that can supply a track, as it
+ implements <a href="../../../music/supplier/TrackSupplier.html" title="interface in is.yarr.qilletni.api.music.supplier"><code>TrackSupplier</code></a>. This also holds additional options for the weight, such as the amount and unit.
+ Weight entries all begin with a separator, either <code>|</code> <code>|!</code> or <code>|~</code>, each providing
+ different behavior. See the <a href="https://qilletni.yarr.is/language/types/built_in_types/#weight-separators">Weight Separator</a> docs for more info.</div>
 </div>
 </section>
 <section class="summary">
@@ -109,34 +113,54 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCanRepeatTrack()" class="member-name-link">getCanRepeatTrack</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets if the weight entry can repeat tracks.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCanRepeatWeight()" class="member-name-link">getCanRepeatWeight</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets if the weight entry can repeat if chosen twice in a row while playing a collection.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackStringValue()" class="member-name-link">getTrackStringValue</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a string representation of the track supplier.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackType()" class="member-name-link">getTrackType</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets what supplier the weight entry uses, in the form of the <a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights"><code>WeightTrackType</code></a>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>double</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getWeightAmount()" class="member-name-link">getWeightAmount</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the amount of weight for this entry.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getWeightUnit()" class="member-name-link">getWeightUnit</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the unit this weight entry was assigned, through the syntax of <code>12x</code> or <code>12%</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setCanRepeat(boolean)" class="member-name-link">setCanRepeat</a><wbr>(boolean&nbsp;canRepeatTrack)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">If the weight unit can repeat tracks.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setCanRepeatWeight(boolean)" class="member-name-link">setCanRepeatWeight</a><wbr>(boolean&nbsp;canRepeatWeight)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets if the weight entry can repeat if chosen twice in a row while playing a collection.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setWeightAmount(double)" class="member-name-link">setWeightAmount</a><wbr>(double&nbsp;weightAmount)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the weight amount from <a href="#getWeightAmount()"><code>getWeightAmount()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#setWeightUnit(is.yarr.qilletni.api.lang.types.weights.WeightUnit)" class="member-name-link">setWeightUnit</a><wbr>(<a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a>&nbsp;weightUnit)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Sets the weight unit from <a href="#getWeightUnit()"><code>getWeightUnit()</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -159,6 +183,13 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>getWeightAmount</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">double</span>&nbsp;<span class="element-name">getWeightAmount</span>()</div>
+<div class="block">Gets the amount of weight for this entry. This pairs with the unit from <a href="#getWeightUnit()"><code>getWeightUnit()</code></a>. If the unit is
+ <a href="WeightUnit.html#MULTIPLIER"><code>WeightUnit.MULTIPLIER</code></a>, the track will be played this many times more than normal in the collection. If it
+ is a <a href="WeightUnit.html#PERCENT"><code>WeightUnit.PERCENT</code></a>, it will play the track this number of percent of times any track is played.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The weight amount</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -167,6 +198,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>setWeightAmount</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setWeightAmount</span><wbr><span class="parameters">(double&nbsp;weightAmount)</span></div>
+<div class="block">Sets the weight amount from <a href="#getWeightAmount()"><code>getWeightAmount()</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>weightAmount</code> - The amount to set the weight to</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -175,6 +211,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>getWeightUnit</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></span>&nbsp;<span class="element-name">getWeightUnit</span>()</div>
+<div class="block">Gets the unit this weight entry was assigned, through the syntax of <code>12x</code> or <code>12%</code>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The unit of the weight entry</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -183,6 +224,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>setWeightUnit</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setWeightUnit</span><wbr><span class="parameters">(<a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a>&nbsp;weightUnit)</span></div>
+<div class="block">Sets the weight unit from <a href="#getWeightUnit()"><code>getWeightUnit()</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>weightUnit</code> - The unit of the weight entry</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -191,6 +237,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>setCanRepeat</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setCanRepeat</span><wbr><span class="parameters">(boolean&nbsp;canRepeatTrack)</span></div>
+<div class="block">If the weight unit can repeat tracks. This is true if the separator used is <code>|!</code></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>canRepeatTrack</code> - If the track can be repeated</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -199,6 +250,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>getCanRepeatTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">getCanRepeatTrack</span>()</div>
+<div class="block">Gets if the weight entry can repeat tracks. This is true if the separator used is <code>|!</code></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If the track can be repeated</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -207,6 +263,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>setCanRepeatWeight</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">setCanRepeatWeight</span><wbr><span class="parameters">(boolean&nbsp;canRepeatWeight)</span></div>
+<div class="block">Sets if the weight entry can repeat if chosen twice in a row while playing a collection. This is true if the separator used is <code>|</code> or <code>|!</code></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>canRepeatWeight</code> - If the weight entry can be repeated</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -215,6 +276,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>getCanRepeatWeight</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">getCanRepeatWeight</span>()</div>
+<div class="block">Gets if the weight entry can repeat if chosen twice in a row while playing a collection. This is true if the separator used is <code>|</code> or <code>|!</code></div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>If the weight entry can be repeated</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -223,6 +289,11 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>getTrackType</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightTrackType</a></span>&nbsp;<span class="element-name">getTrackType</span>()</div>
+<div class="block">Gets what supplier the weight entry uses, in the form of the <a href="WeightTrackType.html" title="enum class in is.yarr.qilletni.api.lang.types.weights"><code>WeightTrackType</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The type of track supplier</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -231,6 +302,12 @@ extends <a href="../../../music/supplier/TrackSupplier.html" title="interface in
 <h3>getTrackStringValue</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getTrackStringValue</span>()</div>
+<div class="block">Gets a string representation of the track supplier. This is typically only used for logging or display purposes.
+ It may not include all information about the track supplier.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>A string representation of the track supplier</dd>
+</dl>
 </div>
 </section>
 </li>

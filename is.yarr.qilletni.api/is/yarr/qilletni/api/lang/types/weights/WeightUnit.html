@@ -97,6 +97,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public enum </span><span class="element-name type-name-label">WeightUnit</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Enum.html" title="class or interface in java.lang" class="external-link">Enum</a>&lt;<a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a>&gt;</span></div>
+<div class="block">The unit of a <a href="WeightEntry.html" title="interface in is.yarr.qilletni.api.lang.types.weights"><code>WeightEntry</code></a>, which helps determine how the weight is calculated. This unit is associated with
+ a number also in the weight entry.</div>
 </div>
 </section>
 <section class="summary">
@@ -119,9 +121,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Enum Constant</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="#MULTIPLIER" class="member-name-link">MULTIPLIER</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The weight, which must represent a track, will show up a given number of times in the collection playing the
+ weights, then played or shuffled as normal.</div>
+</div>
 <div class="col-first odd-row-color"><code><a href="#PERCENT" class="member-name-link">PERCENT</a></code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">The weight will be chosen a given percent of time every song is chosen from the collection playing the weight.</div>
+</div>
 </div>
 </section>
 </li>
@@ -138,10 +145,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#fromSymbol(java.lang.String)" class="member-name-link">fromSymbol</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Gets the <a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights"><code>WeightUnit</code></a> that would be returned by <a href="#getStringUnit()"><code>getStringUnit()</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getStringUnit()" class="member-name-link">getStringUnit</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the string after the number of the weight unit, either <code>"%"</code> or <code>"x"</code>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#valueOf(java.lang.String)" class="member-name-link">valueOf</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -178,6 +189,9 @@ the order they are declared.</div>
 <h3>PERCENT</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></span>&nbsp;<span class="element-name">PERCENT</span></div>
+<div class="block">The weight will be chosen a given percent of time every song is chosen from the collection playing the weight.
+ If all the weight entries in a <code>weights</code> expression have this unit, the percent must add up to exactly
+ 100%.</div>
 </div>
 </section>
 </li>
@@ -186,6 +200,9 @@ the order they are declared.</div>
 <h3>MULTIPLIER</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></span>&nbsp;<span class="element-name">MULTIPLIER</span></div>
+<div class="block">The weight, which must represent a track, will show up a given number of times in the collection playing the
+ weights, then played or shuffled as normal. This simply lets a track be played more often in a playlist than it
+ usually would.</div>
 </div>
 </section>
 </li>
@@ -237,6 +254,11 @@ not permitted.)</div>
 <h3>getStringUnit</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getStringUnit</span>()</div>
+<div class="block">Gets the string after the number of the weight unit, either <code>"%"</code> or <code>"x"</code>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The string unit of the weight</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -245,6 +267,14 @@ not permitted.)</div>
 <h3>fromSymbol</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights">WeightUnit</a></span>&nbsp;<span class="element-name">fromSymbol</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
+<div class="block">Gets the <a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights"><code>WeightUnit</code></a> that would be returned by <a href="#getStringUnit()"><code>getStringUnit()</code></a>. An exception is thrown if it is
+ not either <code>"%"</code> or <code>"x"</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>text</code> - The string unit of the weight, either <code>"%"</code> or <code>"x"</code></dd>
+<dt>Returns:</dt>
+<dd>The <a href="WeightUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.weights"><code>WeightUnit</code></a> found</dd>
+</dl>
 </div>
 </section>
 </li>

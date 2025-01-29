@@ -87,6 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">EntityDefinitionManager</span></div>
+<div class="block">A global manager for the definitions of entities, checking if they exist, and dynamically creating them.</div>
 </div>
 </section>
 <section class="summary">
@@ -104,13 +105,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#defineEntity(is.yarr.qilletni.api.lang.types.entity.EntityDefinition)" class="member-name-link">defineEntity</a><wbr>(<a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a>&nbsp;entityDefinition)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Adds an entity definition to the manager, allowing it to be created and used.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#isDefined(java.lang.String)" class="member-name-link">isDefined</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;entityType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Checks if an entity of the given name is defined.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#lookup(java.lang.String)" class="member-name-link">lookup</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;entityType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Looks up the definition of a given entity name.</div>
+</div>
 </div>
 </div>
 </div>
@@ -130,6 +137,13 @@ loadScripts(document, 'script');</script>
 <h3>isDefined</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">boolean</span>&nbsp;<span class="element-name">isDefined</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;entityType)</span></div>
+<div class="block">Checks if an entity of the given name is defined.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityType</code> - The name of the entity</dd>
+<dt>Returns:</dt>
+<dd>If the entity is defined</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -138,6 +152,14 @@ loadScripts(document, 'script');</script>
 <h3>lookup</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a></span>&nbsp;<span class="element-name">lookup</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;entityType)</span></div>
+<div class="block">Looks up the definition of a given entity name. <a href="#isDefined(java.lang.String)"><code>isDefined(String)</code></a> must return <code>true</code> for
+ this to not throw an error.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityType</code> - The name of the entity</dd>
+<dt>Returns:</dt>
+<dd>The definition of the entity</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -146,6 +168,11 @@ loadScripts(document, 'script');</script>
 <h3>defineEntity</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">defineEntity</span><wbr><span class="parameters">(<a href="EntityDefinition.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinition</a>&nbsp;entityDefinition)</span></div>
+<div class="block">Adds an entity definition to the manager, allowing it to be created and used.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>entityDefinition</code> - The definition of the entity to add</dd>
+</dl>
 </div>
 </section>
 </li>

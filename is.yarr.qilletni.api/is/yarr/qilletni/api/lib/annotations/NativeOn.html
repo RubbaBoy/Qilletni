@@ -85,6 +85,16 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/annotation/Retention.html" title="class or interface in java.lang.annotation" class="external-link">@Retention</a>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/annotation/RetentionPolicy.html#RUNTIME" title="class or interface in java.lang.annotation" class="external-link">RUNTIME</a>)
 <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/annotation/Target.html" title="class or interface in java.lang.annotation" class="external-link">@Target</a>({<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/annotation/ElementType.html#METHOD" title="class or interface in java.lang.annotation" class="external-link">METHOD</a>,<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/annotation/ElementType.html#TYPE" title="class or interface in java.lang.annotation" class="external-link">TYPE</a>})
 </span><span class="modifiers">public @interface </span><span class="element-name type-name-label">NativeOn</span></div>
+<div class="block">An annotation placed on methods or classes to specify that the method (or containing methods, if on a class) are
+ extension methods on a specific Qilletni type.</div>
+<dl class="notes">
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><a href="https://qilletni.yarr.is/native_binding/native_functions/#native-entity-functions">Native Entity Functions</a> in Qilletni docs</li>
+</ul>
+</dd>
+</dl>
 </div>
 </section>
 <section class="summary">
@@ -100,7 +110,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color"><code><a href="#value()" class="member-name-link">value</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The name of the type that this method is an extension method on.</div>
+</div>
 </div>
 </section>
 </li>
@@ -118,6 +130,12 @@ loadScripts(document, 'script');</script>
 <h3>value</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">value</span></div>
+<div class="block">The name of the type that this method is an extension method on. This may either be a native type or an entity
+ name.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The name of the type this is an extension method on</dd>
+</dl>
 </div>
 </section>
 </li>
