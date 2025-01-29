@@ -1521,9 +1521,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         // We don't have the actual QilletniTypeClass for the entity yet, so use a placeholder type
         var onType = QilletniTypeClass.createEntityTypePlaceholder(entityName);
         
-        List<EntityDefinition.FunctionPopulator> functionPopulators = ctx.function_def()
+        List<FunctionPopulator> functionPopulators = ctx.function_def()
                 .stream()
-                .map(functionDef -> new EntityDefinition.FunctionPopulator(functionDef.STATIC() != null,
+                .map(functionDef -> new FunctionPopulator(functionDef.STATIC() != null,
                         (Scope scope) -> scopedVisitEntityFunctionDef(scope, functionDef, onType)))
                 .toList();
 

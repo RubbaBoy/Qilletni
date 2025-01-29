@@ -48,12 +48,12 @@ public class EntityDefinitionImpl implements EntityDefinition {
     /**
      * Consumes the entity's scope and populates it with a function each, that belong to the entity instance.
      */
-    private final List<EntityDefinition.FunctionPopulator> entityFunctionPopulators;
+    private final List<FunctionPopulator> entityFunctionPopulators;
     private final Scope parentScope;
     
     private final QilletniTypeClass<EntityType> qilletniTypeClass;
 
-    public EntityDefinitionImpl(FunctionInvoker functionInvoker, String typeName, Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> uninitializedParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
+    public EntityDefinitionImpl(FunctionInvoker functionInvoker, String typeName, Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> uninitializedParams, List<FunctionPopulator> entityFunctionPopulators, Scope parentScope) {
         this.functionInvoker = functionInvoker;
         this.typeName = typeName;
         this.qilletniTypeClass = new QilletniTypeClass<>(this, typeName);

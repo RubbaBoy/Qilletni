@@ -9,12 +9,26 @@ import java.util.Optional;
 public class ComparableVersion extends Version {
 
     private final RangeSpecifier rangeSpecifier;
-    
+
+    /**
+     * Creates a new {@link ComparableVersion} with the given major, minor, and patch versions, and a range specifier.
+     * 
+     * @param major The major version
+     * @param minor The minor version
+     * @param patch The patch version
+     * @param rangeSpecifier The range specifier for the version
+     */
     public ComparableVersion(int major, int minor, int patch, RangeSpecifier rangeSpecifier) {
         super(major, minor, patch);
         this.rangeSpecifier = rangeSpecifier;
     }
-    
+
+    /**
+     * Creates a new {@link ComparableVersion} with the given {@link Version} and range specifier.
+     * 
+     * @param version The version to use, specifying the major, minor, and patch versions
+     * @param rangeSpecifier The range specifier for the version
+     */
     public ComparableVersion(Version version, RangeSpecifier rangeSpecifier) {
         this(version.major(), version.minor(), version.patch(), rangeSpecifier);
     }
@@ -53,6 +67,9 @@ public class ComparableVersion extends Version {
         return rangeSpecifier.permitsVersion(this, checkVersion);
     }
 
+    /**
+     * Specifies how a version may be matched with other versions.
+     */
     public enum RangeSpecifier {
         /**
          * Permits newer minor and match versions, so the {@code x} of {@code 1.x.x}.

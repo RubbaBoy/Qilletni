@@ -3,6 +3,9 @@ package is.yarr.qilletni.api.lang.types.weights;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
 import is.yarr.qilletni.api.lang.types.WeightsType;
 
+/**
+ * Utilities to assist in weight selection.
+ */
 public class WeightUtils {
 
     /**

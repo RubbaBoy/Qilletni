@@ -10,5 +10,5 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public record EntityAttributes(Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> constructorParams, List<EntityDefinition.FunctionPopulator> entityFunctionPopulators) {
+public record EntityAttributes(Map<String, Supplier<QilletniType>> properties, Map<String, UninitializedType> constructorParams, List<FunctionPopulator> entityFunctionPopulators) {
 }

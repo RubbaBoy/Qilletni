@@ -20,9 +20,14 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinition;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents the class of a QilletniType, used for type checking and conversion. This is conceptually comparable to a
+ * {@link Class} in Java. An entity
+ * 
+ * @param <T> The {@link QilletniType} this type class represents
+ */
 public class QilletniTypeClass<T extends QilletniType> {
     
-    // ANY is only used for list types?   TODO: still true?
     public static final QilletniTypeClass<AnyType> ANY = new QilletniTypeClass<>(AnyType.class, "any");
     public static final QilletniTypeClass<IntType> INT = new QilletniTypeClass<>(IntType.class, "int");
     public static final QilletniTypeClass<DoubleType> DOUBLE = new QilletniTypeClass<>(DoubleType.class, "double");
@@ -52,28 +57,34 @@ public class QilletniTypeClass<T extends QilletniType> {
     private final String typeName;
     private final QilletniTypeClass<?> subType;
 
-    public QilletniTypeClass(Class<?> internalType, String typeName) {
+    private QilletniTypeClass(Class<?> internalType, String typeName) {
         this(internalType, typeName, null);
     }
 
-    public QilletniTypeClass(Class<?> internalType, String typeName, QilletniTypeClass<?> subType) {
+    private QilletniTypeClass(Class<?> internalType, String typeName, QilletniTypeClass<?> subType) {
         this.internalType = internalType;
         this.typeName = typeName;
         this.subType = subType;
         this.entityDefinition = null;
     }
 
-    public QilletniTypeClass(EntityDefinition entityDefinition, String typeName) {
+    QilletniTypeClass(EntityDefinition entityDefinition, String typeName) {
         this(entityDefinition, typeName, null);
     }
 
-    public QilletniTypeClass(EntityDefinition entityDefinition, String typeName, QilletniTypeClass<?> subType) {
+    private QilletniTypeClass(EntityDefinition entityDefinition, String typeName, QilletniTypeClass<?> subType) {
         this.typeName = typeName;
         this.subType = subType;
         this.internalType = EntityType.class;
         this.entityDefinition = entityDefinition;
     }
-    
+
+    /**
+     * Creates a {@link QilletniTypeClass} for a list of the given type.
+     * 
+     * @param subType The subtype of the list, aka what type the list contains
+     * @return The created {@link QilletniTypeClass}
+     */
     public static QilletniTypeClass<ListType> createListOfType(QilletniTypeClass<?> subType) {
         return new QilletniTypeClass<>(ListType.class, "list", subType);
     }
@@ -87,31 +98,68 @@ public class QilletniTypeClass<T extends QilletniType> {
     public static QilletniTypeClass<EntityType> createEntityTypePlaceholder(String entityName) {
         return new EntityPlaceholderTypeClass(entityName);
     }
-    
+
+    /**
+     * If this type class is native to Qilletni. This is true if this does not represent an entity.
+     * 
+     * @return If the type is native to Qilletni
+     */
     public boolean isNativeType() {
         return entityDefinition == null;
     }
 
+    /**
+     * Gets the internal type of the type class, as {@param T}.
+     * 
+     * @return The class of the type
+     */
     public Class<?> getInternalType() {
         return internalType;
     }
-    
+
+    /**
+     * Checks if the internal type of this type class is assignable from the given type class. For example, if this is
+     * {@link QilletniTypeClass#INT} and the given type is {@link QilletniTypeClass#ANY}, this would return <code>true</code>.
+     * 
+     * @param type The type to check
+     * @return If this type is assignable from the given type
+     */
     public boolean isAssignableFrom(QilletniTypeClass<?> type) {
         return internalType.isAssignableFrom(type.getInternalType());
     }
 
+    /**
+     * Gets the {@link EntityDefinition} if this is not a native type (via {@link #isNativeType()}).
+     * 
+     * @return The definition of the entity, or null if this is a native type
+     */
     public EntityDefinition getEntityDefinition() {
         return entityDefinition;
     }
 
+    /**
+     * Gets the string representation of the type. If this is an entity, it will be the entity's name.
+     * 
+     * @return The name of the type
+     */
     public String getTypeName() {
         return typeName;
     }
 
+    /**
+     * If the type contains a subtype, such as a list, this returns it.
+     * 
+     * @return The subtype of the type, or null if there is none
+     */
     public QilletniTypeClass<?> getSubType() {
         return subType;
     }
-    
+
+    /**
+     * Gets all {@link QilletniTypeClass}es that are native to Qilletni.
+     * 
+     * @return All native types
+     */
     public static List<QilletniTypeClass<?>> types() {
         return types;
     }

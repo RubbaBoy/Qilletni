@@ -6,6 +6,9 @@ import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 
 import java.util.List;
 
+/**
+ * A global class to initialize lists, both from {@link QilletniType}s and native Java types.
+ */
 public interface ListInitializer {
 
     /**
