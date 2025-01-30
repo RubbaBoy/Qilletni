@@ -14,7 +14,7 @@ on:
           - Spotify Library
 
 jobs:
-  publish-a:
+  publish-implementation:
     if: ${{ github.event.inputs.target_project == 'Implementation' }}
     runs-on: ubuntu-latest
     # Concurrency key ensures that only one job in this group can run at a time
@@ -34,9 +34,10 @@ jobs:
 
       - name: Publish Qilletni Implementation
         run: ./gradlew :publish
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish-b:
+  publish-api:
     if: ${{ github.event.inputs.target_project == 'API' }}
     runs-on: ubuntu-latest
     concurrency:
@@ -55,9 +56,10 @@ jobs:
 
       - name: Publish Qilletni API
         run: ./gradlew :qilletni-api:publish
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish-c:
+  publish-lib-std:
     if: ${{ github.event.inputs.target_project == 'Standard Library' }}
     runs-on: ubuntu-latest
     concurrency:
@@ -76,9 +78,10 @@ jobs:
 
       - name: Publish Standard Library
         run: ./gradlew :qilletni-lib-std:publish
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  publish-d:
+  publish-spotify:
     if: ${{ github.event.inputs.target_project == 'Spotify Library' }}
     runs-on: ubuntu-latest
     concurrency:
@@ -97,4 +100,5 @@ jobs:
 
       - name: Publish Spotify Library
         run: ./gradlew :qilletni-spotify:publish
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
