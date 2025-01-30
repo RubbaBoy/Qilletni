@@ -323,13 +323,17 @@ loadScripts(document, 'script');</script>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#define(is.yarr.qilletni.api.lang.table.Symbol)" class="member-name-link">define(Symbol&lt;T&gt;)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Defines the given symbol this scope.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/EntityDefinitionManager.html#defineEntity(is.yarr.qilletni.api.lang.types.entity.EntityDefinition)" class="member-name-link">defineEntity(EntityDefinition)</a> - Method in interface is.yarr.qilletni.api.lang.types.entity.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a></dt>
 <dd>
 <div class="block">Adds an entity definition to the manager, allowing it to be created and used.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#defineFunction(is.yarr.qilletni.api.lang.table.Symbol)" class="member-name-link">defineFunction(Symbol&lt;FunctionType&gt;)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Defines the given function in this scope.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lib/qll/QilletniInfoData.html#dependencies()" class="member-name-link">dependencies()</a> - Method in record class is.yarr.qilletni.api.lib.qll.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lib/qll/QilletniInfoData.html" title="class in is.yarr.qilletni.api.lib.qll">QilletniInfoData</a></dt>
 <dd>
 <div class="block">Returns the value of the <a href="./is.yarr.qilletni.api/is/yarr/qilletni/api/lib/qll/QilletniInfoData.html#param-dependencies"><code>dependencies</code></a> record component.</div>
@@ -792,7 +796,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets all available scopes, both used and unused.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#getAllSymbols()" class="member-name-link">getAllSymbols()</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets all symbols in the current scope, as a map of names and values.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/TrackSupplier.html#getAllTracks()" class="member-name-link">getAllTracks()</a> - Method in interface is.yarr.qilletni.api.music.supplier.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/TrackSupplier.html" title="interface in is.yarr.qilletni.api.music.supplier">TrackSupplier</a></dt>
 <dd>
 <div class="block">Gets all possible <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/Track.html" title="interface in is.yarr.qilletni.api.music"><code>Track</code></a> values from the supplier.</div>
@@ -858,7 +864,9 @@ loadScripts(document, 'script');</script>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/DynamicProvider.html#getCurrentProvider()" class="member-name-link">getCurrentProvider()</a> - Method in interface is.yarr.qilletni.api.music.supplier.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/DynamicProvider.html" title="interface in is.yarr.qilletni.api.music.supplier">DynamicProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#getDebugDesc()" class="member-name-link">getDebugDesc()</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets a unique readable name of the scope, for debugging purposes.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/FunctionType.html#getDefinedParamCount()" class="member-name-link">getDefinedParamCount()</a> - Method in interface is.yarr.qilletni.api.lang.types.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/FunctionType.html" title="interface in is.yarr.qilletni.api.lang.types">FunctionType</a></dt>
 <dd>
 <div class="block">Gets the number of parameters the function is defined with.</div>
@@ -1014,7 +1022,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Gets the defined parameters of a function, including the first param if <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/FunctionType.html#getOnType()"><code>FunctionType.getOnType()</code></a> is not null.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#getParent()" class="member-name-link">getParent()</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets the parent scope, if any.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/CollectionType.html#getPlaylist()" class="member-name-link">getPlaylist()</a> - Method in interface is.yarr.qilletni.api.lang.types.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/CollectionType.html" title="interface in is.yarr.qilletni.api.lang.types">CollectionType</a></dt>
 <dd>
 <div class="block">Gets the current <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/Playlist.html" title="interface in is.yarr.qilletni.api.music"><code>Playlist</code></a> instance associated with the current collection for the current service
@@ -1045,7 +1055,9 @@ loadScripts(document, 'script');</script>
 <div class="block">The <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table"><code>Scope</code></a> of the imported file.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#getScopeType()" class="member-name-link">getScopeType()</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Gets the type of the scope, meaning how it is used or defined.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/orchestration/CollectionState.html#getSequentialIndex()" class="member-name-link">getSequentialIndex()</a> - Method in interface is.yarr.qilletni.api.music.orchestration.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/orchestration/CollectionState.html" title="interface in is.yarr.qilletni.api.music.orchestration">CollectionState</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/Album.html#getServiceProvider()" class="member-name-link">getServiceProvider()</a> - Method in interface is.yarr.qilletni.api.music.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/Album.html" title="interface in is.yarr.qilletni.api.music">Album</a></dt>
@@ -1550,13 +1562,17 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if the internal type of this type class is assignable from the given type class.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#isDefined(java.lang.String)" class="member-name-link">isDefined(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Checks if the given symbol name is defined in this scope or any applicable parent scopes.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/EntityDefinitionManager.html#isDefined(java.lang.String)" class="member-name-link">isDefined(String)</a> - Method in interface is.yarr.qilletni.api.lang.types.entity.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a></dt>
 <dd>
 <div class="block">Checks if an entity of the given name is defined.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#isDirectlyDefined(java.lang.String)" class="member-name-link">isDirectlyDefined(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Checks if the given symbol name is defined in this direct scope.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/UninitializedType.html#isEntity()" class="member-name-link">isEntity()</a> - Method in interface is.yarr.qilletni.api.lang.types.entity.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/UninitializedType.html" title="interface in is.yarr.qilletni.api.lang.types.entity">UninitializedType</a></dt>
 <dd>
 <div class="block">Checks if the variable is an entity (and not a native type).</div>
@@ -1566,7 +1582,9 @@ loadScripts(document, 'script');</script>
 <div class="block">If the function was defined outside of an entity.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#isFunctionDefined(java.lang.String)" class="member-name-link">isFunctionDefined(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Checks if the given function name is defined in this scope or any applicable parent scopes.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/TrackSupplier.html#isInconsistent()" class="member-name-link">isInconsistent()</a> - Method in interface is.yarr.qilletni.api.music.supplier.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/TrackSupplier.html" title="interface in is.yarr.qilletni.api.music.supplier">TrackSupplier</a></dt>
 <dd>
 <div class="block">If the <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/Track.html" title="interface in is.yarr.qilletni.api.music"><code>Track</code></a> returned via <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/music/supplier/TrackSupplier.html#getTrack()"><code>TrackSupplier.getTrack()</code></a> is inconsistent, meaning it may change.</div>
@@ -1690,19 +1708,30 @@ loadScripts(document, 'script');</script>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.ScopeType.html#LOCAL" class="member-name-link">LOCAL</a> - Enum constant in enum class is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.ScopeType.html" title="enum class in is.yarr.qilletni.api.lang.table">Scope.ScopeType</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#lookup(java.lang.String)" class="member-name-link">lookup(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Looks up a symbol or function in the current scope and any parents by name.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/EntityDefinitionManager.html#lookup(java.lang.String)" class="member-name-link">lookup(String)</a> - Method in interface is.yarr.qilletni.api.lang.types.entity.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/entity/EntityDefinitionManager.html" title="interface in is.yarr.qilletni.api.lang.types.entity">EntityDefinitionManager</a></dt>
 <dd>
 <div class="block">Looks up the definition of a given entity name.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#lookupFunction(java.lang.String)" class="member-name-link">lookupFunction(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Looks up all functions with the given name.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#lookupFunction(java.lang.String,int)" class="member-name-link">lookupFunction(String, int)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Looks up a function with a given name and number of parameters.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#lookupFunction(java.lang.String,int,is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass)" class="member-name-link">lookupFunction(String, int, QilletniTypeClass&lt;?&gt;)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Looks up a function with a given name and number of parameters, that is on a type (either defined in an entity
+ or is an extension method).</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#lookupFunctionOptionally(java.lang.String,int,is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass)" class="member-name-link">lookupFunctionOptionally(String, int, QilletniTypeClass&lt;?&gt;)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Looks up a function with a given name and number of parameters.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:M">M</h2>
 <dl class="index">
@@ -2027,6 +2056,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Represents the class of a QilletniType, used for type checking and conversion.</div>
 </dd>
+<dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/typeclass/QilletniTypeClass.html#%3Cinit%3E(is.yarr.qilletni.api.lang.types.entity.EntityDefinition,java.lang.String)" class="member-name-link">QilletniTypeClass(EntityDefinition, String)</a> - Constructor for class is.yarr.qilletni.api.lang.types.typeclass.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/typeclass/QilletniTypeClass.html#%3Cinit%3E(is.yarr.qilletni.api.lang.types.entity.EntityDefinition,java.lang.String,is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass)" class="member-name-link">QilletniTypeClass(EntityDefinition, String, QilletniTypeClass&lt;?&gt;)</a> - Constructor for class is.yarr.qilletni.api.lang.types.typeclass.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lib/qll/QllInfo.html" class="type-name-link" title="class in is.yarr.qilletni.api.lib.qll">QllInfo</a> - Record Class in <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lib/qll/package-summary.html">is.yarr.qilletni.api.lib.qll</a></dt>
 <dd>
 <div class="block">A record of a JSON file in a .qll that holds metadata about it.</div>
@@ -2066,9 +2099,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Save the configuration to the file system.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" class="type-name-link" title="interface in is.yarr.qilletni.api.lang.table">Scope</a> - Interface in <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/package-summary.html">is.yarr.qilletni.api.lang.table</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Represents a scope in the Qilletni type system.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.ScopeType.html" class="type-name-link" title="enum class in is.yarr.qilletni.api.lang.table">Scope.ScopeType</a> - Enum Class in <a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/package-summary.html">is.yarr.qilletni.api.lang.table</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">How the scope is used or defined.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/collection/CollectionLimitUnit.html#SECOND" class="member-name-link">SECOND</a> - Enum constant in enum class is.yarr.qilletni.api.lang.types.collection.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/collection/CollectionLimitUnit.html" title="enum class in is.yarr.qilletni.api.lang.types.collection">CollectionLimitUnit</a></dt>
 <dd>
 <div class="block">The collection is played until a set number of seconds passes.</div>
@@ -2103,7 +2140,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets the collection definition for the implementing object.</div>
 </dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#setDebugDesc(java.lang.String)" class="member-name-link">setDebugDesc(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Sets the debug description, for identification.</div>
+</dd>
 <dt><a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/ListType.html#setItems(java.util.List)" class="member-name-link">setItems(List&lt;QilletniType&gt;)</a> - Method in interface is.yarr.qilletni.api.lang.types.<a href="is.yarr.qilletni.api/is/yarr/qilletni/api/lang/types/ListType.html" title="interface in is.yarr.qilletni.api.lang.types">ListType</a></dt>
 <dd>
 <div class="block">Sets the items in the list.</div>
