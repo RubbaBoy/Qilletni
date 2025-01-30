@@ -2,20 +2,11 @@ plugins {
     id 'antlr'
     id 'idea'
     id 'maven-publish'
-    id 'application'
 }
 
 group = 'is.yarr.qilletni'
 version = '1.0.0-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-application {
-    mainClass = 'is.yarr.qilletni.lang.docs.DocParser'
-}
 
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
@@ -30,7 +21,7 @@ dependencies {
     antlr 'org.antlr:antlr4:4.13.1'
 
     implementation 'com.google.code.gson:gson:2.10.1'
-    
+
     implementation 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }
 
@@ -39,8 +30,8 @@ tasks.withType(JavaCompile).each {
 }
 
 generateGrammarSource {
-        var pkg = 'is.yarr.qilletni.antlr';
-        outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/${pkg.split("\\.").join("/")}".toString())
+    var pkg = 'is.yarr.qilletni.antlr'
+    outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/${pkg.split("\\.").join("/")}".toString())
     maxHeapSize = "128m"
     arguments += ['-visitor', '-no-listener']
 }
@@ -62,9 +53,26 @@ idea {
 allprojects {
     apply plugin: 'java'
     apply plugin: 'maven-publish'
-    
+
     repositories {
+        mavenCentral()
         mavenLocal()
+
+        maven {
+            url = "https://maven.pkg.github.com/rubbaboy/Qilletni"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+
+        maven {
+            url = "https://maven.pkg.github.com/rubbaboy/Qilletni/snapshots"
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 
     java {
@@ -72,10 +80,6 @@ allprojects {
         sourceCompatibility = '22'
         targetCompatibility = '22'
     }
-    
-//    tasks.withType(JavaCompile).each {
-//        it.options.compilerArgs.add('--enable-preview')
-//    }
 
     publishing {
         publications {
@@ -83,20 +87,23 @@ allprojects {
                 from components.java
             }
         }
+
+        if (name != "qilletni-provider-demo") {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = version.endsWith('SNAPSHOT') ?
+                            "https://maven.pkg.github.com/rubbaboy/Qilletni/snapshots" :
+                            "https://maven.pkg.github.com/rubbaboy/Qilletni"
+                    credentials {
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
+                    }
+                }
+            }
+        }
     }
 }
-
-//tasks.withType(JavaCompile) {
-//    options.compilerArgs += "--enable-preview"
-//}
-//
-//tasks.withType(Test) {
-//    jvmArgs += "--enable-preview"
-//}
-//
-//tasks.withType(JavaExec) {
-//    jvmArgs += '--enable-preview'
-//}
 
 tasks.named('sourcesJar').configure {
     dependsOn 'generateGrammarSource'
