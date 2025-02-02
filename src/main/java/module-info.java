@@ -1,4 +1,4 @@
-module is.yarr.qilletni {
+module qilletni.impl {
 
     exports is.yarr.qilletni;
     exports is.yarr.qilletni.lib;
@@ -6,7 +6,7 @@ module is.yarr.qilletni {
     exports is.yarr.qilletni.lang.docs;
     exports is.yarr.qilletni.lang.runner;
 
-    requires is.yarr.qilletni.api;
+    requires qilletni.api;
     requires org.antlr.antlr4.runtime;
     requires org.slf4j;
     

@@ -55,18 +55,9 @@ allprojects {
 
     repositories {
         mavenCentral()
-        mavenLocal()
 
         maven {
             url = "https://maven.pkg.github.com/rubbaboy/Qilletni"
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-
-        maven {
-            url = "https://maven.pkg.github.com/rubbaboy/Qilletni/snapshots"
             credentials {
                 username = System.getenv("GITHUB_ACTOR")
                 password = System.getenv("GITHUB_TOKEN")

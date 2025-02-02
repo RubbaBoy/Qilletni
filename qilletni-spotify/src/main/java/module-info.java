@@ -1,6 +1,6 @@
 module qilletni.spotify.main {
     exports is.yarr.qilletni.lib.spotify;
-    requires is.yarr.qilletni.api;
+    requires qilletni.api;
     
     requires java.persistence;
     requires se.michaelthelin.spotify;

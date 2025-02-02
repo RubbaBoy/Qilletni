@@ -1,4 +1,4 @@
-module is.yarr.qilletni.api {
+module qilletni.api {
     requires org.jetbrains.annotations;
     exports is.yarr.qilletni.api;
     exports is.yarr.qilletni.api.auth;
