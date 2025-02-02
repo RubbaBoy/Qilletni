@@ -7,7 +7,6 @@ plugins {
 group = 'is.yarr.qilletni'
 version = '1.0.0-SNAPSHOT'
 
-
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -92,9 +91,10 @@ allprojects {
             repositories {
                 maven {
                     name = "GitHubPackages"
-                    url = version.endsWith('SNAPSHOT') ?
-                            "https://maven.pkg.github.com/rubbaboy/Qilletni/snapshots" :
-                            "https://maven.pkg.github.com/rubbaboy/Qilletni"
+                    url = "https://maven.pkg.github.com/rubbaboy/Qilletni"
+//                    url = version.endsWith('SNAPSHOT') ?
+//                            "https://maven.pkg.github.com/rubbaboy/Qilletni/snapshots" :
+//                            "https://maven.pkg.github.com/rubbaboy/Qilletni"
                     credentials {
                         username = System.getenv("GITHUB_ACTOR")
                         password = System.getenv("GITHUB_TOKEN")
