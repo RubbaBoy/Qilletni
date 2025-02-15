@@ -116,10 +116,22 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minusOperator(is.yarr.qilletni.api.lang.types.QilletniType)" class="member-name-link">minusOperator</a><wbr>(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType,
+ returning the new value.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#minusOperatorInPlace(is.yarr.qilletni.api.lang.types.QilletniType)" class="member-name-link">minusOperatorInPlace</a><wbr>(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusOperator(is.yarr.qilletni.api.lang.types.QilletniType)" class="member-name-link">plusOperator</a><wbr>(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusOperator(is.yarr.qilletni.api.lang.types.QilletniType)" class="member-name-link">plusOperator</a><wbr>(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Performs an addition operation on the current instance of a QilletniType and the specified QilletniType,
+ returning the new value.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#plusOperatorInPlace(is.yarr.qilletni.api.lang.types.QilletniType)" class="member-name-link">plusOperatorInPlace</a><wbr>(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Performs an addition operation on the current instance of a QilletniType and the specified QilletniType.</div>
 </div>
@@ -185,7 +197,8 @@ loadScripts(document, 'script');</script>
 <h3>plusOperator</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></span>&nbsp;<span class="element-name">plusOperator</span><wbr><span class="parameters">(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</span></div>
-<div class="block">Performs an addition operation on the current instance of a QilletniType and the specified QilletniType.</div>
+<div class="block">Performs an addition operation on the current instance of a QilletniType and the specified QilletniType,
+ returning the new value.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>qilletniType</code> - The other QilletniType used in the addition operation.</dd>
@@ -196,16 +209,45 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="plusOperatorInPlace(is.yarr.qilletni.api.lang.types.QilletniType)">
+<h3>plusOperatorInPlace</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">plusOperatorInPlace</span><wbr><span class="parameters">(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</span></div>
+<div class="block">Performs an addition operation on the current instance of a QilletniType and the specified QilletniType. This
+ QilletniType instance is mutated to reflect the result, unlike <a href="#plusOperator(is.yarr.qilletni.api.lang.types.QilletniType)"><code>plusOperator(QilletniType)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>qilletniType</code> - The other QilletniType used in the addition operation.</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
 <section class="detail" id="minusOperator(is.yarr.qilletni.api.lang.types.QilletniType)">
 <h3>minusOperator</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a></span>&nbsp;<span class="element-name">minusOperator</span><wbr><span class="parameters">(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</span></div>
-<div class="block">Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType.</div>
+<div class="block">Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType,
+ returning the new value.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>qilletniType</code> - The other QilletniType used in the subtraction operation.</dd>
 <dt>Returns:</dt>
 <dd>A new QilletniType representing the result of the subtraction operation.</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="minusOperatorInPlace(is.yarr.qilletni.api.lang.types.QilletniType)">
+<h3>minusOperatorInPlace</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">minusOperatorInPlace</span><wbr><span class="parameters">(<a href="QilletniType.html" title="interface in is.yarr.qilletni.api.lang.types">QilletniType</a>&nbsp;qilletniType)</span></div>
+<div class="block">Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType. This
+ QilletniType instance is mutated to reflect the result, unlike <a href="#minusOperator(is.yarr.qilletni.api.lang.types.QilletniType)"><code>minusOperator(QilletniType)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>qilletniType</code> - The other QilletniType used in the subtraction operation.</dd>
 </dl>
 </div>
 </section>
