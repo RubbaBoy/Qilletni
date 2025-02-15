@@ -1,8 +1,10 @@
 package is.yarr.qilletni.lang.types;
 
+import is.yarr.qilletni.api.lang.table.Symbol;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Optional;
 
@@ -15,6 +17,28 @@ public class TypeUtils {
 
         return expectedType.cast(object);
     }
+
+    public static <T extends QilletniType> T safelyCast(QilletniType object, QilletniTypeClass<T> expectedType) {
+        if (object == null || !object.getTypeClass().isAssignableFrom(expectedType)) {
+            throw new TypeMismatchException("Expected type %s but received %s".formatted(expectedType.getTypeName(), object == null ? "null" : object.typeName()));
+        }
+
+        return (T) object;
+    }
+
+    public static <T extends QilletniType> T safelyCast(QilletniType object, QilletniTypeClass<T> expectedType, ParserRuleContext ctx) {
+        if (object == null || !object.getTypeClass().isAssignableFrom(expectedType)) {
+            throw new TypeMismatchException(ctx, "Expected type %s but received %s".formatted(expectedType.getTypeName(), object == null ? "null" : object.typeName()));
+        }
+
+        return (T) object;
+    }
+
+//    public static void requireType(QilletniType qilletniType, QilletniTypeClass<?> typeClass) {
+//        if (!qilletniType.getTypeClass().isAssignableFrom(typeClass)) {
+//            throw new TypeMismatchException("Expected type %s but got a %s".formatted(typeClass.getTypeName(), qilletniType.typeName()));
+//        }
+//    }
 
     /**
      * Gets the {@link QilletniType} from the string type name.

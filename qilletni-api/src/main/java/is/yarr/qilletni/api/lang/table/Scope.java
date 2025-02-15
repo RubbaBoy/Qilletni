@@ -115,6 +115,14 @@ public interface Scope {
      * @return The map of symbols
      */
     Map<String, Symbol<?>> getAllSymbols();
+    
+    /**
+     * Gets all function symbols in the current scope, as a map of names and list of matching functions with the name.
+     * The value is a list because multiple functions with different argument counts can have the same name.
+     * 
+     * @return The map of function symbols
+     */
+    Map<String, List<Symbol<FunctionType>>> getAllFunctionSymbols();
 
     /**
      * Gets the type of the scope, meaning how it is used or defined.

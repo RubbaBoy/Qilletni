@@ -7,6 +7,7 @@ import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.StringType;
 import is.yarr.qilletni.api.lib.annotations.NativeOn;
 
+import java.util.Arrays;
 import java.util.List;
 
 @NativeOn("string")
@@ -43,6 +44,8 @@ public class StringFunctions {
                 case DoubleType doubleType -> doubleType.getValue();
                 default -> type.stringValue();
             }).toArray();
+
+//        System.out.printf("formatArray = %s, types = %s%n", Arrays.toString(formatArray), Arrays.toString(Arrays.stream(formatArray).map(Object::getClass).map(Class::getSimpleName).toArray()));
         
         return String.format(string, formatArray);
     }

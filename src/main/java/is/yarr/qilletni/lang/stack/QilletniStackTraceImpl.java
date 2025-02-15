@@ -31,7 +31,8 @@ public class QilletniStackTraceImpl implements QilletniStackTrace {
 
     @Override
     public void popStackTraceElement() {
-        stackTraceElements.pop();
+        var popped = stackTraceElements.pop();
+        System.out.printf("Popped: %s%n", popped.displayString());
     }
 
     @Override
@@ -41,7 +42,7 @@ public class QilletniStackTraceImpl implements QilletniStackTrace {
 
     @Override
     public String displayStackTrace() {
-        return "Stack trace:\n" + stackTraceElements.stream().map(QilletniStackTraceElement::displayString).collect(Collectors.joining("\n"));
+        return "Stack trace:\n%s".formatted(stackTraceElements.reversed().stream().map(QilletniStackTraceElement::displayString).collect(Collectors.joining("\n")));
     }
 
     @Override

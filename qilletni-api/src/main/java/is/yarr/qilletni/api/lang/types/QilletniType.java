@@ -25,7 +25,8 @@ public sealed interface QilletniType permits AnyType, ImportAliasType, StaticEnt
     }
 
     /**
-     * Performs an addition operation on the current instance of a QilletniType and the specified QilletniType.
+     * Performs an addition operation on the current instance of a QilletniType and the specified QilletniType,
+     * returning the new value.
      *
      * @param qilletniType The other QilletniType used in the addition operation.
      * @return A new QilletniType representing the result of the addition operation.
@@ -33,12 +34,29 @@ public sealed interface QilletniType permits AnyType, ImportAliasType, StaticEnt
     QilletniType plusOperator(QilletniType qilletniType);
 
     /**
-     * Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType.
+     * Performs an addition operation on the current instance of a QilletniType and the specified QilletniType. This
+     * QilletniType instance is mutated to reflect the result, unlike {@link #plusOperator(QilletniType)}.
+     *
+     * @param qilletniType The other QilletniType used in the addition operation.
+     */
+    void plusOperatorInPlace(QilletniType qilletniType);
+
+    /**
+     * Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType,
+     * returning the new value.
      *
      * @param qilletniType The other QilletniType used in the subtraction operation.
      * @return A new QilletniType representing the result of the subtraction operation.
      */
     QilletniType minusOperator(QilletniType qilletniType);
+
+    /**
+     * Performs a subtraction operation between the current instance of a QilletniType and the provided QilletniType. This
+     * QilletniType instance is mutated to reflect the result, unlike {@link #minusOperator(QilletniType)}.
+     *
+     * @param qilletniType The other QilletniType used in the subtraction operation.
+     */
+    void minusOperatorInPlace(QilletniType qilletniType);
 
     /**
      * Retrieves the type name of the current QilletniType instance. If an Entity, it will return the name of the

@@ -1,5 +1,6 @@
 package is.yarr.qilletni.lang.internal;
 
+import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.internal.NativeFunctionClassInjector;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
@@ -9,6 +10,7 @@ import is.yarr.qilletni.api.lib.annotations.BeforeAnyInvocation;
 import is.yarr.qilletni.api.lib.annotations.NativeOn;
 import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
+import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.lib.NoNativeLibraryConstructorFoundContextException;
 import is.yarr.qilletni.lang.exceptions.lib.UninjectableConstructorTypeContextException;
@@ -139,17 +141,22 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
         }
     }
 
-    private static QilletniNativeInvocationException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e) {
+    private static QilletniContextException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e) {
         return getQilletniNativeInvocationException(qilletniStackTrace, e, null);
     }
 
-    private static QilletniNativeInvocationException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e, String methodSpecifier) {
+    private static QilletniContextException getQilletniNativeInvocationException(QilletniStackTrace qilletniStackTrace, Throwable e, String methodSpecifier) {
         Throwable throwable = e;
         if (throwable instanceof InvocationTargetException ite) {
             throwable = ite.getCause();
         }
 
         var theirMessage = throwable.getMessage();
+        
+        if (throwable instanceof QilletniContextException qce) {
+            qce.setMessage("An exception occurred in a %snative method: %s".formatted(Objects.requireNonNullElse(methodSpecifier, ""), qce.getOriginalMessage()));
+            return qce;
+        }
 
         if (theirMessage == null) {
             theirMessage = "An exception of %s occurred in a %snative method".formatted(throwable.getClass().getSimpleName(), Objects.requireNonNullElse(methodSpecifier, ""));
@@ -191,7 +198,8 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
                                         if (obj instanceof UnimplementedFunctionInvoker) {
                                             try {
                                                 LOGGER.debug("New instance of stuff {}", functionInvokerConstructor.getDeclaringClass().getCanonicalName());
-                                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this, qilletniStackTrace.cloneStackTrace());
+//                                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this, qilletniStackTrace.cloneStackTrace());
+                                                return functionInvokerConstructor.newInstance(symbolTable, symbolTables, this, qilletniStackTrace);
                                             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                                                 throw new RuntimeException(e);
                                             }

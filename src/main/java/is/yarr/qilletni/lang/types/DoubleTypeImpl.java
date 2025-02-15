@@ -49,6 +49,17 @@ public class DoubleTypeImpl implements DoubleType {
     }
 
     @Override
+    public void plusOperatorInPlace(QilletniType qilletniType) {
+        if (qilletniType instanceof IntType intType) {
+            value = value + intType.getValue();
+        } else if (qilletniType instanceof DoubleType doubleType) {
+            value = value + doubleType.getValue();
+        } else {
+            throw new UnsupportedOperatorException(this, qilletniType, "+");
+        }
+    }
+
+    @Override
     public QilletniType minusOperator(QilletniType qilletniType) {
         if (qilletniType instanceof DoubleType doubleType) {
             return new DoubleTypeImpl(value - doubleType.getValue());
@@ -57,6 +68,17 @@ public class DoubleTypeImpl implements DoubleType {
         }
         
         throw new UnsupportedOperatorException(this, qilletniType, "-");
+    }
+
+    @Override
+    public void minusOperatorInPlace(QilletniType qilletniType) {
+        if (qilletniType instanceof IntType intType) {
+            value = value - intType.getValue();
+        } else if (qilletniType instanceof DoubleType doubleType) {
+            value = value - doubleType.getValue();
+        } else {
+            throw new UnsupportedOperatorException(this, qilletniType, "-");
+        }
     }
 
     @Override

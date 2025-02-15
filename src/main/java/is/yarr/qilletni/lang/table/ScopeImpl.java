@@ -141,7 +141,7 @@ public class ScopeImpl implements Scope {
             }
         }
 
-        var symbols = lookupFunction(name);
+        var symbols = lookupFunction(name, true);
         return symbols.stream().filter(symbol -> {
                     if (!Objects.equals(symbol.getValue().getOnType(), onType)) {
                         return false;
@@ -158,6 +158,10 @@ public class ScopeImpl implements Scope {
 
     @Override
     public List<Symbol<FunctionType>> lookupFunction(String name) {
+        return lookupFunction(name, false);
+    }
+
+    public List<Symbol<FunctionType>> lookupFunction(String name, boolean allowEmpty) {
         if (symbolTable.containsKey(name)) {
             var symbol = symbolTable.get(name);
             if (symbol.getType().equals(QilletniTypeClass.FUNCTION)) {
@@ -171,7 +175,7 @@ public class ScopeImpl implements Scope {
         }
 
         allFunctions.addAll(functionSymbolTable.getOrDefault(name, Collections.emptyList()));
-        if (allFunctions.isEmpty()) {
+        if (!allowEmpty && allFunctions.isEmpty()) {
             throw new VariableNotFoundException("Function %s not found!".formatted(name));
         }
 
@@ -282,6 +286,11 @@ public class ScopeImpl implements Scope {
     @Override
     public Map<String, Symbol<?>> getAllSymbols() {
         return symbolTable;
+    }
+
+    @Override
+    public Map<String, List<Symbol<FunctionType>>> getAllFunctionSymbols() {
+        return functionSymbolTable;
     }
 
     @Override

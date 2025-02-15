@@ -35,6 +35,7 @@ import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolTableImpl;
 import is.yarr.qilletni.lang.types.BooleanTypeImpl;
 import is.yarr.qilletni.lang.types.DoubleTypeImpl;
+import is.yarr.qilletni.lang.types.EntityTypeImpl;
 import is.yarr.qilletni.lang.types.ImportAliasTypeImpl;
 import is.yarr.qilletni.lang.types.IntTypeImpl;
 import is.yarr.qilletni.lang.types.JavaTypeImpl;
@@ -178,6 +179,9 @@ public class QilletniProgramRunner {
             mapEntity.getEntityScope().<JavaType>lookup("_map").getValue().setReference(qilletniTypeMap);
             return mapEntity;
         });
+        
+        typeAdapterRegistrar.registerExactTypeAdapter(HashMap.class, EntityTypeImpl.class, mapEntity ->
+                mapEntity.getEntityScope().<JavaType>lookup("_map").getValue().getReference(HashMap.class));
 
         typeAdapterRegistrar.registerTypeAdapter(JavaType.class, Object.class, JavaTypeImpl::new);
 

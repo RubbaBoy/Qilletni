@@ -62,7 +62,17 @@ public final class ListTypeImpl implements ListType {
     }
 
     @Override
+    public void plusOperatorInPlace(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "+");
+    }
+
+    @Override
     public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
+    }
+
+    @Override
+    public void minusOperatorInPlace(QilletniType qilletniType) {
         throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 

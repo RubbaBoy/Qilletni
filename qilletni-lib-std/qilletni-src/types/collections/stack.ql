@@ -32,7 +32,7 @@ entity Stack {
     fun pop() {
         return _stack.remove(_stack.size() - 1)
     }
-    
+
     /**
      * Peeks at the top element of the stack.
      *

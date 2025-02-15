@@ -39,6 +39,8 @@ public class FunctionInvokerImpl implements FunctionInvoker {
     private final QilletniStackTrace currentStackTrace;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FunctionInvokerImpl.class);
+    
+    public static int breakCounter = 0;
 
 //    public FunctionInvokerImpl(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, NativeFunctionHandler nativeFunctionHandler) {
 //        this(symbolTable, symbolTableMap, nativeFunctionHandler, null);
@@ -58,7 +60,8 @@ public class FunctionInvokerImpl implements FunctionInvoker {
 
     @Override
     public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params, QilletniType invokedOn) {
-        var stackTraceElement = findCallingMethod();
+        var stackTraceElement = findCallingMethod(alreadyFoundFunction);
+        LOGGER.debug("HEREEE ABABABABA");
         return invokeFunction(alreadyFoundFunction.getName(), params, invokedOn, alreadyFoundFunction, () -> currentStackTrace.pushStackTraceElement(stackTraceElement));
     }
 
@@ -138,7 +141,7 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         var expectedParamLength = functionType.getInvokingParamCount();
 
         if (expectedParamLength != params.size()) {
-            throw new InvalidParameterException("Expected " + expectedParamLength + " parameters, got " + params.size() + " onType: " + hasOnType);
+            throw new InvalidParameterException("Expected %d parameters, got %d onType: %s".formatted(expectedParamLength, params.size(), hasOnType));
         }
 
         QilletniTypeClass<?> invokingUponExpressionType = null;
@@ -183,7 +186,10 @@ public class FunctionInvokerImpl implements FunctionInvoker {
 
         LOGGER.debug("! with current scope: {}", symbolTable);
 
+        LOGGER.debug("pushStackTrace = {}", pushStackTrace);
         pushStackTrace.run();
+        LOGGER.debug("pushed stack trace AFTER");
+        
         Optional<T> result = symbolTableMap.get(symbolTable).visitNode(functionType.getBody());
 
         currentStackTrace.popStackTraceElement();
@@ -212,24 +218,22 @@ public class FunctionInvokerImpl implements FunctionInvoker {
             }
 
             return invokeFunction(id, params, invokedOn, () -> pushLocalStackTrace(ctx));
-        } catch (QilletniException e) {
-            if (e instanceof QilletniContextException qce) {
-                if (!qce.isSourceSet()) {
-                    qce.setSource(ctx);
-                }
-
-                if (qce.getQilletniStackTrace() == null) {
-                    qce.setQilletniStackTrace(currentStackTrace);
-                }
-
-                throw e;
-            } else {
-                var qce = new QilletniContextException(ctx, e);
-
-                qce.setQilletniStackTrace(currentStackTrace);
-
-                throw qce;
+        } catch (QilletniContextException e) {
+            if (!e.isSourceSet()) {
+                e.setSource(ctx);
             }
+
+            if (e.getQilletniStackTrace() == null) {
+                e.setQilletniStackTrace(currentStackTrace);
+            }
+
+            throw e;
+        } catch (QilletniException e) {
+            var qce = new QilletniContextException(ctx, e);
+
+            qce.setQilletniStackTrace(currentStackTrace);
+
+            throw qce;
         }
     }
 
@@ -242,21 +246,22 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         currentStackTrace.pushStackTraceElement(new QilletniStackTraceElementImpl("lib", parsedContext.fileName(), parsedContext.methodName(), parsedContext.line(), parsedContext.column()));
     }
     
-    private QilletniStackTraceElement findCallingMethod() {
+    private QilletniStackTraceElement findCallingMethod(FunctionType alreadyFoundFunction) {
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
-        // Index 0 is getStackTrace, index 1 is findCallingMethod, index 2 is the caller
-        if (stackTraceElements.length > 2) {
-            var elem = stackTraceElements[2]; // 4 is stringValue? TODO: investigate how to get the best result
-            return new QilletniStackTraceElementImpl("native", elem.getFileName(), elem.getMethodName(), elem.getLineNumber(), -1);
+        var thisClassName = this.getClass().getName();
+        var threadClassName = Thread.class.getName();
+        
+        for (var elem : stackTraceElements) {
+            if (!elem.getClassName().equals(thisClassName) && !elem.getClassName().equals(threadClassName)) {
+                return new QilletniStackTraceElementImpl("native", elem.getFileName(), alreadyFoundFunction.getName(), elem.getLineNumber(), -1);
+            }
         }
         
-        throw new RuntimeException("Couldn't identify calling method");
+        throw new RuntimeException("Couldn't identify calling method outside of %s".formatted(thisClassName));
     }
 
     @Override
     public String toString() {
-        return "FunctionInvokerImpl{" +
-                "symbolTable=" + symbolTable +
-                '}';
+        return "FunctionInvokerImpl{symbolTable=%s}".formatted(symbolTable);
     }
 }

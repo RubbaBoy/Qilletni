@@ -49,7 +49,17 @@ public final class StringTypeImpl implements StringType {
     }
 
     @Override
+    public void plusOperatorInPlace(QilletniType qilletniType) {
+        value = value + qilletniType.stringValue();
+    }
+
+    @Override
     public QilletniType minusOperator(QilletniType qilletniType) {
+        throw new UnsupportedOperatorException(this, qilletniType, "-");
+    }
+
+    @Override
+    public void minusOperatorInPlace(QilletniType qilletniType) {
         throw new UnsupportedOperatorException(this, qilletniType, "-");
     }
 

@@ -4,7 +4,6 @@ import is.yarr.qilletni.api.lang.table.Symbol;
 import is.yarr.qilletni.api.lang.types.FunctionType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
-import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.Objects;
 
@@ -26,6 +25,17 @@ public class SymbolImpl<T extends QilletniType> implements Symbol<T> {
     
     public static Symbol<FunctionType> createFunctionSymbol(String name, FunctionType value) {
         return new SymbolImpl<>(name, QilletniTypeClass.FUNCTION, value);
+    }
+
+    /**
+     * Creates a symbol to be used as a placeholder for a real symbol that's in a {@link is.yarr.qilletni.api.lang.table.Scope}.
+     * 
+     * @param value The value of the symbol
+     * @return The synthetic symbol
+     * @param <T> The type of the symbol
+     */
+    public static <T extends QilletniType> Symbol<T> createSyntheticSymbol(T value) {
+        return new SymbolImpl<>("synthetic-%d".formatted(value.hashCode()), (QilletniTypeClass<T>) value.getTypeClass(), value);
     }
 
     @Override

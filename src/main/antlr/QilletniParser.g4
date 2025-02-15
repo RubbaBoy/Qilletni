@@ -20,45 +20,78 @@ running
     ;
 
 // Expressions
-// TODO: Add support for foo.bar[12]
 expr
+    : logicalOrExpr
+    ;
+
+// Next 3 are 9) Relational compare
+
+// Logical OR (lowest precedence)
+logicalOrExpr
+    : logicalAndExpr ( OROR logicalAndExpr )*
+    ;
+
+// Logical AND
+logicalAndExpr
+    : relationalExpr ( ANDAND relationalExpr )*
+    ;
+
+// Relational operators (>, <, >=, <=, ==, !=)
+relationalExpr
+    : additiveExpr ( REL_OP additiveExpr )?
+    ;
+
+// Additive operators + and -
+additiveExpr
+    : multiplicativeExpr ( op += (PLUS | MINUS) multiplicativeExpr )*
+    ;
+
+// Multiplicative operators *, /, /~, %
+multiplicativeExpr
+    : unaryExpr ( op += (STAR | FLOOR_DIV | DIV | MOD) unaryExpr )*
+    ;
+
+// Unary operators
+// This handled Symbols, but returns a QilletniType (as some modify the values here)
+unaryExpr
+    // 1) Immutable NOT
+    : NOT unaryExpr
+    
+    // 2) Immutable postfix expression
+    | op=(INCREMENT | DECREMENT)? postfixExpr (LEFT_SBRACKET expr RIGHT_SBRACKET)? immutablePostfixExprSuffix?
+    ;
+
+// Postfix expressions: every primary (or “atom”) can be followed by any number of dot‐suffixed items.
+postfixExpr
+    : primaryExpr ( DOT postfixSuffix )*
+    ;
+
+// The "suffix" after a DOT can be either a function call
+postfixSuffix
+    : function_call
+    | ID
+    ;
+
+immutablePostfixExprSuffix
+    : crement=(INCREMENT | DECREMENT)
+    | (PLUS_EQUALS | MINUS_EQUALS) expr
+    ;
+
+primaryExpr
     // 1) Parenthesized expression
-    : LEFT_PAREN expr RIGHT_PAREN
+    : wrap_paren=LEFT_PAREN expr RIGHT_PAREN
 
     // 2) A function call with no preceding expr
     | function_call
+    
+    // 3) Boolean literals
+    | single_bool=BOOL
+    
+    // 5) List expressions
+    | list_expression
 
-    // 3) Pre/post increment on an ID with optional indexing: ++x, x++, x[expr]++, etc.
-    | id_pre_crement=(INCREMENT | DECREMENT)? ID LEFT_SBRACKET expr RIGHT_SBRACKET id_post_crement=(INCREMENT | DECREMENT)?
-    | id_pre_crement=(INCREMENT | DECREMENT)? ID id_post_crement=(INCREMENT | DECREMENT)?
-
-    // 4) Postfix increment with += or -= on an ID or an ID with indexing
-    | ID LEFT_SBRACKET expr RIGHT_SBRACKET id_post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
-    | ID id_post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
-
-    // 5) Dot notation: expr DOT function_call, or expr DOT ID (with optional increments)
-    | expr DOT function_call
-    | expr DOT ID post_crement=(INCREMENT | DECREMENT)?
-    | expr DOT ID post_crement_equals=(PLUS_EQUALS | MINUS_EQUALS) expr
-
-    // 6) Entity initialize
+    // 6) Other expressions    
     | entity_initialize
-
-    // 8) Logical NOT
-    | NOT expr
-
-    // 9) Relational compare: expr REL_OP expr (>, <, >=, <=, ==, !=)
-    | expr REL_OP expr
-    | expr ANDAND expr
-    | expr OROR expr
-
-    // 10) Boolean literal
-    | BOOL
-
-    // 11) The new entry point for arithmetic: an additive expression
-    | addSubExpr
-
-    // 12) Additional expressions from original grammar
     | str_expr
     | int_expr
     | double_expr
@@ -68,48 +101,10 @@ expr
     | weights_expr
     | java_expr
     | is_expr
-    | list_expression
     
     // 7) Standalone ID
-    | ID
-
-    ;
-
-/**
- *  For standard arithmetic precedence:
- *   - addSubExpr handles +, -
- *   - mulDivExpr handles *, /, /~, %
- *   - unaryArithmetic handles any prefix ops if you choose to place them there
- *
- *  This ensures multiplication/division have higher precedence than addition/subtraction.
- */
-addSubExpr
-    : mulDivExpr ( (PLUS | MINUS) mulDivExpr )*
-    ;
-
-mulDivExpr
-    : unaryArithmetic ( (STAR | FLOOR_DIV | DIV | MOD) unaryArithmetic )*
-    ;
-
-/**
- *  Other unary operators could be added, such as::
- *    unaryArithmetic
- *      : (INCREMENT | DECREMENT) unaryArithmetic
- *      | primaryArithmetic
- *      ;
- */
-unaryArithmetic
-    : primaryArithmetic
-    ;
-
-primaryArithmetic
-    : LEFT_PAREN expr RIGHT_PAREN
-    | function_call
-    | int_expr
-    | double_expr
-    | str_expr
-    | list_expression
-    | ID
+    | single_id=ID
+    
     ;
 
 int_expr
@@ -322,9 +317,7 @@ entity_initialize
 stmt
     : play_stmt
     | asmt
-    | function_call
     | entity_def
-    | expr DOT function_call
     | provider_stmt
     ;
 
