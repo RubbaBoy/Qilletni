@@ -115,9 +115,17 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:B">B</h2>
 <dl class="index">
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" class="type-name-link" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a> - Interface in <a href="qilletni.api/is/yarr/qilletni/api/lang/internal/package-summary.html">is.yarr.qilletni.api.lang.internal</a></dt>
+<dd>
+<div class="block">Allows for background processes to be run, or effectively async callbacks.</div>
+</dd>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/lib/annotations/BeforeAnyInvocation.html" class="type-name-link" title="annotation interface in is.yarr.qilletni.api.lib.annotations">BeforeAnyInvocation</a> - Annotation Interface in <a href="qilletni.api/is/yarr/qilletni/api/lib/annotations/package-summary.html">is.yarr.qilletni.api.lib.annotations</a></dt>
 <dd>
 <div class="block">An annotation placed on methods holding native classes that are bound to Qilletni methods.</div>
+</dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html#blockAndRunBackgroundTasks()" class="member-name-link">blockAndRunBackgroundTasks()</a> - Method in interface is.yarr.qilletni.api.lang.internal.<a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a></dt>
+<dd>
+<div class="block">Blocks the current thread and runs background tasks immediately when they become available.</div>
 </dd>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/lang/types/typeclass/QilletniTypeClass.html#BOOLEAN" class="member-name-link">BOOLEAN</a> - Static variable in class is.yarr.qilletni.api.lang.types.typeclass.<a href="qilletni.api/is/yarr/qilletni/api/lang/types/typeclass/QilletniTypeClass.html" title="class in is.yarr.qilletni.api.lang.types.typeclass">QilletniTypeClass</a></dt>
 <dd>&nbsp;</dd>
@@ -131,6 +139,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/lib/qll/ComparableVersion.RangeSpecifier.html#CARET" class="member-name-link">CARET</a> - Enum constant in enum class is.yarr.qilletni.api.lib.qll.<a href="qilletni.api/is/yarr/qilletni/api/lib/qll/ComparableVersion.RangeSpecifier.html" title="enum class in is.yarr.qilletni.api.lib.qll">ComparableVersion.RangeSpecifier</a></dt>
 <dd>
 <div class="block">Permits newer minor and match versions, so the <code>x</code> of <code>1.x.x</code>.</div>
+</dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html#checkAndRunBackgroundTasks()" class="member-name-link">checkAndRunBackgroundTasks()</a> - Method in interface is.yarr.qilletni.api.lang.internal.<a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a></dt>
+<dd>
+<div class="block">Checks if any conditions are triggered and runs them if they are.</div>
 </dd>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/lang/stack/QilletniStackTrace.html#cloneStackTrace()" class="member-name-link">cloneStackTrace()</a> - Method in interface is.yarr.qilletni.api.lang.stack.<a href="qilletni.api/is/yarr/qilletni/api/lang/stack/QilletniStackTrace.html" title="interface in is.yarr.qilletni.api.lang.stack">QilletniStackTrace</a></dt>
 <dd>
@@ -1563,6 +1575,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Checks if the internal type of this type class is assignable from the given type class.</div>
 </dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/stack/QilletniStackTraceElement.html#isBackgroundTask()" class="member-name-link">isBackgroundTask()</a> - Method in interface is.yarr.qilletni.api.lang.stack.<a href="qilletni.api/is/yarr/qilletni/api/lang/stack/QilletniStackTraceElement.html" title="interface in is.yarr.qilletni.api.lang.stack">QilletniStackTraceElement</a></dt>
+<dd>
+<div class="block">If this represents a change to a background task being executed via <a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal"><code>BackgroundTaskExecutor</code></a>.</div>
+</dd>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html#isDefined(java.lang.String)" class="member-name-link">isDefined(String)</a> - Method in interface is.yarr.qilletni.api.lang.table.<a href="qilletni.api/is/yarr/qilletni/api/lang/table/Scope.html" title="interface in is.yarr.qilletni.api.lang.table">Scope</a></dt>
 <dd>
 <div class="block">Checks if the given symbol name is defined in this scope or any applicable parent scopes.</div>
@@ -2105,6 +2121,14 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an instance of a <code>ReturnDoc</code> record class.</div>
 </dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html#runWhenCondition(java.lang.Runnable)" class="member-name-link">runWhenCondition(Runnable)</a> - Method in interface is.yarr.qilletni.api.lang.internal.<a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a></dt>
+<dd>
+<div class="block">A condition that is run in between expression invocation breaks when the condition ID is triggered.</div>
+</dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html#runWhenCondition(java.util.function.Consumer)" class="member-name-link">runWhenCondition(Consumer&lt;T&gt;)</a> - Method in interface is.yarr.qilletni.api.lang.internal.<a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a></dt>
+<dd>
+<div class="block">A condition that is run in between expression invocation breaks when the condition ID is triggered.</div>
+</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
 <dl class="index">
@@ -2419,6 +2443,14 @@ loadScripts(document, 'script');</script>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/music/supplier/TrackSupplier.html" class="type-name-link" title="interface in is.yarr.qilletni.api.music.supplier">TrackSupplier</a> - Interface in <a href="qilletni.api/is/yarr/qilletni/api/music/supplier/package-summary.html">is.yarr.qilletni.api.music.supplier</a></dt>
 <dd>
 <div class="block">An interface to represent something that can return a track.</div>
+</dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html#triggerCondition(int)" class="member-name-link">triggerCondition(int)</a> - Method in interface is.yarr.qilletni.api.lang.internal.<a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a></dt>
+<dd>
+<div class="block">Activates a condition from its ID.</div>
+</dd>
+<dt><a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html#triggerCondition(int,java.lang.Object)" class="member-name-link">triggerCondition(int, Object)</a> - Method in interface is.yarr.qilletni.api.lang.internal.<a href="qilletni.api/is/yarr/qilletni/api/lang/internal/BackgroundTaskExecutor.html" title="interface in is.yarr.qilletni.api.lang.internal">BackgroundTaskExecutor</a></dt>
+<dd>
+<div class="block">Activates a condition from its ID.</div>
 </dd>
 <dt><a href="qilletni.api/is/yarr/qilletni/api/lang/docs/structure/item/DocumentedTypeField.html#type()" class="member-name-link">type()</a> - Method in record class is.yarr.qilletni.api.lang.docs.structure.item.<a href="qilletni.api/is/yarr/qilletni/api/lang/docs/structure/item/DocumentedTypeField.html" title="class in is.yarr.qilletni.api.lang.docs.structure.item">DocumentedTypeField</a></dt>
 <dd>
