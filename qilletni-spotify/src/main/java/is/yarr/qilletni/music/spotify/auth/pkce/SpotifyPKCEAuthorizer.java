@@ -120,7 +120,7 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
     private CompletableFuture<String> getCodeFromUser() throws Exception {
         var authorizationCodeUriRequest = spotifyApi.authorizationCodePKCEUri(codeChallenge)
 //          .state("x4xkmn9pu3j6ukrs8n")
-          .scope("user-read-email,user-library-modify,user-library-read,user-read-playback-position,playlist-read-private,playlist-modify-private,playlist-modify-public")
+          .scope("user-read-email,user-library-modify,user-library-read,user-read-playback-position,playlist-read-private,playlist-modify-private,playlist-modify-public,user-read-currently-playing")
 //          .show_dialog(true)D
                 .build();
 

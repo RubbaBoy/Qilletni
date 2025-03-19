@@ -26,6 +26,7 @@ import is.yarr.qilletni.lang.QilletniVisitor;
 import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
 import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
+import is.yarr.qilletni.lang.internal.BackgroundTaskExecutorImpl;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.internal.UnimplementedFunctionInvoker;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
@@ -88,6 +89,7 @@ public class QilletniProgramRunner {
     private final ListTypeTransformer listTypeTransformer;
     private final ListInitializer listInitializer;
     private final LibraryRegistrar libraryRegistrar;
+    private final BackgroundTaskExecutorImpl backgroundTaskExecutor;
     private final QilletniStackTrace qilletniStackTrace;
 
     public QilletniProgramRunner(DynamicProvider dynamicProvider, LibrarySourceFileResolver librarySourceFileResolver, List<QllInfo> loadedQllInfos) {
@@ -102,6 +104,7 @@ public class QilletniProgramRunner {
         this.entityInitializer = new EntityInitializerImpl(typeAdapterRegistrar, entityDefinitionManager);
         this.musicPopulator = new MusicPopulatorImpl(dynamicProvider, internalPackageConfig);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
+        this.backgroundTaskExecutor = new BackgroundTaskExecutorImpl(qilletniStackTrace);
 
         var typeConverter = new TypeConverterImpl(typeAdapterRegistrar, entityInitializer);
 
@@ -130,6 +133,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(new UnimplementedFunctionInvoker()); // This is used as a placeholder, and its type is manipulated during injection
         nativeFunctionHandler.addInjectableInstance(typeConverter);
         nativeFunctionHandler.addInjectableInstance(dynamicProvider);
+        nativeFunctionHandler.addInjectableInstance(backgroundTaskExecutor);
     }
 
     private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, TypeConverter typeConverter, ListInitializer listInitializer) {
@@ -237,7 +241,7 @@ public class QilletniProgramRunner {
         LOGGER.debug("global override: {}", globalScope);
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalOverride, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, qilletniStackTrace, (importedFile, importAs) -> importFileFromStream(pathState.importFrom(importedFile), importAs, globalOverride));
+        var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalOverride, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, backgroundTaskExecutor, qilletniStackTrace, (importedFile, importAs) -> importFileFromStream(pathState.importFrom(importedFile), importAs, globalOverride));
         
         symbolTables.put(symbolTable, qilletniVisitor);
 

@@ -13,6 +13,10 @@ public class CoreFunctions {
         System.out.println(qilletniType.stringValue());
     }
     
+    public static String readLine() {
+        return System.console().readLine();
+    }
+    
     public static String getEnv(String name) {
         return System.getenv(name);
     }

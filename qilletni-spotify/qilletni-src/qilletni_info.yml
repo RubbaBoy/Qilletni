@@ -4,6 +4,7 @@ author: Adam Yarris
 provider: is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider
 native_bind_factory: is.yarr.qilletni.lib.spotify.SpotifyNativeFunctionBindingFactory
 native_classes:
+  - is.yarr.qilletni.lib.spotify.HooksFunctions
   - is.yarr.qilletni.lib.spotify.PlayRedirect
   - is.yarr.qilletni.lib.spotify.PlaylistToolsFunctions
   - is.yarr.qilletni.lib.spotify.RecommendationsFunctions

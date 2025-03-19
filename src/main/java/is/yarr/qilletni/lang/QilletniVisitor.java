@@ -5,6 +5,7 @@ import is.yarr.qilletni.antlr.QilletniLexer;
 import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.antlr.QilletniParserBaseVisitor;
 import is.yarr.qilletni.api.exceptions.InvalidWeightException;
+import is.yarr.qilletni.api.lang.internal.BackgroundTaskExecutor;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.Scope;
 import is.yarr.qilletni.api.lang.table.Symbol;
@@ -48,6 +49,7 @@ import is.yarr.qilletni.lang.exceptions.ListTransformerNotFoundException;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.TypeMismatchException;
 import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
+import is.yarr.qilletni.lang.internal.BackgroundTaskExecutorImpl;
 import is.yarr.qilletni.lang.internal.FunctionInvokerImpl;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.math.MixedExpression;
@@ -102,18 +104,20 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final EntityDefinitionManager entityDefinitionManager;
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
+    private final BackgroundTaskExecutorImpl backgroundTaskExecutor;
     // The file, the namespace
     private final BiFunction<String, String, Optional<ImportAliasType>> importConsumer;
     private final FunctionInvokerImpl functionInvoker;
     private final QilletniStackTrace qilletniStackTrace;
 
-    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, Scope globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, QilletniStackTrace qilletniStackTrace, BiFunction<String, String, Optional<ImportAliasType>> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, Scope globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, BackgroundTaskExecutorImpl backgroundTaskExecutor, QilletniStackTrace qilletniStackTrace, BiFunction<String, String, Optional<ImportAliasType>> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.dynamicProvider = dynamicProvider;
         this.entityDefinitionManager = entityDefinitionManager;
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
+        this.backgroundTaskExecutor = backgroundTaskExecutor;
         this.importConsumer = importConsumer;
         this.qilletniStackTrace = qilletniStackTrace;
         this.functionInvoker = new FunctionInvokerImpl(symbolTable, symbolTableMap, nativeFunctionHandler, qilletniStackTrace);
@@ -391,6 +395,9 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
      * @return The value of the expression
      */
     public QilletniType visitExpr(QilletniParser.ExprContext ctx, boolean valueNeeded) {
+        // Run any background tasks before the expr
+        backgroundTaskExecutor.checkAndRunBackgroundTasks();
+        
         var exprResult = visitLogicalOrExpr(ctx.logicalOrExpr());
         
         if (valueNeeded && exprResult.isEmpty()) {

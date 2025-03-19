@@ -1,6 +1,7 @@
 import "types/types.ql"
 import "util/util.ql"
 import "string.ql"
+import "background.ql"
 
 /**
  * Prints a string representation of the given object to the console, followed by a newline character.
@@ -8,6 +9,13 @@ import "string.ql"
  * @param obj The object to print, of any type.
  */
 native fun print(obj)
+
+/**
+ * Reads a line of input from the console.
+ *
+ * @returns The line of input read from the console
+ */
+native fun readLine()
 
 /**
  * Prints a given string to the console, followed by a newline character. The string is formatted with `string.format`

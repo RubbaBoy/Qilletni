@@ -9,6 +9,8 @@ public class QilletniStackTraceElementImpl implements QilletniStackTraceElement 
     private final String methodName;
     private final int line;
     private final int column;
+    
+    private final boolean isBackgroundTask;
 
     public QilletniStackTraceElementImpl(String library, String fileName, String methodName, int line, int column) {
         this.library = library;
@@ -16,6 +18,27 @@ public class QilletniStackTraceElementImpl implements QilletniStackTraceElement 
         this.methodName = methodName;
         this.line = line;
         this.column = column;
+
+        this.isBackgroundTask = false;
+    }
+    
+    private QilletniStackTraceElementImpl() {
+        this.library = "";
+        this.fileName = "";
+        this.methodName = "";
+        this.line = -1;
+        this.column = -1;
+        
+        this.isBackgroundTask = true;
+    }
+
+    /**
+     * Creates a background task stack trace element.
+     *
+     * @return The background task stack trace element
+     */
+    public static QilletniStackTraceElementImpl createBackgroundTask() {
+        return new QilletniStackTraceElementImpl();
     }
 
     @Override
@@ -44,7 +67,16 @@ public class QilletniStackTraceElementImpl implements QilletniStackTraceElement 
     }
 
     @Override
+    public boolean isBackgroundTask() {
+        return isBackgroundTask;
+    }
+
+    @Override
     public String displayString() {
-        return String.format("\tat [%s] %s %s:%d%s", library, methodName + "(..)", fileName, line, column != -1 ? ":" + column : "");
+        if (isBackgroundTask) {
+            return "\tat [internal] Background Task";
+        } else {
+            return String.format("\tat [%s] %s %s:%d%s", library, methodName + "(..)", fileName, line, column != -1 ? ":" + column : "");
+        }
     }
 }

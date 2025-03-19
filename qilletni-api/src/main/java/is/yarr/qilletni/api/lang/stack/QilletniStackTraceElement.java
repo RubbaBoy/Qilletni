@@ -41,6 +41,14 @@ public interface QilletniStackTraceElement {
     int getColumn();
 
     /**
+     * If this represents a change to a background task being executed via {@link is.yarr.qilletni.api.lang.internal.BackgroundTaskExecutor}.
+     * No other fields will be filled out/valid if this is true.
+     * 
+     * @return If this switches to a background task
+     */
+    boolean isBackgroundTask();
+
+    /**
      * Gets the string representation of the stack trace element, to be displayed in a stack trace.
      * 
      * @return The string to display
