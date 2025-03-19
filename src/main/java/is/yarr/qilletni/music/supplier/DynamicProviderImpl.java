@@ -1,6 +1,7 @@
 package is.yarr.qilletni.music.supplier;
 
 import is.yarr.qilletni.api.auth.ServiceProvider;
+import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
 import is.yarr.qilletni.api.music.StringIdentifier;
@@ -37,6 +38,17 @@ public class DynamicProviderImpl implements DynamicProvider {
         currentProvider = getProvider(providerName);
         
         LOGGER.debug("Switched provider to {}", providerName);
+    }
+
+    @Override
+    public void initializeInitialProvider(PackageConfig packageConfig) {
+        var initialProviderName = packageConfig.get("initialProvider").orElse("spotify");
+        
+        if (providers.containsKey(initialProviderName)) {
+            switchProvider(initialProviderName);
+        } else {
+            switchProvider(providers.keySet().toArray(String[]::new)[0]);
+        }
     }
 
     @Override

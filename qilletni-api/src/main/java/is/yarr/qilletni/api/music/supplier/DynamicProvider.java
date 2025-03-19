@@ -1,6 +1,7 @@
 package is.yarr.qilletni.api.music.supplier;
 
 import is.yarr.qilletni.api.auth.ServiceProvider;
+import is.yarr.qilletni.api.lib.persistence.PackageConfig;
 import is.yarr.qilletni.api.music.MusicCache;
 import is.yarr.qilletni.api.music.MusicFetcher;
 import is.yarr.qilletni.api.music.StringIdentifier;
@@ -14,6 +15,8 @@ public interface DynamicProvider {
     void addServiceProvider(ServiceProvider serviceProvider);
 
     void switchProvider(String providerName);
+    
+    void initializeInitialProvider(PackageConfig internalPackageConfig);
 
     ServiceProvider getProvider(String providerName);
 

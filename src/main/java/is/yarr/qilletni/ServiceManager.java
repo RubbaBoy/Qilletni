@@ -37,13 +37,6 @@ public class ServiceManager {
             
             dynamicProvider.addServiceProvider(provider);
         }
-
-        var defaultProvider = providers.getFirst().getName();
-        if (providers.size() != 1) {
-            LOGGER.info("Choosing {} as a default provider", defaultProvider);
-        }
-        
-        dynamicProvider.switchProvider(defaultProvider);
         
         return dynamicProvider;
     }

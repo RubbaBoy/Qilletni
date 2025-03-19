@@ -95,6 +95,8 @@ public class QilletniProgramRunner {
     public QilletniProgramRunner(DynamicProvider dynamicProvider, LibrarySourceFileResolver librarySourceFileResolver, List<QllInfo> loadedQllInfos) {
         internalPackageConfig.loadConfig();
         
+        dynamicProvider.initializeInitialProvider(internalPackageConfig);
+        
         this.dynamicProvider = dynamicProvider;
         this.symbolTables = new HashMap<>();
         this.globalScope = new ScopeImpl("global");
