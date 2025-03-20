@@ -90,9 +90,14 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <div class="horizontal-scroll">
+<dl class="notes">
+<dt>All Implemented Interfaces:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&gt;</code></dd>
+</dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ComparableVersion</span>
-<span class="extends-implements">extends <a href="Version.html" title="class in is.yarr.qilletni.api.lib.qll">Version</a></span></div>
+<span class="extends-implements">extends <a href="Version.html" title="class in is.yarr.qilletni.api.lib.qll">Version</a>
+implements <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&gt;</span></div>
 <div class="block">A <a href="Version.html" title="class in is.yarr.qilletni.api.lib.qll"><code>Version</code></a> that may be compared with others, fitting a range.</div>
 </div>
 </section>
@@ -149,20 +154,25 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parseComparableVersionString(java.lang.String)" class="member-name-link">parseComparableVersionString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;versionString)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#compareTo(is.yarr.qilletni.api.lib.qll.ComparableVersion)" class="member-name-link">compareTo</a><wbr>(<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&nbsp;other)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Comparable method to allow comparison between versions using java Comparables</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#parseComparableVersionString(java.lang.String)" class="member-name-link">parseComparableVersionString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;versionString)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Parses a <a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll"><code>ComparableVersion</code></a> from a string, such as <code>^1.0.0</code>.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#permitsVersion(is.yarr.qilletni.api.lib.qll.Version)" class="member-name-link">permitsVersion</a><wbr>(<a href="Version.html" title="class in is.yarr.qilletni.api.lib.qll">Version</a>&nbsp;checkVersion)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#permitsVersion(is.yarr.qilletni.api.lib.qll.Version)" class="member-name-link">permitsVersion</a><wbr>(<a href="Version.html" title="class in is.yarr.qilletni.api.lib.qll">Version</a>&nbsp;checkVersion)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if the current <a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll"><code>ComparableVersion</code></a> permits the given <a href="Version.html" title="class in is.yarr.qilletni.api.lib.qll"><code>Version</code></a> to be used in the current
  range.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toString()" class="member-name-link">toString</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -253,6 +263,23 @@ loadScripts(document, 'script');</script>
 <dd><code>checkVersion</code> - The version to compare</dd>
 <dt>Returns:</dt>
 <dd>If the version fits the bounds of the current <a href="ComparableVersion.RangeSpecifier.html" title="enum class in is.yarr.qilletni.api.lib.qll"><code>ComparableVersion.RangeSpecifier</code></a></dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="compareTo(is.yarr.qilletni.api.lib.qll.ComparableVersion)">
+<h3>compareTo</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">compareTo</span><wbr><span class="parameters">(<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&nbsp;other)</span></div>
+<div class="block">Comparable method to allow comparison between versions using java Comparables</div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Comparable.html#compareTo(T)" title="class or interface in java.lang" class="external-link">compareTo</a></code>&nbsp;in interface&nbsp;<code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Comparable.html" title="class or interface in java.lang" class="external-link">Comparable</a>&lt;<a href="ComparableVersion.html" title="class in is.yarr.qilletni.api.lib.qll">ComparableVersion</a>&gt;</code></dd>
+<dt>Parameters:</dt>
+<dd><code>other</code> - the ComparableVersion to be compared.</dd>
+<dt>Returns:</dt>
+<dd>the compare value between this version and the other ComparableVersion</dd>
 </dl>
 </div>
 </section>
