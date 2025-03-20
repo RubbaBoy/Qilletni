@@ -1,12 +1,14 @@
 package is.yarr.qilletni.api.lib.qll;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Arrays;
 import java.util.Optional;
 
 /**
  * A {@link Version} that may be compared with others, fitting a range.
  */
-public class ComparableVersion extends Version {
+public class ComparableVersion extends Version implements Comparable<ComparableVersion> {
 
     private final RangeSpecifier rangeSpecifier;
 
@@ -65,6 +67,22 @@ public class ComparableVersion extends Version {
      */
     public boolean permitsVersion(Version checkVersion) {
         return rangeSpecifier.permitsVersion(this, checkVersion);
+    }
+
+    /**
+     * Comparable method to allow comparison between versions using java Comparables
+     * @param other the ComparableVersion to be compared.
+     * @return the compare value between this version and the other ComparableVersion
+     */
+    @Override
+    public int compareTo(ComparableVersion other) {
+        if (this.major() != other.major()) {
+            return Integer.compare(this.major(), other.major());
+        }
+        if (this.minor() != other.minor()) {
+            return Integer.compare(this.minor(), other.minor());
+        }
+        return Integer.compare(this.patch(), other.patch());
     }
 
     /**
