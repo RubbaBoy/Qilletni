@@ -42,6 +42,7 @@ import is.yarr.qilletni.lang.types.IntTypeImpl;
 import is.yarr.qilletni.lang.types.JavaTypeImpl;
 import is.yarr.qilletni.lang.types.ListTypeImpl;
 import is.yarr.qilletni.lang.types.StringTypeImpl;
+import is.yarr.qilletni.lang.types.conversion.BulkTypeConversion;
 import is.yarr.qilletni.lang.types.conversion.TypeConverterImpl;
 import is.yarr.qilletni.lang.types.entity.EntityDefinitionManagerImpl;
 import is.yarr.qilletni.lang.types.entity.EntityInitializerImpl;
@@ -97,18 +98,21 @@ public class QilletniProgramRunner {
         
         dynamicProvider.initializeInitialProvider(internalPackageConfig);
         
+        
         this.dynamicProvider = dynamicProvider;
         this.symbolTables = new HashMap<>();
         this.globalScope = new ScopeImpl("global");
         this.entityDefinitionManager = new EntityDefinitionManagerImpl();
         this.typeAdapterRegistrar = new TypeAdapterRegistrar();
         this.nativeFunctionHandler = new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables);
-        this.entityInitializer = new EntityInitializerImpl(typeAdapterRegistrar, entityDefinitionManager);
+        
+        var bulkTypeConversion = new BulkTypeConversion(typeAdapterRegistrar);
+        this.entityInitializer = new EntityInitializerImpl(entityDefinitionManager, bulkTypeConversion);
         this.musicPopulator = new MusicPopulatorImpl(dynamicProvider, internalPackageConfig);
         this.qilletniStackTrace = new QilletniStackTraceImpl();
         this.backgroundTaskExecutor = new BackgroundTaskExecutorImpl(qilletniStackTrace);
 
-        var typeConverter = new TypeConverterImpl(typeAdapterRegistrar, entityInitializer);
+        var typeConverter = new TypeConverterImpl(typeAdapterRegistrar, entityInitializer, bulkTypeConversion);
 
         var songTypeFactory = new SongTypeFactoryImpl(dynamicProvider);
         var collectionTypeFactory = new CollectionTypeFactoryImpl(dynamicProvider);

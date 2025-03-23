@@ -7,6 +7,7 @@ import is.yarr.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import is.yarr.qilletni.api.lang.types.entity.EntityInitializer;
 import is.yarr.qilletni.lang.exceptions.NoTypeAdapterException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
+import is.yarr.qilletni.lang.types.conversion.BulkTypeConversion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,12 @@ public class EntityInitializerImpl implements EntityInitializer {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(EntityInitializerImpl.class);
 
-    private final TypeAdapterRegistrar typeAdapterRegistrar;
     private final EntityDefinitionManager entityDefinitionManager;
+    private final BulkTypeConversion bulkTypeConversion;
 
-    public EntityInitializerImpl(TypeAdapterRegistrar typeAdapterRegistrar, EntityDefinitionManager entityDefinitionManager) {
-        this.typeAdapterRegistrar = typeAdapterRegistrar;
+    public EntityInitializerImpl(EntityDefinitionManager entityDefinitionManager, BulkTypeConversion bulkTypeConversion) {
         this.entityDefinitionManager = entityDefinitionManager;
+        this.bulkTypeConversion = bulkTypeConversion;
     }
 
     @Override
@@ -44,20 +45,7 @@ public class EntityInitializerImpl implements EntityInitializer {
 
     @Override
     public EntityType initializeEntity(EntityDefinition entityDefinition, List<Object> args) {
-        var adaptedArgs = new ArrayList<QilletniType>();
-
-        for (var arg : args) {
-            if (arg instanceof QilletniType qilletniType) {
-                adaptedArgs.add(qilletniType);
-                continue;
-            }
-            
-            var typeAdapter = typeAdapterRegistrar.findAnyTypeAdapter(arg.getClass())
-                    .orElseThrow(() -> new NoTypeAdapterException(arg.getClass()));
-
-            adaptedArgs.add(typeAdapter.convertCastedType(arg));
-        }
-        
+        var adaptedArgs = bulkTypeConversion.convertToQilletniTypes(args);
         return entityDefinition.createInstance(adaptedArgs);
     }
 }

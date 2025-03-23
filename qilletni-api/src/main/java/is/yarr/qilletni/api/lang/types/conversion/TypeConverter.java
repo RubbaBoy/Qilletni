@@ -3,6 +3,8 @@ package is.yarr.qilletni.api.lang.types.conversion;
 import is.yarr.qilletni.api.lang.types.EntityType;
 import is.yarr.qilletni.api.lang.types.QilletniType;
 
+import java.util.List;
+
 /**
  * Converts Qilletni to Java types and back.
  */
@@ -25,6 +27,14 @@ public interface TypeConverter {
      * @return The converted object
      */
     QilletniType convertToQilletniType(Object object);
+
+    /**
+     * Converts a list of Java objects to a list of QilletniType objects. Useful for parameter conversions.
+     * 
+     * @param objects The list of objects to convert
+     * @return The converted QilletniType objects
+     */
+    List<QilletniType> convertToQilletniTypes(List<Object> objects);
 
     /**
      * Takes a Java record and converts it to a Qilletni entity. The entity's constructor must be in the same order as

@@ -9,14 +9,18 @@ import is.yarr.qilletni.lang.exceptions.java.RecordConversionException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapter;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
 
+import java.util.List;
+
 public class TypeConverterImpl implements TypeConverter {
     
     private final TypeAdapterRegistrar typeAdapterRegistrar;
     private final EntityInitializer entityInitializer;
+    private final BulkTypeConversion bulkTypeConversion;
 
-    public TypeConverterImpl(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer) {
+    public TypeConverterImpl(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, BulkTypeConversion bulkTypeConversion) {
         this.typeAdapterRegistrar = typeAdapterRegistrar;
         this.entityInitializer = entityInitializer;
+        this.bulkTypeConversion = bulkTypeConversion;
     }
 
     @Override
@@ -37,6 +41,11 @@ public class TypeConverterImpl implements TypeConverter {
                 .orElseThrow(() -> new NoTypeAdapterException(object.getClass()));
 
         return qilletniTypeTypeAdapter.convertCastedType(object);
+    }
+
+    @Override
+    public List<QilletniType> convertToQilletniTypes(List<Object> list) {
+        return bulkTypeConversion.convertToQilletniTypes(list);
     }
 
     @Override
