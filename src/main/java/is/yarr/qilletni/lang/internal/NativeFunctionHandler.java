@@ -61,7 +61,12 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
 
     @Override
     public void addScopedInjectableInstance(Object object, List<Class<?>> permittedClasses) {
-        injectableInstances.add(new ScopedInjectableInstance(object, permittedClasses));
+        injectableInstances.add(ScopedInjectableInstance.createWithPermittedClasses(object, permittedClasses));
+    }
+
+    @Override
+    public void addScopedInjectableInstanceByNames(Object object, List<String> permittedClassNames) {
+        injectableInstances.add(ScopedInjectableInstance.createWithPermittedClassNames(object, permittedClassNames));
     }
 
     public void registerClasses(Class<?>... nativeMethodClass) {
@@ -235,14 +240,20 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
      * @param restrictedScope If there is a restricted scope. `false` indicates that the instance may be injected into
      *                        anything
      * @param permittedClasses If there is a restricted scope, these are the classes that may be injected into
+     * @param permittedClassNames If there is a restricted scope, these are the class names that may be injected into.
+     *                            This is used for when the class may not yet be loaded.
      */
-    record ScopedInjectableInstance(Object instance, boolean restrictedScope, List<Class<?>> permittedClasses) {
+    record ScopedInjectableInstance(Object instance, boolean restrictedScope, List<Class<?>> permittedClasses, List<String> permittedClassNames) {
         public ScopedInjectableInstance(Object instance) {
-            this(instance, false, List.of());
+            this(instance, false, List.of(), List.of());
         }
         
-        public ScopedInjectableInstance(Object instance, List<Class<?>> permittedClasses) {
-            this(instance, true, permittedClasses);
+        public static ScopedInjectableInstance createWithPermittedClasses(Object instance, List<Class<?>> permittedClasses) {
+            return new ScopedInjectableInstance(instance, true, permittedClasses, List.of());
+        }
+        
+        public static ScopedInjectableInstance createWithPermittedClassNames(Object instance, List<String> permittedClassNames) {
+            return new ScopedInjectableInstance(instance, true, List.of(), permittedClassNames);
         }
 
         /**
@@ -252,7 +263,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
          * @return If the class is permitted to be injected
          */
         public boolean permitsClass(Class<?> clazz) {
-            return !restrictedScope || permittedClasses.contains(clazz);
+            return !restrictedScope || permittedClasses.contains(clazz) || permittedClassNames.contains(clazz.getCanonicalName());
         }
     }
 }

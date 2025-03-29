@@ -39,4 +39,14 @@ public interface NativeFunctionClassInjector {
      */
     void addScopedInjectableInstance(Object object, List<Class<?>> permittedClasses);
     
+    /**
+     * Add an instance of anything to be injected into a constructor, by knowing its superclass. Only classes with a
+     * name in the permittedClassNames list will be injected. If the class is not included in the list, it will act as
+     * if it does not exist and may cause an error.
+     * 
+     * @param object The instance to inject
+     * @param permittedClassNames The class names that are allowed to be injected
+     */
+    void addScopedInjectableInstanceByNames(Object object, List<String> permittedClassNames);
+    
 }
