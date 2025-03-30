@@ -2,8 +2,10 @@ package is.yarr.qilletni.lib.core;
 
 import is.yarr.qilletni.api.lang.internal.debug.DebugSupport;
 import is.yarr.qilletni.api.lang.table.Scope;
+import is.yarr.qilletni.api.lang.table.Symbol;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.EntityType;
+import is.yarr.qilletni.api.lang.types.QilletniType;
 import is.yarr.qilletni.api.lib.annotations.BeforeAnyInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,9 @@ import java.util.stream.Collectors;
 public class DebugFunctions {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DebugFunctions.class);
+
+    final String ANSI_GREEN = "\u001B[32m";
+    final String ANSI_RESET = "\u001B[0m";
     
     private final DebugSupport debugSupport;
     private final SymbolTable symbolTable;
@@ -53,21 +58,26 @@ public class DebugFunctions {
         if (depth > 0) {
             System.out.printf("%sScope %s%n", spaces, scope.getDebugDesc());
         }
-        
+
+        if (scope.getAllFunctionSymbols().isEmpty()) {
+            System.out.printf("%sNo functions in scope%n", spaces);
+        }
+
         scope.getAllFunctionSymbols().forEach((name, symbols) -> {
             var nonExtensionFunctions = symbols.stream()
-                    .filter(symbol -> symbol.getValue().getOnType() == null) // Only non-extension functions
-                    .map(symbol -> symbol.getValue().stringValue())
+                    .map(Symbol::getValue)
+                    .filter(functionType -> !functionType.isExternallyDefined()) // Only functions native to the scope
+                    .map(QilletniType::stringValue)
                     .toList();
             
             if (nonExtensionFunctions.size() == 1) {
-                System.out.printf("%s%s%n", spaces, nonExtensionFunctions.getFirst());
+                System.out.printf("%s%s%s%s%n", spaces, ANSI_GREEN, nonExtensionFunctions.getFirst(), ANSI_RESET);
                 return;
             }
         
             if (!nonExtensionFunctions.isEmpty()) {
                 System.out.printf("%s%s:%n", spaces, name);
-                nonExtensionFunctions.forEach(value -> System.out.printf("  %s%s%n", spaces, value));
+                nonExtensionFunctions.forEach(value -> System.out.printf("  %s%s%s%s%n", spaces, ANSI_GREEN, value, ANSI_RESET));
             }
         });
         
@@ -101,7 +111,7 @@ public class DebugFunctions {
         }
         
         scope.getAllSymbols().forEach((name, symbol) ->
-                System.out.printf("%s%s: %s%n", spaces, name, symbol.getValue().stringValue()));
+                System.out.printf("%s%s%s%s: %s%n", spaces, ANSI_GREEN, name, ANSI_RESET, symbol.getValue().stringValue()));
         
         if (scope.getParent() != null) {
             printVariablesFromScope(scope.getParent(), depth + 1, printedScopes);

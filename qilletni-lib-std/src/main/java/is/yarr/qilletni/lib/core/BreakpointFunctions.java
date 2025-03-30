@@ -39,6 +39,7 @@ public class BreakpointFunctions {
         
         var scanner = new Scanner(System.in);
         
+        System.out.print(">> ");
         inputLoop: while (scanner.hasNext()) {
             var line = scanner.nextLine();
             var splitLine = line.split("\\s+");
@@ -55,6 +56,8 @@ public class BreakpointFunctions {
                     debugSupport.runDebugLine(line);
                     break;
             }
+            
+            System.out.print(">> ");
         }
         
         debugSupport.exitBreakpoint();
