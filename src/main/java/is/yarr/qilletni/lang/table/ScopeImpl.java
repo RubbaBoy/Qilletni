@@ -56,7 +56,7 @@ public class ScopeImpl implements Scope {
         this.scopeType = scopeType;
         this.parent = parent;
         this.scopeId = scopeCount++;
-        this.debugDesc = debugDesc;
+        this.debugDesc = "%s (id: %d)".formatted(debugDesc, scopeId);
         this.entityType = entityType;
     }
 

@@ -14,5 +14,8 @@ native_classes:
   - is.yarr.qilletni.lib.core.StringFunctions
   - is.yarr.qilletni.lib.core.DateFunctions
   - is.yarr.qilletni.lib.core.BackgroundFunctions
+  - is.yarr.qilletni.lib.core.BreakpointFunctions
+  - is.yarr.qilletni.lib.core.DebugFunctions
 auto_import:
   - core.ql
+  - debug/debug.ql # TODO: Make this not imported for normal use

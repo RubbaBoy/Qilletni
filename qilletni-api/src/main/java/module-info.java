@@ -26,6 +26,7 @@ module qilletni.api {
     exports is.yarr.qilletni.api.lib.persistence;
     exports is.yarr.qilletni.api.lib.qll;
     exports is.yarr.qilletni.api.lang.internal;
+    exports is.yarr.qilletni.api.lang.internal.debug;
     exports is.yarr.qilletni.api.music.supplier;
     exports is.yarr.qilletni.api.exceptions;
     exports is.yarr.qilletni.api.exceptions.config;

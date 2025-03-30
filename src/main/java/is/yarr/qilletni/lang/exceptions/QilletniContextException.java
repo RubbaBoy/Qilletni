@@ -115,9 +115,9 @@ public class QilletniContextException extends QilletniException {
                 "picocli"
         );
 
-        System.out.println("modules:");
+//        System.out.println("modules:");
         for (StackTraceElement element : stackTraceElements) {
-            System.out.println(element.getModuleName() + "  - " + element.getClassName());
+//            System.out.println(element.getModuleName() + "  - " + element.getClassName());
             if (ignorePackages.stream().noneMatch(pkg -> element.getClassName().startsWith(pkg))) {
                 placeholders.add(new StackTracePlaceholder(element));
 //                filteredStackTrace.append("\tat ").append(element).append("\n");

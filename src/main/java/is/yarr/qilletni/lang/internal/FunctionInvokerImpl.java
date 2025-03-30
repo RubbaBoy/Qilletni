@@ -61,7 +61,6 @@ public class FunctionInvokerImpl implements FunctionInvoker {
     @Override
     public <T extends QilletniType> Optional<T> invokeFunction(FunctionType alreadyFoundFunction, List<QilletniType> params, QilletniType invokedOn) {
         var stackTraceElement = findCallingMethod(alreadyFoundFunction);
-        LOGGER.debug("HEREEE ABABABABA");
         return invokeFunction(alreadyFoundFunction.getName(), params, invokedOn, alreadyFoundFunction, () -> currentStackTrace.pushStackTraceElement(stackTraceElement));
     }
 

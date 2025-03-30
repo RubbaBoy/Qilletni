@@ -55,6 +55,7 @@ allprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
 
         maven {
             url = "https://maven.pkg.github.com/rubbaboy/Qilletni"

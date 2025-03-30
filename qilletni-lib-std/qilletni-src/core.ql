@@ -2,6 +2,7 @@ import "types/types.ql"
 import "util/util.ql"
 import "string.ql"
 import "background.ql"
+import "breakpoint.ql"
 
 /**
  * Prints a string representation of the given object to the console, followed by a newline character.

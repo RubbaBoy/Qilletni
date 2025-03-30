@@ -31,6 +31,7 @@ import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
 import is.yarr.qilletni.lang.internal.UnimplementedFunctionInvoker;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterRegistrar;
+import is.yarr.qilletni.lang.internal.debug.DebugSupportImpl;
 import is.yarr.qilletni.lang.stack.QilletniStackTraceImpl;
 import is.yarr.qilletni.lang.table.ScopeImpl;
 import is.yarr.qilletni.lang.table.SymbolTableImpl;
@@ -83,6 +84,7 @@ public class QilletniProgramRunner {
     private final PackageConfig internalPackageConfig = PackageConfigImpl.createInternalConfig();
     private final EntityDefinitionManager entityDefinitionManager;
     private final TypeAdapterRegistrar typeAdapterRegistrar;
+    private final DebugSupportImpl debugSupport;
     private final NativeFunctionHandler nativeFunctionHandler;
     private final EntityInitializer entityInitializer;
     private final DynamicProvider dynamicProvider;
@@ -104,7 +106,8 @@ public class QilletniProgramRunner {
         this.globalScope = new ScopeImpl("global");
         this.entityDefinitionManager = new EntityDefinitionManagerImpl();
         this.typeAdapterRegistrar = new TypeAdapterRegistrar();
-        this.nativeFunctionHandler = new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables);
+        this.debugSupport = new DebugSupportImpl("true".equals(internalPackageConfig.get("debug").orElse("")));
+        this.nativeFunctionHandler = new NativeFunctionHandler(new TypeAdapterInvoker(typeAdapterRegistrar), symbolTables, debugSupport);
         
         var bulkTypeConversion = new BulkTypeConversion(typeAdapterRegistrar);
         this.entityInitializer = new EntityInitializerImpl(entityDefinitionManager, bulkTypeConversion);
@@ -140,6 +143,13 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(typeConverter);
         nativeFunctionHandler.addInjectableInstance(dynamicProvider);
         nativeFunctionHandler.addInjectableInstance(backgroundTaskExecutor);
+        
+        if (debugSupport.isDebugEnabled()) {
+            LOGGER.debug("Debugging enabled");
+            nativeFunctionHandler.addScopedInjectableInstanceByNames(debugSupport, List.of("is.yarr.qilletni.lib.core.BreakpointFunctions", "is.yarr.qilletni.lib.core.DebugFunctions"));
+        } else {
+            LOGGER.debug("Debugging disabled");
+        }
     }
 
     private static TypeAdapterRegistrar initializeTypeAdapterRegistrar(TypeAdapterRegistrar typeAdapterRegistrar, EntityInitializer entityInitializer, TypeConverter typeConverter, ListInitializer listInitializer) {
@@ -247,7 +257,8 @@ public class QilletniProgramRunner {
         LOGGER.debug("global override: {}", globalScope);
 
         QilletniParser.ProgContext programContext = qilletniParser.prog();
-        var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalOverride, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, backgroundTaskExecutor, qilletniStackTrace, (importedFile, importAs) -> importFileFromStream(pathState.importFrom(importedFile), importAs, globalOverride));
+        var qilletniVisitor = new QilletniVisitor(symbolTable, symbolTables, globalOverride, dynamicProvider, entityDefinitionManager, nativeFunctionHandler, musicPopulator, listTypeTransformer, backgroundTaskExecutor, debugSupport, qilletniStackTrace,
+                (importedFile, importAs) -> importFileFromStream(pathState.importFrom(importedFile), importAs, globalOverride));
         
         symbolTables.put(symbolTable, qilletniVisitor);
 

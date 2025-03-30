@@ -52,6 +52,7 @@ import is.yarr.qilletni.lang.exceptions.VariableNotFoundException;
 import is.yarr.qilletni.lang.internal.BackgroundTaskExecutorImpl;
 import is.yarr.qilletni.lang.internal.FunctionInvokerImpl;
 import is.yarr.qilletni.lang.internal.NativeFunctionHandler;
+import is.yarr.qilletni.lang.internal.debug.DebugSupportImpl;
 import is.yarr.qilletni.lang.math.MixedExpression;
 import is.yarr.qilletni.lang.table.SymbolImpl;
 import is.yarr.qilletni.lang.table.TableUtils;
@@ -105,12 +106,13 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     private final MusicPopulator musicPopulator;
     private final ListTypeTransformer listTypeTransformer;
     private final BackgroundTaskExecutorImpl backgroundTaskExecutor;
+    private final DebugSupportImpl debugSupport;
     // The file, the namespace
     private final BiFunction<String, String, Optional<ImportAliasType>> importConsumer;
     private final FunctionInvokerImpl functionInvoker;
     private final QilletniStackTrace qilletniStackTrace;
 
-    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, Scope globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, BackgroundTaskExecutorImpl backgroundTaskExecutor, QilletniStackTrace qilletniStackTrace, BiFunction<String, String, Optional<ImportAliasType>> importConsumer) {
+    public QilletniVisitor(SymbolTable symbolTable, Map<SymbolTable, QilletniVisitor> symbolTableMap, Scope globalScope, DynamicProvider dynamicProvider, EntityDefinitionManager entityDefinitionManager, NativeFunctionHandler nativeFunctionHandler, MusicPopulator musicPopulator, ListTypeTransformer listTypeTransformer, BackgroundTaskExecutorImpl backgroundTaskExecutor, DebugSupportImpl debugSupport, QilletniStackTrace qilletniStackTrace, BiFunction<String, String, Optional<ImportAliasType>> importConsumer) {
         this.symbolTable = symbolTable;
         this.globalScope = globalScope;
         this.dynamicProvider = dynamicProvider;
@@ -118,6 +120,7 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
         this.musicPopulator = musicPopulator;
         this.listTypeTransformer = listTypeTransformer;
         this.backgroundTaskExecutor = backgroundTaskExecutor;
+        this.debugSupport = debugSupport;
         this.importConsumer = importConsumer;
         this.qilletniStackTrace = qilletniStackTrace;
         this.functionInvoker = new FunctionInvokerImpl(symbolTable, symbolTableMap, nativeFunctionHandler, qilletniStackTrace);
@@ -685,6 +688,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public Optional<QilletniType> visitPostfixSuffix(QilletniType leftExpr, QilletniParser.PostfixSuffixContext ctx) { // DONE
         // This is just a function call on the left side
         if (ctx.function_call() != null) {
+            if (debugSupport.isDebugEnabled()) {
+                debugSupport.setLastExecutedLine(ctx.getText());
+            }
+            
             // This throws because it's an expression, so it expects a return value
             return functionInvoker.invokeFunction(ctx.function_call(), leftExpr);
 //                    .orElseThrow(FunctionDidntReturnException::new);
@@ -718,6 +725,10 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
     public Optional<QilletniType> visitPrimaryExpr(QilletniParser.PrimaryExprContext ctx) {
         // 2) Function call
         if (ctx.function_call() != null) {
+            if (debugSupport.isDebugEnabled()) {
+                debugSupport.setLastExecutedLine(ctx.getText());
+            }
+            
             return functionInvoker.invokeFunction(ctx.function_call(), null);
 //                    .orElseThrow(FunctionDidntReturnException::new);
         }
@@ -1122,18 +1133,16 @@ public class QilletniVisitor extends QilletniParserBaseVisitor<Object> {
 
     @Override
     public Object visitStmt(QilletniParser.StmtContext ctx) {
-//        if (ctx.DOT() != null) { // foo.bar()
-//            var leftExpr = visitQilletniTypedNode(ctx.expr());
-//            functionInvoker.invokeFunction(ctx.function_call(), leftExpr);
-//            return null;
-//        }
-
         visitChildren(ctx);
         return null;
     }
 
     @Override
     public Optional<QilletniType> visitFunction_call(QilletniParser.Function_callContext ctx) {
+        if (debugSupport.isDebugEnabled()) {
+            debugSupport.setLastExecutedLine(ctx.getText());
+        }
+        
         return functionInvoker.invokeFunction(ctx);
     }
 

@@ -29,7 +29,7 @@ public class TypeAdapterInvoker {
         var javaParams = method.getParameterTypes();
 
         // params being sent to the java method, must match up with javaParams types
-        var invokingParams = new Object[params.size()];
+        var invokingParams = new Object[javaParams.length];
 
         LOGGER.debug("java method: {}", method);
         LOGGER.debug("java method name: {}", method.getName());

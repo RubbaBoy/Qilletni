@@ -1,7 +1,10 @@
 package is.yarr.qilletni.lang.internal;
 
+import is.yarr.qilletni.antlr.QilletniLexer;
+import is.yarr.qilletni.antlr.QilletniParser;
 import is.yarr.qilletni.api.exceptions.QilletniException;
 import is.yarr.qilletni.api.lang.internal.NativeFunctionClassInjector;
+import is.yarr.qilletni.api.lang.internal.debug.DebugSupport;
 import is.yarr.qilletni.api.lang.stack.QilletniStackTrace;
 import is.yarr.qilletni.api.lang.table.SymbolTable;
 import is.yarr.qilletni.api.lang.types.QilletniType;
@@ -9,13 +12,19 @@ import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
 import is.yarr.qilletni.api.lib.annotations.BeforeAnyInvocation;
 import is.yarr.qilletni.api.lib.annotations.NativeOn;
 import is.yarr.qilletni.lang.QilletniVisitor;
+import is.yarr.qilletni.lang.docs.exceptions.DocErrorListener;
 import is.yarr.qilletni.lang.exceptions.NativeMethodNotBoundException;
 import is.yarr.qilletni.lang.exceptions.QilletniContextException;
 import is.yarr.qilletni.lang.exceptions.QilletniNativeInvocationException;
 import is.yarr.qilletni.lang.exceptions.lib.NoNativeLibraryConstructorFoundContextException;
 import is.yarr.qilletni.lang.exceptions.lib.UninjectableConstructorTypeContextException;
 import is.yarr.qilletni.lang.internal.adapter.TypeAdapterInvoker;
+import is.yarr.qilletni.lang.internal.debug.DebugSupportImpl;
+import is.yarr.qilletni.lang.table.SymbolTableImpl;
 import is.yarr.qilletni.lang.types.TypeUtils;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CharStreams;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +35,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,17 +51,19 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     private final TypeAdapterInvoker typeAdapterInvoker;
     private final List<ScopedInjectableInstance> injectableInstances;
     private final Map<SymbolTable, QilletniVisitor> symbolTables;
-    
+    private final DebugSupportImpl debugSupport;
+
     private final static Constructor<?> functionInvokerConstructor = FunctionInvokerImpl.class.getConstructors()[0];
     
-    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, Map<SymbolTable, QilletniVisitor> symbolTables) {
-        this(typeAdapterInvoker, new ArrayList<>(), symbolTables);
+    public NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, Map<SymbolTable, QilletniVisitor> symbolTables, DebugSupportImpl debugSupport) {
+        this(typeAdapterInvoker, new ArrayList<>(), symbolTables, debugSupport);
     }
 
-    private NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<ScopedInjectableInstance> injectableInstances, Map<SymbolTable, QilletniVisitor> symbolTables) {
+    private NativeFunctionHandler(TypeAdapterInvoker typeAdapterInvoker, List<ScopedInjectableInstance> injectableInstances, Map<SymbolTable, QilletniVisitor> symbolTables, DebugSupportImpl debugSupport) {
         this.typeAdapterInvoker = typeAdapterInvoker;
         this.injectableInstances = injectableInstances;
         this.symbolTables = symbolTables;
+        this.debugSupport = debugSupport;
     }
     
     @Override
@@ -133,7 +145,7 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
 
         try {
             if (invocableMethod.beforeAny() != null) {
-                typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), List.of(params.getFirst()));
+                typeAdapterInvoker.invokeMethod(instance, invocableMethod.beforeAny(), params.isEmpty() ? Collections.emptyList() : List.of(params.getFirst()));
             }
         } catch (Throwable e) {
             throw getQilletniNativeInvocationException(qilletniStackTrace, e, "beforeAny ");
@@ -208,6 +220,12 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
                                             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                                                 throw new RuntimeException(e);
                                             }
+                                        }
+                                        
+                                        if (obj instanceof DebugSupportImpl debugSupportParam) {
+                                            var qilletniVisitor = symbolTables.get(symbolTable);
+                                            
+                                            debugSupportParam.initializeREPL(symbolTable, qilletniVisitor, qilletniStackTrace);
                                         }
 
                                         return obj;

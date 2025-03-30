@@ -1,13 +1,12 @@
-package is.yarr.qilletni.lang.docs.exceptions;
+package is.yarr.qilletni.lang.exceptions;
 
 import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 
-public class DocErrorListener extends BaseErrorListener {
+public class REPLErrorListener extends BaseErrorListener {
     
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
@@ -25,7 +24,7 @@ public class DocErrorListener extends BaseErrorListener {
         }
         
         // Print the error message
-        System.err.printf("Error at line %d, position %d: %s%n", line, charPositionInLine, msg);
+        System.err.printf("Error at column %d: %s%n", charPositionInLine, msg);
 
 //        System.err.println("input = " + input);
 
@@ -34,7 +33,6 @@ public class DocErrorListener extends BaseErrorListener {
         if (line - 1 < lines.length) {
             String errorLine = lines[line - 1];
             System.err.printf("Context: %s%n", errorLine);
-//            String pointer = new String(new char[charPositionInLine]).replace("\0", " ") + "^";
             System.err.printf("%s^%n", " ".repeat(charPositionInLine + 9));
         }
     }
