@@ -9,6 +9,7 @@ is.yarr.qilletni.api.lang.docs.structure.item
 is.yarr.qilletni.api.lang.docs.structure.text
 is.yarr.qilletni.api.lang.docs.structure.text.inner
 is.yarr.qilletni.api.lang.internal
+is.yarr.qilletni.api.lang.internal.debug
 is.yarr.qilletni.api.lang.stack
 is.yarr.qilletni.api.lang.table
 is.yarr.qilletni.api.lang.types

@@ -129,6 +129,12 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Add an instance of anything to be injected into a constructor, by knowing its superclass.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#addScopedInjectableInstanceByNames(java.lang.Object,java.util.List)" class="member-name-link">addScopedInjectableInstanceByNames</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;permittedClassNames)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Add an instance of anything to be injected into a constructor, by knowing its superclass.</div>
+</div>
 </div>
 </div>
 </div>
@@ -169,6 +175,23 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>object</code> - The instance to inject</dd>
 <dd><code>permittedClasses</code> - The classes that are allowed to be injected</dd>
+</dl>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addScopedInjectableInstanceByNames(java.lang.Object,java.util.List)">
+<h3>addScopedInjectableInstanceByNames</h3>
+<div class="horizontal-scroll">
+<div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">addScopedInjectableInstanceByNames</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>&nbsp;object,
+ <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;permittedClassNames)</span></div>
+<div class="block">Add an instance of anything to be injected into a constructor, by knowing its superclass. Only classes with a
+ name in the permittedClassNames list will be injected. If the class is not included in the list, it will act as
+ if it does not exist and may cause an error.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>object</code> - The instance to inject</dd>
+<dd><code>permittedClassNames</code> - The class names that are allowed to be injected</dd>
 </dl>
 </div>
 </section>
