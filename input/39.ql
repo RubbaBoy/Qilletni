@@ -6,13 +6,10 @@ entity Cat {
     Cat(name, age, interests)
     
     fun printInterests() {
-//        for (interest : interests) {
-            vars()
-            print("This should give an error:")
-            print(beer)
-//            breakpoint()
-//            printf("Interest: %s", [interest])
-//        }
+        for (interest : interests) {
+            breakpoint()
+            printf("Interest: %s", [interest])
+        }
     }
 }
 

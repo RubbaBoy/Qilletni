@@ -12,13 +12,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class DebugFunctions {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DebugFunctions.class);
 
     final String ANSI_GREEN = "\u001B[32m";
+    final String ANSI_GRAY = "\u001B[90m";
     final String ANSI_RESET = "\u001B[0m";
     
     private final DebugSupport debugSupport;
@@ -60,7 +60,7 @@ public class DebugFunctions {
         }
 
         if (scope.getAllFunctionSymbols().isEmpty()) {
-            System.out.printf("%s - No functions in scope -%n", spaces);
+            System.out.printf("%s%s - No functions in scope -%s%n", spaces, ANSI_GRAY, ANSI_RESET);
         }
 
         scope.getAllFunctionSymbols().forEach((name, symbols) -> {
@@ -107,7 +107,7 @@ public class DebugFunctions {
         }
         
         if (scope.getAllSymbols().isEmpty()) {
-            System.out.printf("%s - No variables in scope -%n", spaces);
+            System.out.printf("%s%s - No variables in scope -%s%n", spaces, ANSI_GRAY, ANSI_RESET);
         }
         
         scope.getAllSymbols().forEach((name, symbol) ->
