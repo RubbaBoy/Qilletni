@@ -8,8 +8,8 @@ native fun vars()
 
 native fun vars(entityInstance)
 
-fun bt() {
-    backtrace()
-}
+// This could be a call to backtrace() not natively,
+// however that makes the stack trace look messier
+native fun bt()
 
 native fun backtrace()

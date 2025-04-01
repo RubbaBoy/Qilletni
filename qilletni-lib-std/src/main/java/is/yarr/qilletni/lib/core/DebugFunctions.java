@@ -44,23 +44,23 @@ public class DebugFunctions {
     }
     
     private void printFunctionsFromScope(Scope scope, int depth, Set<Scope> printedScopes) {
-        if (ignoreCall) return;
+        var currentScopeStr = scope.equals(symbolTable.currentScope()) ? " (current) " : "";
         
         var spaces = "  ".repeat(depth + 1);
 
         if (printedScopes.contains(scope)) {
-            System.out.printf("%sScope %s (already printed)%n", spaces, scope.getDebugDesc());
+            System.out.printf("%sScope %s %s(already printed)%n", spaces, scope.getDebugDesc(), currentScopeStr);
             return;
         }
 
         printedScopes.add(scope);
 
         if (depth > 0) {
-            System.out.printf("%sScope %s%n", spaces, scope.getDebugDesc());
+            System.out.printf("%sScope %s%s%n", spaces, scope.getDebugDesc(), currentScopeStr);
         }
 
         if (scope.getAllFunctionSymbols().isEmpty()) {
-            System.out.printf("%sNo functions in scope%n", spaces);
+            System.out.printf("%s - No functions in scope -%n", spaces);
         }
 
         scope.getAllFunctionSymbols().forEach((name, symbols) -> {
@@ -91,23 +91,23 @@ public class DebugFunctions {
     }
     
     private void printVariablesFromScope(Scope scope, int depth, Set<Scope> printedScopes) {
-        if (ignoreCall) return;
+        var currentScopeStr = scope.equals(symbolTable.currentScope()) ? " (current) " : "";
         
         var spaces = "  ".repeat(depth + 1);
 
         if (printedScopes.contains(scope)) {
-            System.out.printf("%sScope %s (already printed)%n", spaces, scope.getDebugDesc());
+            System.out.printf("%sScope %s %s(already printed)%n", spaces, scope.getDebugDesc(), currentScopeStr);
             return;
         }
 
         printedScopes.add(scope);
         
         if (depth > 0) {
-            System.out.printf("%sScope %s%n", spaces, scope.getDebugDesc());
+            System.out.printf("%sScope %s%s%n", spaces, scope.getDebugDesc(), currentScopeStr);
         }
         
         if (scope.getAllSymbols().isEmpty()) {
-            System.out.printf("%sNo variables in scope%n", spaces);
+            System.out.printf("%s - No variables in scope -%n", spaces);
         }
         
         scope.getAllSymbols().forEach((name, symbol) ->
@@ -124,10 +124,12 @@ public class DebugFunctions {
         var currentScope = symbolTable.currentScope();
         var printedScopes = new HashSet<Scope>();
 
+        System.out.printf("%nScope %s (current)%n", currentScope.getDebugDesc());
+        printVariablesFromScope(currentScope, printedScopes);
+
         for (var scope : symbolTable.getAllScopes()) {
-            if (scope.equals(currentScope)) continue;
-            
             System.out.printf("Scope %s%s%n", scope.getDebugDesc(), scope.equals(currentScope) ? " (current)" : "");
+            
             printFunctionsFromScope(scope, printedScopes);
         }
     }
@@ -143,12 +145,13 @@ public class DebugFunctions {
         if (ignoreCall) return;
         
         var currentScope = symbolTable.currentScope();
-        var printedScopes = new HashSet<Scope>(); 
+        var printedScopes = new HashSet<Scope>();
+
+        System.out.printf("%nScope %s (current)%n", currentScope.getDebugDesc());
+        printVariablesFromScope(currentScope, printedScopes);
 
         for (var scope : symbolTable.getAllScopes()) {
-            if (scope.equals(currentScope)) continue;
-            
-            System.out.printf("%nScope %s%n", scope.getDebugDesc());
+            System.out.printf("%nScope %s%s%n", scope.getDebugDesc(), scope.equals(currentScope) ? " (current)" : "");
             
             printVariablesFromScope(scope, printedScopes);
         }
@@ -159,6 +162,10 @@ public class DebugFunctions {
         
         System.out.printf("Variables In %s instance%n", entityType.typeName());
         printVariablesFromScope(entityType.getEntityScope(), new HashSet<>());
+    }
+
+    public void bt() {
+        backtrace();
     }
 
     public void backtrace() {

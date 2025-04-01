@@ -157,6 +157,7 @@ public class FunctionInvokerImpl implements FunctionInvoker {
         
         LOGGER.debug("AAA symbol table rn: {}", symbolTable);
         var functionScope = symbolTable.functionCall();
+        functionScope.setDebugDesc("fun %s".formatted(functionType.getName()));
         LOGGER.debug("AAA func scope rn: {}", functionScope);
         LOGGER.debug("AAA new symbol table rn: {}", symbolTable);
 

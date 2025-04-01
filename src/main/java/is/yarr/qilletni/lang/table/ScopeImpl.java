@@ -56,8 +56,8 @@ public class ScopeImpl implements Scope {
         this.scopeType = scopeType;
         this.parent = parent;
         this.scopeId = scopeCount++;
-        this.debugDesc = "%s (id: %d)".formatted(debugDesc, scopeId);
         this.entityType = entityType;
+        setDebugDesc(debugDesc);
     }
 
     @Override
@@ -103,11 +103,11 @@ public class ScopeImpl implements Scope {
         
         
         if (checkParentForVar) {
-            LOGGER.debug("looking in parent!");
+            LOGGER.debug("looking in parent! (scope {})", scopeId);
             return parent.lookup(name);
         }
 
-        throw new VariableNotFoundException("Symbol %s not found!".formatted(name));
+        throw new VariableNotFoundException("Symbol %s not found! (scope %d)".formatted(name, scopeId));
     }
 
     @Override
@@ -310,7 +310,7 @@ public class ScopeImpl implements Scope {
 
     @Override
     public void setDebugDesc(String desc) {
-        this.debugDesc = desc;
+        this.debugDesc = "%s (id: %d)".formatted(desc, scopeId);
     }
 
     @Override

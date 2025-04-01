@@ -75,7 +75,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
 
     @Override
     public StaticEntityType createStaticInstance() {
-        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "static entity", qilletniTypeClass);
+        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "static %s".formatted(typeName), qilletniTypeClass);
         
         entityFunctionPopulators.stream()
                 .filter(FunctionPopulator::isStaticFunction)
@@ -85,7 +85,7 @@ public class EntityDefinitionImpl implements EntityDefinition {
     }
 
     protected Scope createScope(List<QilletniType> constructorParams) {
-        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "entity", qilletniTypeClass);
+        var scope = new ScopeImpl(parentScope, Scope.ScopeType.ENTITY, "entity %s".formatted(typeName), qilletniTypeClass);
 
         if (uninitializedParams.size() != constructorParams.size()) {
             throw new InvalidParameterException("Invalid constructor invocation");

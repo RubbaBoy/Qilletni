@@ -65,7 +65,10 @@ public class DebugSupportImpl implements DebugSupport {
 
     @Override
     public void printBacktrace() {
-        qilletniStackTrace.displayStackTrace();
+        var clonedStackTrace = qilletniStackTrace.cloneStackTrace();
+        clonedStackTrace.popStackTraceElement(); // Remove the function that called this method
+        
+        System.out.println(clonedStackTrace.displayStackTrace());
     }
 
     @Override

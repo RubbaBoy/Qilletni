@@ -87,7 +87,7 @@ public class SymbolTableImpl implements SymbolTable {
         
 //        currentScopeStack = new Stack<>();
 //        currentScopeStack.push(functionGlobal); // The parent where all global functions are stored
-        currentScope = new ScopeImpl(global, Scope.ScopeType.FUNCTION, "Fun local"); // Local to the function, inside. Params should be defined here
+        currentScope = new ScopeImpl(global, Scope.ScopeType.FUNCTION, "fun local"); // Local to the function, inside. Params should be defined here
 
         return currentScope;
     }

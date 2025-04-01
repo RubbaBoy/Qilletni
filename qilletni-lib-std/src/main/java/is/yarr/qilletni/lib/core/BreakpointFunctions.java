@@ -47,10 +47,10 @@ public class BreakpointFunctions {
             switch (splitLine[0]) {
                 case "help":
                     System.out.println("Commands:");
-                    System.out.println("  exit/quit - Exit the breakpoint");
+                    System.out.println("  exit/quit/continue - Exit the breakpoint");
                     System.out.println("  help - Display this help message");
                     break;
-                case "exit", "quit":
+                case "exit", "quit", "continue", "cont":
                     break inputLoop;
                 default:
                     debugSupport.runDebugLine(line);

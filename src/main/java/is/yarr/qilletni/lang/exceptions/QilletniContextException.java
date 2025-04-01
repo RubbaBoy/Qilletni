@@ -110,7 +110,8 @@ public class QilletniContextException extends QilletniException {
                 "is.yarr.qilletni.music",
                 "is.yarr.qilletni.antlr",
                 "is.yarr.qilletni.toolchain",
-                "java.base",
+                "java.",
+                "jdk.",
                 "org.antlr",
                 "picocli"
         );
