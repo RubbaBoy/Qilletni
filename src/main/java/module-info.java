@@ -1,10 +1,10 @@
 module qilletni.impl {
 
-    exports is.yarr.qilletni;
-    exports is.yarr.qilletni.lib;
-    exports is.yarr.qilletni.lib.persistence;
-    exports is.yarr.qilletni.lang.docs;
-    exports is.yarr.qilletni.lang.runner;
+    exports dev.qilletni.impl;
+    exports dev.qilletni.impl.lib;
+    exports dev.qilletni.impl.lib.persistence;
+    exports dev.qilletni.impl.lang.docs;
+    exports dev.qilletni.impl.lang.runner;
 
     requires qilletni.api;
     requires org.antlr.antlr4.runtime;

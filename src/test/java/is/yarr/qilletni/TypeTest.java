@@ -1,20 +1,20 @@
 package is.yarr.qilletni;
 
-import is.yarr.qilletni.api.lang.types.weights.WeightUnit;
-import is.yarr.qilletni.api.lang.types.BooleanType;
-import is.yarr.qilletni.api.lang.types.CollectionType;
-import is.yarr.qilletni.api.lang.types.IntType;
-import is.yarr.qilletni.lang.types.IntTypeImpl;
-import is.yarr.qilletni.api.lang.types.ListType;
-import is.yarr.qilletni.api.lang.types.QilletniType;
-import is.yarr.qilletni.api.lang.types.SongType;
-import is.yarr.qilletni.api.lang.types.StringType;
-import is.yarr.qilletni.lang.types.TypelessListType;
-import is.yarr.qilletni.api.lang.types.WeightsType;
-import is.yarr.qilletni.api.lang.types.collection.CollectionDefinition;
-import is.yarr.qilletni.api.lang.types.collection.CollectionOrder;
-import is.yarr.qilletni.api.lang.types.typeclass.QilletniTypeClass;
-import is.yarr.qilletni.lang.types.WeightsTypeImpl;
+import dev.qilletni.api.lang.types.weights.WeightUnit;
+import dev.qilletni.api.lang.types.BooleanType;
+import dev.qilletni.api.lang.types.CollectionType;
+import dev.qilletni.api.lang.types.IntType;
+import dev.qilletni.impl.lang.types.IntTypeImpl;
+import dev.qilletni.api.lang.types.ListType;
+import dev.qilletni.api.lang.types.QilletniType;
+import dev.qilletni.api.lang.types.SongType;
+import dev.qilletni.api.lang.types.StringType;
+import dev.qilletni.lang.types.TypelessListType;
+import dev.qilletni.api.lang.types.WeightsType;
+import dev.qilletni.api.lang.types.collection.CollectionDefinition;
+import dev.qilletni.api.lang.types.collection.CollectionOrder;
+import dev.qilletni.api.lang.types.typeclass.QilletniTypeClass;
+import dev.qilletni.impl.lang.types.WeightsTypeImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

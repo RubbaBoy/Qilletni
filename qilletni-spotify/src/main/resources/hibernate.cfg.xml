@@ -15,11 +15,11 @@
 
         <property name="hbm2ddl.auto">update</property>
 
-        <mapping class="is.yarr.qilletni.music.spotify.entities.SpotifyAlbum"/>
-        <mapping class="is.yarr.qilletni.music.spotify.entities.SpotifyArtist"/>
-        <mapping class="is.yarr.qilletni.music.spotify.entities.SpotifyPlaylist"/>
-        <mapping class="is.yarr.qilletni.music.spotify.entities.SpotifyPlaylistIndex"/>
-        <mapping class="is.yarr.qilletni.music.spotify.entities.SpotifyTrack"/>
-        <mapping class="is.yarr.qilletni.music.spotify.entities.SpotifyUser"/>
+        <mapping class="dev.qilletni.lib.spotify.music.entities.SpotifyAlbum"/>
+        <mapping class="dev.qilletni.lib.spotify.music.entities.SpotifyArtist"/>
+        <mapping class="dev.qilletni.lib.spotify.music.entities.SpotifyPlaylist"/>
+        <mapping class="dev.qilletni.lib.spotify.music.entities.SpotifyPlaylistIndex"/>
+        <mapping class="dev.qilletni.lib.spotify.music.entities.SpotifyTrack"/>
+        <mapping class="dev.qilletni.lib.spotify.music.entities.SpotifyUser"/>
     </session-factory>
 </hibernate-configuration>

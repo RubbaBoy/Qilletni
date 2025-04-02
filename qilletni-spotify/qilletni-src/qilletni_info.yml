@@ -1,12 +1,12 @@
 name: spotify
 version: 1.0.0
 author: Adam Yarris 
-provider: is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider
-native_bind_factory: is.yarr.qilletni.lib.spotify.SpotifyNativeFunctionBindingFactory
+provider: dev.qilletni.lib.spotify.music.provider.SpotifyServiceProvider
+native_bind_factory: dev.qilletni.lib.spotify.SpotifyNativeFunctionBindingFactory
 native_classes:
-  - is.yarr.qilletni.lib.spotify.HooksFunctions
-  - is.yarr.qilletni.lib.spotify.PlayRedirect
-  - is.yarr.qilletni.lib.spotify.PlaylistToolsFunctions
-  - is.yarr.qilletni.lib.spotify.RecommendationsFunctions
+  - dev.qilletni.lib.spotify.HooksFunctions
+  - dev.qilletni.lib.spotify.PlayRedirect
+  - dev.qilletni.lib.spotify.PlaylistToolsFunctions
+  - dev.qilletni.lib.spotify.RecommendationsFunctions
 dependencies:
   - postgres:^1.0.0

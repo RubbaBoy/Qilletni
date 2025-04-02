@@ -4,7 +4,7 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'is.yarr.qilletni'
+group = 'dev.qilletni.impl'
 version = '1.0.0-SNAPSHOT'
 
 dependencies {
@@ -21,7 +21,7 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.10.1'
 
-    implementation 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
+    implementation 'dev.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }
 
 tasks.withType(JavaCompile).each {
@@ -29,7 +29,7 @@ tasks.withType(JavaCompile).each {
 }
 
 generateGrammarSource {
-    var pkg = 'is.yarr.qilletni.antlr'
+    var pkg = 'dev.qilletni.impl.antlr'
     outputDirectory = new File("${project.buildDir}/generated-src/antlr/main/${pkg.split("\\.").join("/")}".toString())
     maxHeapSize = "128m"
     arguments += ['-visitor', '-no-listener']
@@ -55,7 +55,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        mavenLocal()
 
         maven {
             url = "https://maven.pkg.github.com/rubbaboy/Qilletni"

@@ -1,7 +1,7 @@
 lexer grammar DocsLexer;
 
 @lexer::header {
-    package is.yarr.qilletni.antlr;
+    package dev.qilletni.impl.antlr;
 }
 
 BEGIN_DOC: '/**' -> skip;

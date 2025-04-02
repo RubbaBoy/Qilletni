@@ -3,7 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group = 'is.yarr.qilletni.music.spotify'
+group = 'dev.qilletni.lib.spotify'
 version = '1.0.0-SNAPSHOT'
 
 dependencies {
@@ -23,7 +23,7 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-api'
     }
 
-    compileOnly  'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
+    compileOnly 'dev.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }
 
 shadowJar {

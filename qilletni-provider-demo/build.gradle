@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group = 'is.yarr.qilletni.music.demo'
+group = 'dev.qilletni.music.demo'
 version = '1.0.0-SNAPSHOT'
 
 repositories {
@@ -14,8 +15,12 @@ dependencies {
     implementation 'org.apache.logging.log4j:log4j-core:2.22.1'
     implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
 
-//    implementation project(':qilletni-api')
-    implementation 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
+    implementation 'dev.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
+}
+
+shadowJar {
+    configurations = [project.configurations.runtimeClasspath]
+    archiveClassifier.set('')
 }
 
 tasks.withType(JavaCompile).each {

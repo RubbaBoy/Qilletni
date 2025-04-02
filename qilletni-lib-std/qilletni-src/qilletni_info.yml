@@ -3,19 +3,19 @@ version: 1.0.0
 author: Adam Yarris
 description: The standard library for the Qilletni language
 native_classes:
-  - is.yarr.qilletni.lib.core.AlbumFunctions
-  - is.yarr.qilletni.lib.core.ArtistFunctions
-  - is.yarr.qilletni.lib.core.CollectionFunctions
-  - is.yarr.qilletni.lib.core.CoreFunctions
-  - is.yarr.qilletni.lib.core.ListFunctions
-  - is.yarr.qilletni.lib.core.MapFunctions
-  - is.yarr.qilletni.lib.core.MathFunctions
-  - is.yarr.qilletni.lib.core.SongFunctions
-  - is.yarr.qilletni.lib.core.StringFunctions
-  - is.yarr.qilletni.lib.core.DateFunctions
-  - is.yarr.qilletni.lib.core.BackgroundFunctions
-  - is.yarr.qilletni.lib.core.BreakpointFunctions
-  - is.yarr.qilletni.lib.core.DebugFunctions
+  - dev.qilletni.lib.core.AlbumFunctions
+  - dev.qilletni.lib.core.ArtistFunctions
+  - dev.qilletni.lib.core.CollectionFunctions
+  - dev.qilletni.lib.core.CoreFunctions
+  - dev.qilletni.lib.core.ListFunctions
+  - dev.qilletni.lib.core.MapFunctions
+  - dev.qilletni.lib.core.MathFunctions
+  - dev.qilletni.lib.core.SongFunctions
+  - dev.qilletni.lib.core.StringFunctions
+  - dev.qilletni.lib.core.DateFunctions
+  - dev.qilletni.lib.core.BackgroundFunctions
+  - dev.qilletni.lib.core.BreakpointFunctions
+  - dev.qilletni.lib.core.DebugFunctions
 auto_import:
   - core.ql
   - debug/debug.ql # TODO: Make this not imported for normal use

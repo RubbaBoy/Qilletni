@@ -1,7 +1,7 @@
 parser grammar QilletniParser;
 
 @header {
-    package is.yarr.qilletni.antlr;
+    package dev.qilletni.impl.antlr;
 }
 
 options { tokenVocab=QilletniLexer; }

@@ -1,8 +1,8 @@
 package is.yarr.qilletni;
 
-import is.yarr.qilletni.lang.runner.ImportPathState;
-import is.yarr.qilletni.lang.runner.QilletniProgramRunner;
-import is.yarr.qilletni.api.lang.table.SymbolTable;
+import dev.qilletni.impl.lang.runner.ImportPathState;
+import dev.qilletni.impl.lang.runner.QilletniProgramRunner;
+import dev.qilletni.api.lang.table.SymbolTable;
 import org.antlr.v4.runtime.CharStreams;
 
 import java.util.List;

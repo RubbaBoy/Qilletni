@@ -1,5 +1,7 @@
-module qilletni.spotify.main {
-    exports is.yarr.qilletni.lib.spotify;
+import dev.qilletni.lib.spotify.music.provider.SpotifyServiceProvider;
+
+module qilletni.lib.spotify.main {
+    exports dev.qilletni.lib.spotify;
     requires qilletni.api;
     
     requires java.persistence;
@@ -21,10 +23,10 @@ module qilletni.spotify.main {
     requires com.sun.xml.bind;
     requires com.fasterxml.classmate;
 
-    opens is.yarr.qilletni.music.spotify.auth.pkce to com.google.gson;
-    opens is.yarr.qilletni.music.spotify.entities to org.hibernate.orm.core;
-    exports is.yarr.qilletni.music.spotify.play;
+    opens dev.qilletni.lib.spotify.music.auth.pkce to com.google.gson;
+    opens dev.qilletni.lib.spotify.music.entities to org.hibernate.orm.core;
+    exports dev.qilletni.lib.spotify.music.play;
 
-    provides is.yarr.qilletni.api.auth.ServiceProvider
-            with is.yarr.qilletni.music.spotify.provider.SpotifyServiceProvider;
+    provides dev.qilletni.api.auth.ServiceProvider
+            with SpotifyServiceProvider;
 }

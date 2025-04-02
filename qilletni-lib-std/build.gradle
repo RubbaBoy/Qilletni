@@ -3,7 +3,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group = 'is.yarr.qilletni.lib.core'
+group = 'dev.qilletni.lib.core'
 version = '1.0.0'
 
 dependencies {
@@ -11,7 +11,7 @@ dependencies {
     compileOnly 'org.apache.logging.log4j:log4j-core:2.22.1'
     compileOnly 'org.apache.logging.log4j:log4j-slf4j-impl:2.22.1'
 
-    compileOnly 'is.yarr.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
+    compileOnly 'dev.qilletni.api:qilletni-api:1.0.0-SNAPSHOT'
 }
 
 shadowJar {

@@ -1,7 +1,7 @@
 lexer grammar QilletniLexer;
 
 @lexer::header {
-    package is.yarr.qilletni.antlr;
+    package dev.qilletni.impl.antlr;
 }
 
 tokens {

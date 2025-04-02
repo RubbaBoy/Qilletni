@@ -1,7 +1,7 @@
 parser grammar DocsParser;
 
 @header {
-    package is.yarr.qilletni.antlr;
+    package dev.qilletni.impl.antlr;
 }
 
 options { tokenVocab=DocsLexer; }
