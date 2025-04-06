@@ -78,6 +78,7 @@ loadScripts(document, 'script');</script>
 <li><a href="qilletni.api/dev/qilletni/api/music/package-tree.html">dev.qilletni.api.music</a>, </li>
 <li><a href="qilletni.api/dev/qilletni/api/music/factories/package-tree.html">dev.qilletni.api.music.factories</a>, </li>
 <li><a href="qilletni.api/dev/qilletni/api/music/orchestration/package-tree.html">dev.qilletni.api.music.orchestration</a>, </li>
+<li><a href="qilletni.api/dev/qilletni/api/music/play/package-tree.html">dev.qilletni.api.music.play</a>, </li>
 <li><a href="qilletni.api/dev/qilletni/api/music/supplier/package-tree.html">dev.qilletni.api.music.supplier</a></li>
 </ul>
 <section class="hierarchy">
@@ -86,7 +87,8 @@ loadScripts(document, 'script');</script>
 <li class="circle">java.lang.<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" class="type-name-link external-link" title="class or interface in java.lang">Object</a>
 <ul>
 <li class="circle">dev.qilletni.api.<a href="qilletni.api/dev/qilletni/api/CollectionUtility.html" class="type-name-link" title="class in dev.qilletni.api">CollectionUtility</a></li>
-<li class="circle">dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/ConsolePlayActor.html" class="type-name-link" title="class in dev.qilletni.api.music">ConsolePlayActor</a> (implements dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.html" title="interface in dev.qilletni.api.music">PlayActor</a>)</li>
+<li class="circle">dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/ConsolePlayActor.html" class="type-name-link" title="class in dev.qilletni.api.music">ConsolePlayActor</a> (implements dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a>)</li>
+<li class="circle">dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" class="type-name-link" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a> (implements dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a>)</li>
 <li class="circle">dev.qilletni.api.lang.types.typeclass.<a href="qilletni.api/dev/qilletni/api/lang/types/typeclass/QilletniTypeClass.html" class="type-name-link" title="class in dev.qilletni.api.lang.types.typeclass">QilletniTypeClass</a>&lt;T&gt;
 <ul>
 <li class="circle">dev.qilletni.api.lang.types.typeclass.<a href="qilletni.api/dev/qilletni/api/lang/types/typeclass/EntityPlaceholderTypeClass.html" class="type-name-link" title="class in dev.qilletni.api.lang.types.typeclass">EntityPlaceholderTypeClass</a></li>
@@ -149,7 +151,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">dev.qilletni.api.lib.<a href="qilletni.api/dev/qilletni/api/lib/NativeFunctionBindingFactory.html" class="type-name-link" title="interface in dev.qilletni.api.lib">NativeFunctionBindingFactory</a></li>
 <li class="circle">dev.qilletni.api.lang.internal.<a href="qilletni.api/dev/qilletni/api/lang/internal/NativeFunctionClassInjector.html" class="type-name-link" title="interface in dev.qilletni.api.lang.internal">NativeFunctionClassInjector</a></li>
 <li class="circle">dev.qilletni.api.lib.persistence.<a href="qilletni.api/dev/qilletni/api/lib/persistence/PackageConfig.html" class="type-name-link" title="interface in dev.qilletni.api.lib.persistence">PackageConfig</a></li>
-<li class="circle">dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.html" class="type-name-link" title="interface in dev.qilletni.api.music">PlayActor</a></li>
+<li class="circle">dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" class="type-name-link" title="interface in dev.qilletni.api.music.play">PlayActor</a></li>
 <li class="circle">dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/Playlist.html" class="type-name-link" title="interface in dev.qilletni.api.music">Playlist</a></li>
 <li class="circle">dev.qilletni.api.music.factories.<a href="qilletni.api/dev/qilletni/api/music/factories/PlaylistTypeFactory.html" class="type-name-link" title="interface in dev.qilletni.api.music.factories">PlaylistTypeFactory</a></li>
 <li class="circle">dev.qilletni.api.lang.stack.<a href="qilletni.api/dev/qilletni/api/lang/stack/QilletniStackTrace.html" class="type-name-link" title="interface in dev.qilletni.api.lang.stack">QilletniStackTrace</a></li>
@@ -215,7 +217,7 @@ loadScripts(document, 'script');</script>
 <li class="circle">dev.qilletni.api.lang.types.collection.<a href="qilletni.api/dev/qilletni/api/lang/types/collection/CollectionOrder.html" class="type-name-link" title="enum class in dev.qilletni.api.lang.types.collection">CollectionOrder</a></li>
 <li class="circle">dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/ComparableVersion.RangeSpecifier.html" class="type-name-link" title="enum class in dev.qilletni.api.lib.qll">ComparableVersion.RangeSpecifier</a></li>
 <li class="circle">dev.qilletni.api.lang.docs.structure.<a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocFieldType.FieldType.html" class="type-name-link" title="enum class in dev.qilletni.api.lang.docs.structure">DocFieldType.FieldType</a></li>
-<li class="circle">dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html" class="type-name-link" title="enum class in dev.qilletni.api.music">PlayActor.PlayResult</a></li>
+<li class="circle">dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html" class="type-name-link" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a></li>
 <li class="circle">dev.qilletni.api.lang.table.<a href="qilletni.api/dev/qilletni/api/lang/table/Scope.ScopeType.html" class="type-name-link" title="enum class in dev.qilletni.api.lang.table">Scope.ScopeType</a></li>
 <li class="circle">dev.qilletni.api.lang.types.song.<a href="qilletni.api/dev/qilletni/api/lang/types/song/SongDefinition.html" class="type-name-link" title="enum class in dev.qilletni.api.lang.types.song">SongDefinition</a></li>
 <li class="circle">dev.qilletni.api.lang.types.weights.<a href="qilletni.api/dev/qilletni/api/lang/types/weights/WeightTrackType.html" class="type-name-link" title="enum class in dev.qilletni.api.lang.types.weights">WeightTrackType</a></li>

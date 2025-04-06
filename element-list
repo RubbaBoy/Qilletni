@@ -28,4 +28,5 @@ dev.qilletni.api.lib.qll
 dev.qilletni.api.music
 dev.qilletni.api.music.factories
 dev.qilletni.api.music.orchestration
+dev.qilletni.api.music.play
 dev.qilletni.api.music.supplier

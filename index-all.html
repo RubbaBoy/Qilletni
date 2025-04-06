@@ -348,6 +348,12 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="qilletni.api/dev/qilletni/api/lang/internal/debug/DebugSupport.html" class="type-name-link" title="interface in dev.qilletni.api.lang.internal.debug">DebugSupport</a> - Interface in <a href="qilletni.api/dev/qilletni/api/lang/internal/debug/package-summary.html">dev.qilletni.api.lang.internal.debug</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" class="type-name-link" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a> - Class in <a href="qilletni.api/dev/qilletni/api/music/play/package-summary.html">dev.qilletni.api.music.play</a></dt>
+<dd>
+<div class="block">This is a sample base implementation of a <a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a> that can be routed to different <a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a>.</div>
+</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html#%3Cinit%3E(dev.qilletni.api.music.play.PlayActor)" class="member-name-link">DefaultRoutablePlayActor(PlayActor)</a> - Constructor for class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/table/Scope.html#define(dev.qilletni.api.lang.table.Symbol)" class="member-name-link">define(Symbol&lt;T&gt;)</a> - Method in interface dev.qilletni.api.lang.table.<a href="qilletni.api/dev/qilletni/api/lang/table/Scope.html" title="interface in dev.qilletni.api.lang.table">Scope</a></dt>
 <dd>
 <div class="block">Defines the given symbol this scope.</div>
@@ -473,6 +479,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="qilletni.api/dev/qilletni/api/music/factories/package-summary.html">dev.qilletni.api.music.factories</a> - package dev.qilletni.api.music.factories</dt>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/music/orchestration/package-summary.html">dev.qilletni.api.music.orchestration</a> - package dev.qilletni.api.music.orchestration</dt>
+<dd>&nbsp;</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/package-summary.html">dev.qilletni.api.music.play</a> - package dev.qilletni.api.music.play</dt>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/music/supplier/package-summary.html">dev.qilletni.api.music.supplier</a> - package dev.qilletni.api.music.supplier</dt>
 <dd>&nbsp;</dd>
@@ -760,7 +768,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Indicates whether some other object is "equal to" this one.</div>
 </dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html#ERROR" class="member-name-link">ERROR</a> - Enum constant in enum class dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music">PlayActor.PlayResult</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html#ERROR" class="member-name-link">ERROR</a> - Enum constant in enum class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lib/qll/ComparableVersion.RangeSpecifier.html#EXACT" class="member-name-link">EXACT</a> - Enum constant in enum class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/ComparableVersion.RangeSpecifier.html" title="enum class in dev.qilletni.api.lib.qll">ComparableVersion.RangeSpecifier</a></dt>
 <dd>
@@ -961,6 +969,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets a unique readable name of the scope, for debugging purposes.</div>
 </dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html#getDefaultPlay()" class="member-name-link">getDefaultPlay()</a> - Method in class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/types/FunctionType.html#getDefinedParamCount()" class="member-name-link">getDefinedParamCount()</a> - Method in interface dev.qilletni.api.lang.types.<a href="qilletni.api/dev/qilletni/api/lang/types/FunctionType.html" title="interface in dev.qilletni.api.lang.types">FunctionType</a></dt>
 <dd>
 <div class="block">Gets the number of parameters the function is defined with.</div>
@@ -1121,6 +1131,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the parent scope, if any.</div>
 </dd>
+<dt><a href="qilletni.api/dev/qilletni/api/auth/ServiceProvider.html#getPlayActor()" class="member-name-link">getPlayActor()</a> - Method in interface dev.qilletni.api.auth.<a href="qilletni.api/dev/qilletni/api/auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a></dt>
+<dd>
+<div class="block">Gets the <a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a> created after initialization.</div>
+</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/supplier/DynamicProvider.html#getPlayActor()" class="member-name-link">getPlayActor()</a> - Method in interface dev.qilletni.api.music.supplier.<a href="qilletni.api/dev/qilletni/api/music/supplier/DynamicProvider.html" title="interface in dev.qilletni.api.music.supplier">DynamicProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/types/CollectionType.html#getPlaylist()" class="member-name-link">getPlaylist()</a> - Method in interface dev.qilletni.api.lang.types.<a href="qilletni.api/dev/qilletni/api/lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a></dt>
 <dd>
 <div class="block">Gets the current <a href="qilletni.api/dev/qilletni/api/music/Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a> instance associated with the current collection for the current service
@@ -1978,9 +1994,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Checks if <code>#version</code> <a href="qilletni.api/dev/qilletni/api/lib/qll/ComparableVersion.html" title="class in dev.qilletni.api.lib.qll"><code>ComparableVersion</code></a> will permit the given <a href="qilletni.api/dev/qilletni/api/lib/qll/Version.html" title="class in dev.qilletni.api.lib.qll"><code>Version</code></a> to be used in
  accordance to the version's range specifier.</div>
 </dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.html" class="type-name-link" title="interface in dev.qilletni.api.music">PlayActor</a> - Interface in <a href="qilletni.api/dev/qilletni/api/music/package-summary.html">dev.qilletni.api.music</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" class="type-name-link" title="interface in dev.qilletni.api.music.play">PlayActor</a> - Interface in <a href="qilletni.api/dev/qilletni/api/music/play/package-summary.html">dev.qilletni.api.music.play</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html" class="type-name-link" title="enum class in dev.qilletni.api.music">PlayActor.PlayResult</a> - Enum Class in <a href="qilletni.api/dev/qilletni/api/music/package-summary.html">dev.qilletni.api.music</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html" class="type-name-link" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a> - Enum Class in <a href="qilletni.api/dev/qilletni/api/music/play/package-summary.html">dev.qilletni.api.music.play</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/music/orchestration/TrackOrchestrator.html#playCollection(dev.qilletni.api.lang.types.CollectionType,boolean)" class="member-name-link">playCollection(CollectionType, boolean)</a> - Method in interface dev.qilletni.api.music.orchestration.<a href="qilletni.api/dev/qilletni/api/music/orchestration/TrackOrchestrator.html" title="interface in dev.qilletni.api.music.orchestration">TrackOrchestrator</a></dt>
 <dd>
@@ -2005,7 +2021,9 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Plays a single track.</div>
 </dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.html#playTrack(dev.qilletni.api.music.Track)" class="member-name-link">playTrack(Track)</a> - Method in interface dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.html" title="interface in dev.qilletni.api.music">PlayActor</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html#playTrack(dev.qilletni.api.music.Track)" class="member-name-link">playTrack(Track)</a> - Method in class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html#playTrack(dev.qilletni.api.music.Track)" class="member-name-link">playTrack(Track)</a> - Method in interface dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/types/QilletniType.html#plusOperator(dev.qilletni.api.lang.types.QilletniType)" class="member-name-link">plusOperator(QilletniType)</a> - Method in interface dev.qilletni.api.lang.types.<a href="qilletni.api/dev/qilletni/api/lang/types/QilletniType.html" title="interface in dev.qilletni.api.lang.types">QilletniType</a></dt>
 <dd>
@@ -2143,6 +2161,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Remove a value from the configuration.</div>
 </dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html#resetReroutedPlayTrack()" class="member-name-link">resetReroutedPlayTrack()</a> - Method in class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/docs/structure/text/inner/FunctionDoc.html#returnDoc()" class="member-name-link">returnDoc()</a> - Method in record class dev.qilletni.api.lang.docs.structure.text.inner.<a href="qilletni.api/dev/qilletni/api/lang/docs/structure/text/inner/FunctionDoc.html" title="class in dev.qilletni.api.lang.docs.structure.text.inner">FunctionDoc</a></dt>
 <dd>
 <div class="block">Returns the value of the <code>returnDoc</code> record component.</div>
@@ -2227,6 +2247,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the type's reference to anything, overriding any previous reference.</div>
 </dd>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html#setReroutedPlayTrack(java.util.function.Function)" class="member-name-link">setReroutedPlayTrack(Function&lt;Track, CompletableFuture&lt;PlayActor.PlayResult&gt;&gt;)</a> - Method in class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/DefaultRoutablePlayActor.html" title="class in dev.qilletni.api.music.play">DefaultRoutablePlayActor</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/types/SongType.html#setSongDefinition(dev.qilletni.api.lang.types.song.SongDefinition)" class="member-name-link">setSongDefinition(SongDefinition)</a> - Method in interface dev.qilletni.api.lang.types.<a href="qilletni.api/dev/qilletni/api/lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a></dt>
 <dd>
 <div class="block">Sets the song definition for the implementing object.</div>
@@ -2319,7 +2341,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="qilletni.api/dev/qilletni/api/music/orchestration/CollectionState.html#stringValue()" class="member-name-link">stringValue()</a> - Method in interface dev.qilletni.api.music.orchestration.<a href="qilletni.api/dev/qilletni/api/music/orchestration/CollectionState.html" title="interface in dev.qilletni.api.music.orchestration">CollectionState</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html#SUCCESS" class="member-name-link">SUCCESS</a> - Enum constant in enum class dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music">PlayActor.PlayResult</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html#SUCCESS" class="member-name-link">SUCCESS</a> - Enum constant in enum class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/table/SymbolTable.html#swapScope(dev.qilletni.api.lang.table.Scope)" class="member-name-link">swapScope(Scope)</a> - Method in interface dev.qilletni.api.lang.table.<a href="qilletni.api/dev/qilletni/api/lang/table/SymbolTable.html" title="interface in dev.qilletni.api.lang.table">SymbolTable</a></dt>
 <dd>
@@ -2594,7 +2616,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music">PlayActor.PlayResult</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
 </dd>
@@ -2648,7 +2670,7 @@ the order they are declared.</div>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
 </dd>
-<dt><a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html#values()" class="member-name-link">values()</a> - Static method in enum class dev.qilletni.api.music.<a href="qilletni.api/dev/qilletni/api/music/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music">PlayActor.PlayResult</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html#values()" class="member-name-link">values()</a> - Static method in enum class dev.qilletni.api.music.play.<a href="qilletni.api/dev/qilletni/api/music/play/PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a></dt>
 <dd>
 <div class="block">Returns an array containing the constants of this enum class, in
 the order they are declared.</div>
