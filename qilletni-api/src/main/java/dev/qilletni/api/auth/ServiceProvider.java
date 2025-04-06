@@ -5,7 +5,7 @@ import dev.qilletni.api.music.supplier.DynamicProvider;
 import dev.qilletni.api.music.MusicCache;
 import dev.qilletni.api.music.MusicFetcher;
 import dev.qilletni.api.music.MusicTypeConverter;
-import dev.qilletni.api.music.PlayActor;
+import dev.qilletni.api.music.play.PlayActor;
 import dev.qilletni.api.music.StringIdentifier;
 import dev.qilletni.api.music.factories.AlbumTypeFactory;
 import dev.qilletni.api.music.factories.CollectionTypeFactory;
@@ -81,4 +81,11 @@ public interface ServiceProvider {
      * @return The created {@link StringIdentifier}
      */
     StringIdentifier getStringIdentifier(SongTypeFactory songTypeFactory, CollectionTypeFactory collectionTypeFactory, AlbumTypeFactory albumTypeFactory);
+    
+    /**
+     * Gets the {@link PlayActor} created after initialization.
+     *
+     * @return The created {@link PlayActor}
+     */
+    PlayActor getPlayActor();
 }

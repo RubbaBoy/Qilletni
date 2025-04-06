@@ -6,14 +6,16 @@ import dev.qilletni.api.lib.persistence.PackageConfig;
 import dev.qilletni.api.music.MusicCache;
 import dev.qilletni.api.music.MusicFetcher;
 import dev.qilletni.api.music.MusicTypeConverter;
-import dev.qilletni.api.music.PlayActor;
 import dev.qilletni.api.music.StringIdentifier;
 import dev.qilletni.api.music.factories.AlbumTypeFactory;
 import dev.qilletni.api.music.factories.CollectionTypeFactory;
 import dev.qilletni.api.music.factories.SongTypeFactory;
 import dev.qilletni.api.music.orchestration.TrackOrchestrator;
+import dev.qilletni.api.music.play.DefaultRoutablePlayActor;
+import dev.qilletni.api.music.play.PlayActor;
 import dev.qilletni.lib.spotify.async.ExecutorServiceUtility;
 import dev.qilletni.lib.spotify.database.HibernateUtil;
+import dev.qilletni.lib.spotify.music.QueuePlayActor;
 import dev.qilletni.lib.spotify.music.SpotifyMusicCache;
 import dev.qilletni.lib.spotify.music.SpotifyMusicFetcher;
 import dev.qilletni.lib.spotify.music.SpotifyMusicTypeConverter;
@@ -22,7 +24,6 @@ import dev.qilletni.lib.spotify.music.auth.SpotifyApiSingleton;
 import dev.qilletni.lib.spotify.music.auth.SpotifyAuthorizer;
 import dev.qilletni.lib.spotify.music.auth.pkce.SpotifyPKCEAuthorizer;
 import dev.qilletni.lib.spotify.music.creator.PlaylistCreator;
-import dev.qilletni.lib.spotify.music.play.ReroutablePlayActor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
     private MusicTypeConverter musicTypeConverter;
     private StringIdentifier stringIdentifier;
     private SpotifyAuthorizer authorizer;
+    private PlayActor playActor;
     
     private static ServiceProvider serviceProviderInstance;
     
@@ -57,7 +59,8 @@ public class SpotifyServiceProvider implements ServiceProvider {
             SpotifyApiSingleton.setSpotifyAuthorizer(authorizer);
             musicFetcher = spotifyMusicFetcher;
             musicCache = new SpotifyMusicCache(spotifyMusicFetcher);
-            trackOrchestrator = defaultTrackOrchestratorFunction.apply(new ReroutablePlayActor(), musicCache);
+            playActor = new DefaultRoutablePlayActor(new QueuePlayActor());
+            trackOrchestrator = defaultTrackOrchestratorFunction.apply(playActor, musicCache);
 
             musicTypeConverter = new SpotifyMusicTypeConverter(musicCache);
             
@@ -104,7 +107,12 @@ public class SpotifyServiceProvider implements ServiceProvider {
         
         return stringIdentifier;
     }
-    
+
+    @Override
+    public PlayActor getPlayActor() {
+        return playActor;
+    }
+
     private void initConfig() {
         packageConfig.loadConfig();
         
@@ -126,7 +134,6 @@ public class SpotifyServiceProvider implements ServiceProvider {
     }
     
     public static ServiceProvider getServiceProviderInstance() {
-        Objects.requireNonNull(serviceProviderInstance, "ServiceProvider#initialize must be invoked to initialize ServiceProvider");
-        return serviceProviderInstance;
+        return Objects.requireNonNull(serviceProviderInstance, "ServiceProvider#initialize must be invoked to initialize ServiceProvider");
     }
 }

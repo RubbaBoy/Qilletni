@@ -33,24 +33,28 @@ public class LibraryRegistrar {
 
     public void registerLibraries(List<QllInfo> loadedQllInfos) {
         for (var qllInfo : loadedQllInfos) {
-            LOGGER.debug("Loading library {} v{}", qllInfo.name(), qllInfo.version().getVersionString());
+            try {
+                LOGGER.debug("Loading library {} v{}", qllInfo.name(), qllInfo.version().getVersionString());
 
-            if (libraries.containsKey(qllInfo.name())) {
-                LOGGER.error("Attempted to import library of duplicate name: {}", qllInfo.name());
-            } else {
-                libraries.put(qllInfo.name(), qllInfo);
-                var classes = loadNativeClasses(qllInfo.nativeClasses());
-                nativeFunctionHandler.registerClasses(classes);
+                if (libraries.containsKey(qllInfo.name())) {
+                    LOGGER.error("Attempted to import library of duplicate name: {}", qllInfo.name());
+                } else {
+                    libraries.put(qllInfo.name(), qllInfo);
+                    var classes = loadNativeClasses(qllInfo.nativeClasses());
+                    nativeFunctionHandler.registerClasses(classes);
 
-                var packageConfig = PackageConfigImpl.createPackageConfig(qllInfo.name());
-                nativeFunctionHandler.addScopedInjectableInstance(packageConfig, List.of(classes));
-                
-                instantiateNativeFunctionBindingFactory(qllInfo.nativeBindFactoryClass())
-                        .ifPresent(factory -> factory.applyNativeFunctionBindings(nativeFunctionHandler));
+                    var packageConfig = PackageConfigImpl.createPackageConfig(qllInfo.name());
+                    nativeFunctionHandler.addScopedInjectableInstance(packageConfig, List.of(classes));
 
-                autoImportFiles.addAll(qllInfo.autoImportFiles()
-                        .stream()
-                        .map(file -> new AutoImportFile(file, qllInfo.name())).toList());
+                    instantiateNativeFunctionBindingFactory(qllInfo.nativeBindFactoryClass())
+                            .ifPresent(factory -> factory.applyNativeFunctionBindings(nativeFunctionHandler));
+
+                    autoImportFiles.addAll(qllInfo.autoImportFiles()
+                            .stream()
+                            .map(file -> new AutoImportFile(file, qllInfo.name())).toList());
+                }
+            } catch (Exception e) {
+                LOGGER.error("Failed to load library {} v{}", qllInfo.name(), qllInfo.version().getVersionString(), e);
             }
         }
     }

@@ -25,6 +25,7 @@ import java.awt.Desktop;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -118,11 +119,21 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
      * @throws Exception
      */
     private CompletableFuture<String> getCodeFromUser() throws Exception {
+        var scopes = List.of(
+                "user-read-email",
+                "user-library-modify",
+                "user-library-read",
+                "user-modify-playback-state",
+                "user-read-playback-state",
+                "user-read-playback-position",
+                "user-read-currently-playing",
+                "playlist-read-private",
+                "playlist-modify-private",
+                "playlist-modify-public"
+        );
+        
         var authorizationCodeUriRequest = spotifyApi.authorizationCodePKCEUri(codeChallenge)
-//          .state("x4xkmn9pu3j6ukrs8n")
-          .scope("user-read-email,user-library-modify,user-library-read,user-read-playback-position,playlist-read-private,playlist-modify-private,playlist-modify-public,user-read-currently-playing")
-//          .show_dialog(true)D
-                .build();
+          .scope(String.join(",", scopes)).build();
 
         authorizationCodeUriRequest.executeAsync().thenAccept(uri -> {
             try {

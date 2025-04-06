@@ -5,7 +5,7 @@ provider: dev.qilletni.lib.spotify.music.provider.SpotifyServiceProvider
 native_bind_factory: dev.qilletni.lib.spotify.SpotifyNativeFunctionBindingFactory
 native_classes:
   - dev.qilletni.lib.spotify.HooksFunctions
-  - dev.qilletni.lib.spotify.PlayRedirect
+  - dev.qilletni.lib.spotify.BlockingQueueFunctions
   - dev.qilletni.lib.spotify.PlaylistToolsFunctions
   - dev.qilletni.lib.spotify.RecommendationsFunctions
 dependencies:

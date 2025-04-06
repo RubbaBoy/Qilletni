@@ -98,9 +98,14 @@ public class NativeFunctionHandler implements NativeFunctionClassInjector {
     }
     
     private Optional<Method> getBeforeAnyInvocationMethod(Class<?> nativeMethodClass) {
-        return Arrays.stream(nativeMethodClass.getDeclaredMethods())
-                .filter(method -> hasAnnotation(method, BeforeAnyInvocation.class))
-                .findFirst();
+        try {
+            return Arrays.stream(nativeMethodClass.getDeclaredMethods())
+                    .filter(method -> hasAnnotation(method, BeforeAnyInvocation.class))
+                    .findFirst();
+        } catch (Exception e) {
+            LOGGER.error("Error getting beforeAny method", e);
+            return Optional.empty();
+        }
     }
     
     private boolean hasAnnotation(Method method, Class<?> annotationClass) {

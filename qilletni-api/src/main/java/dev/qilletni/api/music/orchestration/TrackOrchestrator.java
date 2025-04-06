@@ -3,7 +3,7 @@ package dev.qilletni.api.music.orchestration;
 import dev.qilletni.api.lang.types.CollectionType;
 import dev.qilletni.api.lang.types.WeightsType;
 import dev.qilletni.api.lang.types.collection.CollectionLimit;
-import dev.qilletni.api.music.PlayActor;
+import dev.qilletni.api.music.play.PlayActor;
 import dev.qilletni.api.music.Track;
 
 /**

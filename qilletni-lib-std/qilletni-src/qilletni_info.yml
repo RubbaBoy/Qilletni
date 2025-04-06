@@ -16,6 +16,7 @@ native_classes:
   - dev.qilletni.lib.core.BackgroundFunctions
   - dev.qilletni.lib.core.BreakpointFunctions
   - dev.qilletni.lib.core.DebugFunctions
+  - dev.qilletni.lib.core.PlayRedirectFunctions
 auto_import:
   - core.ql
   - debug/debug.ql # TODO: Make this not imported for normal use

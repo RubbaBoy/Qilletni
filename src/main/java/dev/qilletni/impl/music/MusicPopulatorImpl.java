@@ -100,7 +100,7 @@ public class MusicPopulatorImpl implements MusicPopulator {
 
         final var musicCache = dynamicProvider.getMusicCache();
         
-        LOGGER.debug("Populating collection: {}", collectionType);
+        LOGGER.debug("---- Populating collection: {}", collectionType);
 
         var foundPlaylist = switch (collectionType.getCollectionDefinition()) {
             case NAME_CREATOR -> musicCache.getPlaylist(collectionType.getSuppliedName(), collectionType.getSuppliedCreator())

@@ -22,10 +22,10 @@ module qilletni.lib.spotify.main {
     requires java.naming;
     requires com.sun.xml.bind;
     requires com.fasterxml.classmate;
+    requires org.apache.logging.log4j;
 
     opens dev.qilletni.lib.spotify.music.auth.pkce to com.google.gson;
     opens dev.qilletni.lib.spotify.music.entities to org.hibernate.orm.core;
-    exports dev.qilletni.lib.spotify.music.play;
 
     provides dev.qilletni.api.auth.ServiceProvider
             with SpotifyServiceProvider;

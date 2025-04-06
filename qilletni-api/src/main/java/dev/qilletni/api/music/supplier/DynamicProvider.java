@@ -9,6 +9,7 @@ import dev.qilletni.api.music.factories.AlbumTypeFactory;
 import dev.qilletni.api.music.factories.CollectionTypeFactory;
 import dev.qilletni.api.music.factories.SongTypeFactory;
 import dev.qilletni.api.music.orchestration.TrackOrchestrator;
+import dev.qilletni.api.music.play.PlayActor;
 
 public interface DynamicProvider {
 
@@ -33,4 +34,6 @@ public interface DynamicProvider {
     TrackOrchestrator getTrackOrchestrator();
     
     StringIdentifier getStringIdentifier();
+    
+    PlayActor getPlayActor();
 }

@@ -1,5 +1,7 @@
 package dev.qilletni.api.music;
 
+import dev.qilletni.api.music.play.PlayActor;
+
 import java.util.concurrent.CompletableFuture;
 
 public class ConsolePlayActor implements PlayActor {

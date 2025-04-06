@@ -1,5 +1,6 @@
 import "types/types.ql"
 import "util/util.ql"
+import "music/play_redirect.ql"
 import "string.ql"
 import "background.ql"
 import "breakpoint.ql"

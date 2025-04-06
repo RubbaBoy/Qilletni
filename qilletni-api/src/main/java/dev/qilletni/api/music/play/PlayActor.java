@@ -1,4 +1,6 @@
-package dev.qilletni.api.music;
+package dev.qilletni.api.music.play;
+
+import dev.qilletni.api.music.Track;
 
 import java.util.concurrent.CompletableFuture;
 
