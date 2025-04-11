@@ -560,7 +560,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html" class="type-name-link" title="class in dev.qilletni.api.lang.docs.structure">DocumentedFile</a> - Record Class in <a href="qilletni.api/dev/qilletni/api/lang/docs/structure/package-summary.html">dev.qilletni.api.lang.docs.structure</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html#%3Cinit%3E(java.lang.String,java.util.List)" class="member-name-link">DocumentedFile(String, List&lt;DocumentedItem&gt;)</a> - Constructor for record class dev.qilletni.api.lang.docs.structure.<a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html" title="class in dev.qilletni.api.lang.docs.structure">DocumentedFile</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html#%3Cinit%3E(java.lang.String,java.nio.file.Path,java.util.List)" class="member-name-link">DocumentedFile(String, Path, List&lt;DocumentedItem&gt;)</a> - Constructor for record class dev.qilletni.api.lang.docs.structure.<a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html" title="class in dev.qilletni.api.lang.docs.structure">DocumentedFile</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>DocumentedFile</code> record class.</div>
 </dd>
@@ -1505,6 +1505,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A Qilletni type representing a named import alias, with the following syntax <code>import 'xx.ql' as someAlias</code>.</div>
 </dd>
+<dt><a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html#importPath()" class="member-name-link">importPath()</a> - Method in record class dev.qilletni.api.lang.docs.structure.<a href="qilletni.api/dev/qilletni/api/lang/docs/structure/DocumentedFile.html" title="class in dev.qilletni.api.lang.docs.structure">DocumentedFile</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>importPath</code> record component.</div>
+</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/docs/structure/item/DocumentedType.html#importPath()" class="member-name-link">importPath()</a> - Method in interface dev.qilletni.api.lang.docs.structure.item.<a href="qilletni.api/dev/qilletni/api/lang/docs/structure/item/DocumentedType.html" title="interface in dev.qilletni.api.lang.docs.structure.item">DocumentedType</a></dt>
 <dd>
 <div class="block">The file path this type is defined in, and may be used to import from.</div>
@@ -2114,7 +2118,7 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A representation of the qilletni_info.yml file in an unbuilt project/application</div>
 </dd>
-<dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QilletniInfoData.html#%3Cinit%3E(java.lang.String,dev.qilletni.api.lib.qll.Version,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.util.List,java.util.List)" class="member-name-link">QilletniInfoData(String, Version, String, String, String, String, List&lt;String&gt;, List&lt;String&gt;, List&lt;QilletniInfoData.Dependency&gt;)</a> - Constructor for record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QilletniInfoData.html" title="class in dev.qilletni.api.lib.qll">QilletniInfoData</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QilletniInfoData.html#%3Cinit%3E(java.lang.String,dev.qilletni.api.lib.qll.Version,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.util.List,java.util.List)" class="member-name-link">QilletniInfoData(String, Version, String, String, String, String, String, List&lt;String&gt;, List&lt;String&gt;, List&lt;QilletniInfoData.Dependency&gt;)</a> - Constructor for record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QilletniInfoData.html" title="class in dev.qilletni.api.lib.qll">QilletniInfoData</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>QilletniInfoData</code> record class.</div>
 </dd>
@@ -2146,7 +2150,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html#%3Cinit%3E(dev.qilletni.api.lib.qll.QilletniInfoData)" class="member-name-link">QllInfo(QilletniInfoData)</a> - Constructor for record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html" title="class in dev.qilletni.api.lib.qll">QllInfo</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html#%3Cinit%3E(java.lang.String,dev.qilletni.api.lib.qll.Version,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.lang.String,java.util.List,java.util.List)" class="member-name-link">QllInfo(String, Version, String, String, List&lt;QilletniInfoData.Dependency&gt;, String, String, List&lt;String&gt;, List&lt;String&gt;)</a> - Constructor for record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html" title="class in dev.qilletni.api.lib.qll">QllInfo</a></dt>
+<dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html#%3Cinit%3E(java.lang.String,dev.qilletni.api.lib.qll.Version,java.lang.String,java.lang.String,java.lang.String,java.util.List,java.lang.String,java.lang.String,java.util.List,java.util.List)" class="member-name-link">QllInfo(String, Version, String, String, String, List&lt;QilletniInfoData.Dependency&gt;, String, String, List&lt;String&gt;, List&lt;String&gt;)</a> - Constructor for record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html" title="class in dev.qilletni.api.lib.qll">QllInfo</a></dt>
 <dd>
 <div class="block">Creates an instance of a <code>QllInfo</code> record class.</div>
 </dd>
@@ -2321,6 +2325,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="qilletni.api/dev/qilletni/api/music/factories/SongTypeFactory.html" class="type-name-link" title="interface in dev.qilletni.api.music.factories">SongTypeFactory</a> - Interface in <a href="qilletni.api/dev/qilletni/api/music/factories/package-summary.html">dev.qilletni.api.music.factories</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QilletniInfoData.html#sourceUrl()" class="member-name-link">sourceUrl()</a> - Method in record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QilletniInfoData.html" title="class in dev.qilletni.api.lib.qll">QilletniInfoData</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>sourceUrl</code> record component.</div>
+</dd>
+<dt><a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html#sourceUrl()" class="member-name-link">sourceUrl()</a> - Method in record class dev.qilletni.api.lib.qll.<a href="qilletni.api/dev/qilletni/api/lib/qll/QllInfo.html" title="class in dev.qilletni.api.lib.qll">QllInfo</a></dt>
+<dd>
+<div class="block">Returns the value of the <code>sourceUrl</code> record component.</div>
+</dd>
 <dt><a href="qilletni.api/dev/qilletni/api/lang/types/StaticEntityType.html" class="type-name-link" title="interface in dev.qilletni.api.lang.types">StaticEntityType</a> - Interface in <a href="qilletni.api/dev/qilletni/api/lang/types/package-summary.html">dev.qilletni.api.lang.types</a></dt>
 <dd>
 <div class="block">A Qilletni type representing the expression of an entity's name.</div>
