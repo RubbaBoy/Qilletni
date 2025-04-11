@@ -50,6 +50,7 @@ public class SpotifyServiceProvider implements ServiceProvider {
     @Override
     public CompletableFuture<Void> initialize(BiFunction<PlayActor, MusicCache, TrackOrchestrator> defaultTrackOrchestratorFunction, PackageConfig packageConfig) {
         this.packageConfig = packageConfig;
+        populateInitialConfig();
         initConfig();
         
         authorizer = SpotifyPKCEAuthorizer.createWithCodes(packageConfig, packageConfig.getOrThrow("clientId"), packageConfig.getOrThrow("redirectUri"));
@@ -110,7 +111,25 @@ public class SpotifyServiceProvider implements ServiceProvider {
 
     @Override
     public PlayActor getPlayActor() {
-        return playActor;
+        return Objects.requireNonNull(playActor, "ServiceProvider#initialize must be invoked to initialize PlayActor");
+    }
+
+    /**
+     * Populate the config if it's empty (i.e. first run).
+     */
+    private void populateInitialConfig() {
+        packageConfig.loadConfig();
+        
+        if (packageConfig.get("dbUrl").isEmpty() && packageConfig.get("dbUsername").isEmpty() && packageConfig.get("dbPassword").isEmpty()) {
+            LOGGER.debug("Spotify config is empty, populating with default values");
+            
+            packageConfig.set("dbUrl", "jdbc:postgresql://localhost:5435/qilletni");
+            packageConfig.set("dbUsername", "qilletni");
+            packageConfig.set("dbPassword", "pass");
+            packageConfig.saveConfig();
+        } else {
+            LOGGER.debug("Spotify config already populated, skipping");
+        }
     }
 
     private void initConfig() {

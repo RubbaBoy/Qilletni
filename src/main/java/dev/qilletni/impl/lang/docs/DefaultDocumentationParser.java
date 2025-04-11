@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -44,6 +45,6 @@ public class DefaultDocumentationParser implements DocumentationParser {
 
         var qilletniDocVisitor = new QilletniDocVisitor(libraryName, importPath);
         var documentedItems = qilletniDocVisitor.visitProg(parser.prog());
-        return new DocumentedFile(fileName, Objects.requireNonNullElse(documentedItems, Collections.emptyList()));
+        return new DocumentedFile(fileName, Paths.get(Objects.requireNonNullElse(importPath, "")), Objects.requireNonNullElse(documentedItems, Collections.emptyList()));
     }
 }

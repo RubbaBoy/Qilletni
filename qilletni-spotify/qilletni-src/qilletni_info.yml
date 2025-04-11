@@ -1,6 +1,8 @@
 name: spotify
 version: 1.0.0
-author: Adam Yarris 
+author: Adam Yarris
+description: A service provider and library for Spotify, allowing for recommendations, playlist modifications, and user actions.
+source_url: https://github.com/RubbaBoy/Qilletni/tree/master/qilletni-spotify
 provider: dev.qilletni.lib.spotify.music.provider.SpotifyServiceProvider
 native_bind_factory: dev.qilletni.lib.spotify.SpotifyNativeFunctionBindingFactory
 native_classes:

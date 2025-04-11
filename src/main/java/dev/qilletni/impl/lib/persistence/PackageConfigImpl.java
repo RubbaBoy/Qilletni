@@ -50,6 +50,7 @@ public class PackageConfigImpl implements PackageConfig {
      * @return The created {@link PackageConfig}
      */
     public static PackageConfig createPackageConfig(String packageName) {
+        packageName = packageName.toLowerCase();
         var propertiesFile = getPersistenceDirectory().resolve("%s.properties".formatted(packageName));
         return new PackageConfigImpl(packageName, "Properties for the package '%s'".formatted(packageName), propertiesFile);
     }

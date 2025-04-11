@@ -220,7 +220,13 @@ public class QilletniProgramRunner {
     }
 
     public SymbolTable runProgram(Path file, Scope global) throws IOException {
-        return runProgram(file, new ImportPathState(file.getParent()), global);
+        var parent = file.getParent();
+        if (file.getParent() == null) {
+            LOGGER.debug("File '{}' has no parent", file);
+            parent = Paths.get("");
+        }
+        
+        return runProgram(file, new ImportPathState(parent), global);
     }
 
     private SymbolTable runProgram(Path file, ImportPathState pathState, Scope global) throws IOException {

@@ -2,6 +2,7 @@ name: std
 version: 1.0.0
 author: Adam Yarris
 description: The standard library for the Qilletni language
+source_url: https://github.com/RubbaBoy/Qilletni/tree/master/qilletni-lib-std
 native_classes:
   - dev.qilletni.lib.core.AlbumFunctions
   - dev.qilletni.lib.core.ArtistFunctions

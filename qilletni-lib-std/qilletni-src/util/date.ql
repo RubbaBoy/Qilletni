@@ -5,7 +5,7 @@ entity Date {
 
     /**
      * The internal [@java java.time.LocalDate] object to store the date info.
-     * @type @java java.util.HashMap
+     * @type @java java.time.LocalDate
      */
     java _date
     
