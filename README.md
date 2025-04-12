@@ -5,14 +5,14 @@
 <p align="center">
   <b>
     <a href="https://qilletni.dev/">Website</a> •
-    <a href="https://qilletni.dev/docs/">Language Docs</a> •
-    <a href="https://qilletni.dev/api/">Native API Docs</a>
+    <a href="https://docs.qilletni.dev/">Language Docs</a> •
+    <a href="https://api.qilletni.dev/">Native API Docs</a>
   </b>
 </p>
 
 <p align="center">
   <i>
-    A high-performance DSL for curating music queues and playlists — declarative, composable, and service-agnostic.
+    A high-performance DSL for curating music queues and playlists — declarative, composable, and music service-agnostic.
   </i>
 </p>
 
@@ -22,9 +22,12 @@
 
 Qilletni is a **Domain-Specific Language** (DSL) designed to orchestrate and manipulate music queues, playlists, and metadata across multiple streaming platforms.
 
-Unlike traditional API SDKs that require verbose REST wrappers, Qilletni lets you treat songs, playlists, and APIs as native constructs — with type safety, cross-provider conversion, and built-in playlist logic like weighted selection. Extension of the language is easy with a package system, and native methods that seamlessly invoke Java methods.
+Unlike traditional API SDKs that require verbose REST wrappers, Qilletni lets you treat songs, playlists, and APIs as native constructs — with type safety, cross-provider conversion, and built-in playlist logic like weighted selection. Extension of the language is easy with a package system, and native methods that seamlessly invoke Java methods. Qilletni is a statically typed, object-oriented language with a familiar C-style syntax that leverages composition over inheritance.
 
-Qilletni is 
+```markdown
+> [!NOTE]
+> Qilletni is currently in beta, so some documentation is still being worked on. Please make an issue if you think something should be added
+```
 
 ---
 
@@ -41,6 +44,7 @@ Qilletni is
   collection myMix = "My Playlist" collection by "RubbaBoy"
   
   play mySong
+  ```
 
 [Native Types →](https://qilletni.dev/language/types/built_in_types/)
 
@@ -56,7 +60,7 @@ Qilletni is
   weights myWeights =
       | 25% "Track A" by "Artist"   // Play 25% of every song picked from weightedCollection
       | 5x  "Track B" by "Artist"   // When shuffling, play 5x more than normal
-      | 10% "Inner Playlist" collection by "username"     // 10% of every song, play a song from "Inner Playlist". Dont repeat
+      | 10% "Inner Playlist" collection by "username"    // 10% of every song, play a song from "Inner Playlist"
       |~ 15% someFunctionReturningSong()    // 15% of every song, pick one from this method. Dont do this twice in a row 
   
   collection weightedCollection = "My Playlist" collection by "username" weights[myWeights]
@@ -251,9 +255,9 @@ Each project includes:
 
 ```
 my_project/
-├── qilletni-src/
-│   ├── my_project.ql
-│   └── qilletni_info.yml
+└── qilletni-src/
+    ├── my_project.ql
+    └── qilletni_info.yml
 ```
 
 See [Project Structure →](https://qilletni.dev/project_structure/)
