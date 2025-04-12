@@ -24,10 +24,8 @@ Qilletni is a **Domain-Specific Language** (DSL) designed to orchestrate and man
 
 Unlike traditional API SDKs that require verbose REST wrappers, Qilletni lets you treat songs, playlists, and APIs as native constructs — with type safety, cross-provider conversion, and built-in playlist logic like weighted selection. Extension of the language is easy with a package system, and native methods that seamlessly invoke Java methods. Qilletni is a statically typed, object-oriented language with a familiar C-style syntax that leverages composition over inheritance.
 
-```markdown
 > [!NOTE]
 > Qilletni is currently in beta, so some documentation is still being worked on. Please make an issue if you think something should be added
-```
 
 ---
 
