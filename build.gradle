@@ -83,9 +83,6 @@ allprojects {
                 maven {
                     name = "GitHubPackages"
                     url = "https://maven.pkg.github.com/rubbaboy/Qilletni"
-//                    url = version.endsWith('SNAPSHOT') ?
-//                            "https://maven.pkg.github.com/rubbaboy/Qilletni/snapshots" :
-//                            "https://maven.pkg.github.com/rubbaboy/Qilletni"
                     credentials {
                         username = System.getenv("GITHUB_ACTOR")
                         password = System.getenv("GITHUB_TOKEN")

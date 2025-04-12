@@ -1,22 +1,4 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!--<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd" >-->
-<!--<log4j:configuration debug="false">-->
-<!--    <appender name="default.file" class="org.apache.log4j.FileAppender">-->
-<!--        <param name="file" value="${logPath}.log"/>-->
-<!--        <param name="append" value="false"/>-->
-<!--        <layout class="org.apache.log4j.PatternLayout">-->
-<!--        [15:43:01] [main/INFO]: Hello world!-->
-<!--            <param name="ConversionPattern" value="[%d{HH:mm:ss}] [%t/%p]: %m%n"/>-->
-<!--        </layout>-->
-<!--    </appender>-->
-
-<!--    <root>-->
-<!--        <priority value="info"/>-->
-<!--        <appender-ref ref="default.console"/>-->
-<!--        <appender-ref ref="default.file"/>-->
-<!--    </root>-->
-<!--</log4j:configuration>-->
-
 <Configuration status="WARN">
 <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
