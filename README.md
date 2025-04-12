@@ -160,7 +160,7 @@ docker run -d \
 **Local (requires Java 22):**
 
 ```bash
-curl https://qilletni.dev/install.sh | bash
+curl https://raw.githubusercontent.com/RubbaBoy/QilletniToolchain/refs/heads/master/scripts/install.sh | bash
 source ~/.bashrc
 qilletni run your_script.ql
 ```
