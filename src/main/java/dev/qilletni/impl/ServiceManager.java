@@ -33,7 +33,10 @@ public class ServiceManager {
         for (var provider : providers) {
             // Pass in unloaded PackageConfig to the provider. They don't have to load it (or create one) if they don't need to.
             var packageConfig = PackageConfigImpl.createPackageConfig(provider.getName());
-            provider.initialize(DefaultTrackOrchestrator::new, packageConfig).join();
+            provider.initialize(DefaultTrackOrchestrator::new, packageConfig).exceptionally(t -> {
+                LOGGER.error("Failed to initialize service provider: {}", provider.getName(), t);
+                return null;
+            }).join();
             
             dynamicProvider.addServiceProvider(provider);
         }

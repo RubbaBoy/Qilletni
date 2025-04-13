@@ -87,23 +87,28 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
                 beginRefreshLoop(credentials.expiresIn());
                 updateCurrentUser().thenRun(() -> completableFuture.complete(spotifyApi));
             } catch (IOException | ParseException | SpotifyWebApiException e) {
-                LOGGER.debug("Exception occurred while using cached creds, resetting and trying again");
+                LOGGER.error("Exception occurred while using cached creds, resetting and trying again", e);
                 packageConfig.remove(CACHED_CREDS_NAME);
+                packageConfig.saveConfig();
+                
+                getManualCreds(completableFuture);
             }
-        }, () -> {
-            LOGGER.debug("Manual creds!");
-
-            try {
-                getCodeFromUser().thenCompose(this::setupSpotifyApi)
-                        .thenAccept(this::beginRefreshLoop)
-                        .thenCompose(_ -> updateCurrentUser())
-                        .thenRun(() -> completableFuture.complete(spotifyApi));
-            } catch (Exception e) {
-                completableFuture.completeExceptionally(e);
-            }
-        });
+        }, () -> getManualCreds(completableFuture));
 
         return completableFuture;
+    }
+    
+    private void getManualCreds(CompletableFuture<SpotifyApi> completableFuture) {
+        LOGGER.debug("Manual creds!");
+
+        try {
+            getCodeFromUser().thenCompose(this::setupSpotifyApi)
+                    .thenAccept(this::beginRefreshLoop)
+                    .thenCompose(_ -> updateCurrentUser())
+                    .thenRun(() -> completableFuture.complete(spotifyApi));
+        } catch (Exception e) {
+            completableFuture.completeExceptionally(e);
+        }
     }
 
     @Override
@@ -136,11 +141,11 @@ public class SpotifyPKCEAuthorizer implements SpotifyAuthorizer {
           .scope(String.join(",", scopes)).build();
 
         authorizationCodeUriRequest.executeAsync().thenAccept(uri -> {
+            LOGGER.info("Redirecting to: {}", uri);
+            
             try {
                 Desktop.getDesktop().browse(uri);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (IOException e) {} // Might not be supported
         });
 
         var codeFuture = new CompletableFuture<String>();
