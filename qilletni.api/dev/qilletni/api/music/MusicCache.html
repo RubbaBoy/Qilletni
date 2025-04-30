@@ -87,6 +87,8 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">MusicCache</span></div>
+<div class="block">An interface to efficiently retrieve music data that can be cached, usually in a database. If the cache misses,
+ <a href="MusicFetcher.html" title="interface in dev.qilletni.api.music"><code>MusicFetcher</code></a> is used, and the cache is updated automatically.</div>
 </div>
 </section>
 <section class="summary">
@@ -105,19 +107,29 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Album.html" title="interface in dev.qilletni.api.music">Album</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAlbum(java.lang.String,java.lang.String)" class="member-name-link">getAlbum</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;artist)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets an <a href="Album.html" title="interface in dev.qilletni.api.music"><code>Album</code></a> from a given name and artist.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Album.html" title="interface in dev.qilletni.api.music">Album</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAlbumById(java.lang.String)" class="member-name-link">getAlbumById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets an <a href="Album.html" title="interface in dev.qilletni.api.music"><code>Album</code></a> from a given ID.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getAlbumTracks(dev.qilletni.api.music.Album)" class="member-name-link">getAlbumTracks</a><wbr>(<a href="Album.html" title="interface in dev.qilletni.api.music">Album</a>&nbsp;album)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets all tracks from a given <a href="Album.html" title="interface in dev.qilletni.api.music"><code>Album</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Artist.html" title="interface in dev.qilletni.api.music">Artist</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getArtistById(java.lang.String)" class="member-name-link">getArtistById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets an <a href="Artist.html" title="interface in dev.qilletni.api.music"><code>Artist</code></a> from a given ID.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Artist.html" title="interface in dev.qilletni.api.music">Artist</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getArtistByName(java.lang.String)" class="member-name-link">getArtistByName</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets an <a href="Artist.html" title="interface in dev.qilletni.api.music"><code>Artist</code></a> from a given name.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getIdFromString(java.lang.String)" class="member-name-link">getIdFromString</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;idOrUrl)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
@@ -126,26 +138,40 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Playlist.html" title="interface in dev.qilletni.api.music">Playlist</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlaylist(java.lang.String,java.lang.String)" class="member-name-link">getPlaylist</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;author)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a <a href="Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a> from a given name and author.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Playlist.html" title="interface in dev.qilletni.api.music">Playlist</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlaylistById(java.lang.String)" class="member-name-link">getPlaylistById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a <a href="Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a> from a given ID.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlaylistTracks(dev.qilletni.api.music.Playlist)" class="member-name-link">getPlaylistTracks</a><wbr>(<a href="Playlist.html" title="interface in dev.qilletni.api.music">Playlist</a>&nbsp;playlist)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets all tracks from a given <a href="Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrack(java.lang.String,java.lang.String)" class="member-name-link">getTrack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;artist)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a> from a given name and artist.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackById(java.lang.String)" class="member-name-link">getTrackById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets a <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a> from a given ID, specific to the service provider implementation.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracks(java.util.List)" class="member-name-link">getTracks</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="MusicFetcher.TrackNameArtist.html" title="class in dev.qilletni.api.music">MusicFetcher.TrackNameArtist</a>&gt;&nbsp;tracks)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets multiple <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a>s from a given list of <a href="MusicFetcher.TrackNameArtist.html" title="class in dev.qilletni.api.music"><code>MusicFetcher.TrackNameArtist</code></a>s.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTracksById(java.util.List)" class="member-name-link">getTracksById</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;trackIds)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets multiple <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a>s from a given list of IDs.</div>
+</div>
 </div>
 </div>
 </div>
@@ -166,6 +192,15 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">getTrack</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;artist)</span></div>
+<div class="block">Gets a <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a> from a given name and artist. If multiple tracks are found with the name/artist combination,
+ it is up to the implementation to decide what to pick.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - The name of the track, not including the artist name</dd>
+<dd><code>artist</code> - The name of the artist</dd>
+<dt>Returns:</dt>
+<dd>The track with the given name and artist, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -174,6 +209,13 @@ loadScripts(document, 'script');</script>
 <h3>getTrackById</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">getTrackById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Gets a <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a> from a given ID, specific to the service provider implementation.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID of the track. This is in different formats for each service provider implementation.</dd>
+<dt>Returns:</dt>
+<dd>The track with the given ID, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -182,6 +224,15 @@ loadScripts(document, 'script');</script>
 <h3>getTracks</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">getTracks</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="MusicFetcher.TrackNameArtist.html" title="class in dev.qilletni.api.music">MusicFetcher.TrackNameArtist</a>&gt;&nbsp;tracks)</span></div>
+<div class="block">Gets multiple <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a>s from a given list of <a href="MusicFetcher.TrackNameArtist.html" title="class in dev.qilletni.api.music"><code>MusicFetcher.TrackNameArtist</code></a>s. This effectively
+ performs what <a href="#getTrack(java.lang.String,java.lang.String)"><code>getTrack(String, String)</code></a> does, but batched for multiple tracks at once.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tracks</code> - The tracks to look up</dd>
+<dt>Returns:</dt>
+<dd>The list of tracks that were found, in the same order as the given list of tracks. If a track isn't
+ found, it is skipped</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -190,6 +241,15 @@ loadScripts(document, 'script');</script>
 <h3>getTracksById</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">getTracksById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&nbsp;trackIds)</span></div>
+<div class="block">Gets multiple <a href="Track.html" title="interface in dev.qilletni.api.music"><code>Track</code></a>s from a given list of IDs. This effectively performs what <a href="#getTrackById(java.lang.String)"><code>getTrackById(String)</code></a>
+ does, but batched for multiple tracks at once. The IDs are in different formats for each service provider.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>trackIds</code> - The IDs of the tracks to look up</dd>
+<dt>Returns:</dt>
+<dd>The list of tracks that were found, in the same order as the given list of track IDs. If a track isn't
+ found, it is skipped.</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -199,6 +259,16 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Playlist.html" title="interface in dev.qilletni.api.music">Playlist</a>&gt;</span>&nbsp;<span class="element-name">getPlaylist</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;author)</span></div>
+<div class="block">Gets a <a href="Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a> from a given name and author. If multiple playlists are found with the name/author
+ combination, it is up to the implementation to decide what to pick. If multiple playlists are found with the
+ same name, it is up to the implementation to decide what to pick.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - The name of the playlist</dd>
+<dd><code>author</code> - The name of the artist</dd>
+<dt>Returns:</dt>
+<dd>The playlist with the given name and author, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -207,6 +277,13 @@ loadScripts(document, 'script');</script>
 <h3>getPlaylistById</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Playlist.html" title="interface in dev.qilletni.api.music">Playlist</a>&gt;</span>&nbsp;<span class="element-name">getPlaylistById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Gets a <a href="Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a> from a given ID. This is in different formats for each service provider implementation.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID of the playlist. This is in different formats for each service provider implementation</dd>
+<dt>Returns:</dt>
+<dd>The playlist with the given ID, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -216,6 +293,16 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Album.html" title="interface in dev.qilletni.api.music">Album</a>&gt;</span>&nbsp;<span class="element-name">getAlbum</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
  <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;artist)</span></div>
+<div class="block">Gets an <a href="Album.html" title="interface in dev.qilletni.api.music"><code>Album</code></a> from a given name and artist. If multiple albums are found with the name/artist combination,
+ it is up to the implementation to decide what to pick. If multiple albums are found with the same name, it is
+ up to the implementation to decide what to pick.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - The name of the album, not including the artist name</dd>
+<dd><code>artist</code> - The name of the artist</dd>
+<dt>Returns:</dt>
+<dd>The album with the given name and artist, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -224,6 +311,13 @@ loadScripts(document, 'script');</script>
 <h3>getAlbumById</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Album.html" title="interface in dev.qilletni.api.music">Album</a>&gt;</span>&nbsp;<span class="element-name">getAlbumById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Gets an <a href="Album.html" title="interface in dev.qilletni.api.music"><code>Album</code></a> from a given ID. This is in different formats for each service provider implementation.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID of the album. This is in different formats for each service provider implementation</dd>
+<dt>Returns:</dt>
+<dd>The album with the given ID, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -232,6 +326,13 @@ loadScripts(document, 'script');</script>
 <h3>getAlbumTracks</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">getAlbumTracks</span><wbr><span class="parameters">(<a href="Album.html" title="interface in dev.qilletni.api.music">Album</a>&nbsp;album)</span></div>
+<div class="block">Gets all tracks from a given <a href="Album.html" title="interface in dev.qilletni.api.music"><code>Album</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>album</code> - The album to get tracks from</dd>
+<dt>Returns:</dt>
+<dd>A list of all tracks in the album, in the order they appear in the album.</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -240,6 +341,13 @@ loadScripts(document, 'script');</script>
 <h3>getPlaylistTracks</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">getPlaylistTracks</span><wbr><span class="parameters">(<a href="Playlist.html" title="interface in dev.qilletni.api.music">Playlist</a>&nbsp;playlist)</span></div>
+<div class="block">Gets all tracks from a given <a href="Playlist.html" title="interface in dev.qilletni.api.music"><code>Playlist</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playlist</code> - The playlist to get tracks from</dd>
+<dt>Returns:</dt>
+<dd>A list of all tracks in the playlist, in the order they appear in the playlist</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -248,6 +356,13 @@ loadScripts(document, 'script');</script>
 <h3>getArtistById</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Artist.html" title="interface in dev.qilletni.api.music">Artist</a>&gt;</span>&nbsp;<span class="element-name">getArtistById</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Gets an <a href="Artist.html" title="interface in dev.qilletni.api.music"><code>Artist</code></a> from a given ID. This is in different formats for each service provider implementation.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>id</code> - The ID of the artist. This is in different formats for each service provider implementation.</dd>
+<dt>Returns:</dt>
+<dd>The artist with the given ID, if any</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -256,6 +371,14 @@ loadScripts(document, 'script');</script>
 <h3>getArtistByName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Artist.html" title="interface in dev.qilletni.api.music">Artist</a>&gt;</span>&nbsp;<span class="element-name">getArtistByName</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name)</span></div>
+<div class="block">Gets an <a href="Artist.html" title="interface in dev.qilletni.api.music"><code>Artist</code></a> from a given name. If multiple artists are found with the same name, it is up to the
+ implementation to decide what to pick.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>name</code> - The full name of the artist to look up</dd>
+<dt>Returns:</dt>
+<dd>The artist with the given name, if any</dd>
+</dl>
 </div>
 </section>
 </li>

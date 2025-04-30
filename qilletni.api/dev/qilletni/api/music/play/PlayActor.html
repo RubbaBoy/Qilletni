@@ -91,6 +91,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">PlayActor</span></div>
+<div class="block">An actor that can play a track.</div>
 </div>
 </section>
 <section class="summary">
@@ -106,7 +107,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="PlayActor.PlayResult.html" class="type-name-link" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">The result of a <a href="#playTrack(dev.qilletni.api.music.Track)"><code>playTrack(Track)</code></a> operation.</div>
+</div>
 </div>
 </section>
 </li>
@@ -123,7 +126,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a><wbr>&lt;<a href="PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#playTrack(dev.qilletni.api.music.Track)" class="member-name-link">playTrack</a><wbr>(<a href="../Track.html" title="interface in dev.qilletni.api.music">Track</a>&nbsp;track)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Plays a track.</div>
+</div>
 </div>
 </div>
 </div>
@@ -143,6 +148,14 @@ loadScripts(document, 'script');</script>
 <h3>playTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a>&gt;</span>&nbsp;<span class="element-name">playTrack</span><wbr><span class="parameters">(<a href="../Track.html" title="interface in dev.qilletni.api.music">Track</a>&nbsp;track)</span></div>
+<div class="block">Plays a track. This is highly implementation-dependent.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>track</code> - The track to play</dd>
+<dt>Returns:</dt>
+<dd>The result of the play operation. Some implementations may return immediately, while others may wait for
+ the track to finish playing.</dd>
+</dl>
 </div>
 </section>
 </li>

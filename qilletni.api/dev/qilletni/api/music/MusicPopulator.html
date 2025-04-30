@@ -87,6 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">MusicPopulator</span></div>
+<div class="block">Populates music types with data from the <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a>, used before accessing the data.</div>
 </div>
 </section>
 <section class="summary">
@@ -105,27 +106,36 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types">AlbumType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#initiallyPopulateAlbum(dev.qilletni.api.lang.types.AlbumType)" class="member-name-link">initiallyPopulateAlbum</a><wbr>(<a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types">AlbumType</a>&nbsp;albumType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">If eager loading is enabled, the given album is populated.</div>
+<div class="block">If eager loading is enabled, the given album is populated via <a href="#populateAlbum(dev.qilletni.api.lang.types.AlbumType)"><code>populateAlbum(AlbumType)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#initiallyPopulateCollection(dev.qilletni.api.lang.types.CollectionType)" class="member-name-link">initiallyPopulateCollection</a><wbr>(<a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">If eager loading is enabled, the given album is populated.</div>
+<div class="block">If eager loading is enabled, the given album is populated via <a href="#populateCollection(dev.qilletni.api.lang.types.CollectionType)"><code>populateCollection(CollectionType)</code></a>.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#initiallyPopulateSong(dev.qilletni.api.lang.types.SongType)" class="member-name-link">initiallyPopulateSong</a><wbr>(<a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a>&nbsp;songType)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">If eager loading is enabled, the given song is populated.</div>
+<div class="block">If eager loading is enabled, the given song is populated via <a href="#populateSong(dev.qilletni.api.lang.types.SongType)"><code>populateSong(SongType)</code></a>.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#populateAlbum(dev.qilletni.api.lang.types.AlbumType)" class="member-name-link">populateAlbum</a><wbr>(<a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types">AlbumType</a>&nbsp;albumType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Takes an <a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types"><code>AlbumType</code></a> and collects all relevant data via <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a> and populates the type with
+ <a href="../lang/types/SongType.html#populateSpotifyData(dev.qilletni.api.music.Track)"><code>SongType.populateSpotifyData(Track)</code></a>.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#populateCollection(dev.qilletni.api.lang.types.CollectionType)" class="member-name-link">populateCollection</a><wbr>(<a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Takes an <a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types"><code>CollectionType</code></a> and collects all relevant data via <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a> and populates the type
+ with <a href="../lang/types/CollectionType.html#populateSpotifyData(dev.qilletni.api.music.Playlist)"><code>CollectionType.populateSpotifyData(Playlist)</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#populateSong(dev.qilletni.api.lang.types.SongType)" class="member-name-link">populateSong</a><wbr>(<a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a>&nbsp;songType)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Takes a <a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types"><code>SongType</code></a> and collects all relevant data via <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a> and populates the type with
+ <a href="../lang/types/SongType.html#populateSpotifyData(dev.qilletni.api.music.Track)"><code>SongType.populateSpotifyData(Track)</code></a>.</div>
+</div>
 </div>
 </div>
 </div>
@@ -145,7 +155,8 @@ loadScripts(document, 'script');</script>
 <h3>initiallyPopulateSong</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a></span>&nbsp;<span class="element-name">initiallyPopulateSong</span><wbr><span class="parameters">(<a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a>&nbsp;songType)</span></div>
-<div class="block">If eager loading is enabled, the given song is populated. Otherwise, nothing occurs.
+<div class="block">If eager loading is enabled, the given song is populated via <a href="#populateSong(dev.qilletni.api.lang.types.SongType)"><code>populateSong(SongType)</code></a>.
+ Otherwise, nothing occurs.
  TODO: Make this into some kind of factory for SongTypes?</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -161,6 +172,12 @@ loadScripts(document, 'script');</script>
 <h3>populateSong</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">populateSong</span><wbr><span class="parameters">(<a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types">SongType</a>&nbsp;songType)</span></div>
+<div class="block">Takes a <a href="../lang/types/SongType.html" title="interface in dev.qilletni.api.lang.types"><code>SongType</code></a> and collects all relevant data via <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a> and populates the type with
+ <a href="../lang/types/SongType.html#populateSpotifyData(dev.qilletni.api.music.Track)"><code>SongType.populateSpotifyData(Track)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>songType</code> - The song to populate</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -169,7 +186,8 @@ loadScripts(document, 'script');</script>
 <h3>initiallyPopulateAlbum</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types">AlbumType</a></span>&nbsp;<span class="element-name">initiallyPopulateAlbum</span><wbr><span class="parameters">(<a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types">AlbumType</a>&nbsp;albumType)</span></div>
-<div class="block">If eager loading is enabled, the given album is populated. Otherwise, nothing occurs.
+<div class="block">If eager loading is enabled, the given album is populated via <a href="#populateAlbum(dev.qilletni.api.lang.types.AlbumType)"><code>populateAlbum(AlbumType)</code></a>.
+ Otherwise, nothing occurs.
  TODO: Make this into some kind of factory for AlbumTypes?</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -185,6 +203,12 @@ loadScripts(document, 'script');</script>
 <h3>populateAlbum</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">populateAlbum</span><wbr><span class="parameters">(<a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types">AlbumType</a>&nbsp;albumType)</span></div>
+<div class="block">Takes an <a href="../lang/types/AlbumType.html" title="interface in dev.qilletni.api.lang.types"><code>AlbumType</code></a> and collects all relevant data via <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a> and populates the type with
+ <a href="../lang/types/SongType.html#populateSpotifyData(dev.qilletni.api.music.Track)"><code>SongType.populateSpotifyData(Track)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>albumType</code> - The album to populate</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -193,7 +217,8 @@ loadScripts(document, 'script');</script>
 <h3>initiallyPopulateCollection</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a></span>&nbsp;<span class="element-name">initiallyPopulateCollection</span><wbr><span class="parameters">(<a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType)</span></div>
-<div class="block">If eager loading is enabled, the given album is populated. Otherwise, nothing occurs.
+<div class="block">If eager loading is enabled, the given album is populated via <a href="#populateCollection(dev.qilletni.api.lang.types.CollectionType)"><code>populateCollection(CollectionType)</code></a>.
+ Otherwise, nothing occurs.
  TODO: Make this into some kind of factory for CollectionTypes?</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -209,6 +234,12 @@ loadScripts(document, 'script');</script>
 <h3>populateCollection</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">populateCollection</span><wbr><span class="parameters">(<a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types">CollectionType</a>&nbsp;collectionType)</span></div>
+<div class="block">Takes an <a href="../lang/types/CollectionType.html" title="interface in dev.qilletni.api.lang.types"><code>CollectionType</code></a> and collects all relevant data via <a href="MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a> and populates the type
+ with <a href="../lang/types/CollectionType.html#populateSpotifyData(dev.qilletni.api.music.Playlist)"><code>CollectionType.populateSpotifyData(Playlist)</code></a>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collectionType</code> - The collection to populate</dd>
+</dl>
 </div>
 </section>
 </li>

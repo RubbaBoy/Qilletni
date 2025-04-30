@@ -87,6 +87,9 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">DynamicProvider</span></div>
+<div class="block">Represents a service provider that can be switched at runtime. It is important to pass around an instance of this
+ interface rather than individual service provider interfaces (e.g. <a href="../MusicCache.html" title="interface in dev.qilletni.api.music"><code>MusicCache</code></a>, <a href="../MusicFetcher.html" title="interface in dev.qilletni.api.music"><code>MusicFetcher</code></a>, etc.)
+ because if the service provider is switched, the underlying implementations will need to be changed too.</div>
 </div>
 </section>
 <section class="summary">
@@ -104,42 +107,66 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#addServiceProvider(dev.qilletni.api.auth.ServiceProvider)" class="member-name-link">addServiceProvider</a><wbr>(<a href="../../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a>&nbsp;serviceProvider)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Adds a service provider to the list of available service providers.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getCurrentProvider()" class="member-name-link">getCurrentProvider</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the current service provider.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../MusicCache.html" title="interface in dev.qilletni.api.music">MusicCache</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMusicCache()" class="member-name-link">getMusicCache</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the music cache used by the current service provider.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../MusicFetcher.html" title="interface in dev.qilletni.api.music">MusicFetcher</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getMusicFetcher()" class="member-name-link">getMusicFetcher</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the music fetcher used by the current service provider.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../play/PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getPlayActor()" class="member-name-link">getPlayActor</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the <a href="../play/PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a> used by the current service provider.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getProvider(java.lang.String)" class="member-name-link">getProvider</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerName)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the service provider with the given name.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../StringIdentifier.html" title="interface in dev.qilletni.api.music">StringIdentifier</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getStringIdentifier()" class="member-name-link">getStringIdentifier</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the <a href="../StringIdentifier.html" title="interface in dev.qilletni.api.music"><code>StringIdentifier</code></a> used by the current service provider.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="../orchestration/TrackOrchestrator.html" title="interface in dev.qilletni.api.music.orchestration">TrackOrchestrator</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getTrackOrchestrator()" class="member-name-link">getTrackOrchestrator</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Gets the track orchestrator used by the current service provider.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#initFactories(dev.qilletni.api.music.factories.SongTypeFactory,dev.qilletni.api.music.factories.CollectionTypeFactory,dev.qilletni.api.music.factories.AlbumTypeFactory)" class="member-name-link">initFactories</a><wbr>(<a href="../factories/SongTypeFactory.html" title="interface in dev.qilletni.api.music.factories">SongTypeFactory</a>&nbsp;songTypeFactory,
  <a href="../factories/CollectionTypeFactory.html" title="interface in dev.qilletni.api.music.factories">CollectionTypeFactory</a>&nbsp;collectionTypeFactory,
  <a href="../factories/AlbumTypeFactory.html" title="interface in dev.qilletni.api.music.factories">AlbumTypeFactory</a>&nbsp;albumTypeFactory)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Initializes the music factories.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#initializeInitialProvider(dev.qilletni.api.lib.persistence.PackageConfig)" class="member-name-link">initializeInitialProvider</a><wbr>(<a href="../../lib/persistence/PackageConfig.html" title="interface in dev.qilletni.api.lib.persistence">PackageConfig</a>&nbsp;internalPackageConfig)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Initializes the service provider that is initially used by the program.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#shutdownProviders()" class="member-name-link">shutdownProviders</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Shuts down all service providers.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#switchProvider(java.lang.String)" class="member-name-link">switchProvider</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerName)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">Switches the current service provider to the one with the given name.</div>
+</div>
 </div>
 </div>
 </div>
@@ -159,6 +186,11 @@ loadScripts(document, 'script');</script>
 <h3>addServiceProvider</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">addServiceProvider</span><wbr><span class="parameters">(<a href="../../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a>&nbsp;serviceProvider)</span></div>
+<div class="block">Adds a service provider to the list of available service providers.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>serviceProvider</code> - The service provider to add</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -167,6 +199,11 @@ loadScripts(document, 'script');</script>
 <h3>switchProvider</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">switchProvider</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerName)</span></div>
+<div class="block">Switches the current service provider to the one with the given name.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>providerName</code> - The name of the service provider to switch to</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -175,6 +212,11 @@ loadScripts(document, 'script');</script>
 <h3>initializeInitialProvider</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">initializeInitialProvider</span><wbr><span class="parameters">(<a href="../../lib/persistence/PackageConfig.html" title="interface in dev.qilletni.api.lib.persistence">PackageConfig</a>&nbsp;internalPackageConfig)</span></div>
+<div class="block">Initializes the service provider that is initially used by the program.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>internalPackageConfig</code> - The <a href="../../lib/persistence/PackageConfig.html" title="interface in dev.qilletni.api.lib.persistence"><code>PackageConfig</code></a> used by the internal system</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -183,6 +225,13 @@ loadScripts(document, 'script');</script>
 <h3>getProvider</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a></span>&nbsp;<span class="element-name">getProvider</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;providerName)</span></div>
+<div class="block">Gets the service provider with the given name.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>providerName</code> - The name of the service provider to get</dd>
+<dt>Returns:</dt>
+<dd>The found service provider</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -191,6 +240,11 @@ loadScripts(document, 'script');</script>
 <h3>getCurrentProvider</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a></span>&nbsp;<span class="element-name">getCurrentProvider</span>()</div>
+<div class="block">Gets the current service provider.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current service provider</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -201,6 +255,13 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">initFactories</span><wbr><span class="parameters">(<a href="../factories/SongTypeFactory.html" title="interface in dev.qilletni.api.music.factories">SongTypeFactory</a>&nbsp;songTypeFactory,
  <a href="../factories/CollectionTypeFactory.html" title="interface in dev.qilletni.api.music.factories">CollectionTypeFactory</a>&nbsp;collectionTypeFactory,
  <a href="../factories/AlbumTypeFactory.html" title="interface in dev.qilletni.api.music.factories">AlbumTypeFactory</a>&nbsp;albumTypeFactory)</span></div>
+<div class="block">Initializes the music factories. This only needs to be called once.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>songTypeFactory</code> - The song type factory to use</dd>
+<dd><code>collectionTypeFactory</code> - The collection type factory to use</dd>
+<dd><code>albumTypeFactory</code> - The album type factory to use</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -209,6 +270,7 @@ loadScripts(document, 'script');</script>
 <h3>shutdownProviders</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type">void</span>&nbsp;<span class="element-name">shutdownProviders</span>()</div>
+<div class="block">Shuts down all service providers. This should clean up any async tasks currently running.</div>
 </div>
 </section>
 </li>
@@ -217,6 +279,12 @@ loadScripts(document, 'script');</script>
 <h3>getMusicCache</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../MusicCache.html" title="interface in dev.qilletni.api.music">MusicCache</a></span>&nbsp;<span class="element-name">getMusicCache</span>()</div>
+<div class="block">Gets the music cache used by the current service provider. Do not keep a reference to this object that may span
+ a nonatomic context, as the implementation may switch.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current music cache</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -225,6 +293,12 @@ loadScripts(document, 'script');</script>
 <h3>getMusicFetcher</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../MusicFetcher.html" title="interface in dev.qilletni.api.music">MusicFetcher</a></span>&nbsp;<span class="element-name">getMusicFetcher</span>()</div>
+<div class="block">Gets the music fetcher used by the current service provider. Do not keep a reference to this object that may span
+ a nonatomic context, as the implementation may switch.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current music fetcher</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -233,6 +307,12 @@ loadScripts(document, 'script');</script>
 <h3>getTrackOrchestrator</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../orchestration/TrackOrchestrator.html" title="interface in dev.qilletni.api.music.orchestration">TrackOrchestrator</a></span>&nbsp;<span class="element-name">getTrackOrchestrator</span>()</div>
+<div class="block">Gets the track orchestrator used by the current service provider. Do not keep a reference to this object that may
+ span a nonatomic context, as the implementation may switch.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current track orchestrator</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -241,6 +321,12 @@ loadScripts(document, 'script');</script>
 <h3>getStringIdentifier</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../StringIdentifier.html" title="interface in dev.qilletni.api.music">StringIdentifier</a></span>&nbsp;<span class="element-name">getStringIdentifier</span>()</div>
+<div class="block">Gets the <a href="../StringIdentifier.html" title="interface in dev.qilletni.api.music"><code>StringIdentifier</code></a> used by the current service provider. Do not keep a reference to this object
+ that may span a nonatomic context, as the implementation may switch.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current <a href="../StringIdentifier.html" title="interface in dev.qilletni.api.music"><code>StringIdentifier</code></a></dd>
+</dl>
 </div>
 </section>
 </li>
@@ -249,6 +335,12 @@ loadScripts(document, 'script');</script>
 <h3>getPlayActor</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="../play/PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a></span>&nbsp;<span class="element-name">getPlayActor</span>()</div>
+<div class="block">Gets the <a href="../play/PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a> used by the current service provider. Do not keep a reference to this object that may
+ span a nonatomic context, as the implementation may switch.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The current <a href="../play/PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a></dd>
+</dl>
 </div>
 </section>
 </li>

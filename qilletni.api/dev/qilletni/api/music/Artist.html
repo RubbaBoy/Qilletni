@@ -87,6 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="horizontal-scroll">
 <hr>
 <div class="type-signature"><span class="modifiers">public interface </span><span class="element-name type-name-label">Artist</span></div>
+<div class="block">An artist that is stored in a database. The implementation of this is service provider-dependent.</div>
 </div>
 </section>
 <section class="summary">
@@ -104,13 +105,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getId()" class="member-name-link">getId</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The unique ID of the artist.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getName()" class="member-name-link">getName</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The name of the artist.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a><wbr>&lt;<a href="../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#getServiceProvider()" class="member-name-link">getServiceProvider</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="block">The service provider that this artist is from.</div>
+</div>
 </div>
 </div>
 </div>
@@ -130,6 +137,11 @@ loadScripts(document, 'script');</script>
 <h3>getId</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getId</span>()</div>
+<div class="block">The unique ID of the artist. This means different things for each implementation.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The unique ID of the artist</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -138,6 +150,11 @@ loadScripts(document, 'script');</script>
 <h3>getName</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getName</span>()</div>
+<div class="block">The name of the artist.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The name of the artist</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -146,6 +163,11 @@ loadScripts(document, 'script');</script>
 <h3>getServiceProvider</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="../auth/ServiceProvider.html" title="interface in dev.qilletni.api.auth">ServiceProvider</a>&gt;</span>&nbsp;<span class="element-name">getServiceProvider</span>()</div>
+<div class="block">The service provider that this artist is from.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The service provider that this artist is from</dd>
+</dl>
 </div>
 </section>
 </li>

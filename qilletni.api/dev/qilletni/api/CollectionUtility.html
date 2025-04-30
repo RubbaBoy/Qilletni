@@ -91,6 +91,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CollectionUtility</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
+<div class="block">A utility class for working with collections.</div>
 </div>
 </section>
 <section class="summary">
@@ -106,7 +107,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="CollectionUtility.Entry.html" class="type-name-link" title="class in dev.qilletni.api">CollectionUtility.Entry</a>&lt;<a href="CollectionUtility.Entry.html" title="type parameter in CollectionUtility.Entry">K</a>,<wbr><a href="CollectionUtility.Entry.html" title="type parameter in CollectionUtility.Entry">V</a>&gt;</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">A record representing a key-value pair.</div>
+</div>
 </div>
 </section>
 </li>
@@ -137,11 +140,15 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;T&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;T&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createList(int,T)" class="member-name-link">createList</a><wbr>(int&nbsp;size,
  T&nbsp;value)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a list of a given size, filled with references of a given value.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static &lt;K,<wbr>
 V&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="CollectionUtility.Entry.html" title="class in dev.qilletni.api">CollectionUtility.Entry</a>&lt;K,<wbr>V&gt;&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getRecordEntries(java.util.Map)" class="member-name-link">getRecordEntries</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;K,<wbr>V&gt;&nbsp;map)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Gets a list of entries from a map.</div>
+</div>
 </div>
 </div>
 </div>
@@ -182,6 +189,16 @@ V&gt;&nbsp;<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;K,<wbr>
 V&gt;</span>
 <span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="CollectionUtility.Entry.html" title="class in dev.qilletni.api">CollectionUtility.Entry</a>&lt;K,<wbr>V&gt;&gt;</span>&nbsp;<span class="element-name">getRecordEntries</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;K,<wbr>V&gt;&nbsp;map)</span></div>
+<div class="block">Gets a list of entries from a map.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>K</code> - The type of the keys in the map</dd>
+<dd><code>V</code> - The type of the values in the map</dd>
+<dt>Parameters:</dt>
+<dd><code>map</code> - The map to get the entries from</dd>
+<dt>Returns:</dt>
+<dd>The list of entries in the map</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -191,6 +208,16 @@ V&gt;</span>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="type-parameters">&lt;T&gt;</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;T&gt;</span>&nbsp;<span class="element-name">createList</span><wbr><span class="parameters">(int&nbsp;size,
  T&nbsp;value)</span></div>
+<div class="block">Creates a list of a given size, filled with references of a given value.</div>
+<dl class="notes">
+<dt>Type Parameters:</dt>
+<dd><code>T</code> - The type of the value to fill the list with</dd>
+<dt>Parameters:</dt>
+<dd><code>size</code> - The size of the list to create</dd>
+<dd><code>value</code> - The value to fill the list with</dd>
+<dt>Returns:</dt>
+<dd>The list of references to the given value</dd>
+</dl>
 </div>
 </section>
 </li>

@@ -138,16 +138,24 @@ implements <a href="PlayActor.html" title="interface in dev.qilletni.api.music.p
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDefaultPlay()" class="member-name-link">getDefaultPlay</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the default <a href="PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a>.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a><wbr>&lt;<a href="PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a>&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#playTrack(dev.qilletni.api.music.Track)" class="member-name-link">playTrack</a><wbr>(<a href="../Track.html" title="interface in dev.qilletni.api.music">Track</a>&nbsp;track)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Plays a track.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetReroutedPlayTrack()" class="member-name-link">resetReroutedPlayTrack</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Resets the function that will be used to play a track.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setReroutedPlayTrack(java.util.function.Function)" class="member-name-link">setReroutedPlayTrack</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="../Track.html" title="interface in dev.qilletni.api.music">Track</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a>&gt;&gt;&nbsp;playFunction)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the function that will be used to play a track.</div>
+</div>
 </div>
 </div>
 </div>
@@ -186,9 +194,16 @@ implements <a href="PlayActor.html" title="interface in dev.qilletni.api.music.p
 <h3>playTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a>&gt;</span>&nbsp;<span class="element-name">playTrack</span><wbr><span class="parameters">(<a href="../Track.html" title="interface in dev.qilletni.api.music">Track</a>&nbsp;track)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="PlayActor.html#playTrack(dev.qilletni.api.music.Track)">PlayActor</a></code></span></div>
+<div class="block">Plays a track. This is highly implementation-dependent.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="PlayActor.html#playTrack(dev.qilletni.api.music.Track)">playTrack</a></code>&nbsp;in interface&nbsp;<code><a href="PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>track</code> - The track to play</dd>
+<dt>Returns:</dt>
+<dd>The result of the play operation. Some implementations may return immediately, while others may wait for
+ the track to finish playing.</dd>
 </dl>
 </div>
 </section>
@@ -198,6 +213,11 @@ implements <a href="PlayActor.html" title="interface in dev.qilletni.api.music.p
 <h3>setReroutedPlayTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setReroutedPlayTrack</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/function/Function.html" title="class or interface in java.util.function" class="external-link">Function</a>&lt;<a href="../Track.html" title="interface in dev.qilletni.api.music">Track</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/concurrent/CompletableFuture.html" title="class or interface in java.util.concurrent" class="external-link">CompletableFuture</a>&lt;<a href="PlayActor.PlayResult.html" title="enum class in dev.qilletni.api.music.play">PlayActor.PlayResult</a>&gt;&gt;&nbsp;playFunction)</span></div>
+<div class="block">Sets the function that will be used to play a track.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>playFunction</code> - The function to use to play a track</dd>
+</dl>
 </div>
 </section>
 </li>
@@ -206,6 +226,7 @@ implements <a href="PlayActor.html" title="interface in dev.qilletni.api.music.p
 <h3>resetReroutedPlayTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetReroutedPlayTrack</span>()</div>
+<div class="block">Resets the function that will be used to play a track. This will use the default <a href="PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a>.</div>
 </div>
 </section>
 </li>
@@ -214,6 +235,11 @@ implements <a href="PlayActor.html" title="interface in dev.qilletni.api.music.p
 <h3>getDefaultPlay</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="PlayActor.html" title="interface in dev.qilletni.api.music.play">PlayActor</a></span>&nbsp;<span class="element-name">getDefaultPlay</span>()</div>
+<div class="block">Gets the default <a href="PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a>.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The default <a href="PlayActor.html" title="interface in dev.qilletni.api.music.play"><code>PlayActor</code></a></dd>
+</dl>
 </div>
 </section>
 </li>
