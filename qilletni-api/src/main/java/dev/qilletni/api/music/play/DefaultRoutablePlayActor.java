@@ -25,14 +25,27 @@ public class DefaultRoutablePlayActor implements PlayActor {
         return reroutedPlayTrack.apply(track);
     }
 
+    /**
+     * Sets the function that will be used to play a track.
+     * 
+     * @param playFunction The function to use to play a track
+     */
     public void setReroutedPlayTrack(Function<Track, CompletableFuture<PlayActor.PlayResult>> playFunction) {
         reroutedPlayTrack = playFunction;
     }
 
+    /**
+     * Resets the function that will be used to play a track. This will use the default {@link PlayActor}.
+     */
     public void resetReroutedPlayTrack() {
         reroutedPlayTrack = defaultPlayActor::playTrack;
     }
 
+    /**
+     * Gets the default {@link PlayActor}.
+     * 
+     * @return The default {@link PlayActor}
+     */
     public PlayActor getDefaultPlay() {
         return defaultPlayActor;
     }

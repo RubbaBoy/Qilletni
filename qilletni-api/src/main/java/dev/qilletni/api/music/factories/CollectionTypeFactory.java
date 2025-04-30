@@ -3,6 +3,9 @@ package dev.qilletni.api.music.factories;
 import dev.qilletni.api.lang.types.CollectionType;
 import dev.qilletni.api.music.Playlist;
 
+/**
+ * Creates {@link CollectionType}s.
+ */
 public interface CollectionTypeFactory {
 
     /**

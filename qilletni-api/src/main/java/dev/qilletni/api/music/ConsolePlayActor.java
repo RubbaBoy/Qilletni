@@ -4,6 +4,9 @@ import dev.qilletni.api.music.play.PlayActor;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A simple {@link PlayActor} that prints the track to the console.
+ */
 public class ConsolePlayActor implements PlayActor {
     
     @Override

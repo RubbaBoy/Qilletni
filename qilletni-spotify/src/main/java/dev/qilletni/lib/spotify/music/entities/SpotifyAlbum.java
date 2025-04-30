@@ -47,7 +47,7 @@ public class SpotifyAlbum implements Album {
 
     @Override
     public Artist getArtist() {
-        return artists.get(0);
+        return artists.getFirst();
     }
 
     @Override

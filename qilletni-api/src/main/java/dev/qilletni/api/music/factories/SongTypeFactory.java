@@ -3,6 +3,9 @@ package dev.qilletni.api.music.factories;
 import dev.qilletni.api.lang.types.SongType;
 import dev.qilletni.api.music.Track;
 
+/**
+ * Creates {@link SongType}s.
+ */
 public interface SongTypeFactory {
 
     /**

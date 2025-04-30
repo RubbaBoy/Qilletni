@@ -3,6 +3,9 @@ package dev.qilletni.api.music.factories;
 import dev.qilletni.api.lang.types.AlbumType;
 import dev.qilletni.api.music.Album;
 
+/**
+ * Creates {@link AlbumType}s.
+ */
 public interface AlbumTypeFactory {
 
     /**

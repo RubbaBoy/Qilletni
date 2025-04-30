@@ -5,6 +5,9 @@ import dev.qilletni.api.music.Track;
 
 import java.util.List;
 
+/**
+ * Creates {@link Playlist}s.
+ */
 public interface PlaylistTypeFactory {
 
     /**
