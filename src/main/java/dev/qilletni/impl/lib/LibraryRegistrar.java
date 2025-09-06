@@ -5,6 +5,7 @@ import dev.qilletni.api.lib.qll.QllInfo;
 import dev.qilletni.impl.lang.exceptions.lib.LibraryNotFoundException;
 import dev.qilletni.impl.lang.internal.NativeFunctionHandler;
 import dev.qilletni.impl.lib.persistence.PackageConfigImpl;
+import dev.qilletni.pkgutil.PackageSorter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +33,9 @@ public class LibraryRegistrar {
     }
 
     public void registerLibraries(List<QllInfo> loadedQllInfos) {
-        for (var qllInfo : loadedQllInfos) {
+        var orderedQllInfos = PackageSorter.getOrderedPackageList(loadedQllInfos);
+        
+        for (var qllInfo : orderedQllInfos) {
             try {
                 LOGGER.debug("Loading library {} v{}", qllInfo.name(), qllInfo.version().getVersionString());
 
