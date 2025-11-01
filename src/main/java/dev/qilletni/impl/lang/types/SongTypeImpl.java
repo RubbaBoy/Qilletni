@@ -134,8 +134,6 @@ public final class SongTypeImpl implements SongType {
 
     @Override
     public String stringValue() {
-        var track = dynamicTrack.get();
-
         if (!isSpotifyDataPopulated()) {
             if (songDefinition == SongDefinition.URL) {
                 return String.format("song(%s)", url);
@@ -145,6 +143,8 @@ public final class SongTypeImpl implements SongType {
                 return String.format("song(\"%s\" by \"%s\")", title, artist);
             }
         }
+
+        var track = dynamicTrack.get();
 
         return String.format("song(\"%s\" by \"%s\")", track.getName(), track.getArtist().getName());
     }
