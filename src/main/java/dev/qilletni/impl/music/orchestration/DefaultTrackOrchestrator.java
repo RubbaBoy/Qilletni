@@ -59,7 +59,9 @@ public class DefaultTrackOrchestrator implements TrackOrchestrator {
     public void playCollection(CollectionType collectionType, boolean loop) {
         LOGGER.debug("Play collection: {}", collectionType.getPlaylist().getTitle());
 
-        conditionallyPlayCollection(collectionType, loop, track -> {}, () -> true);
+        conditionallyPlayCollection(collectionType, loop, track -> {
+            playActor.playTrack(track).join();
+        }, () -> true);
     }
 
     @Override

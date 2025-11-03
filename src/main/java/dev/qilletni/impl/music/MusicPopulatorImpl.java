@@ -7,6 +7,7 @@ import dev.qilletni.api.lib.persistence.PackageConfig;
 import dev.qilletni.api.music.MusicPopulator;
 import dev.qilletni.api.music.supplier.DynamicProvider;
 import dev.qilletni.impl.lang.exceptions.music.AlbumNotFoundException;
+import dev.qilletni.impl.lang.exceptions.music.CollectionNotFoundException;
 import dev.qilletni.impl.lang.exceptions.music.SongNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,9 +105,9 @@ public class MusicPopulatorImpl implements MusicPopulator {
 
         var foundPlaylist = switch (collectionType.getCollectionDefinition()) {
             case NAME_CREATOR -> musicCache.getPlaylist(collectionType.getSuppliedName(), collectionType.getSuppliedCreator())
-                    .orElseThrow(() -> new AlbumNotFoundException(String.format("Collection \"%s\" by \"%s\" not found", collectionType.getSuppliedName(), collectionType.getSuppliedCreator())));
+                    .orElseThrow(() -> new CollectionNotFoundException(String.format("Collection \"%s\" by \"%s\" not found", collectionType.getSuppliedName(), collectionType.getSuppliedCreator())));
             case URL -> musicCache.getPlaylistById(musicCache.getIdFromString(collectionType.getSuppliedUrl()))
-                    .orElseThrow(() -> new AlbumNotFoundException(String.format("Album with ID \"%s\" not found", collectionType.getSuppliedUrl())));
+                    .orElseThrow(() -> new CollectionNotFoundException(String.format("Collection with ID \"%s\" not found", collectionType.getSuppliedUrl())));
             case PREPOPULATED, SONG_LIST -> collectionType.getPlaylist();
         };
         

@@ -39,8 +39,8 @@ public class CollectionFunctions {
     }
 
     @BeforeAnyInvocation
-    public void setupSong(CollectionType collectionType) {
-        musicPopulator.initiallyPopulateCollection(collectionType);
+    public void setupCollection(CollectionType collectionType) {
+        musicPopulator.populateCollection(collectionType);
     }
 
     public String getId(CollectionType collectionType) {
