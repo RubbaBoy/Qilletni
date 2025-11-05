@@ -5,18 +5,24 @@ import dev.qilletni.api.lang.types.BooleanType;
 import dev.qilletni.api.lang.types.CollectionType;
 import dev.qilletni.api.lang.types.EntityType;
 import dev.qilletni.api.lang.types.FunctionType;
+import dev.qilletni.api.lang.types.SongType;
 import dev.qilletni.api.lang.types.StringType;
 import dev.qilletni.api.lang.types.entity.EntityDefinitionManager;
 import dev.qilletni.api.lib.annotations.BeforeAnyInvocation;
 import dev.qilletni.api.lib.annotations.NativeOn;
 import dev.qilletni.api.music.MusicCache;
 import dev.qilletni.api.music.MusicPopulator;
+import dev.qilletni.api.music.factories.CollectionStateFactory;
 import dev.qilletni.api.music.factories.SongTypeFactory;
+import dev.qilletni.api.music.orchestration.CollectionState;
+import dev.qilletni.api.music.orchestration.TrackOrchestrator;
 import dev.qilletni.api.music.supplier.DynamicProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @NativeOn("collection")
@@ -29,13 +35,21 @@ public class CollectionFunctions {
     private final FunctionInvoker functionInvoker;
     private final SongTypeFactory songTypeFactory;
     private final MusicCache musicCache;
+    private final TrackOrchestrator trackOrchestrator;
+    private final CollectionStateFactory collectionStateFactory;
 
-    public CollectionFunctions(MusicPopulator musicPopulator, EntityDefinitionManager entityDefinitionManager, FunctionInvoker functionInvoker, SongTypeFactory songTypeFactory, DynamicProvider dynamicProvider) {
+    // TODO: Yeah this will probably (definitely) cause memory leaks
+    //       Better fix this later or figure out a better way
+    private static final Map<CollectionType, CollectionState> collectionStates = new HashMap<>();
+
+    public CollectionFunctions(MusicPopulator musicPopulator, EntityDefinitionManager entityDefinitionManager, FunctionInvoker functionInvoker, SongTypeFactory songTypeFactory, DynamicProvider dynamicProvider, CollectionStateFactory collectionStateFactory) {
         this.musicPopulator = musicPopulator;
         this.entityDefinitionManager = entityDefinitionManager;
         this.functionInvoker = functionInvoker;
         this.songTypeFactory = songTypeFactory;
         this.musicCache = dynamicProvider.getMusicCache();
+        this.trackOrchestrator = dynamicProvider.getTrackOrchestrator();
+        this.collectionStateFactory = collectionStateFactory;
     }
 
     @BeforeAnyInvocation
@@ -94,6 +108,20 @@ public class CollectionFunctions {
                     LOGGER.debug("Track \"{}\" checking {} == {}", track.getName(), track.getArtist().getId(), artistId);
                     return track.getArtist().getId().equals(artistId);
                 });
+    }
+
+    /**
+     * This holds an internal collection state, specific to this method. It's not ideal but saves the user from
+     * passing around a state, or potentially have inconsistent states with different plays.
+     *
+     * @param collectionType The collection to play from
+     * @return The song that is next
+     */
+    public SongType nextSong(CollectionType collectionType) {
+        var state = collectionStates.computeIfAbsent(collectionType, _ ->
+                collectionStateFactory.createFromCollection(collectionType));
+
+        return songTypeFactory.createSongFromTrack(trackOrchestrator.getTrackFromCollection(state));
     }
 
 }

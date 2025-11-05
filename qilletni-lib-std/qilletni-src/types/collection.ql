@@ -48,3 +48,8 @@ native fun anySongMatches(fn) on collection
  * @returns[@type boolean] If the collection contains the artist
  */
 native fun containsArtist(artist) on collection
+
+/**
+ * Gets the next song as if it were being played.
+ */
+native fun nextSong() on collection

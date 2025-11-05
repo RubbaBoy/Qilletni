@@ -55,6 +55,7 @@ import dev.qilletni.impl.lib.LibrarySourceFileResolver;
 import dev.qilletni.impl.lib.persistence.PackageConfigImpl;
 import dev.qilletni.impl.music.MusicPopulatorImpl;
 import dev.qilletni.impl.music.factories.AlbumTypeFactoryImpl;
+import dev.qilletni.impl.music.factories.CollectionStateFactoryImpl;
 import dev.qilletni.impl.music.factories.CollectionTypeFactoryImpl;
 import dev.qilletni.impl.music.factories.SongTypeFactoryImpl;
 import org.antlr.v4.runtime.CharStream;
@@ -143,6 +144,7 @@ public class QilletniProgramRunner {
         nativeFunctionHandler.addInjectableInstance(typeConverter);
         nativeFunctionHandler.addInjectableInstance(dynamicProvider);
         nativeFunctionHandler.addInjectableInstance(backgroundTaskExecutor);
+        nativeFunctionHandler.addInjectableInstance(new CollectionStateFactoryImpl(dynamicProvider));
         
         if (debugSupport.isDebugEnabled()) {
             LOGGER.debug("Debugging enabled");

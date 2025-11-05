@@ -15,9 +15,10 @@ import java.util.Optional;
 public interface MusicTypeConverter {
 
     /**
-     * Converts a track from one service provider to another.
+     * Converts a track from one service provider to another. The same track from other service providers is the
+     * `tracks` parameter.
      * 
-     * @param tracks The tracks to convert
+     * @param tracks The tracks to convert. These originate from other service providers
      * @return The created track in the current service provider's implementation
      */
     Optional<Track> convertTrack(List<Track> tracks);
