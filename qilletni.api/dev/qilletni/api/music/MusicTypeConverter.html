@@ -153,10 +153,11 @@ loadScripts(document, 'script');</script>
 <h3>convertTrack</h3>
 <div class="horizontal-scroll">
 <div class="member-signature"><span class="return-type"><a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/Optional.html" title="class or interface in java.util" class="external-link">Optional</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;</span>&nbsp;<span class="element-name">convertTrack</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/22/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="Track.html" title="interface in dev.qilletni.api.music">Track</a>&gt;&nbsp;tracks)</span></div>
-<div class="block">Converts a track from one service provider to another.</div>
+<div class="block">Converts a track from one service provider to another. The same track from other service providers is the
+ `tracks` parameter.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>tracks</code> - The tracks to convert</dd>
+<dd><code>tracks</code> - The tracks to convert. These originate from other service providers</dd>
 <dt>Returns:</dt>
 <dd>The created track in the current service provider's implementation</dd>
 </dl>
